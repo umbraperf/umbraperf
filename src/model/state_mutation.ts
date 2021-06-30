@@ -22,7 +22,6 @@ export type StateMutationVariant =
 export type Dispatch = (mutation: StateMutationVariant) => void;
 /// Mutation of the application state
 export class AppStateMutation {
-    /// Set the editor program
     public static reduce(state: AppState, mutation: StateMutationVariant): AppState {
         switch (mutation.type) {
             case StateMutationType.SET_GREETER:

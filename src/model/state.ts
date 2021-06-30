@@ -5,6 +5,6 @@ export interface AppState {
 
 export function createDefaultState(): AppState {
     return {
-        helloworld: "fooo",
+        helloworld: "fooo2",
     };
 }

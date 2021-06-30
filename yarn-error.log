@@ -1,0 +1,120 @@
+Arguments: 
+  /home/andre/.nvm/versions/node/v16.1.0/bin/node /home/andre/.nvm/versions/node/v16.1.0/bin/yarn install
+
+PATH: 
+  /home/andre/.nvm/versions/node/v16.1.0/bin:/home/andre/.pyenv/shims:/home/andre/.pyenv/bin:/home/andre/.gem/bin:/home/andre/.npm_packages/bin:/home/andre/go/bin:/home/andre/bin:/home/andre/.fluttersdk/.pub-cache/bin:/home/andre/.pub-cache/bin:/home/andre/.fluttersdk/bin:/home/andre/.cargo/bin:/home/andre/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/local/sbin:/home/andre/.local/bin:/home/andre/.nvm/versions/node/v16.1.0/bin:/home/andre/.pyenv/shims:/home/andre/.pyenv/bin:/home/andre/.gem/bin:/home/andre/.npm_packages/bin:/home/andre/go/bin:/home/andre/bin:/home/andre/.fluttersdk/.pub-cache/bin:/home/andre/.pub-cache/bin:/home/andre/.fluttersdk/bin:/home/andre/.cargo/bin:/home/andre/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/local/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/andre/.fzf/bin:/home/andre/.displayplacer:/home/andre/.fzf/bin:/home/andre/.displayplacer
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  16.1.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@duckdb%2fduckdb-wasm: Not found
+      at Request.params.callback [as _callback] (/home/andre/.nvm/versions/node/v16.1.0/lib/node_modules/yarn/lib/cli.js:66988:18)
+      at Request.self.callback (/home/andre/.nvm/versions/node/v16.1.0/lib/node_modules/yarn/lib/cli.js:140662:22)
+      at Request.emit (node:events:365:28)
+      at Request.<anonymous> (/home/andre/.nvm/versions/node/v16.1.0/lib/node_modules/yarn/lib/cli.js:141634:10)
+      at Request.emit (node:events:365:28)
+      at IncomingMessage.<anonymous> (/home/andre/.nvm/versions/node/v16.1.0/lib/node_modules/yarn/lib/cli.js:141556:12)
+      at Object.onceWrapper (node:events:471:28)
+      at IncomingMessage.emit (node:events:377:35)
+      at endReadableNT (node:internal/streams/readable:1312:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+      "name": "@duckdb/duckdb-wasm-shell",
+      "version": "0.1.0",
+      "description": "",
+      "author": "Andre Kohn <kohn.a@outlook.com>",
+      "license": "MIT",
+      "private": true,
+      "scripts": {
+          "start": "webpack serve --config webpack.debug.js",
+          "start:corp": "webpack serve --config webpack.debug.corp.js",
+          "build:debug": "NODE_OPTIONS='--max-old-space-size=4096' webpack --config webpack.debug.js",
+          "build:release": "NODE_OPTIONS='--max-old-space-size=4096' webpack --config webpack.release.js",
+          "analyze:debug": "webpack --config webpack.debug.js --analyze",
+          "analyze:release": "webpack --config webpack.release.js --analyze",
+          "lint": "eslint src types"
+      },
+      "engines": {
+          "node": ">=14.13"
+      },
+      "dependencies": {
+          "@duckdb/duckdb-wasm": "^0.0.28",
+          "bootstrap": "^5.0.1",
+          "classnames": "^2.3.1",
+          "framer-motion": "^4.1.17",
+          "immutable": "^4.0.0-rc.12",
+          "react": "^17.0.2",
+          "react-bootstrap": "^1.6.0",
+          "react-dom": "^17.0.2",
+          "react-dropzone": "^11.3.4",
+          "react-redux": "^7.2.4",
+          "react-router-dom": "^5.2.0",
+          "redux": "^4.1.0",
+          "xterm": "^4.13.0",
+          "xterm-addon-fit": "^0.5.0",
+          "xterm-addon-ligatures": "^0.5.0",
+          "xterm-addon-unicode11": "^0.2.0",
+          "xterm-addon-web-links": "^0.4.0",
+          "xterm-addon-webgl": "^0.11.1"
+      },
+      "devDependencies": {
+          "@types/classnames": "^2.3.1",
+          "@types/node": "^15.12.5",
+          "@types/react-dom": "^17.0.7",
+          "@types/react-redux": "^7.1.16",
+          "@types/react-router-dom": "^5.1.7",
+          "@types/react-virtualized": "^9.21.11",
+          "@wasm-tool/wasm-pack-plugin": "^1.4.0",
+          "copy-webpack-plugin": "^9.0.1",
+          "css-loader": "^5.2.6",
+          "esbuild-css-modules-plugin": "^1.0.6",
+          "eslint": "^7.27.0",
+          "eslint-config-prettier": "^8.3.0",
+          "eslint-plugin-jasmine": "^4.1.2",
+          "eslint-plugin-react": "^7.24.0",
+          "file-loader": "^6.2.0",
+          "html-webpack-plugin": "^5.3.1",
+          "jasmine-spec-reporter": "^7.0.0",
+          "karma": "^6.3.4",
+          "karma-chrome-launcher": "^3.1.0",
+          "karma-firefox-launcher": "^2.1.0",
+          "karma-jasmine": "^4.0.1",
+          "karma-spec-reporter": "^0.0.32",
+          "karma-webpack": "^5.0.0",
+          "mini-css-extract-plugin": "^1.6.1",
+          "source-map-loader": "^3.0.0",
+          "style-loader": "^3.0.0",
+          "ts-loader": "^9.2.2",
+          "typescript": "^4.3.2",
+          "typescript-plugin-css-modules": "^3.3.0",
+          "webpack": "^5.39.0",
+          "webpack-bundle-analyzer": "^4.4.1",
+          "webpack-cli": "^4.7.2",
+          "webpack-dev-server": "^3.11.2",
+          "webpackbar": "^5.0.0-3"
+      },
+      "peerDependencies": {
+          "@types/react": "^17.0.3",
+          "react": "^17.0.2",
+          "react-dom": "^17.0.2"
+      },
+      "optionalDependencies": {
+          "fsevents": "*"
+      },
+      "type": "module"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

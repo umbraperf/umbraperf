@@ -1,0 +1,46 @@
+[package]
+name = "umbra_profiler"
+version = "0.1.0"
+authors = []
+edition = "2018"
+publish = false
+
+workspace = "../"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies.web-sys]
+version = "0.3.51"
+features = [
+  'console',
+  'Crypto',
+  'Document',
+  'Element',
+  'Node',
+  'NodeList',
+  'Window',
+  'MouseEvent',
+  'KeyboardEvent',
+  'HtmlTextAreaElement',
+  'HtmlCanvasElement',
+  'WebSocket',
+  'Performance',
+]
+
+[dependencies]
+console_error_panic_hook = "0.1.6"
+wasm-bindgen = "0.2.74"
+wasm-bindgen-futures = "0.4.24"
+chrono = "0.4.19"
+js-sys = "0.3.51"
+lazy_static = "1.4.0"
+encode_unicode = "0.3.6"
+unicode-width = "0.1.8"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.12"
+
+[profile.release]
+lto = true
+opt-level = "s"

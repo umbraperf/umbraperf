@@ -13,6 +13,8 @@
     outline: none;
     transition: border .24s ease-in-out;
     margin: 50px;
+    align-items: center;
+    text-align: center;
 }
 
 .dropzoneActive{

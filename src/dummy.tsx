@@ -87,7 +87,10 @@ class Dummy extends React.Component<Props> {
                             <section className={styles[dropzoneStyle()]}>
                                 <div {...getRootProps()} style={{ width: "100%", height: "100%" }}>
                                     <input {...getInputProps()} />
-                                    <p>Drag 'n' drop some files here, or click to select files</p>
+                                    <p> Drag files here, or click to select files.
+                                        <br></br>
+                                        Only .csv files are allowed.
+                                    </p>
                                 </div>
                             </section>)
                     }}

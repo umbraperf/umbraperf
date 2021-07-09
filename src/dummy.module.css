@@ -1,0 +1,35 @@
+.dropzoneBase{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-width: 2;
+    border-radius: 2;
+    border-color: #eeeeee;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border .24s ease-in-out;
+    margin: 50px;
+}
+
+.dropzoneActive{
+    composes: dropzoneBase;
+    border-color:#2196f3;
+}
+
+.dropzoneAccept{
+    composes: dropzoneBase;
+    border-color:#00e676;
+}
+
+.dropzoneReject{
+    composes: dropzoneBase;
+    border-color:#ff1744;
+}
+
+p{
+    font-size: x-large;
+}

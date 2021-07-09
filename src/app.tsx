@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as model from './model';
 
 import { Provider as ReduxProvider } from 'react-redux';
-import { Route, BrowserRouter, Switch, useLocation, Redirect } from 'react-router-dom';
+import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
 
 import './globals.css';
 
@@ -22,7 +22,7 @@ ReactDOM.render(
                 <Route exact path="/">
                     <Redirect to="/dummy" />
                 </Route>
-                
+
                 <Route exact path="/dummy" component={Dummy} />
 
                 <Route path="*">
@@ -43,7 +43,9 @@ function NoMatch() {
     return (
         <div>
             <h3>
-                No match for <code>{location.pathname}</code>
+                404: No subpage found for <code>{location.pathname}</code>.
+                <br></br>
+                You can return to homepage: <Link to={'/'} className="nav-link"> Home </Link>
             </h3>
         </div>
     );

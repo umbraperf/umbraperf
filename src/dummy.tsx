@@ -19,7 +19,7 @@ class Dummy extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
-      }
+    }
 
     public async passToMichael(files: Array<File>) {
        // const files = event.target.files;
@@ -62,7 +62,7 @@ class Dummy extends React.Component<Props> {
                 <p>
                     Selected file: {this.props.fileName}
                 </p>
-                <Dropzone onDrop={acceptedFiles => this.receiveFileOnDrop(acceptedFiles)}>
+                <Dropzone accept = {".csv"} onDrop={(acceptedFiles, rejectedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
                     {({ getRootProps, getInputProps }) => (
                         <section>
                             <div {...getRootProps()}>

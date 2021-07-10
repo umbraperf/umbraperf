@@ -12,12 +12,16 @@ use std::str;
 
 struct State {
     pub counter: u64,
+    pub expected_chunks: u64,
+    pub processed_chunks: u64,
     pub vec: Vec<u8>,
 }
 
 thread_local! {
     static STATE: Arc<Mutex<State>> = Arc::new(Mutex::new(State {
         counter: 0,
+        expected_chunks: 0,
+        processed_chunks: 0, 
         vec: Vec::new(),
     }));
 }
@@ -35,8 +39,15 @@ pub fn get_state() -> i32 {
         return sg.counter;
         });
     return 0;
-    }
+}
 
+#[wasm_bindgen(js_name = "setExpectedChunks")]
+pub fn set_expected_chunks(num: u64) {
+    STATE.with(|s| {
+        let mut sg = s.lock().expect("State unlocked");
+        sg.expected_chunks = num;
+    });
+}   
 
 
 #[wasm_bindgen(js_name = "consumeChunk")]
@@ -44,6 +55,7 @@ pub fn consume_chunk(chunk: &Uint8Array) {
     
     let _buffer = chunk.to_vec();
     let number:u8 = 10;
+
     let mut linevec = Vec::new();
     let mut iterator = _buffer.iter();
 
@@ -97,6 +109,10 @@ pub fn consume_chunk(chunk: &Uint8Array) {
              }
         }
     }
+}
+
+pub fn notify_finished() {
+
 }
 
 pub fn print_to_console(str: &JsValue) {

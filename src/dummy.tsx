@@ -6,6 +6,7 @@ import Dropzone, { DropzoneState } from 'react-dropzone'
 import * as profiler_core from '../crate/pkg';
 
 import styles from './dummy.module.css';
+import { stat } from 'fs/promises';
 
 interface Props {
     helloworld: string;
@@ -14,6 +15,8 @@ interface Props {
     setFileName: (newFileName: string) => void;
     result: string;
     setResult: (newResult: string) => void;
+    chunksNumber: number;
+    setChunksNumber: (newChunksNumber: number) => void;
 }
 
 class Dummy extends React.Component<Props> {
@@ -34,6 +37,7 @@ class Dummy extends React.Component<Props> {
         let remaining = fileSize;
         let offset = 0;
         const numberOfChunks = Math.ceil(fileSize/chunkSize);
+        this.props.setChunksNumber(numberOfChunks);
         //profiler_core.setExpectedChunks(numberOfChunks);
 
         while (remaining > 0) {
@@ -51,6 +55,14 @@ class Dummy extends React.Component<Props> {
     public async getResultFromMichael() {
         if(this.props.fileName){
             this.props.setResult("loading...");
+
+            console.log(this.props.chunksNumber);
+
+/*             while(profiler_core.getProcessedChunks() !== this.props.chunksNumber){
+                console.log("working");
+            } */
+            console.log("fertig");
+
             //const result: any = await profiler_core.getState();
             //console.log("statte: " + result);
             //this.props.setResult(result);
@@ -155,6 +167,7 @@ const mapStateToProps = (state: model.AppState) => ({
     helloworld: state.helloworld,
     fileName: state.fileName,
     result: state.result,
+    chunksNumber: state.chunksNumber,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -172,6 +185,11 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         dispatch({
             type: model.StateMutationType.SET_RESULT,
             data: newResult,
+        }),
+        setChunksNumber: (newChunksNumber: number) =>
+        dispatch({
+            type: model.StateMutationType.SET_CHUNKSNUMBER,
+            data: newChunksNumber,
         }),
 });
 

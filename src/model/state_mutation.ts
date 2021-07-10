@@ -12,6 +12,7 @@ export enum StateMutationType {
     SET_FILENAME = 'SET_FILENAME',
     SET_GREETER = 'SET_GREETER',
     SET_RESULT = 'SET_RESULT',
+    SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     OTHER = 'OTHER',
 }
 
@@ -20,6 +21,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_GREETER, string>
     | StateMutation<StateMutationType.SET_RESULT, string>
+    | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     ;
 
 // The action dispatch
@@ -37,6 +39,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     result: mutation.data,
+                };
+            case StateMutationType.SET_CHUNKSNUMBER:
+                return {
+                    ...state,
+                    chunksNumber: mutation.data,
                 };
             case StateMutationType.SET_GREETER:
                 return {

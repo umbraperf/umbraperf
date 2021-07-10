@@ -3,6 +3,7 @@ export interface AppState {
     helloworld: string;
     fileName: string | undefined;
     result: string;
+    chunksNumber: number;
 }
 
 export function createDefaultState(): AppState {
@@ -10,5 +11,6 @@ export function createDefaultState(): AppState {
         helloworld: "fooo2",
         fileName: undefined,
         result: "no result",
+        chunksNumber: 0,
     };
 }

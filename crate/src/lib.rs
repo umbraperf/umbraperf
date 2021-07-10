@@ -104,7 +104,6 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                         sg.vec.push(*v);
                     }
                     if sg.expected_chunks == sg.processed_chunks {
-                        notify_finished();
                     }
                 }); 
                 print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
@@ -114,10 +113,6 @@ pub fn consume_chunk(chunk: &Uint8Array) {
     }
 }
 
-#[wasm_bindgen(module = "/src/dummy.tsx")]
-    pub fn notify_finished() {
-        js_sys::Reflect::apply(update(),None,None);
-}
 
 pub fn print_to_console(str: &JsValue) {
     unsafe {

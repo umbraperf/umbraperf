@@ -51,6 +51,7 @@ pub fn get_processed_chunks() -> i32 {
 
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
+    rustfunc();
     let _buffer: Vec<u8> = chunk.to_vec();
     let number: u8 = 10;
 
@@ -115,4 +116,21 @@ pub fn print_to_console(str: &JsValue) {
         web_sys::console::log_1(str);
     }
 }
+
+#[wasm_bindgen]
+pub fn rustfunc() {
+    unsafe {
+        update();
+    }
+}
+
+#[wasm_bindgen(raw_module="../../src/dummy")]
+extern "C" {
+
+    #[wasm_bindgen()]
+    fn update() -> u32;
+
+}
+
+
 

@@ -195,5 +195,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 
 export function update(){
-    console.log("hi");
+    console.log("hi")
+    return 32;
 }

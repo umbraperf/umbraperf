@@ -30,8 +30,12 @@ pub fn print_something(something: &str) {
 
 #[wasm_bindgen(js_name = "getState")]
 pub fn get_state() -> i32 {
-   return 5;
-}
+    STATE.with(|s| {
+        let mut sg = s.lock().expect("State unlocked");
+        return sg.counter;
+        });
+    return 0;
+    }
 
 
 

@@ -18,6 +18,18 @@ ReactDOM.render(
     <ReduxProvider store={store}>
 
         <BrowserRouter>
+            <div>
+                <h3>Navigation:</h3>
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <ul className="navbar-nav mr-auto">
+                        <li><Link to={'/'} className="nav-link"> Dummy </Link></li>
+                        {/*                         <li><Link to={'/contact'} className="nav-link">Contact</Link></li>
+                        <li><Link to={'/about'} className="nav-link">About</Link></li> */}
+                    </ul>
+                </nav>
+                <hr />
+            </div>
+
             <Switch>
                 <Route exact path="/">
                     <Redirect to="/dummy" />

@@ -10,8 +10,10 @@ import styles from './dummy.module.css';
 interface Props {
     helloworld: string;
     setHelloWorld: (newGreeter: string) => void;
-    fileName: string;
+    fileName: string | undefined;
     setFileName: (newFileName: string) => void;
+    result: string;
+    setResult: (newResult: string) => void;
 }
 
 class Dummy extends React.Component<Props> {
@@ -19,6 +21,7 @@ class Dummy extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
+        this.getResultFromMichael = this.getResultFromMichael.bind(this);
     }
 
     public async passToMichael(files: Array<File>) {
@@ -26,18 +29,31 @@ class Dummy extends React.Component<Props> {
         if (!files || files?.length == 0 || files![0] == null) return;
         const file = files[0];
         const fileSize = file.size;
+        const chunkSize = 4000;
         console.log(fileSize);
         let remaining = fileSize;
         let offset = 0;
+        const numberOfChunks = Math.ceil(fileSize/chunkSize);
+        //profiler_core.setExpectedChunks(numberOfChunks);
 
         while (remaining > 0) {
-            const readHere = Math.min(remaining, 4000);
+            const readHere = Math.min(remaining, chunkSize);
             let chunk = file.slice(offset, offset + readHere);
             const data = await chunk.arrayBuffer();
             console.log(data)
             profiler_core.consumeChunk(new Uint8Array(data));
             remaining -= readHere;
             offset += readHere;
+        }
+        console.log(numberOfChunks);
+    }
+
+    public async getResultFromMichael() {
+        if(this.props.fileName){
+            this.props.setResult("loading...");
+            //const result: any = await profiler_core.getState();
+            //console.log("statte: " + result);
+            //this.props.setResult(result);
         }
     }
 
@@ -61,7 +77,7 @@ class Dummy extends React.Component<Props> {
 
             <div className={"dropzone-container"}>
                 <p>
-                    Selected file: {this.props.fileName}
+                    Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
                 </p>
                 <Dropzone
                     accept={'.csv'}
@@ -81,8 +97,6 @@ class Dummy extends React.Component<Props> {
                             }
                         };
 
-                        console.log(fileRejections);
-
                         return (
                             <section className={styles[dropzoneStyle()]}>
                                 <div {...getRootProps()} style={{ width: "100%", height: "100%" }}>
@@ -95,6 +109,12 @@ class Dummy extends React.Component<Props> {
                             </section>)
                     }}
                 </Dropzone>
+            </div>
+            
+            <div className={"resultArea"} {...this.getResultFromMichael()} >
+                <p>
+                    {this.props.result}
+                </p>
             </div>
         </div>;
     }
@@ -134,6 +154,7 @@ class Dummy extends React.Component<Props> {
 const mapStateToProps = (state: model.AppState) => ({
     helloworld: state.helloworld,
     fileName: state.fileName,
+    result: state.result,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -147,10 +168,15 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
             type: model.StateMutationType.SET_FILENAME,
             data: newFileName,
         }),
-});
-
-const dropzoneStyle = () => ({
-
+    setResult: (newResult: string) =>
+        dispatch({
+            type: model.StateMutationType.SET_RESULT,
+            data: newResult,
+        }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
+
+export function update(){
+    console.log("hi");
+}

@@ -1,12 +1,14 @@
 export interface AppState {
     /// The registered files
     helloworld: string;
-    fileName: string;
+    fileName: string | undefined;
+    result: string;
 }
 
 export function createDefaultState(): AppState {
     return {
         helloworld: "fooo2",
-        fileName: "no file selected",
+        fileName: undefined,
+        result: "no result",
     };
 }

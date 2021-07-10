@@ -11,6 +11,7 @@ export type StateMutation<T, P> = {
 export enum StateMutationType {
     SET_FILENAME = 'SET_FILENAME',
     SET_GREETER = 'SET_GREETER',
+    SET_RESULT = 'SET_RESULT',
     OTHER = 'OTHER',
 }
 
@@ -18,6 +19,7 @@ export enum StateMutationType {
 export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_GREETER, string>
+    | StateMutation<StateMutationType.SET_RESULT, string>
     ;
 
 // The action dispatch
@@ -30,6 +32,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     fileName: mutation.data,
+                };
+            case StateMutationType.SET_RESULT:
+                return {
+                    ...state,
+                    result: mutation.data,
                 };
             case StateMutationType.SET_GREETER:
                 return {

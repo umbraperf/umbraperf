@@ -6,7 +6,6 @@ import Dropzone, { DropzoneState } from 'react-dropzone'
 import * as profiler_core from '../crate/pkg';
 
 import styles from './dummy.module.css';
-import { stat } from 'fs/promises';
 
 interface Props {
     helloworld: string;

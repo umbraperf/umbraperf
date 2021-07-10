@@ -28,6 +28,12 @@ pub fn print_something(something: &str) {
     example();
 }
 
+#[wasm_bindgen(js_name = "getState")]
+pub fn get_state() -> i32 {
+   return 5;
+}
+
+
 
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {

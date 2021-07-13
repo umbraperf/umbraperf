@@ -51,7 +51,6 @@ pub fn get_processed_chunks() -> i32 {
 
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
-    rustfunc();
     let _buffer: Vec<u8> = chunk.to_vec();
     let number: u8 = 10;
 
@@ -105,6 +104,7 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                     sg.processed_chunks += 1;
                 }); 
                 print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
+                rustfunc();
                 break;
              }
         }

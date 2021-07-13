@@ -1,4 +1,5 @@
 import * as model from './model';
+import store from './app';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState } from 'react-dropzone'
@@ -12,8 +13,10 @@ interface Props {
     setHelloWorld: (newGreeter: string) => void;
     fileName: string | undefined;
     setFileName: (newFileName: string) => void;
-    result: string;
-    setResult: (newResult: string) => void;
+    resultLoading: boolean;
+    setResultLoading: (newResultLoading: boolean) => void;
+    result: string | undefined;
+    setResult: (newResult: string | undefined) => void;
     chunksNumber: number;
     setChunksNumber: (newChunksNumber: number) => void;
 }
@@ -23,7 +26,7 @@ class Dummy extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
-        this.getResultFromMichael = this.getResultFromMichael.bind(this);
+        this.awaitResultFromCore = this.awaitResultFromCore.bind(this);
     }
 
     public async passToMichael(files: Array<File>) {
@@ -35,7 +38,7 @@ class Dummy extends React.Component<Props> {
         console.log(fileSize);
         let remaining = fileSize;
         let offset = 0;
-        const numberOfChunks = Math.ceil(fileSize/chunkSize);
+        const numberOfChunks = Math.ceil(fileSize / chunkSize);
         this.props.setChunksNumber(numberOfChunks);
         //profiler_core.setExpectedChunks(numberOfChunks);
 
@@ -43,7 +46,7 @@ class Dummy extends React.Component<Props> {
             const readHere = Math.min(remaining, chunkSize);
             let chunk = file.slice(offset, offset + readHere);
             const data = await chunk.arrayBuffer();
-            console.log(data)
+            //console.log(data)
             profiler_core.consumeChunk(new Uint8Array(data));
             remaining -= readHere;
             offset += readHere;
@@ -51,31 +54,25 @@ class Dummy extends React.Component<Props> {
         console.log(numberOfChunks);
     }
 
-    public async getResultFromMichael() {
-        if(this.props.fileName){
-            this.props.setResult("loading...");
-
-            console.log(this.props.chunksNumber);
-
-/*             while(profiler_core.getProcessedChunks() !== this.props.chunksNumber){
-                console.log("working");
-            } */
-            console.log("fertig");
-
-            //const result: any = await profiler_core.getState();
-            //console.log("statte: " + result);
-            //this.props.setResult(result);
+    public async awaitResultFromCore() {
+        if (this.props.fileName) {
+            console.log(this.props.resultLoading);
+            if (this.props.resultLoading) {
+                this.props.setResult("loading result...");
+            } else {
+                this.props.setResult(this.props.result);
+            }
+            console.log("result from rust:" + this.props.result);
         }
     }
 
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
-
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setFileName(acceptedFiles[0].name);
+            this.props.setResultLoading(true);
             this.passToMichael(acceptedFiles);
         }
-        console.log(acceptedFiles);
-
+        //console.log(acceptedFiles);
     }
 
 
@@ -121,8 +118,8 @@ class Dummy extends React.Component<Props> {
                     }}
                 </Dropzone>
             </div>
-            
-            <div className={"resultArea"} {...this.getResultFromMichael()} >
+
+            <div className={"resultArea"} {...this.awaitResultFromCore()} >
                 <p>
                     {this.props.result}
                 </p>
@@ -165,6 +162,7 @@ class Dummy extends React.Component<Props> {
 const mapStateToProps = (state: model.AppState) => ({
     helloworld: state.helloworld,
     fileName: state.fileName,
+    resultLoading: state.resultLoading,
     result: state.result,
     chunksNumber: state.chunksNumber,
 });
@@ -180,12 +178,17 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
             type: model.StateMutationType.SET_FILENAME,
             data: newFileName,
         }),
-    setResult: (newResult: string) =>
+    setResultLoading: (newResultLoading: boolean) =>
+        dispatch({
+            type: model.StateMutationType.SET_RESULTLOADING,
+            data: newResultLoading,
+        }),
+    setResult: (newResult: string | undefined) =>
         dispatch({
             type: model.StateMutationType.SET_RESULT,
             data: newResult,
         }),
-        setChunksNumber: (newChunksNumber: number) =>
+    setChunksNumber: (newChunksNumber: number) =>
         dispatch({
             type: model.StateMutationType.SET_CHUNKSNUMBER,
             data: newChunksNumber,
@@ -194,7 +197,19 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 
-export function update(){
-    console.log("hi")
-    return 32;
+//get notification from rust
+export function update() {
+    console.log("notification from rust");
+    const result = "" + profiler_core.getState();
+    //const result = "" + 20;
+
+    store.dispatch({
+        type: model.StateMutationType.SET_RESULTLOADING,
+        data: false,
+    });
+    store.dispatch({
+        type: model.StateMutationType.SET_RESULT,
+        data: result,
+    });
+
 }

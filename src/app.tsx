@@ -62,3 +62,5 @@ function NoMatch() {
         </div>
     );
 }
+
+export default store;

@@ -1,9 +1,5 @@
-pub(crate) mod csv_reader;
-
-extern crate csv;
 extern crate wasm_bindgen;
 
-use csv_reader::example;
 use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 use std::sync::Arc;
@@ -12,41 +8,23 @@ use csv::ReaderBuilder;
 use std::str;
 
 struct State {
-    pub counter: u64,
-    pub processed_chunks: u64,
     pub vec: Vec<u8>,
 }
 
 thread_local! {
     static STATE: Arc<Mutex<State>> = Arc::new(Mutex::new(State {
-        counter: 0,
-        processed_chunks: 0, 
         vec: Vec::new(),
     }));
 }
 
+static mut COUNTER: i32 = 0;
 
-#[wasm_bindgen(js_name = "printSomething")]
-pub fn print_something(something: &str) {
-    example();
-}
 
 #[wasm_bindgen(js_name = "getState")]
 pub fn get_state() -> i32 {
-    STATE.with(|s| {
-        let mut sg = s.lock().expect("State unlocked");
-        return sg.counter;
-        });
-    return 0;
-}
-
-#[wasm_bindgen(js_name = "getProcessedChunks")]
-pub fn get_processed_chunks() -> i32 {
-    STATE.with(|s| {
-        let mut sg = s.lock().expect("State unlocked");
-        return sg.processed_chunks;
-        });
-    return 0;
+    unsafe {
+        return COUNTER;
+    }
 }
 
 #[wasm_bindgen(js_name = "consumeChunk")]
@@ -80,12 +58,10 @@ pub fn consume_chunk(chunk: &Uint8Array) {
         
                     for result in rdr.records() {
                         let record = result.expect("CSV record");
-                        let number = &record[1].parse::<u64>().expect("u64");
-                        STATE.with(|s| {
-                            let mut sg = s.lock().expect("State unlocked");
-                            sg.counter += number;
-                            print_to_console(&format!("COUNTER: {:?}", sg.counter).into());
-                        }); 
+                        let number = &record[1].parse::<i32>().expect("u64");
+                        unsafe {
+                            COUNTER = COUNTER + number;
+                        }
                     }
         
                     linevec = Vec::new(); 
@@ -101,7 +77,6 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                     for v in linevec.iter() {
                         sg.vec.push(*v);
                     }
-                    sg.processed_chunks += 1;
                 }); 
                 print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
                 rustfunc();
@@ -126,11 +101,6 @@ pub fn rustfunc() {
 
 #[wasm_bindgen(raw_module="../../src/dummy")]
 extern "C" {
-
     #[wasm_bindgen()]
     fn update() -> u32;
-
 }
-
-
-

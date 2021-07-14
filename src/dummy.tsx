@@ -141,10 +141,10 @@ class Dummy extends React.Component<Props> {
 
             <div className={"resultArea"} {...this.awaitResultFromCore()} >
                 <p>
-                    {this.props.resultLoading ? 
-                    <CircularProgress />
-                    :
-                    this.props.result}
+                    {this.props.resultLoading ?
+                        <CircularProgress />
+                        :
+                        this.props.result}
                 </p>
             </div>
         </div>;

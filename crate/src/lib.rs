@@ -21,13 +21,13 @@ thread_local! {
     }));
 }
 
-static mut COUNTER: i32 = 0;
+static mut SUM: i32 = 0;
 
 
 #[wasm_bindgen(js_name = "getState")]
 pub fn get_state() -> i32 {
     unsafe {
-        return COUNTER;
+        return SUM;
     }
 }
 
@@ -40,20 +40,19 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
     return 0;
 }
 
-
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
-    let _buffer: Vec<u8> = chunk.to_vec();
+    let buffer: Vec<u8> = chunk.to_vec();
     let linebreak: u8 = 10;
 
-    let mut linevec = Vec::new();
-    let mut iterator = _buffer.iter();
+    let mut binary_vec = Vec::new();
+    let mut iterator = buffer.iter();
 
     STATE.with(|s| {
         let sg = s.lock().expect("State unlocked");
         if !sg.vec.len().eq(&0) {
             for v in sg.vec.iter() {
-                linevec.push(*v);
+                binary_vec.push(*v);
             }
         }
     });  
@@ -62,37 +61,42 @@ pub fn consume_chunk(chunk: &Uint8Array) {
     loop {
         match iterator.next() {
             Some(i) => {
-                // if linebreak is found process vector else push it to vector for later use
+                // if linebreak is found process binary vector else push it to vector for later processing
                 if i == &linebreak {
-                    process_chunk(linevec);
-                    linevec = Vec::new(); 
-        
+                    process_chunk(binary_vec);
+                    binary_vec = Vec::new();
                 } else {
-                   &linevec.push(*i);
+                   &binary_vec.push(*i);
                 }
             },
+            // may be end of file or end of chunk
             None => { 
                 STATE.with(|s| {
                     let mut sg = s.lock().expect("State unlocked");
                     sg.processed_chunks += 1;
+                    // end of file
                     if sg.expected_chunks == sg.processed_chunks {
-                        if linevec.len() > 0 {
-                            process_chunk(linevec);
+                        if binary_vec.len() > 0 {
+                            process_chunk(binary_vec);
                         }
-                        rustfunc();
-                        unsafe {
-                            COUNTER = 0;
-                        }
+                        // notify JS about finish and reset variables and notify JS about finish
+                        notifyJS();
                         sg.processed_chunks = 0;
+                        unsafe {
+                            SUM = 0;
+                        }
                         sg.vec = Vec::new();
+                        print_to_console(&format!("File ends").into());
+                    // end of chunk
                     } else {
+                        // push line break of chunk to global state
                         sg.vec = Vec::new();
-                        for v in linevec.iter() {
+                        for v in binary_vec.iter() {
                             sg.vec.push(*v);
                         }
+                        print_to_console(&format!("Chunk ends").into());
                     }
                 }); 
-                print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
                 break;
              }
         }
@@ -100,26 +104,27 @@ pub fn consume_chunk(chunk: &Uint8Array) {
 }
 
 pub fn process_chunk(vec: Vec<u8>) {
-
-    print_to_console(&format!("BINARY: {:?}", &vec).into());
+    // convert to String
     let s = str::from_utf8(&vec).expect("Invalid UTF-8 sequence.");
-    print_to_console(&format!("STRING: {:?}", &s).into());
+    // reader
     let mut rdr = ReaderBuilder::new()
     .delimiter(b',')
     .has_headers(false)
     .from_reader(s.as_bytes());
 
+    // calculate
     for result in rdr.records() {
         let record = result.expect("CSV record");
         let number = &record[1].parse::<i32>().expect("u64");
         unsafe {
-            COUNTER = COUNTER + number;
+            SUM = SUM + number;
         }
     }
+    print_to_console(&format!("BINARY: {:?}", &vec).into());
+    print_to_console(&format!("STRING: {:?}", &s).into());
     unsafe {
-        print_to_console(&format!("COUNTER: {:?}", COUNTER).into());
+        print_to_console(&format!("COUNTER: {:?}", SUM).into());
     }
-
 }
 
 pub fn print_to_console(str: &JsValue) {
@@ -129,7 +134,7 @@ pub fn print_to_console(str: &JsValue) {
 }
 
 #[wasm_bindgen]
-pub fn rustfunc() {
+pub fn notifyJS() {
     unsafe {
         update();
     }

@@ -9,11 +9,15 @@ use std::str;
 
 struct State {
     pub vec: Vec<u8>,
+    pub processed_chunks: i32,
+    pub expected_chunks: i32
 }
 
 thread_local! {
     static STATE: Arc<Mutex<State>> = Arc::new(Mutex::new(State {
         vec: Vec::new(),
+        processed_chunks: 0,
+        expected_chunks: 0
     }));
 }
 
@@ -26,6 +30,16 @@ pub fn get_state() -> i32 {
         return COUNTER;
     }
 }
+
+#[wasm_bindgen(js_name = "setExpectedChunks")]
+pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
+    STATE.with(|s| {
+        let mut sg = s.lock().expect("State unlocked");
+        sg.expected_chunks = expected_chunks;
+        });
+    return 0;
+}
+
 
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
@@ -76,10 +90,19 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                     sg.vec = Vec::new();
                     for v in linevec.iter() {
                         sg.vec.push(*v);
+                        sg.processed_chunks += 1;
                     }
                 }); 
                 print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
-                rustfunc();
+                STATE.with(|s| {
+                    let sg = s.lock().expect("State unlocked");
+                    if sg.expected_chunks == sg.processed_chunks {
+                        rustfunc();
+                        unsafe {
+                            COUNTER = 0;
+                        }
+                    }
+                }); 
                 break;
              }
         }

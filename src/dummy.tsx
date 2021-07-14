@@ -2,7 +2,7 @@ import * as model from './model';
 import store from './app';
 import React from 'react';
 import { connect } from 'react-redux';
-import Dropzone, { DropzoneState } from 'react-dropzone'
+import Dropzone, { DropEvent, DropzoneState, FileRejection } from 'react-dropzone'
 
 import * as profiler_core from '../crate/pkg';
 
@@ -21,12 +21,15 @@ interface Props {
     setChunksNumber: (newChunksNumber: number) => void;
 }
 
+
 class Dummy extends React.Component<Props> {
 
     constructor(props: Props) {
         super(props);
+
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
         this.awaitResultFromCore = this.awaitResultFromCore.bind(this);
+        this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
     }
 
     public async passToMichael(files: Array<File>) {
@@ -66,6 +69,7 @@ class Dummy extends React.Component<Props> {
     }
 
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
+        //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setFileName(acceptedFiles[0].name);
             this.props.setResultLoading(true);
@@ -73,6 +77,28 @@ class Dummy extends React.Component<Props> {
             this.passToMichael(acceptedFiles);
         }
         //console.log(acceptedFiles);
+    }
+
+    defineDropzoneStyle(isDragActive: boolean, acceptedFiles: File[], fileRejections: FileRejection[]): string {
+        //const dropzoneStyle = () => {
+
+        //const styleString = "dropzoneBase";
+
+        let styleString = "dropzoneBase";
+        if (isDragActive) { styleString = "dropzoneActive" };
+        if (acceptedFiles.length !== 0) { styleString = "dropzoneAccept" };
+        if (fileRejections.length !== 0) { styleString = "dropzoneReject" };
+
+        return styleString;
+
+    }
+
+    listAcceptedFiles(acceptedFiles: File[]) {
+        return acceptedFiles.map(file => (
+            <li key={file.name}>
+                {file.name} - {file.size} bytes
+            </li>
+        ));
     }
 
 
@@ -93,26 +119,19 @@ class Dummy extends React.Component<Props> {
                     onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
                     {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {
 
-                        const dropzoneStyle = () => {
-                            if (isDragActive) {
-                                return "dropzoneActive";
-                            } else if (acceptedFiles.length !== 0) {
-                                return "dropzoneAccept";
-                            } else if (fileRejections.length !== 0) {
-                                return "dropzoneReject"
-                            } else {
-                                return "dropzoneBase"
-                            }
-                        };
+                        const dropzoneStyle: string = this.defineDropzoneStyle(isDragActive, acceptedFiles, fileRejections);
 
                         return (
-                            <section className={styles[dropzoneStyle()]}>
+                            <section className={styles[dropzoneStyle]}>
                                 <div {...getRootProps()} style={{ width: "100%", height: "100%" }}>
                                     <input {...getInputProps()} />
                                     <p> Drag files here, or click to select files.
                                         <br></br>
                                         Only .csv files are allowed.
                                     </p>
+                                    {acceptedFiles.length != 0 ?
+                                        <p>Selected file (valid): {this.listAcceptedFiles(acceptedFiles)}</p> :
+                                        (fileRejections.length != 0 ? <p>File not valid!</p> : <p>No files selected.</p>)}
                                 </div>
                             </section>)
                     }}

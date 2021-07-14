@@ -40,13 +40,12 @@ class Dummy extends React.Component<Props> {
         let offset = 0;
         const numberOfChunks = Math.ceil(fileSize / chunkSize);
         this.props.setChunksNumber(numberOfChunks);
-        //profiler_core.setExpectedChunks(numberOfChunks);
+        profiler_core.setExpectedChunks(numberOfChunks);
 
         while (remaining > 0) {
             const readHere = Math.min(remaining, chunkSize);
             let chunk = file.slice(offset, offset + readHere);
             const data = await chunk.arrayBuffer();
-            //console.log(data)
             profiler_core.consumeChunk(new Uint8Array(data));
             remaining -= readHere;
             offset += readHere;
@@ -70,6 +69,7 @@ class Dummy extends React.Component<Props> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setFileName(acceptedFiles[0].name);
             this.props.setResultLoading(true);
+            this.props.setResult(undefined);
             this.passToMichael(acceptedFiles);
         }
         //console.log(acceptedFiles);
@@ -201,7 +201,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 export function update() {
     console.log("notification from rust");
     const result = "" + profiler_core.getState();
-    //const result = "" + 20;
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULTLOADING,

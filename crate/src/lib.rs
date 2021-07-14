@@ -90,19 +90,17 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                     sg.vec = Vec::new();
                     for v in linevec.iter() {
                         sg.vec.push(*v);
-                        sg.processed_chunks += 1;
                     }
-                }); 
-                print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
-                STATE.with(|s| {
-                    let sg = s.lock().expect("State unlocked");
+                    sg.processed_chunks += 1;
                     if sg.expected_chunks == sg.processed_chunks {
                         rustfunc();
                         unsafe {
                             COUNTER = 0;
                         }
+                        sg.processed_chunks = 0;
                     }
                 }); 
+                print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());
                 break;
              }
         }

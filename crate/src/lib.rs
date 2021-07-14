@@ -101,6 +101,7 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                             COUNTER = 0;
                         }
                         sg.processed_chunks = 0;
+                        sg.vec = Vec::new();
                     }
                 }); 
                 print_to_console(&format!("Chunk ends and rest of line may be moved to next chunk").into());

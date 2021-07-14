@@ -7,6 +7,7 @@ import Dropzone, { DropEvent, DropzoneState, FileRejection } from 'react-dropzon
 import * as profiler_core from '../crate/pkg';
 
 import styles from './dummy.module.css';
+import { CircularProgress } from '@material-ui/core';
 
 interface Props {
     helloworld: string;
@@ -60,7 +61,7 @@ class Dummy extends React.Component<Props> {
         if (this.props.fileName) {
             console.log(this.props.resultLoading);
             if (this.props.resultLoading) {
-                this.props.setResult("loading result...");
+                this.props.setResult("loading");
             } else {
                 this.props.setResult(this.props.result);
             }
@@ -140,7 +141,10 @@ class Dummy extends React.Component<Props> {
 
             <div className={"resultArea"} {...this.awaitResultFromCore()} >
                 <p>
-                    {this.props.result}
+                    {this.props.resultLoading ? 
+                    <CircularProgress />
+                    :
+                    this.props.result}
                 </p>
             </div>
         </div>;

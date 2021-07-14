@@ -77,7 +77,10 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                             COUNTER = COUNTER + number;
                         }
                     }
-        
+                    unsafe {
+                        print_to_console(&format!("COUNTER: {:?}", COUNTER).into());
+                    }
+
                     linevec = Vec::new(); 
         
                 } else {

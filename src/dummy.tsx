@@ -40,7 +40,7 @@ class Dummy extends React.Component<Props> {
         let offset = 0;
         const numberOfChunks = Math.ceil(fileSize / chunkSize);
         this.props.setChunksNumber(numberOfChunks);
-        //profiler_core.setExpectedChunks(numberOfChunks);
+        profiler_core.setExpectedChunks(numberOfChunks);
 
         while (remaining > 0) {
             const readHere = Math.min(remaining, chunkSize);
@@ -201,7 +201,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 export function update() {
     console.log("notification from rust");
     const result = "" + profiler_core.getState();
-    //const result = "" + 20;
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULTLOADING,

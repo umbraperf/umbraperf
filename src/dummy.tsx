@@ -2,7 +2,7 @@ import * as model from './model';
 import store from './app';
 import React from 'react';
 import { connect } from 'react-redux';
-import Dropzone, { DropEvent, DropzoneState, FileRejection } from 'react-dropzone'
+import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
 import * as profiler_core from '../crate/pkg';
 

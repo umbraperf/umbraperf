@@ -8,6 +8,7 @@ import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react
 import './globals.css';
 
 import Dummy from './dummy';
+import PersistentDrawerLeft from './Drawer';
 
 
 const store = model.createStore();
@@ -16,6 +17,8 @@ const element = document.getElementById('root');
 
 ReactDOM.render(
     <ReduxProvider store={store}>
+
+        <PersistentDrawerLeft></PersistentDrawerLeft>
 
         <BrowserRouter>
             <div>

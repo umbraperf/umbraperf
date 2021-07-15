@@ -15,38 +15,55 @@ const store = model.createStore();
 
 const element = document.getElementById('root');
 
+export const routes = [
+    {
+        path: '/',
+        sidebarName: 'Start',
+        component: Dummy
+    },
+    {
+        path: '/dummy',
+        sidebarName: 'Dummy',
+        component: Dummy
+    },
+
+];
+
 ReactDOM.render(
     <ReduxProvider store={store}>
 
-        <PersistentDrawerLeft></PersistentDrawerLeft>
-
         <BrowserRouter>
+            <PersistentDrawerLeft></PersistentDrawerLeft>
+            
             <div>
                 <h3>Navigation:</h3>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <ul className="navbar-nav mr-auto">
                         <li><Link to={'/'} className="nav-link"> Dummy </Link></li>
-                        {/*                         <li><Link to={'/contact'} className="nav-link">Contact</Link></li>
-                        <li><Link to={'/about'} className="nav-link">About</Link></li> */}
                     </ul>
                 </nav>
                 <hr />
             </div>
 
             <Switch>
+
+                {routes.map((route: any) => (
+                    <Route exact path={route.path} key={route.path}>
+                        <route.component />
+                    </Route>
+                ))}
+
                 <Route exact path="/">
                     <Redirect to="/dummy" />
                 </Route>
 
-                <Route exact path="/dummy" component={Dummy} />
-
+{/*                 <Route exact path="/dummy" component={Dummy} />
+ */}
                 <Route path="*">
                     <NoMatch />
                 </Route>
             </Switch>
-
         </BrowserRouter>
-
 
     </ReduxProvider>,
     element,

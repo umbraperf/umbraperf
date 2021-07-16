@@ -8,6 +8,7 @@ import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react
 import './globals.css';
 
 import Dummy from './componentes/dummy';
+import Parquet_Analyzer from './componentes/parquet_analyzer';
 import PersistentDrawerLeft from './componentes/drawer';
 
 
@@ -26,6 +27,11 @@ export const routes = [
         sidebarName: 'Dummy',
         component: Dummy
     },
+    {
+        path: '/parquet',
+        sidebarName: 'Parquet',
+        component: Parquet_Analyzer
+    }
 
 ];
 

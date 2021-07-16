@@ -224,6 +224,7 @@ dependencies = [
  "encode_unicode",
  "js-sys",
  "lazy_static",
+ "log",
  "unicode-width",
  "wasm-bindgen",
  "wasm-bindgen-futures",

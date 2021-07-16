@@ -1,42 +1,55 @@
 extern crate wasm_bindgen;
 
-use js_sys::Uint8Array;
-use wasm_bindgen::prelude::*;
-use std::sync::Arc;
-use std::sync::Mutex;
 use csv::ReaderBuilder;
+use js_sys::Uint8Array;
+use std::cell::RefCell;
 use std::str;
+use wasm_bindgen::prelude::*;
+
+mod console;
+
+use console::DEFAULT_LOGGER;
 
 struct State {
     pub vec: Vec<u8>,
     pub processed_chunks: i32,
-    pub expected_chunks: i32
+    pub expected_chunks: i32,
+    pub sum: i32,
 }
 
 thread_local! {
-    static STATE: Arc<Mutex<State>> = Arc::new(Mutex::new(State {
+    static STATE: RefCell<State> = RefCell::new(State {
         vec: Vec::new(),
         processed_chunks: 0,
-        expected_chunks: 0
-    }));
+        expected_chunks: 0,
+        sum: 0,
+    });
 }
 
-static mut SUM: i32 = 0;
+fn with_state<Callback, ReturnType>(cb: Callback) -> ReturnType
+where
+    Callback: FnOnce(&State) -> ReturnType,
+{
+    STATE.with(|s| cb(&s.borrow()))
+}
 
+fn with_state_mut<Callback, ReturnType>(cb: Callback) -> ReturnType
+where
+    Callback: FnOnce(&mut State) -> ReturnType,
+{
+    STATE.with(|s| cb(&mut s.borrow_mut()))
+}
 
 #[wasm_bindgen(js_name = "getState")]
 pub fn get_state() -> i32 {
-    unsafe {
-        return SUM;
-    }
+    with_state(|s| s.sum)
 }
 
 #[wasm_bindgen(js_name = "setExpectedChunks")]
 pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
-    STATE.with(|s| {
-        let mut sg = s.lock().expect("State unlocked");
-        sg.expected_chunks = expected_chunks;
-        });
+    with_state_mut(|s| {
+        s.expected_chunks = expected_chunks;
+    });
     return 0;
 }
 
@@ -48,14 +61,13 @@ pub fn consume_chunk(chunk: &Uint8Array) {
     let mut binary_vec = Vec::new();
     let mut iterator = buffer.iter();
 
-    STATE.with(|s| {
-        let sg = s.lock().expect("State unlocked");
-        if !sg.vec.len().eq(&0) {
-            for v in sg.vec.iter() {
+    with_state_mut(|s| {
+        if s.vec.len() > 0 {
+            for v in s.vec.iter() {
                 binary_vec.push(*v);
             }
         }
-    });  
+    });
 
     // loop through buffer
     loop {
@@ -66,13 +78,12 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                     process_chunk(binary_vec);
                     binary_vec = Vec::new();
                 } else {
-                   &binary_vec.push(*i);
+                    &binary_vec.push(*i);
                 }
-            },
+            }
             // may be end of file or end of chunk
-            None => { 
-                STATE.with(|s| {
-                    let mut sg = s.lock().expect("State unlocked");
+            None => {
+                with_state_mut(|sg| {
                     sg.processed_chunks += 1;
                     // end of file
                     if sg.expected_chunks == sg.processed_chunks {
@@ -82,9 +93,7 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                         // notify JS about finish and reset variables and notify JS about finish
                         notifyJS();
                         sg.processed_chunks = 0;
-                        unsafe {
-                            SUM = 0;
-                        }
+                        sg.sum = 0;
                         sg.vec = Vec::new();
                         print_to_console(&format!("File ends").into());
                     // end of chunk
@@ -96,9 +105,9 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                         }
                         print_to_console(&format!("Chunk ends").into());
                     }
-                }); 
+                });
                 break;
-             }
+            }
         }
     }
 }
@@ -108,40 +117,41 @@ pub fn process_chunk(vec: Vec<u8>) {
     let s = str::from_utf8(&vec).expect("Invalid UTF-8 sequence.");
     // reader
     let mut rdr = ReaderBuilder::new()
-    .delimiter(b',')
-    .has_headers(false)
-    .from_reader(s.as_bytes());
+        .delimiter(b',')
+        .has_headers(false)
+        .from_reader(s.as_bytes());
 
     // calculate
-    for result in rdr.records() {
-        let record = result.expect("CSV record");
-        let number = &record[1].parse::<i32>().expect("u64");
-        unsafe {
-            SUM = SUM + number;
+    with_state_mut(|s| {
+        for result in rdr.records() {
+            let record = result.expect("CSV record");
+            let number = &record[1].parse::<i32>().expect("u64");
+
+            s.sum = s.sum + number;
+            print_to_console(&format!("COUNTER: {:?}", s.sum).into());
         }
-    }
+    });
     print_to_console(&format!("BINARY: {:?}", &vec).into());
     print_to_console(&format!("STRING: {:?}", &s).into());
-    unsafe {
-        print_to_console(&format!("COUNTER: {:?}", SUM).into());
-    }
 }
 
 pub fn print_to_console(str: &JsValue) {
-    unsafe {
-        web_sys::console::log_1(str);
-    }
+    unsafe { web_sys::console::log_1(str) };
 }
 
 #[wasm_bindgen]
 pub fn notifyJS() {
-    unsafe {
-        update();
-    }
+    unsafe { update() };
 }
 
-#[wasm_bindgen(raw_module="../../src/componentes/dummy")]
+#[wasm_bindgen(raw_module = "../../src/componentes/dummy")]
 extern "C" {
     #[wasm_bindgen()]
     fn update() -> u32;
+}
+
+#[wasm_bindgen(start)]
+pub fn main() {
+    log::set_logger(&DEFAULT_LOGGER).unwrap();
+    log::set_max_level(log::LevelFilter::Info);
 }

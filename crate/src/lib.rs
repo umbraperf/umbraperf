@@ -6,11 +6,12 @@ use std::cell::RefCell;
 use std::str;
 use wasm_bindgen::prelude::*;
 
+extern crate console_error_panic_hook;
+use std::panic;
+
 mod console;
 
-use console::DEFAULT_LOGGER;
-
-struct State {
+pub struct State {
     pub vec: Vec<u8>,
     pub processed_chunks: i32,
     pub expected_chunks: i32,
@@ -75,7 +76,9 @@ pub fn consume_chunk(chunk: &Uint8Array) {
             Some(i) => {
                 // if linebreak is found process binary vector else push it to vector for later processing
                 if i == &linebreak {
-                    process_chunk(binary_vec);
+                    with_state_mut(|sg| {
+                        process_chunk(sg, binary_vec);
+                    });
                     binary_vec = Vec::new();
                 } else {
                     &binary_vec.push(*i);
@@ -83,19 +86,17 @@ pub fn consume_chunk(chunk: &Uint8Array) {
             }
             // may be end of file or end of chunk
             None => {
-                with_state_mut(|sg| {
+                let done = with_state_mut(|sg| {
                     sg.processed_chunks += 1;
                     // end of file
                     if sg.expected_chunks == sg.processed_chunks {
                         if binary_vec.len() > 0 {
-                            process_chunk(binary_vec);
+                            process_chunk(sg, binary_vec);
                         }
-                        // notify JS about finish and reset variables and notify JS about finish
-                        notifyJS();
                         sg.processed_chunks = 0;
                         sg.sum = 0;
                         sg.vec = Vec::new();
-                        print_to_console(&format!("File ends").into());
+                        return true;
                     // end of chunk
                     } else {
                         // push line break of chunk to global state
@@ -104,15 +105,21 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                             sg.vec.push(*v);
                         }
                         print_to_console(&format!("Chunk ends").into());
+                        return false;
                     }
                 });
+                if done {
+                    // notify JS about finish and reset variables and notify JS about finish
+                    notifyJS();
+                    print_to_console(&format!("File ends").into());
+                }
                 break;
             }
         }
     }
 }
 
-pub fn process_chunk(vec: Vec<u8>) {
+pub fn process_chunk(state: &mut State, vec: Vec<u8>) {
     // convert to String
     let s = str::from_utf8(&vec).expect("Invalid UTF-8 sequence.");
     // reader
@@ -122,15 +129,13 @@ pub fn process_chunk(vec: Vec<u8>) {
         .from_reader(s.as_bytes());
 
     // calculate
-    with_state_mut(|s| {
-        for result in rdr.records() {
-            let record = result.expect("CSV record");
-            let number = &record[1].parse::<i32>().expect("u64");
+    for result in rdr.records() {
+        let record = result.expect("CSV record");
+        let number = &record[1].parse::<i32>().expect("u64");
 
-            s.sum = s.sum + number;
-            print_to_console(&format!("COUNTER: {:?}", s.sum).into());
-        }
-    });
+        state.sum = state.sum + number;
+        print_to_console(&format!("COUNTER: {:?}", state.sum).into());
+    }
     print_to_console(&format!("BINARY: {:?}", &vec).into());
     print_to_console(&format!("STRING: {:?}", &s).into());
 }
@@ -152,6 +157,7 @@ extern "C" {
 
 #[wasm_bindgen(start)]
 pub fn main() {
-    log::set_logger(&DEFAULT_LOGGER).unwrap();
-    log::set_max_level(log::LevelFilter::Info);
+    console_error_panic_hook::set_once();
+    // log::set_logger(&DEFAULT_LOGGER).unwrap();
+    // log::set_max_level(log::LevelFilter::Info);
 }

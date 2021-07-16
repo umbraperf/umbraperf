@@ -1,12 +1,12 @@
-import * as model from './model';
-import store from './app';
+import * as model from '../model';
+import store from '../app';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
-import * as profiler_core from '../crate/pkg';
+import * as profiler_core from '../../crate/pkg/shell';
 
-import styles from './dummy.module.css';
+import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 
 interface Props {

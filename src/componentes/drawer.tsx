@@ -18,8 +18,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-import { routes } from './app';
-import { NavLink, withRouter } from 'react-router-dom';
+import { routes } from '../app';
+import { Link, withRouter } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -139,11 +139,11 @@ function PersistentDrawerLeft(props: any) {
                 <List>
                     {routes.map((prop, key) => {
                         return (
-                            <NavLink to={prop.path} style={{ textDecoration: 'none' }} key={key}>
+                            <Link to={prop.path} style={{ textDecoration: 'none', color: 'black' }} key={key}>
                                 <ListItem button selected={activeRoute(prop.path)} >
                                     <ListItemText primary={prop.sidebarName} />
                                 </ListItem>
-                            </NavLink>
+                            </Link>
                         );
                     })}
                 </List>

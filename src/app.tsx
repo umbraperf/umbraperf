@@ -7,8 +7,8 @@ import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react
 
 import './globals.css';
 
-import Dummy from './dummy';
-import PersistentDrawerLeft from './Drawer';
+import Dummy from './componentes/dummy';
+import PersistentDrawerLeft from './componentes/drawer';
 
 
 const store = model.createStore();
@@ -34,7 +34,7 @@ ReactDOM.render(
 
         <BrowserRouter>
             <PersistentDrawerLeft></PersistentDrawerLeft>
-            
+
             <div>
                 <h3>Navigation:</h3>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -47,17 +47,17 @@ ReactDOM.render(
 
             <Switch>
 
+                <Route exact path="/">
+                    <Redirect to="/dummy" />
+                </Route>
+
                 {routes.map((route: any) => (
                     <Route exact path={route.path} key={route.path}>
                         <route.component />
                     </Route>
                 ))}
 
-                <Route exact path="/">
-                    <Redirect to="/dummy" />
-                </Route>
-
-{/*                 <Route exact path="/dummy" component={Dummy} />
+                {/*                 <Route exact path="/dummy" component={Dummy} />
  */}
                 <Route path="*">
                     <NoMatch />

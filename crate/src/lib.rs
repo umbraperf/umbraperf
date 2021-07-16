@@ -140,7 +140,7 @@ pub fn notifyJS() {
     }
 }
 
-#[wasm_bindgen(raw_module="../../src/dummy")]
+#[wasm_bindgen(raw_module="../../src/componentes/dummy")]
 extern "C" {
     #[wasm_bindgen()]
     fn update() -> u32;

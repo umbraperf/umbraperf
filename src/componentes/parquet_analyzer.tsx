@@ -110,7 +110,7 @@ class Parquet_Analyzer extends React.Component<Props> {
                     Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
                 </p>
                 <Dropzone
-                    accept={'.csv'}
+                    accept={'.parquet'}
                     multiple={false}
                     onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
                     {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {

@@ -14,6 +14,7 @@ export enum StateMutationType {
     SET_RESULTLOADING = 'SET_RESULTLOADING',
     SET_RESULT = 'SET_RESULT',
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
+    SET_FILE = 'SET_FILE',
     OTHER = 'OTHER',
 }
 
@@ -24,6 +25,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULTLOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULT, string | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
+    | StateMutation<StateMutationType.SET_FILE, File>
     ;
 
 // The action dispatch
@@ -51,6 +53,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     chunksNumber: mutation.data,
+                };
+            case StateMutationType.SET_FILE:
+                return {
+                    ...state,
+                    file: mutation.data,
                 };
             case StateMutationType.SET_GREETER:
                 return {

@@ -10,8 +10,6 @@ import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 
 interface Props {
-    helloworld: string;
-    setHelloWorld: (newGreeter: string) => void;
     fileName: string | undefined;
     setFileName: (newFileName: string) => void;
     resultLoading: boolean;
@@ -20,10 +18,26 @@ interface Props {
     setResult: (newResult: string | undefined) => void;
     chunksNumber: number;
     setChunksNumber: (newChunksNumber: number) => void;
+    file: File | undefined;
+    setFile: (newFile: File) => void;
+}
+
+interface ChunkState {
+    chunkNumber: number;
+    setChunkNumber: (newChunkNumber: number) => void;
+    remainingFileSize: undefined | number;
+    setRemainingFileSize: (newRemainingFileSize: number) => void;
 }
 
 
 class Parquet_Analyzer extends React.Component<Props> {
+
+    chunksState: ChunkState = {
+        chunkNumber: 0,
+        setChunkNumber: (newChunkNumber: number) => (this.chunksState.chunkNumber = newChunkNumber),
+        remainingFileSize: undefined,
+        setRemainingFileSize: (newRemainingFileSize: number) => (this.chunksState.remainingFileSize = newRemainingFileSize),
+    }
 
     constructor(props: Props) {
         super(props);
@@ -31,6 +45,21 @@ class Parquet_Analyzer extends React.Component<Props> {
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
         this.awaitResultFromCore = this.awaitResultFromCore.bind(this);
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
+    }
+
+    public passNextToCore() {
+        const currentChunk = this.chunksState.chunkNumber;
+        const remainingFileSize = this.chunksState.remainingFileSize;
+        const chunkSize = 4000;
+        const offset = currentChunk * chunkSize;
+        let chunk = undefined;
+        if(remainingFileSize != undefined && remainingFileSize > 0 && this.props.file != undefined){
+            const readHere = Math.min(remainingFileSize, chunkSize);
+            chunk = this.props.file.slice(offset, offset + readHere);
+        }
+        const nextChunk = currentChunk + 1;
+        this.chunksState.setChunkNumber(nextChunk);
+        return chunk;
     }
 
     public async passToMichael(files: Array<File>) {
@@ -72,10 +101,13 @@ class Parquet_Analyzer extends React.Component<Props> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
-            this.props.setFileName(acceptedFiles[0].name);
+            const file = acceptedFiles[0];
+            this.props.setFileName(file.name);
             this.props.setResultLoading(true);
             this.props.setResult(undefined);
-            this.passToMichael(acceptedFiles);
+            this.props.setFile(file);
+            this.chunksState.setRemainingFileSize(file.size);
+            //this.passToMichael(acceptedFiles);
         }
         //console.log(acceptedFiles);
     }
@@ -148,19 +180,14 @@ class Parquet_Analyzer extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    helloworld: state.helloworld,
     fileName: state.fileName,
     resultLoading: state.resultLoading,
     result: state.result,
     chunksNumber: state.chunksNumber,
+    file: state.file,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setHelloWorld: (newGreeter: string) =>
-        dispatch({
-            type: model.StateMutationType.SET_GREETER,
-            data: newGreeter,
-        }),
     setFileName: (newFileName: string) =>
         dispatch({
             type: model.StateMutationType.SET_FILENAME,
@@ -180,6 +207,11 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         dispatch({
             type: model.StateMutationType.SET_CHUNKSNUMBER,
             data: newChunksNumber,
+        }),
+    setFile: (newFile: File) =>
+        dispatch({
+            type: model.StateMutationType.SET_FILE,
+            data: newFile,
         }),
 });
 

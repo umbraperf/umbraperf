@@ -5,6 +5,7 @@ export interface AppState {
     resultLoading: boolean;
     result: string | undefined;
     chunksNumber: number;
+    file: undefined | File;
 }
 
 export function createDefaultState(): AppState {
@@ -14,5 +15,6 @@ export function createDefaultState(): AppState {
         resultLoading: false,
         result: undefined,
         chunksNumber: 0,
+        file: undefined,
     };
 }

@@ -151,7 +151,6 @@ class Dummy extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    helloworld: state.helloworld,
     fileName: state.fileName,
     resultLoading: state.resultLoading,
     result: state.result,

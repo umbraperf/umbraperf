@@ -63,30 +63,6 @@ export class Parquet extends React.Component<Props> {
         return new Uint8Array(arrayBufferChunk!);
     }
 
-    public async passToMichael(files: Array<File>) {
-        // const files = event.target.files;
-        if (!files || files?.length == 0 || files![0] == null) return;
-        const file = files[0];
-        const fileSize = file.size;
-        const chunkSize = 4000;
-        console.log(fileSize);
-        let remaining = fileSize;
-        let offset = 0;
-        const numberOfChunks = Math.ceil(fileSize / chunkSize);
-        this.props.setChunksNumber(numberOfChunks);
-        profiler_core.setExpectedChunks(numberOfChunks);
-
-        while (remaining > 0) {
-            const readHere = Math.min(remaining, chunkSize);
-            let chunk = file.slice(offset, offset + readHere);
-            const data = await chunk.arrayBuffer();
-            profiler_core.consumeChunk(new Uint8Array(data));
-            remaining -= readHere;
-            offset += readHere;
-        }
-        console.log(numberOfChunks);
-    }
-
     public async awaitResultFromCore() {
         if (this.props.fileName) {
             console.log(this.props.resultLoading);
@@ -109,12 +85,8 @@ export class Parquet extends React.Component<Props> {
             this.props.setFile(file);
             this.chunksState.setRemainingFileSize(file.size);
             this.chunksState.setChunkNumber(0);
-            console.log(this.passNextToCore());
-            console.log(this.passNextToCore());
-
-            //this.passToMichael(acceptedFiles);
+            profiler_core.notifyRustNewFile();
         }
-        //console.log(acceptedFiles);
     }
 
     defineDropzoneStyle(isDragActive: boolean, acceptedFiles: File[], fileRejections: FileRejection[]): string {

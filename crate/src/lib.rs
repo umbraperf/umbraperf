@@ -56,6 +56,7 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
+    rustfunc();
     let buffer: Vec<u8> = chunk.to_vec();
     let linebreak: u8 = 10;
 
@@ -110,7 +111,6 @@ pub fn consume_chunk(chunk: &Uint8Array) {
                 });
                 if done {
                     // notify JS about finish and reset variables and notify JS about finish
-                    notifyJS();
                     print_to_console(&format!("File ends").into());
                 }
                 break;
@@ -144,16 +144,26 @@ pub fn print_to_console(str: &JsValue) {
     unsafe { web_sys::console::log_1(str) };
 }
 
-#[wasm_bindgen]
-pub fn notifyJS() {
-    unsafe { update() };
+fn rustfunc() {
+    unsafe {
+        let parquet:Parquet = Parquet::getClass();
+        let _x = parquet.passNextToCore();
+    }
 }
 
-#[wasm_bindgen(raw_module = "../../src/components/dummy")]
+#[wasm_bindgen(raw_module="../../src/components/parquet")]
 extern "C" {
-    #[wasm_bindgen()]
-    fn update() -> u32;
+    type Parquet;
+
+    #[wasm_bindgen(constructor)]
+    fn getClass() -> Parquet;
+
+    #[wasm_bindgen(method)]
+    fn passNextToCore(this: &Parquet) -> Uint8Array;
+
+
 }
+
 
 #[wasm_bindgen(start)]
 pub fn main() {

@@ -46,7 +46,7 @@ class Parquet_Analyzer extends React.Component<Props> {
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
     }
 
-    public passNextToCore() {
+    public async passNextToCore() {
         const currentChunk = this.chunksState.chunkNumber;
         const remainingFileSize = this.chunksState.remainingFileSize;
         const chunkSize = 4000;
@@ -55,11 +55,12 @@ class Parquet_Analyzer extends React.Component<Props> {
         if(remainingFileSize != undefined && remainingFileSize > 0 && this.props.file != undefined){
             const readHere = Math.min(remainingFileSize, chunkSize);
             chunk = this.props.file.slice(offset, offset + readHere);
-            this.chunksState.setRemainingFileSize(offset+readHere);
+            this.chunksState.setRemainingFileSize(remainingFileSize - readHere);
+            const nextChunk = currentChunk + 1;
+            this.chunksState.setChunkNumber(nextChunk);
         }
-        const nextChunk = currentChunk + 1;
-        this.chunksState.setChunkNumber(nextChunk);
-        return chunk;
+        const arrayBufferChunk = await chunk?.arrayBuffer();
+        return new Uint8Array(arrayBufferChunk!);
     }
 
     public async passToMichael(files: Array<File>) {
@@ -107,6 +108,10 @@ class Parquet_Analyzer extends React.Component<Props> {
             this.props.setResult(undefined);
             this.props.setFile(file);
             this.chunksState.setRemainingFileSize(file.size);
+            this.chunksState.setChunkNumber(0);
+            console.log(this.passNextToCore());
+            console.log(this.passNextToCore());
+
             //this.passToMichael(acceptedFiles);
         }
         //console.log(acceptedFiles);
@@ -142,7 +147,7 @@ class Parquet_Analyzer extends React.Component<Props> {
                     Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
                 </p>
                 <Dropzone
-                    accept={'.parquet'}
+                    accept={['.parquet', '.csv']}
                     multiple={false}
                     onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
                     {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {

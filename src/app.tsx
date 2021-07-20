@@ -7,9 +7,9 @@ import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react
 
 import './globals.css';
 
-import Dummy from './componentes/dummy';
-import Parquet_Analyzer from './componentes/parquet_analyzer';
-import PersistentDrawerLeft from './componentes/drawer';
+import Dummy from './components/dummy';
+import Parquet_Analyzer from './components/parquet';
+import PersistentDrawerLeft from './components/drawer';
 
 
 const store = model.createStore();

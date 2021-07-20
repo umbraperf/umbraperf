@@ -149,7 +149,7 @@ pub fn notifyJS() {
     unsafe { update() };
 }
 
-#[wasm_bindgen(raw_module = "../../src/componentes/dummy")]
+#[wasm_bindgen(raw_module = "../../src/components/dummy")]
 extern "C" {
     #[wasm_bindgen()]
     fn update() -> u32;

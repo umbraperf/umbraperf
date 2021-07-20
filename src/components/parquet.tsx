@@ -29,7 +29,7 @@ interface ChunkState {
     setRemainingFileSize: (newRemainingFileSize: number) => void;
 }
 
-class Parquet_Analyzer extends React.Component<Props> {
+class Parquet extends React.Component<Props> {
 
     chunksState: ChunkState = {
         chunkNumber: 0,
@@ -220,7 +220,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Parquet_Analyzer);
+export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
 
 //get notification from rust
 export function update() {

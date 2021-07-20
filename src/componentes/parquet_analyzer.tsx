@@ -29,7 +29,6 @@ interface ChunkState {
     setRemainingFileSize: (newRemainingFileSize: number) => void;
 }
 
-
 class Parquet_Analyzer extends React.Component<Props> {
 
     chunksState: ChunkState = {
@@ -56,6 +55,7 @@ class Parquet_Analyzer extends React.Component<Props> {
         if(remainingFileSize != undefined && remainingFileSize > 0 && this.props.file != undefined){
             const readHere = Math.min(remainingFileSize, chunkSize);
             chunk = this.props.file.slice(offset, offset + readHere);
+            this.chunksState.setRemainingFileSize(offset+readHere);
         }
         const nextChunk = currentChunk + 1;
         this.chunksState.setChunkNumber(nextChunk);

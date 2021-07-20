@@ -54,6 +54,10 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
     return 0;
 }
 
+#[wasm_bindgen(js_name = "notifyRustNewFile")]
+pub fn notify_rust_new_file(){
+}
+
 #[wasm_bindgen(js_name = "consumeChunk")]
 pub fn consume_chunk(chunk: &Uint8Array) {
     rustfunc();

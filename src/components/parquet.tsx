@@ -29,7 +29,7 @@ interface ChunkState {
     setRemainingFileSize: (newRemainingFileSize: number) => void;
 }
 
-class Parquet extends React.Component<Props> {
+export class Parquet extends React.Component<Props> {
 
     chunksState: ChunkState = {
         chunkNumber: 0,

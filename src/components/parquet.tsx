@@ -4,66 +4,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
-import * as profiler_core from '../../crate/pkg/shell';
-
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 
 interface Props {
+    file: undefined | File;
     fileName: string | undefined;
-    setFileName: (newFileName: string) => void;
     resultLoading: boolean;
-    setResultLoading: (newResultLoading: boolean) => void;
     result: string | undefined;
-    setResult: (newResult: string | undefined) => void;
     chunksNumber: number;
+    setResultLoading: (newResultLoading: boolean) => void;
     setChunksNumber: (newChunksNumber: number) => void;
-    file: File | undefined;
-    setFile: (newFile: File) => void;
 }
 
-interface ChunkState {
-    chunkNumber: number;
-    setChunkNumber: (newChunkNumber: number) => void;
-    remainingFileSize: undefined | number;
-    setRemainingFileSize: (newRemainingFileSize: number) => void;
-}
-
-export class Parquet extends React.Component<Props> {
-
-    chunksState: ChunkState = {
-        chunkNumber: 0,
-        setChunkNumber: (newChunkNumber: number) => (this.chunksState.chunkNumber = newChunkNumber),
-        remainingFileSize: undefined,
-        setRemainingFileSize: (newRemainingFileSize: number) => (this.chunksState.remainingFileSize = newRemainingFileSize),
-    }
+class Parquet extends React.Component<Props> {
 
     constructor(props: Props) {
         super(props);
 
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
-        this.awaitResultFromCore = this.awaitResultFromCore.bind(this);
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
     }
 
-    public async passNextToCore() {
-        const currentChunk = this.chunksState.chunkNumber;
-        const remainingFileSize = this.chunksState.remainingFileSize;
-        const chunkSize = 4000;
-        const offset = currentChunk * chunkSize;
-        let chunk = undefined;
-        if(remainingFileSize != undefined && remainingFileSize > 0 && this.props.file != undefined){
-            const readHere = Math.min(remainingFileSize, chunkSize);
-            chunk = this.props.file.slice(offset, offset + readHere);
-            this.chunksState.setRemainingFileSize(remainingFileSize - readHere);
-            const nextChunk = currentChunk + 1;
-            this.chunksState.setChunkNumber(nextChunk);
-        }
-        const arrayBufferChunk = await chunk?.arrayBuffer();
-        return new Uint8Array(arrayBufferChunk!);
-    }
 
-    public async awaitResultFromCore() {
+/*     public async awaitResultFromCore() {
         if (this.props.fileName) {
             console.log(this.props.resultLoading);
             if (this.props.resultLoading) {
@@ -73,34 +37,24 @@ export class Parquet extends React.Component<Props> {
             }
             console.log("result from rust:" + this.props.result);
         }
-    }
+    } */
 
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
-            const file = acceptedFiles[0];
-            this.props.setFileName(file.name);
             this.props.setResultLoading(true);
-            this.props.setResult(undefined);
-            this.props.setFile(file);
-            this.chunksState.setRemainingFileSize(file.size);
-            this.chunksState.setChunkNumber(0);
-            profiler_core.scanFile(this);
+            const file = acceptedFiles[0];
+            model.setNewFile(file.name, file);
         }
     }
 
     defineDropzoneStyle(isDragActive: boolean, acceptedFiles: File[], fileRejections: FileRejection[]): string {
-        //const dropzoneStyle = () => {
-
-        //const styleString = "dropzoneBase";
-
         let styleString = "dropzoneBase";
         if (isDragActive) { styleString = "dropzoneActive" };
         if (acceptedFiles.length !== 0) { styleString = "dropzoneAccept" };
         if (fileRejections.length !== 0) { styleString = "dropzoneReject" };
 
         return styleString;
-
     }
 
     listAcceptedFiles(acceptedFiles: File[]) {
@@ -143,7 +97,7 @@ export class Parquet extends React.Component<Props> {
                 </Dropzone>
             </div>
 
-            <div className={"resultArea"} {...this.awaitResultFromCore()} >
+            <div className={"resultArea"} >
                 <p>
                     {this.props.resultLoading ?
                         <CircularProgress />
@@ -157,38 +111,23 @@ export class Parquet extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
+    file: state.file,
     fileName: state.fileName,
     resultLoading: state.resultLoading,
     result: state.result,
     chunksNumber: state.chunksNumber,
-    file: state.file,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setFileName: (newFileName: string) =>
-        dispatch({
-            type: model.StateMutationType.SET_FILENAME,
-            data: newFileName,
-        }),
     setResultLoading: (newResultLoading: boolean) =>
         dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: newResultLoading,
         }),
-    setResult: (newResult: string | undefined) =>
-        dispatch({
-            type: model.StateMutationType.SET_RESULT,
-            data: newResult,
-        }),
     setChunksNumber: (newChunksNumber: number) =>
         dispatch({
             type: model.StateMutationType.SET_CHUNKSNUMBER,
             data: newChunksNumber,
-        }),
-    setFile: (newFile: File) =>
-        dispatch({
-            type: model.StateMutationType.SET_FILE,
-            data: newFile,
         }),
 });
 

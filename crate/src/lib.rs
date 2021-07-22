@@ -14,6 +14,10 @@ use arrow::*;
 use std::fs::File;
 use std::io::Error;
 use js_sys::Promise as js_promise;
+use arrow::array::*;
+use arrow::record_batch::RecordBatch;
+
+
 
 
 extern crate console_error_panic_hook;
@@ -98,7 +102,21 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 pub async fn scan_file(p: WebFile) -> Result<(), js_sys::Error> {
     unsafe { web_sys::console::log_1(&format!("HERE").into()) };
     let array = read_chunk(&p).await?;
-    unsafe { web_sys::console::log_1(&array) };
+    let mut buff = Cursor::new(array);
+    /* let arr = arrow::bytes::Bytes::new(array);
+    let buff2 = arrow::buffer::Buffer::from_bytes(array.to_vec());
+     */
+    let id_array = arrow::array::UInt8Array::from(vec![1, 2, 3, 4, 5]);
+    
+    let schema = Schema::new(vec![
+    Field::new("id", DataType::UInt8, false)
+    ]);
+
+    let batch = RecordBatch::try_new(
+        Arc::new(schema),
+        vec![Arc::new(id_array)]
+    );
+    
     Ok(())
 }
 

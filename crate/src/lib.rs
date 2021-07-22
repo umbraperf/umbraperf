@@ -20,12 +20,8 @@ use std::result as r;
 
 extern crate console_error_panic_hook;
 use std::panic;
-use std::io::Cursor;
 
-extern crate arrow;
-use arrow::csv as a;
 use arrow::datatypes::{DataType, Field, Schema};
-use std::fs::File;
 use std::sync::Arc;
 
 mod console;
@@ -46,7 +42,7 @@ thread_local! {
     });
 }
 
-fn createBuilder(chunk: &Uint8Array) -> a::reader::Reader<Cursor<Vec<u8>>> {
+/* fn createBuilder(chunk: &Uint8Array) -> a::reader::Reader<Cursor<Vec<u8>>> {
     
     let buff = Cursor::new(chunk.to_vec());
 
@@ -73,7 +69,7 @@ fn createBuilder(chunk: &Uint8Array) -> a::reader::Reader<Cursor<Vec<u8>>> {
     print_to_console(&format!("Hey, went into apache arrow reader").into());
 
     reader
-}
+} */
 
 fn with_state<Callback, ReturnType>(cb: Callback) -> ReturnType
 where
@@ -130,9 +126,9 @@ pub fn consume_chunk_active(){
 pub fn consume_chunk(chunk: &Uint8Array) {
     
     //Read csv via curser
-    let mut csvReader = createBuilder(chunk);
-    let _batch = csvReader.next().unwrap().unwrap();
-
+  /*   let mut csvReader = createBuilder(chunk); */
+/*     let _batch = csvReader.next().unwrap().unwrap();
+ */
 
     rustfunc();
     let buffer: Vec<u8> = chunk.to_vec();

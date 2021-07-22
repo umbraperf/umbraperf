@@ -85,7 +85,7 @@ export class Parquet extends React.Component<Props> {
             this.props.setFile(file);
             this.chunksState.setRemainingFileSize(file.size);
             this.chunksState.setChunkNumber(0);
-            profiler_core.notifyRustNewFile();
+            profiler_core.scanFile(this);
         }
     }
 

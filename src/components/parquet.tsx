@@ -197,7 +197,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
 //get notification from rust
 export function update() {
     console.log("notification from rust");
-    const result = "" + profiler_core.getState();
+    const result = ""
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULTLOADING,

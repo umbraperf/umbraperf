@@ -1,10 +1,22 @@
 extern crate wasm_bindgen;
 
+use arrow::array::UInt16Array;
 use csv::ReaderBuilder;
-use js_sys::Uint8Array;
+use futures::*;
+use js_sys::{JSON, Uint8Array};
 use std::cell::RefCell;
-use std::str;
+use std::{io, str};
 use wasm_bindgen::prelude::*;
+use std::io::Cursor;
+use std::io::*;
+
+extern crate arrow;
+use arrow::*;
+use std::fs::File;
+use std::io::Error;
+use js_sys::Promise as js_promise;
+use std::result as r;
+
 
 extern crate console_error_panic_hook;
 use std::panic;
@@ -41,12 +53,10 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-#[wasm_bindgen(js_name = "getState")]
 pub fn get_state() -> i32 {
     with_state(|s| s.sum)
 }
 
-#[wasm_bindgen(js_name = "setExpectedChunks")]
 pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
     with_state_mut(|s| {
         s.expected_chunks = expected_chunks;
@@ -56,16 +66,38 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 #[wasm_bindgen(js_name = "notifyRustNewFile")]
 pub fn notify_rust_new_file(){
+    consume_chunk_active();
 }
 
-#[wasm_bindgen(js_name = "consumeChunk")]
+pub fn consume_chunk_active(){
+    print_to_console(&format!("HERE").into());
+    let resolvePromise = rustfunc();
+
+    match resolvePromise {
+        Ok(x) => {
+            print_to_console(&format!("{:?}",&x).into());
+            let y = js_promise::resolve(&x);
+            print_to_console(&format!("{:?}",&y).into());
+           
+
+        }
+        Err(x) => {
+
+        }
+    }
+   /*  let uint8vec = rustfunc().to_vec();
+    print_to_console(&format!("HERE").into());
+    print_to_console(&format!("{:?}",uint8vec).into());
+    consume_chunk(&uint8); */
+}
+
 pub fn consume_chunk(chunk: &Uint8Array) {
-    rustfunc();
+    
     let buffer: Vec<u8> = chunk.to_vec();
     let linebreak: u8 = 10;
 
-    let mut binary_vec = Vec::new();
     let mut iterator = buffer.iter();
+    let mut binary_vec = Vec::new();
 
     with_state_mut(|s| {
         if s.vec.len() > 0 {
@@ -126,7 +158,7 @@ pub fn consume_chunk(chunk: &Uint8Array) {
 pub fn process_chunk(state: &mut State, vec: Vec<u8>) {
     // convert to String
     let s = str::from_utf8(&vec).expect("Invalid UTF-8 sequence.");
-    // reader
+ /*    // reader
     let mut rdr = ReaderBuilder::new()
         .delimiter(b',')
         .has_headers(false)
@@ -139,7 +171,7 @@ pub fn process_chunk(state: &mut State, vec: Vec<u8>) {
 
         state.sum = state.sum + number;
         print_to_console(&format!("COUNTER: {:?}", state.sum).into());
-    }
+    } */
     print_to_console(&format!("BINARY: {:?}", &vec).into());
     print_to_console(&format!("STRING: {:?}", &s).into());
 }
@@ -148,12 +180,18 @@ pub fn print_to_console(str: &JsValue) {
     unsafe { web_sys::console::log_1(str) };
 }
 
-fn rustfunc() {
+fn rustfunc() -> r::Result<JsValue, JsValue> {
     unsafe {
-        let parquet:Parquet = Parquet::getClass();
-        let _x = parquet.passNextToCore();
+        let t = Parquet::getClass();
+        let x = t.passNextToCore();
+        print_to_console(&format!("HERE2").into());
+       /*  let output = wasm_bindgen_futures::JsFuture::from(result).await?; */
+/*         let output = executor::block_on(x);
+ */        print_to_console(&format!("HERE3").into());
+        x
     }
 }
+
 
 #[wasm_bindgen(raw_module="../../src/components/parquet")]
 extern "C" {
@@ -162,9 +200,8 @@ extern "C" {
     #[wasm_bindgen(constructor)]
     fn getClass() -> Parquet;
 
-    #[wasm_bindgen(method)]
-    fn passNextToCore(this: &Parquet) -> Uint8Array;
-
+    #[wasm_bindgen(method,catch)]
+    fn passNextToCore(this: &Parquet) -> r::Result<JsValue,JsValue>;
 
 }
 

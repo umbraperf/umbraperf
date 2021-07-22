@@ -14,7 +14,6 @@ use arrow::*;
 use js_sys::Promise as js_promise;
 use std::fs::File;
 use std::io::Error;
-use js_sys::Promise as js_promise;
 use arrow::array::*;
 use arrow::record_batch::RecordBatch;
 
@@ -99,10 +98,15 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
     return 0;
 }
 
-#[wasm_bindgen(js_name = "tiggerScanFile")]
-pub async fn scan_file() -> Result<(), js_sys::Error> {
-    unsafe { web_sys::console::log_1(&format!("HERE").into()) };
+#[wasm_bindgen(js_name = "triggerScanFile")]
+pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
     let array = read_chunk(&p).await?;
+    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT").into()) };
+    unsafe { web_sys::console::log_1(&array) };
+    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT2").into()) };
+    unsafe { web_sys::console::log_1(&format!("{:?}",&array).into()) };
+    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT3").into()) };
+
     let mut buff = Cursor::new(array);
     /* let arr = arrow::bytes::Bytes::new(array);
     let buff2 = arrow::buffer::Buffer::from_bytes(array.to_vec());
@@ -121,17 +125,23 @@ pub async fn scan_file() -> Result<(), js_sys::Error> {
     Ok(())
 }
 
-async fn read_chunk() -> Result<Uint8Array, js_sys::Error> {
-    /* let x = ask_js_for_chunk(0, 4000);  */
+async fn read_chunk(p: &Web_File) -> Result<Uint8Array, js_sys::Error> {
+    let x:i32 = 6000;
+    let y:i32 = 9000;
+    let x = p.ask_js_for_chunk(x, y).await?.into();  
     unsafe { web_sys::console::log_1(&format!("HERE2").into()) };
+    unsafe { web_sys::console::log_1(&format!("{:?}",&x).into()) };
     Ok(x)
 }
 
-#[wasm_bindgen(raw_module = "../../src/model/web_file")]
+#[wasm_bindgen(raw_module = "../../src/model/web_file", js_name="web_file")]
 extern "C" {
 
+    #[wasm_bindgen(js_name = "WebFile")]
+    pub type Web_File;
+
     #[wasm_bindgen(method,catch, js_name = "askJsForChunk")]
-    async fn ask_js_for_chunk(offset: i32, chunkSize: i32) -> Result<JsValue, JsValue>;
+    async fn ask_js_for_chunk(this: &Web_File, offset: i32, chunkSize: i32) -> Result<JsValue, JsValue>;
 }
 
 #[wasm_bindgen(start)]

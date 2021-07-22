@@ -9,7 +9,9 @@ export interface FileInfo {
     file: File | undefined;
 }
 
-export function setNewFile(fileName: string, file: File): void{
+export class WebFile{
+
+public setNewFile(fileName: string, file: File): void{
 
     store.dispatch({
         type: StateMutationType.SET_FILENAME,
@@ -26,11 +28,11 @@ export function setNewFile(fileName: string, file: File): void{
         data: undefined,
     });
 
-    profiler_core.triggerScanFile();
+    profiler_core.triggerScanFile(this);
 
 } 
 
-export async function askJsForChunk(offset: number, chunkSize: number){
+public async askJsForChunk(offset: number, chunkSize: number){
 
     const file = store.getState().file;
     if(file != undefined){
@@ -41,7 +43,9 @@ export async function askJsForChunk(offset: number, chunkSize: number){
             chunk = file.slice(offset, offset + readHere);
         }
         const arrayBufferChunk = await chunk?.arrayBuffer();
+        console.log(arrayBufferChunk);
         return new Uint8Array(arrayBufferChunk!);
 
     }
+}
 }

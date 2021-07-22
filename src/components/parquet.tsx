@@ -6,6 +6,7 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
+import { WebFile } from '../model';
 
 interface Props {
     file: undefined | File;
@@ -44,7 +45,8 @@ class Parquet extends React.Component<Props> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
-            model.setNewFile(file.name, file);
+            const webfile = new WebFile();
+            webfile.setNewFile(file.name,file);
         }
     }
 

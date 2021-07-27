@@ -25,6 +25,7 @@ checksum = "06d2bd50fddbdcecd832742b388228eec02eb3aabd33144ef46f6bc5420bf662"
 dependencies = [
  "bitflags",
  "chrono",
+ "csv",
  "getrandom",
  "hex",
  "indexmap",

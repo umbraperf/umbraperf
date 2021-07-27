@@ -28,18 +28,6 @@ class Parquet extends React.Component<Props> {
     }
 
 
-/*     public async awaitResultFromCore() {
-        if (this.props.fileName) {
-            console.log(this.props.resultLoading);
-            if (this.props.resultLoading) {
-                this.props.setResult("loading");
-            } else {
-                this.props.setResult(this.props.result);
-            }
-            console.log("result from rust:" + this.props.result);
-        }
-    } */
-
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {

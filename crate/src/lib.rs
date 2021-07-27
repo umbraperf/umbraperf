@@ -93,84 +93,23 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 #[wasm_bindgen(js_name = "triggerScanFile")]
 pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
+    
+    unsafe { web_sys::console::log_1(&format!("Scan File triggerd").into()) };
     let array = read_chunk(&p).await?;
-    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT").into()) };
     unsafe { web_sys::console::log_1(&array) };
-    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT2").into()) };
-    unsafe { web_sys::console::log_1(&format!("{:?}",&array).into()) };
-    unsafe { web_sys::console::log_1(&format!("HERE TO PRINT3").into()) };
 
-    unsafe { web_sys::console::log_1(&format!("{:?}",&array.to_vec()).into()) };
+    let cursor = io::Cursor::new(array.to_vec());
 
-    let mut buff = io::Cursor::new(array.to_vec());
-    /* let arr = arrow::bytes::Bytes::new(array);
-    let buff2 = arrow::buffer::Buffer::from_bytes(array.to_vec());
-     */
-
-     //let rdr = csvreader::from_reader(buff);
      let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new();
-     let reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,buff);
-     let mut test = reader.unwrap();
-     let element = &test.nth(0);
-     unsafe { web_sys::console::log_1(&format!("HERE TO TELL").into()) };
-     unsafe { web_sys::console::log_1(&format!("{:?}",&element).into()) };
-/*     let schema = Schema::new(
-         Field::new("string", DataType::Utf8, false),
-         Filed::new("int", DataType::Int32, false),
-     ) */
+     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,cursor);
+     let mut reader = cursor_reader.unwrap();
      
-     /*
-     let batch = RecordBatch::try_new(
-         Arc::new(schema),
-         vec![
-             Arc::new()
-             Arc::new
-         ]
-     ) */
-
-     //reader: rdr
-      /*   schema
-        has_header:
-        batch_size:
-        delimiter:
-        bounds:
-        projections: */
-
+     let batch = &reader.next().unwrap().unwrap();
      
-     //let batch = rdr.next().unwrap().unwrap();
+     unsafe { web_sys::console::log_1(&format!("{:?}", &batch).into()) };
 
-   /*   let builder = csv::ReaderBuilder::new().infer_schema(100);
-     let reader = builder.build(buff).unwrap(); */
-
-    
-/*     let id_array = arrow::array::UInt8Array::from(rdr);
- */    
-
-    
-  /*   let schema = Schema::new(vec![
-    Field::new("id", DataType::UInt8, false)
-    ]);
-
-    let batch = RecordBatch::try_new(
-        Arc::new(schema),
-        vec![Arc::new(id_array)]
-    );
-     */
     Ok(())
 }
-
-/* pub fn sort_by_group(batch: &RecordBatch) -> ArrowResult<RecordBatch> {
-    let indices = arrow::compute::sort_to_indices(batch.column(2),None)?;
-
-    RecordBatch::try_new(
-        batch.schema(),
-        batch
-        .columns()
-        .iter()
-        .map(|column| take(column.as_ref(), &indices, None))
-        .collect::<ArrowResult<Vec<ArrayRef>>>()?;
-    )
-} */
 
 async fn read_chunk(p: &Web_File) -> Result<Uint8Array, js_sys::Error> {
     let x:i32 = 0;

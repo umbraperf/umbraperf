@@ -1,8 +1,10 @@
 extern crate wasm_bindgen;
 
+use arrow::array::Array;
 use csv::Reader as csvreader;
 use js_sys::{Uint8Array};
 use std::cell::RefCell;
+use std::convert::TryInto;
 use std::{io};
 use wasm_bindgen::prelude::*;
 
@@ -94,30 +96,47 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 #[wasm_bindgen(js_name = "triggerScanFile")]
 pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
     
-    unsafe { web_sys::console::log_1(&format!("Scan File triggerd").into()) };
-    let array = read_chunk(&p).await?;
-    unsafe { web_sys::console::log_1(&array) };
+    unsafe { web_sys::console::log_1(&format!("Scan File triggered").into()) };
+    let mut from: i32 = 0;
+    let mut to: i32 = 4000;
+    loop {
+        let array = read_chunk(&p, from, to).await?;
+        unsafe { web_sys::console::log_1(&array) };
+        if array.to_vec().len() == 0 {
+            unsafe { web_sys::console::log_1(&format!("End of File").into()) };
+            return Ok(())
+        } else {
 
-    let cursor = io::Cursor::new(array.to_vec());
+            unsafe { web_sys::console::log_1(&format!("Chunk is processed to Batch").into()) };
 
-     let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new();
-     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,cursor);
-     let mut reader = cursor_reader.unwrap();
-     
-     let batch = &reader.next().unwrap().unwrap();
-     
-     unsafe { web_sys::console::log_1(&format!("{:?}", &batch).into()) };
-
-    Ok(())
+            let cursor = io::Cursor::new(array.to_vec());
+        
+            let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new();
+            let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,cursor);
+            let mut reader = cursor_reader.unwrap();
+             
+            let batch = &reader.next().unwrap().unwrap();
+            let column = batch.column(1);
+            aggregate_batch_column(column);
+             
+            unsafe { web_sys::console::log_1(&format!("{:?}", &batch).into()) };
+            from += 4000;
+            to += 4000;
+        }
+    }
 }
 
-async fn read_chunk(p: &Web_File) -> Result<Uint8Array, js_sys::Error> {
-    let x:i32 = 0;
-    let y:i32 = 4000;
-    let x = p.ask_js_for_chunk(x, y).await?.into();  
-    unsafe { web_sys::console::log_1(&format!("HERE2").into()) };
-    unsafe { web_sys::console::log_1(&format!("{:?}",&x).into()) };
-    Ok(x)
+//TODO
+pub fn aggregate_batch_column(array: &Arc<dyn Array>) -> i64 {
+    0
+}
+
+async fn read_chunk(p: &Web_File, from: i32, to: i32) -> Result<Uint8Array, js_sys::Error> {
+
+    let array = p.ask_js_for_chunk(from, to).await?.into();  
+    unsafe { web_sys::console::log_1(&format!("Print js-chunk").into()) };
+    unsafe { web_sys::console::log_1(&format!("{:?}",&array).into()) };
+    Ok(array)
 }
 
 #[wasm_bindgen(raw_module = "../../src/model/web_file", js_name="web_file")]

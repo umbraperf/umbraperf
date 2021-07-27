@@ -3,7 +3,7 @@ import store from '../app';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
-
+import * as d3 from 'd3';
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { WebFile } from '../model';
@@ -20,8 +20,12 @@ interface Props {
 
 class Parquet extends React.Component<Props> {
 
+    barChartRef: React.RefObject<HTMLDivElement>;
+
     constructor(props: Props) {
         super(props);
+
+        this.barChartRef = React.createRef<HTMLDivElement>();
 
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
@@ -34,7 +38,7 @@ class Parquet extends React.Component<Props> {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
             const webfile = new WebFile();
-            webfile.setNewFile(file.name,file);
+            webfile.setNewFile(file.name, file);
         }
     }
 
@@ -54,6 +58,68 @@ class Parquet extends React.Component<Props> {
             </li>
         ));
     }
+
+    createVisualization() {
+
+        const data = [{id: "test1", value: 1},
+        {id: "test2", value: 2},
+        {id: "test3", value: 3},
+        {id: "test4", value: 4},
+        {id: "test5", value: 5} ];
+
+        // set the dimensions and margins of the graph
+        const margin = { top: 30, right: 30, bottom: 70, left: 60 },
+            width = 460 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        let svg = d3.select(this.barChartRef.current)
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+            // X axis
+            const x = d3.scaleBand()
+                .range([0, width])
+                .domain(data.map(function (d) { return d.id; }))
+                .padding(0.2);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end");
+
+            // Add Y axis
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.value) as number]).nice()
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Bars
+            svg.selectAll("bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", (d) => x(d.id)|| 0)
+                .attr("y", (d) => y(d.value))
+                .attr("width", x.bandwidth())
+                .attr("height", function (d) { return y(0) - y(d.value); })
+                .attr("fill", "#69b3a2")
+
+    }
+
+    componentDidMount() {
+        //TODO: controller needs to set loading on false and to set result object, if needs to check if result ready and loading false
+        this.props.setResultLoading(false);
+        if (!this.props.resultLoading ){//&& this.props.result) {
+          this.createVisualization();
+        }
+      }
 
 
     public render() {
@@ -92,7 +158,7 @@ class Parquet extends React.Component<Props> {
                     {this.props.resultLoading ?
                         <CircularProgress />
                         :
-                        this.props.result}
+                        <div id="bar-chart-ref" ref={this.barChartRef}></div>}
                 </p>
             </div>
         </div>;

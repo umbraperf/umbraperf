@@ -1,18 +1,13 @@
 extern crate wasm_bindgen;
 
 use arrow::array::Array;
-use csv::Reader as csvreader;
 use js_sys::{Uint8Array};
 use std::cell::RefCell;
-use std::convert::TryInto;
 use std::{io};
 use wasm_bindgen::prelude::*;
 
 extern crate arrow;
-use arrow::record_batch::RecordBatch;
 use arrow::datatypes::{DataType, Field, Schema};
-use arrow::csv::*;
-
 
 
 extern crate console_error_panic_hook;
@@ -37,35 +32,6 @@ thread_local! {
         sum: 0,
     });
 }
-
-/* fn createBuilder(chunk: &Uint8Array) -> a::reader::Reader<Cursor<Vec<u8>>> {
-
-    let buff = Cursor::new(chunk.to_vec());
-
-    //let file = File::open("test/data/uk_cities_with_headers.csv").unwrap();
-
-    let schema = Schema::new(vec![
-        Field::new("Test", DataType::Int64, false)
-
-    ]);
-
-    let reader = a::reader::Reader::new(buff, Arc::new(schema), false, None, 1000, None, None);
-
-
-    // create a builder, inferring the schema with the first 100 records
-
-    //let builder:a::reader::ReaderBuilder = a::reader::ReaderBuilder::new().infer_schema(Some(100));
-
-    //builder.has_headers(true);
-    //builder.with_deliminator(',');
-    //builder.with_batch_size(4000);
-
-    //let reader = builder.build(buff.seek()).unwrap();
-
-    print_to_console(&format!("Hey, went into apache arrow reader").into());
-
-    reader
-} */
 
 fn with_state<Callback, ReturnType>(cb: Callback) -> ReturnType
 where
@@ -109,6 +75,7 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
 
             unsafe { web_sys::console::log_1(&format!("Chunk is processed to Batch").into()) };
 
+
             let cursor = io::Cursor::new(array.to_vec());
         
             let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new();
@@ -118,7 +85,7 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
             let batch = &reader.next().unwrap().unwrap();
             let column = batch.column(1);
             aggregate_batch_column(column);
-             
+            
             unsafe { web_sys::console::log_1(&format!("{:?}", &batch).into()) };
             from += 4000;
             to += 4000;

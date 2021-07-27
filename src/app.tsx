@@ -54,7 +54,7 @@ ReactDOM.render(
             <Switch>
 
                 <Route exact path="/">
-                    <Redirect to="/dummy" />
+                    <Redirect to="/parquet" />
                 </Route>
 
                 {routes.map((route: any) => (

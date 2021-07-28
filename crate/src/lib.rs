@@ -118,12 +118,13 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
 }
 
 //TODO
-pub fn aggregate_batch_column(array: &Arc<dyn Array>) -> i64 {
+fn aggregate_batch_column(array: &Arc<dyn Array>) -> i64 {
     0
 }
 
 async fn read_chunk(p: &Web_File, from: i32, to: i32) -> Result<Uint8Array, js_sys::Error> {
-
+    let s: &str = "t";
+    let result_of_computation = p.store_result_from_rust("Test".into(), vec![1,2,3]);
     let array = p.ask_js_for_chunk(from, to).await?.into();  
     unsafe { web_sys::console::log_1(&format!("Print js-chunk").into()) };
     unsafe { web_sys::console::log_1(&format!("{:?}",&array).into()) };
@@ -138,6 +139,9 @@ extern "C" {
 
     #[wasm_bindgen(method,catch, js_name = "askJsForChunk")]
     async fn ask_js_for_chunk(this: &Web_File, offset: i32, chunkSize: i32) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(method,catch, js_name = "storeResultFromRust")]
+    fn store_result_from_rust(this: &Web_File, request: String, x: Vec<i32>) -> Result<JsValue, JsValue>;
 }
 
 #[wasm_bindgen(start)]

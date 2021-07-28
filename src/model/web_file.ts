@@ -50,7 +50,11 @@ export class WebFile {
         }
     }
 
-    public storeResultFromRust(result: Result) {
+    public storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {
+
+        console.log(request);
+        console.log(x);
+        const result = undefined;
 
         console.log("notification from rust");
         // const result = "" + profiler_core.getState();

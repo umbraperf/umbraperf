@@ -128,15 +128,6 @@ class Parquet extends React.Component<Props> {
         }
     }
 
-    /*     componentDidMount(): void {
-            console.log(this.props.resultLoading);
-            console.log(this.props.result);
-            if (!this.props.resultLoading && this.props.result) {
-                this.createVisualization();
-            }
-        } */
-
-
     public render() {
         return <div>
             <div className={"dropzone-container"}>

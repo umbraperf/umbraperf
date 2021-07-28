@@ -124,7 +124,9 @@ class Parquet extends React.Component<Props> {
 
     componentDidUpdate(prevProps: Props): void {;
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+            if(this.props.result.request === "parquet"){
                 this.createVisualization();
+            }
         }
     }
 

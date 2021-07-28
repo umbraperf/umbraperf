@@ -39,7 +39,7 @@ class Parquet extends React.Component<Props> {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
             const webfile = new WebFile();
-            webfile.setNewFile(file.name, file);
+            webfile.setNewFile(file.name, file, "parquet");
         }
     }
 

@@ -29,6 +29,7 @@ export class WebFile {
             data: undefined,
         });
 
+        // TODO add requesting component to rust call
         profiler_core.triggerScanFile(this);
 
     }

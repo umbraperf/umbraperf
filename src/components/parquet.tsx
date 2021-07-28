@@ -72,7 +72,6 @@ class Parquet extends React.Component<Props> {
             request: "parquet",
             x: ["test1", "test2", "test3", "test4", "test5"],
             y: [5, 4, 3, 2, 1],
-            z: undefined
         };
 
         // set the dimensions and margins of the graph

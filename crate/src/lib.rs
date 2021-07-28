@@ -3,6 +3,7 @@ extern crate wasm_bindgen;
 use arrow::array::Array;
 use js_sys::{Uint8Array};
 use std::cell::RefCell;
+use std::io::{BufRead, Read};
 use std::{io};
 use wasm_bindgen::prelude::*;
 
@@ -64,9 +65,11 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
     
     unsafe { web_sys::console::log_1(&format!("Scan File triggered").into()) };
     let mut from: i32 = 0;
-    let mut to: i32 = 4000;
+    let size: i32 = 5;
     loop {
-        let array = read_chunk(&p, from, to).await?;
+        unsafe { web_sys::console::log_1(&format!("{:?}", &from).into()) };
+        unsafe { web_sys::console::log_1(&format!("{:?}", &size).into()) };
+        let array = read_chunk(&p, from, size).await?;
         unsafe { web_sys::console::log_1(&array) };
         if array.to_vec().len() == 0 {
             unsafe { web_sys::console::log_1(&format!("End of File").into()) };
@@ -76,19 +79,40 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
             unsafe { web_sys::console::log_1(&format!("Chunk is processed to Batch").into()) };
 
 
-            let cursor = io::Cursor::new(array.to_vec());
-        
+            let mut cursor = io::Cursor::new(array.to_vec());
+            let mut buf = vec![];
+
+            loop {
+                let len_buf = buf.len();
+                let read = cursor.read_until(b'\n', &mut buf);
+                if len_buf == buf.len() {
+                    break;
+                }
+                unsafe { web_sys::console::log_1(&format!("{:?}",&buf).into()) };
+
+                match read {
+                    Err(x) => {
+                        unsafe { web_sys::console::log_1(&format!("Error reading (cursor)").into()) };
+                    }
+                    Ok(_x) => {
+    
+                    }
+                }
+            
+            }
+           
             let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new();
-            let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,cursor);
+            let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder,io::Cursor::new(buf));
             let mut reader = cursor_reader.unwrap();
              
+            unsafe { web_sys::console::log_1(&format!("Reader is build").into()) };
+
             let batch = &reader.next().unwrap().unwrap();
-            let column = batch.column(1);
+            let column = batch.column(0);
             aggregate_batch_column(column);
             
             unsafe { web_sys::console::log_1(&format!("{:?}", &batch).into()) };
-            from += 4000;
-            to += 4000;
+            from += size;
         }
     }
 }

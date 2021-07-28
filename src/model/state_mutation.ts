@@ -1,5 +1,7 @@
 import * as model from '../model';
 import { AppState } from './state';
+import { Result } from "./core_result";
+
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -23,7 +25,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_GREETER, string>
     | StateMutation<StateMutationType.SET_RESULTLOADING, boolean>
-    | StateMutation<StateMutationType.SET_RESULT, string | undefined>
+    | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
     ;

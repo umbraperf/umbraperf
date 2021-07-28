@@ -122,13 +122,19 @@ class Parquet extends React.Component<Props> {
 
     }
 
-    componentDidMount() {
-        //TODO: controller needs to set loading on false and to set result object, if needs to check if result ready and loading false
-        this.props.setResultLoading(false);
-        if (!this.props.resultLoading) {//&& this.props.result) {
-            this.createVisualization();
+    componentDidUpdate(prevProps: Props): void {;
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+                this.createVisualization();
         }
     }
+
+    /*     componentDidMount(): void {
+            console.log(this.props.resultLoading);
+            console.log(this.props.result);
+            if (!this.props.resultLoading && this.props.result) {
+                this.createVisualization();
+            }
+        } */
 
 
     public render() {
@@ -163,12 +169,11 @@ class Parquet extends React.Component<Props> {
             </div>
 
             <div className={"resultArea"} >
-                <p>
-                    {this.props.resultLoading ?
-                        <CircularProgress />
-                        :
-                        <div id="bar-chart-ref" ref={this.barChartRef}></div>}
-                </p>
+                {this.props.resultLoading ?
+                    <CircularProgress />
+                    :
+                    <div id="bar-chart-ref" ref={this.barChartRef}></div>
+                }
             </div>
         </div>;
     }

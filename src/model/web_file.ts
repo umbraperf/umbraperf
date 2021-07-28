@@ -64,6 +64,6 @@ export class WebFile {
             type: StateMutationType.SET_RESULT,
             data: result,
         });
-        console.log(store.getState().result);
+        console.log(store.getState());
     }
 }

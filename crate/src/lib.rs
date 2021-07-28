@@ -62,7 +62,7 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 #[wasm_bindgen(js_name = "triggerScanFile")]
 pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
-    let result_of_computation = p.store_result_from_rust("Test".into(), vec![1,2,3]);
+    let result_of_computation = p.store_result_from_rust("parquet".into(), vec![1,2,3]);
 
     
     unsafe { web_sys::console::log_1(&format!("Scan File triggered").into()) };

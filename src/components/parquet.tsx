@@ -7,12 +7,14 @@ import * as d3 from 'd3';
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { WebFile } from '../model';
+import { Result } from 'src/model/core_result';
+
 
 interface Props {
     file: undefined | File;
     fileName: string | undefined;
     resultLoading: boolean;
-    result: string | undefined;
+    result: Result | undefined;
     chunksNumber: number;
     setResultLoading: (newResultLoading: boolean) => void;
     setChunksNumber: (newChunksNumber: number) => void;
@@ -30,19 +32,6 @@ class Parquet extends React.Component<Props> {
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
     }
-
-
-    /*     public async awaitResultFromCore() {
-            if (this.props.fileName) {
-                console.log(this.props.resultLoading);
-                if (this.props.resultLoading) {
-                    this.props.setResult("loading");
-                } else {
-                    this.props.setResult(this.props.result);
-                }
-                console.log("result from rust:" + this.props.result);
-            }
-        } */
 
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
@@ -200,19 +189,3 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
-
-//get notification from rust
-export function update() {
-    console.log("notification from rust");
-    const result = ""
-
-    store.dispatch({
-        type: model.StateMutationType.SET_RESULTLOADING,
-        data: false,
-    });
-    store.dispatch({
-        type: model.StateMutationType.SET_RESULT,
-        data: result,
-    });
-
-}

@@ -1,9 +1,11 @@
+import { Result } from "./core_result";
+
 export interface AppState {
     /// The registered files
     helloworld: string;
     fileName: string | undefined;
     resultLoading: boolean;
-    result: string | undefined;
+    result: Result | undefined;
     chunksNumber: number;
     file: undefined | File;
 }

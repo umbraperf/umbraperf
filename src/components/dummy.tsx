@@ -8,14 +8,15 @@ import * as profiler_core from '../../crate/pkg/shell';
 
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
+import { Result } from 'src/model/core_result';
 
 interface Props {
     fileName: string | undefined;
     setFileName: (newFileName: string) => void;
     resultLoading: boolean;
     setResultLoading: (newResultLoading: boolean) => void;
-    result: string | undefined;
-    setResult: (newResult: string | undefined) => void;
+    result: Result | undefined;
+    setResult: (newResult: Result | undefined) => void;
     chunksNumber: number;
     setChunksNumber: (newChunksNumber: number) => void;
 }
@@ -59,7 +60,7 @@ class Dummy extends React.Component<Props> {
         if (this.props.fileName) {
             console.log(this.props.resultLoading);
             if (this.props.resultLoading) {
-                this.props.setResult("loading");
+                this.props.setResult(undefined);
             } else {
                 this.props.setResult(this.props.result);
             }
@@ -168,7 +169,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: newResultLoading,
         }),
-    setResult: (newResult: string | undefined) =>
+    setResult: (newResult: Result | undefined) =>
         dispatch({
             type: model.StateMutationType.SET_RESULT,
             data: newResult,
@@ -185,7 +186,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 //get notification from rust
 export function update() {
     console.log("notification from rust");
-    const result = "";
+    const result = undefined;
     // const result = "" + profiler_core.getState();
 
     store.dispatch({

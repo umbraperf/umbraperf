@@ -12,7 +12,7 @@ export interface FileInfo {
 
 export class WebFile {
 
-    public setNewFile(fileName: string, file: File): void {
+    public setNewFile(fileName: string, file: File, requestingComponent: string): void {
 
         store.dispatch({
             type: StateMutationType.SET_FILENAME,

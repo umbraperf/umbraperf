@@ -5,11 +5,11 @@ export interface Result {
     z?: Array<any> | undefined;
 }
 
-export function createDefaultResult(): Result {
+export function createResultObject(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>): Result {
     return {
-        request: "",
-        x: [],
-        y: [],
-        z: [],
+        request: request,
+        x: x,
+        y: y,
+        z: z,
     };
 }

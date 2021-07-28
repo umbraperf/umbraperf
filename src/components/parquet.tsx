@@ -70,9 +70,12 @@ class Parquet extends React.Component<Props> {
 
         const test: Result = {
             request: "parquet",
-            x: ["test1", "test2", "test3", "test4", "test5"],
-            y: [5, 4, 3, 2, 1],
+            x: ["test3", "test4", "test5"],
+            y: [5, 4, 3],
         };
+
+        const testFromRust: Result = this.props.result!;
+        console.log(testFromRust);
 
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 30, bottom: 70, left: 60 },
@@ -91,7 +94,7 @@ class Parquet extends React.Component<Props> {
         // Add X axis
         const x = d3.scaleBand()
             .range([0, width])
-            .domain(data.map(function (d) { return d.id; }))
+            .domain(test.x!.map(function (d) { return d; }))
             .padding(0.2);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -102,7 +105,7 @@ class Parquet extends React.Component<Props> {
 
         // Add Y axis
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.value) as number]).nice()
+            .domain([0, d3.max(testFromRust.x!) as number]).nice()
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
@@ -115,9 +118,9 @@ class Parquet extends React.Component<Props> {
             //.attr("x", (d) => x(d.id) || 0)
             .attr("x", (d) => x(d) || 0)
             //.attr("y", (d) => y(d.value))
-            .attr("y", (d, i) => y(test.y![i]))
+            .attr("y", (d, i) => y(testFromRust.x![i]))
             .attr("width", x.bandwidth())
-            .attr("height", function (d, i) { return y(0) - y(test.y![i]); })
+            .attr("height", function (d, i) { return y(0) - y(testFromRust.x![i]); })
             .attr("fill", "#69b3a2")
 
     }

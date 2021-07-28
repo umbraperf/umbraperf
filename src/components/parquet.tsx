@@ -8,7 +8,6 @@ import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { WebFile } from '../model';
 import { Result } from 'src/model/core_result';
-import { TextsmsTwoTone } from '@material-ui/icons';
 
 
 interface Props {
@@ -69,7 +68,12 @@ class Parquet extends React.Component<Props> {
         { id: "test4", value: 4 },
         { id: "test5", value: 5 }];
 
-        const test = { x: ["test1", "test2", "test3", "test4", "test5"], y: [5, 4, 3, 2, 1] };
+        const test: Result = {
+            request: "parquet",
+            x: ["test1", "test2", "test3", "test4", "test5"],
+            y: [5, 4, 3, 2, 1],
+            z: undefined
+        };
 
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 30, bottom: 70, left: 60 },
@@ -106,15 +110,15 @@ class Parquet extends React.Component<Props> {
 
         // Bars
         svg.selectAll("bar")
-            .data(test.x)
+            .data(test.x as Array<string>)
             .enter()
             .append("rect")
             //.attr("x", (d) => x(d.id) || 0)
             .attr("x", (d) => x(d) || 0)
             //.attr("y", (d) => y(d.value))
-            .attr("y", (d, i) => y(test.y[i]))
+            .attr("y", (d, i) => y(test.y![i]))
             .attr("width", x.bandwidth())
-            .attr("height", function (d, i) { return y(0) - y(test.y[i]); })
+            .attr("height", function (d, i) { return y(0) - y(test.y![i]); })
             .attr("fill", "#69b3a2")
 
     }

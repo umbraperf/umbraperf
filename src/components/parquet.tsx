@@ -8,6 +8,7 @@ import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { WebFile } from '../model';
 import { Result } from 'src/model/core_result';
+import { TextsmsTwoTone } from '@material-ui/icons';
 
 
 interface Props {
@@ -62,11 +63,13 @@ class Parquet extends React.Component<Props> {
 
     createVisualization() {
 
-        const data = [{id: "test1", value: 1},
-        {id: "test2", value: 2},
-        {id: "test3", value: 3},
-        {id: "test4", value: 4},
-        {id: "test5", value: 5} ];
+        const data = [{ id: "test1", value: 1 },
+        { id: "test2", value: 2 },
+        { id: "test3", value: 3 },
+        { id: "test4", value: 4 },
+        { id: "test5", value: 5 }];
+
+        const test = { x: ["test1", "test2", "test3", "test4", "test5"], y: [5, 4, 3, 2, 1] };
 
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 30, bottom: 70, left: 60 },
@@ -82,45 +85,47 @@ class Parquet extends React.Component<Props> {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-            // X axis
-            const x = d3.scaleBand()
-                .range([0, width])
-                .domain(data.map(function (d) { return d.id; }))
-                .padding(0.2);
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x))
-                .selectAll("text")
-                .attr("transform", "translate(-10,0)rotate(-45)")
-                .style("text-anchor", "end");
+        // Add X axis
+        const x = d3.scaleBand()
+            .range([0, width])
+            .domain(data.map(function (d) { return d.id; }))
+            .padding(0.2);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
 
-            // Add Y axis
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.value) as number]).nice()
-                .range([height, 0]);
-            svg.append("g")
-                .call(d3.axisLeft(y));
+        // Add Y axis
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.value) as number]).nice()
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
 
-            // Bars
-            svg.selectAll("bar")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("x", (d) => x(d.id)|| 0)
-                .attr("y", (d) => y(d.value))
-                .attr("width", x.bandwidth())
-                .attr("height", function (d) { return y(0) - y(d.value); })
-                .attr("fill", "#69b3a2")
+        // Bars
+        svg.selectAll("bar")
+            .data(test.x)
+            .enter()
+            .append("rect")
+            //.attr("x", (d) => x(d.id) || 0)
+            .attr("x", (d) => x(d) || 0)
+            //.attr("y", (d) => y(d.value))
+            .attr("y", (d, i) => y(test.y[i]))
+            .attr("width", x.bandwidth())
+            .attr("height", function (d, i) { return y(0) - y(test.y[i]); })
+            .attr("fill", "#69b3a2")
 
     }
 
     componentDidMount() {
         //TODO: controller needs to set loading on false and to set result object, if needs to check if result ready and loading false
         this.props.setResultLoading(false);
-        if (!this.props.resultLoading ){//&& this.props.result) {
-          this.createVisualization();
+        if (!this.props.resultLoading) {//&& this.props.result) {
+            this.createVisualization();
         }
-      }
+    }
 
 
     public render() {

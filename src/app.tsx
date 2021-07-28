@@ -45,7 +45,8 @@ ReactDOM.render(
                 <h3>Navigation:</h3>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <ul className="navbar-nav mr-auto">
-                        <li><Link to={'/'} className="nav-link"> Dummy </Link></li>
+                        <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
+                        <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
                     </ul>
                 </nav>
                 <hr />

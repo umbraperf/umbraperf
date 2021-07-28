@@ -173,7 +173,7 @@ function PersistentDrawerLeft(props: any) {
             >
                 <div className={classes.drawerHeader} />
                 <Typography paragraph>
-                    Dummy-Componente.
+                    Use burger menu for navigation.
                 </Typography>
                 <Typography paragraph>
                     Upload CSV file.

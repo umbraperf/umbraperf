@@ -38,9 +38,11 @@ impl Seek for WebFileReader {
 
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
-        let read_here = out.length.min(self.length - self.offset);
+        /* let read_here = out.length.min(self.length - self.offset);
         let read = self.file.ask_js_for_chunk(out, read_here);
         self.offset += read_here;
-        Ok(read_here)
+        Ok(read_here) */
+        let size: usize = 0;
+        Ok(size)
     }
 }

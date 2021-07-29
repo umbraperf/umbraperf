@@ -21,9 +21,10 @@ worker.postMessage({
     data: "hello worker",
 });
 
-worker.onMessage = (e) {
-    store.dispatch()
-}
+/* worker.onMessage = (e) {
+    //TODO
+    //store.dispatch()
+} */
 
 const appContext: IAppContext = {
     worker,

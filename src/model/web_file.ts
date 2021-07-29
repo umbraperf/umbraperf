@@ -34,6 +34,13 @@ export class WebFile {
 
     }
 
+    public getLength(){
+        if(undefined !== store.getState().file){
+            return store.getState().file?.size as number;
+        }
+
+    }
+
     public async askJsForChunk(offset: number, chunkSize: number) {
 
         const file = store.getState().file;

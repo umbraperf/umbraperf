@@ -6,11 +6,12 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import * as d3 from 'd3';
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
-import { WebFile } from '../model';
+import { WebFile, WorkerRequestType } from '../model';
 import { Result } from 'src/model/core_result';
-
+import { IAppContext, withAppContext } from '../app_context';
 
 interface Props {
+    appContext: IAppContext;
     file: undefined | File;
     fileName: string | undefined;
     resultLoading: boolean;
@@ -38,6 +39,12 @@ class Parquet extends React.Component<Props> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
+
+            this.props.appContext.worker.postMessage({
+                type: WorkerRequestType.REGISTER_FILE,
+                data: file
+            });
+
             const webfile = new WebFile();
             webfile.setNewFile(file.name, file, "parquet");
         }
@@ -197,4 +204,4 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
+export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));

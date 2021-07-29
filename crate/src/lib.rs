@@ -7,15 +7,18 @@ use std::sync::Arc;
 use std::cell::RefCell;
 use std::io::{BufRead};
 use std::{io};
-use std::panic;
 
 extern crate arrow;
 use arrow::array::Array;
 
 extern crate console_error_panic_hook;
 
+mod bindings;
 mod console;
 mod console_js_log;
+mod streambuf;
+
+use bindings::WebFile;
 
 //STATE
 pub struct State {
@@ -63,7 +66,7 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 // START
 #[wasm_bindgen(js_name = "triggerScanFile")]
-pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
+pub async fn scan_file(p: WebFile) -> Result<(), js_sys::Error> {
     let result_of_computation = p.store_result_from_rust("parquet".into(), vec![1,2,3]);
 
     
@@ -120,9 +123,9 @@ pub async fn scan_file(p: Web_File) -> Result<(), js_sys::Error> {
     }
 }
 
-async fn read_chunk(p: &Web_File, from: i32, to: i32) -> Result<Uint8Array, js_sys::Error> {
+async fn read_chunk(p: &WebFile, from: i32, size: i32) -> Result<Uint8Array, js_sys::Error> {
     let s: &str = "t";
-    let array = p.ask_js_for_chunk(from, to).await?.into();  
+    let array = p.ask_js_for_chunk(from, size).await?.into();  
     
     print_to_js("Print js-chunk");
     print_to_js_with_obj(&format!("{:?}",&array).into());
@@ -143,20 +146,4 @@ fn print_to_js(s: &str) {
 fn print_to_js_with_obj(s: &JsValue) {
     use web_sys::console;
     unsafe { console::log_1(s); }
-}
-
-
-// WASM_BINDGEN 
-#[wasm_bindgen(raw_module = "../../src/model/web_file", js_name="web_file")]
-extern "C" {
-
-    #[wasm_bindgen(js_name = "WebFile")]
-    pub type Web_File;
-
-    #[wasm_bindgen(method,catch, js_name = "askJsForChunk")]
-    async fn ask_js_for_chunk(this: &Web_File, offset: i32, chunkSize: i32) -> Result<JsValue, JsValue>;
-
-    #[wasm_bindgen(method,catch, js_name = "storeResultFromRust")]
-    fn store_result_from_rust(this: &Web_File, request: String, x: Vec<i32>) -> Result<JsValue, JsValue>;
-
 }

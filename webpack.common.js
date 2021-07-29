@@ -11,10 +11,11 @@ export function configure(params) {
         target: 'web',
         entry: {
             app: ['./src/app.tsx'],
+            worker: ['./src/worker.ts'],
         },
         output: {
             path: params.buildDir,
-            filename: 'static/js/[name].[contenthash].js',
+            filename: '[name].js',
             chunkFilename: 'static/js/[name].[contenthash].js',
             assetModuleFilename: 'static/assets/[name].[contenthash].[ext]',
             webassemblyModuleFilename: 'static/wasm/[hash].wasm',

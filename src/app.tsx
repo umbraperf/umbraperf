@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as model from './model';
+import createProdStore from './model/store_prod';
+import { IAppContext, AppContextProvider } from './app_context';
 
 import { Provider as ReduxProvider } from 'react-redux';
 import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
@@ -11,8 +13,21 @@ import Dummy from './components/dummy';
 import Parquet from './components/parquet';
 import PersistentDrawerLeft from './components/drawer';
 
+const store = createProdStore();
 
-const store = model.createStore();
+const worker = new Worker('./worker.js');
+worker.postMessage({
+    type: "foo",
+    data: "hello worker",
+});
+
+worker.onMessage = (e) {
+    store.dispatch()
+}
+
+const appContext: IAppContext = {
+    worker,
+};
 
 const element = document.getElementById('root');
 
@@ -36,8 +51,8 @@ export const routes = [
 ];
 
 ReactDOM.render(
+    <AppContextProvider value={appContext}>
     <ReduxProvider store={store}>
-
         <BrowserRouter>
             <PersistentDrawerLeft></PersistentDrawerLeft>
 
@@ -72,7 +87,9 @@ ReactDOM.render(
             </Switch>
         </BrowserRouter>
 
-    </ReduxProvider>,
+    </ReduxProvider>
+</AppContextProvider>
+    ,
     element,
 );
 

@@ -8,6 +8,7 @@ import * as model from '../model';
 export * from './state_mutation';
 export * from './state';
 export * from './web_file';
+export * from './worker_request';
 
 // XXX Conditional
 import storeDev from './store_dev';

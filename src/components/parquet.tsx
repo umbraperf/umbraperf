@@ -40,7 +40,7 @@ class Parquet extends React.Component<Props> {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
             const webFileControllerInstance = new WebFileController(this.props.appContext.worker);
-            webFileControllerInstance.regiterFileAtWorker(file);
+            webFileControllerInstance.registerFileAtWorker(file);
             
         }
     }

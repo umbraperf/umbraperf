@@ -15,6 +15,16 @@ export class WorkerAPI {
         });
     }
 
+    public readChunk(offset: number, chunkSize: number){
+        this.worker.postMessage({
+            type: model.WorkerRequestType.READ_CHUNK,
+            data: {
+                offset: offset,
+                chunkSize: chunkSize,
+            }
+        });
+    }
+
     public testWorker() {
         this.worker.postMessage({
             type: model.WorkerRequestType.TEST,

@@ -6,12 +6,12 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import * as d3 from 'd3';
 import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
-import { WebFile, WorkerRequestType } from '../model';
+import { WebFile } from '../model';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
 
 interface Props {
-    appContext: IAppContext;
+    //appContext: IAppContext;
     file: undefined | File;
     fileName: string | undefined;
     resultLoading: boolean;
@@ -40,13 +40,13 @@ class Parquet extends React.Component<Props> {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
 
-            this.props.appContext.worker.postMessage({
-                type: WorkerRequestType.REGISTER_FILE,
-                data: file
-            });
-
+            /*             this.props.appContext.worker.postMessage({
+                            type: WorkerRequestType.REGISTER_FILE,
+                            data: file
+                        });
+             */
             const webfile = new WebFile();
-            webfile.setNewFile(file.name, file, "parquet");
+            //webfile.setNewFile(file.name, file, "parquet");
         }
     }
 
@@ -132,9 +132,10 @@ class Parquet extends React.Component<Props> {
 
     }
 
-    componentDidUpdate(prevProps: Props): void {;
+    componentDidUpdate(prevProps: Props): void {
+        ;
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            if(this.props.result.request === "parquet"){
+            if (this.props.result.request === "parquet") {
                 this.createVisualization();
             }
         }
@@ -142,10 +143,17 @@ class Parquet extends React.Component<Props> {
 
     public render() {
         return <div>
+            {/*             <form  >
+                <label>Wählen Sie eine Textdatei (*.txt, *.html usw.) von Ihrem Rechner aus.
+                    <input type="file" />
+                </label>
+                <button>… und ab geht die Post!</button>
+            </form> */}
             <div className={"dropzone-container"}>
                 <p>
                     Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
                 </p>
+
                 <Dropzone
                     accept={['.parquet', '.csv']}
                     multiple={false}
@@ -204,4 +212,9 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
+//export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
+export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
+
+
+
+

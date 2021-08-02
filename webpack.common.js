@@ -1,8 +1,8 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import path from 'path';
 import { fileURLToPath } from 'url';
+import path from 'path';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,7 +11,7 @@ export function configure(params) {
         target: 'web',
         entry: {
             app: ['./src/app.tsx'],
-            worker: ['./src/worker.ts'],
+            //worker: ['./src/worker.ts'],
         },
         output: {
             path: params.buildDir,

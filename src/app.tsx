@@ -12,23 +12,34 @@ import './globals.css';
 import Dummy from './components/dummy';
 import Parquet from './components/parquet';
 import PersistentDrawerLeft from './components/drawer';
+import { WorkerAPI } from './worker_api';
 
+
+//Create Redux stroe
 const store = createProdStore();
 
-const worker = new Worker('./worker.js');
-worker.postMessage({
+//Create WebWorker
+//const worker = new Worker("./worker.js");
+//const worker = new Worker();
+;
+/* worker.postMessage({
     type: "foo",
     data: "hello worker",
-});
+}) */
 
 /* worker.onMessage = (e) {
     //TODO
     //store.dispatch()
 } */
 
-const appContext: IAppContext = {
-    worker,
-};
+const worker = new WorkerAPI();
+/* const appContext: IAppContext = {
+    //worker,
+    worker: new WorkerAPI(),
+}; */
+
+//worker.testWorker();
+
 
 const element = document.getElementById('root');
 
@@ -52,45 +63,45 @@ export const routes = [
 ];
 
 ReactDOM.render(
-    <AppContextProvider value={appContext}>
-    <ReduxProvider store={store}>
-        <BrowserRouter>
-            <PersistentDrawerLeft></PersistentDrawerLeft>
+/*     <AppContextProvider value={null}>
+ */        <ReduxProvider store={store}>
+            <BrowserRouter>
+                <PersistentDrawerLeft></PersistentDrawerLeft>
 
-            <div>
-                <h3>Navigation:</h3>
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                    <ul className="navbar-nav mr-auto">
-                        <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
-                        <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
-                    </ul>
-                </nav>
-                <hr />
-            </div>
+                <div>
+                    <h3>Navigation:</h3>
+                    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                        <ul className="navbar-nav mr-auto">
+                            <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
+                            <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
+                        </ul>
+                    </nav>
+                    <hr />
+                </div>
 
-            <Switch>
+                <Switch>
 
-                <Route exact path="/">
-                    <Redirect to="/parquet" />
-                </Route>
-
-                {routes.map((route: any) => (
-                    <Route exact path={route.path} key={route.path}>
-                        <route.component />
+                    <Route exact path="/">
+                        <Redirect to="/parquet" />
                     </Route>
-                ))}
 
-                {/*                 <Route exact path="/dummy" component={Dummy} />
+                    {routes.map((route: any) => (
+                        <Route exact path={route.path} key={route.path}>
+                            <route.component />
+                        </Route>
+                    ))}
+
+                    {/*                 <Route exact path="/dummy" component={Dummy} />
  */}
-                <Route path="*">
-                    <NoMatch />
-                </Route>
-            </Switch>
-        </BrowserRouter>
+                    <Route path="*">
+                        <NoMatch />
+                    </Route>
+                </Switch>
+            </BrowserRouter>
 
-    </ReduxProvider>
-</AppContextProvider>
-    ,
+        </ReduxProvider>
+/*     </AppContextProvider>
+ */    ,
     element,
 );
 

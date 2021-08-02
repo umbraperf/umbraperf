@@ -1,5 +1,6 @@
-export enum WorkerRequestType {
-    REGISTER_FILE = 'REGISTER_FILE'
+/* export enum WorkerRequestType {
+    REGISTER_FILE = 'REGISTER_FILE',
+    TEST = 'TEST',
 };
 
 export type WorkerRequest<T, P> = {
@@ -16,4 +17,5 @@ export type WorkerResponse<T, P> = {
 };
 
 export type WorkerRequestVariant =
-    WorkerRequest<WorkerRequestType.REGISTER_FILE, File>;
+    WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
+    WorkerRequest<WorkerRequestType.TEST, string>; */

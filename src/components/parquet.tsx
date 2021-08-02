@@ -11,7 +11,7 @@ import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
 
 interface Props {
-    //appContext: IAppContext;
+    appContext: IAppContext;
     file: undefined | File;
     fileName: string | undefined;
     resultLoading: boolean;
@@ -39,6 +39,8 @@ class Parquet extends React.Component<Props> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
+
+            this.props.appContext.worker.testWorker();
 
             /*             this.props.appContext.worker.postMessage({
                             type: WorkerRequestType.REGISTER_FILE,
@@ -212,8 +214,8 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         }),
 });
 
-//export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
-export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
+export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
+//export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
 
 
 

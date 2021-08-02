@@ -38,7 +38,7 @@ const worker = new WorkerAPI();
     worker: new WorkerAPI(),
 }; */
 
-//worker.testWorker();
+worker.testWorker();
 
 
 const element = document.getElementById('root');

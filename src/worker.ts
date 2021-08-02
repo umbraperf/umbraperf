@@ -47,8 +47,8 @@ worker.onmessage = (message) => {
 
   if (!message.type) return;
 
-  const messageType = message.type;
-  const messageData = message.data;
+  const messageType = message.data.type;
+  const messageData = message.data.data;
 
   switch (messageType) {
 

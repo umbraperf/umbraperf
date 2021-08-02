@@ -39,16 +39,7 @@ class Parquet extends React.Component<Props> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
-
-            this.props.appContext.worker.testWorker();
-
-            /*             this.props.appContext.worker.postMessage({
-                            type: WorkerRequestType.REGISTER_FILE,
-                            data: file
-                        });
-             */
-            const webfile = new WebFile();
-            //webfile.setNewFile(file.name, file, "parquet");
+            this.props.appContext.worker.registerFile(file);
         }
     }
 

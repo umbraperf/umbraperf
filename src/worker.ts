@@ -54,6 +54,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.REGISTER_FILE:
       console.log("REGISTER FILE");
+      console.log(messageData);
       break;
    
       case WorkerRequestType.TEST:

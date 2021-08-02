@@ -46,7 +46,6 @@ let registeredFile: IRegisteredFile = {
 console.log("I WAS AT THE NEW WORKER");
 
 // Receive from the main thread
-
 worker.onmessage = (message) => {
 
   console.log(message);
@@ -74,7 +73,24 @@ worker.onmessage = (message) => {
         console.log(`Read Chunk at ${(messageData as any).offset}`)
         console.log(registeredFile);
 
+        const offset = (messageData as any).offset;
+        const chunkSize = (messageData as any).chunkSize;
+        const file = registeredFile.file;
+        const remainingFileSize = file.size - offset;
 
+        let chunk = undefined;
+
+        if(remainingFileSize > 0){
+          const readPart = Math.min(remainingFileSize, chunkSize);
+          chunk = file.slice(offset, offset + readPart);
+
+          const reader = new FileReaderSync();
+          const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
+          const uInt8ArrayChunk =  new Uint8Array(arrayBufferChunk!);
+
+          console.log(uInt8ArrayChunk);
+
+        }
       }
       break;
 

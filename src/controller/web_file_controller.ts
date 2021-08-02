@@ -51,15 +51,15 @@ export class WebFileController {
 
     public registerFileAtWorker(file: File){
         this.worker.registerFile(file);
-        this.worker.readChunk(0, 0);
+        this.worker.readChunk(0, 10);
 
     }
 
-    public async askJsForChunk(offset: number, chunkSize: number) {
+    public  askJsForChunk(offset: number, chunkSize: number) {
 
 
         const file = store.getState().file;
-        if (file != undefined) {
+/*         if (file != undefined) {
             const remainingFileSize = file.size - offset;
             let chunk = undefined;
             if (remainingFileSize > 0) {
@@ -70,7 +70,7 @@ export class WebFileController {
             console.log(arrayBufferChunk);
             return new Uint8Array(arrayBufferChunk!);
 
-        }
+        } */
     }
 
     public storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {

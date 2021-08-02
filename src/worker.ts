@@ -1,5 +1,7 @@
 /* eslint-env worker */
 
+import * as profiler_core from '../crate/pkg/shell';
+
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
   TEST = 'TEST',
@@ -55,6 +57,8 @@ worker.onmessage = (message) => {
     case WorkerRequestType.REGISTER_FILE:
       console.log("REGISTER FILE");
       console.log(messageData);
+
+      profiler_core.triggerScanFile(this);
       break;
    
       case WorkerRequestType.TEST:

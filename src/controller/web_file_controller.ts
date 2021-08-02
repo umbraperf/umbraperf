@@ -1,8 +1,8 @@
-import { StateMutationType } from "./state_mutation";
-import { Result, createResultObject } from "./core_result";
+import { StateMutationType } from "../model/state_mutation";
+import { Result, createResultObject } from "../model/core_result";
 import store from '../app';
 import * as profiler_core from '../../crate/pkg/shell';
-//import { WorkerAPI } from "../worker_api";
+import { WorkerAPI } from "src/worker_api";
 
 
 
@@ -11,11 +11,15 @@ export interface FileInfo {
     file: File | undefined;
 }
 
-export class WebFile {
 
-    //worker = new WorkerAPI;
+export class WebFileController {
+    worker: WorkerAPI;
 
-    public setNewFile(fileName: string, file: File, requestingComponent: string): void {
+    constructor(worker: WorkerAPI){
+        this.worker = worker;
+    }
+
+/*     public setNewFile(fileName: string, file: File, requestingComponent: string): void {
 
         //this.worker.registerFile(file);
 
@@ -34,16 +38,19 @@ export class WebFile {
             data: undefined,
         });
 
-        // TODO add requesting component to rust call
         profiler_core.triggerScanFile(this);
 
-    }
+    } */
 
     public getLength(){
         if(undefined !== store.getState().file){
             return store.getState().file?.size as number;
         }
 
+    }
+
+    public regiterFileAtWorker(file: File){
+        this.worker.registerFile(file);
     }
 
     public async askJsForChunk(offset: number, chunkSize: number) {

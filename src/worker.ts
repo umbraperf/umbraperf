@@ -8,6 +8,10 @@ export enum WorkerRequestType {
   TEST = 'TEST',
 };
 
+export enum WorkerResponseType {
+  SENT_UINT8 = 'SENT_UINT8'
+};
+
 export type WorkerRequest<T, P> = {
   readonly messageId: number;
   readonly type: T;
@@ -23,16 +27,19 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.READ_CHUNK, {offset: number, chunkSize: number}> |
+  WorkerRequest<WorkerRequestType.READ_CHUNK, { offset: number, chunkSize: number }> |
   WorkerRequest<WorkerRequestType.TEST, string>;
+
+export type WorkerResponseVariant =
+  WorkerResponse<WorkerResponseType.SENT_UINT8, Uint8Array>;
 
 
 export interface IRequestWorker {
-  postMessage: (answerMessage: string) => void;
+  postMessage: (answerMessage: WorkerResponseVariant) => void;
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
 }
 
-interface IRegisteredFile{
+interface IRegisteredFile {
   file: File | undefined,
   size: number | undefined,
 }
@@ -69,7 +76,7 @@ worker.onmessage = (message) => {
       break;
 
     case WorkerRequestType.READ_CHUNK:
-      if(registeredFile.file){
+      if (registeredFile.file) {
         console.log(`Read Chunk at ${(messageData as any).offset}`)
         console.log(registeredFile);
 
@@ -80,16 +87,22 @@ worker.onmessage = (message) => {
 
         let chunk = undefined;
 
-        if(remainingFileSize > 0){
+        if (remainingFileSize > 0) {
           const readPart = Math.min(remainingFileSize, chunkSize);
           chunk = file.slice(offset, offset + readPart);
 
           const reader = new FileReaderSync();
           const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
-          const uInt8ArrayChunk =  new Uint8Array(arrayBufferChunk!);
+          const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
 
           console.log(uInt8ArrayChunk);
 
+          worker.postMessage({
+            messageId: 10,
+            requestId: 10,
+            type: WorkerResponseType.SENT_UINT8,
+            data: uInt8ArrayChunk,
+          });
         }
       }
       break;

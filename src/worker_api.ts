@@ -1,11 +1,13 @@
 import * as model from './worker';
 
+const worker = new Worker(new URL('./worker.ts', import.meta.url));
+
 
 export class WorkerAPI {
     worker!: Worker;
 
-    constructor(){
-        this.worker = new Worker(new URL('./worker.ts', import.meta.url));
+    constructor() {
+        this.worker = worker;
     }
 
     //Requests from Main to Worker:
@@ -17,7 +19,7 @@ export class WorkerAPI {
         });
     }
 
-    public readChunk(offset: number, chunkSize: number){
+    public readChunk(offset: number, chunkSize: number) {
         this.worker.postMessage({
             type: model.WorkerRequestType.READ_CHUNK,
             data: {
@@ -34,11 +36,12 @@ export class WorkerAPI {
         });
     }
 
-    //Responses from Worker to Main:
-    
-/*     this.worker.onmessage( {
+}
 
-    }) */
-    
- 
-} 
+//Responses from Worker to Main:
+
+worker.addEventListener('message', message => {
+    console.log(message);
+});
+
+

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as model from './model';
 import createProdStore from './model/store_prod';
 import { IAppContext, AppContextProvider } from './app_context';
 
@@ -18,28 +17,12 @@ import { WorkerAPI } from './worker_api';
 //Create Redux stroe
 const store = createProdStore();
 
-//Create WebWorker
-//const worker = new Worker("./worker.js");
-//const worker = new Worker();
-;
-/* worker.postMessage({
-    type: "foo",
-    data: "hello worker",
-}) */
+//Create WorkerAPI
+const workerAPI = new WorkerAPI();
 
-/* worker.onMessage = (e) {
-    //TODO
-    //store.dispatch()
-} */
-
-const worker = new WorkerAPI();
-/* const appContext: IAppContext = {
-    //worker,
-    worker: new WorkerAPI(),
-}; */
-
-worker.testWorker();
-
+const appContext: IAppContext = {
+    worker: workerAPI,
+};
 
 const element = document.getElementById('root');
 
@@ -63,8 +46,8 @@ export const routes = [
 ];
 
 ReactDOM.render(
-/*     <AppContextProvider value={null}>
- */        <ReduxProvider store={store}>
+    <AppContextProvider value={appContext}>
+        <ReduxProvider store={store}>
             <BrowserRouter>
                 <PersistentDrawerLeft></PersistentDrawerLeft>
 
@@ -100,8 +83,8 @@ ReactDOM.render(
             </BrowserRouter>
 
         </ReduxProvider>
-/*     </AppContextProvider>
- */    ,
+    </AppContextProvider>
+    ,
     element,
 );
 

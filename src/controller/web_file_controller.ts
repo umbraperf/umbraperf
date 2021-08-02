@@ -49,11 +49,14 @@ export class WebFileController {
 
     }
 
-    public regiterFileAtWorker(file: File){
+    public registerFileAtWorker(file: File){
         this.worker.registerFile(file);
+        this.worker.readChunk(0, 0);
+
     }
 
     public async askJsForChunk(offset: number, chunkSize: number) {
+
 
         const file = store.getState().file;
         if (file != undefined) {

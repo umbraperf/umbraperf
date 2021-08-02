@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { WorkerAPI } from './worker_api';
 
 export interface IAppContext {
-    worker: Worker
+    //worker: Worker
+    worker: WorkerAPI,
 }
 
 const ctx = React.createContext<IAppContext | null>(null);

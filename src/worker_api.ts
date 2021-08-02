@@ -1,8 +1,12 @@
-import * as model from './model';
+import * as model from './worker';
+
 
 export class WorkerAPI {
-    worker: Worker;
+    worker!: Worker;
 
+    constructor(){
+        this.worker = new Worker(new URL('./worker.ts', import.meta.url));
+    }
 
     public registerFile(file: File) {
         this.worker.postMessage({
@@ -10,4 +14,11 @@ export class WorkerAPI {
             data: file
         });
     }
-}
+
+    public testWorker() {
+        this.worker.postMessage({
+            type: model.WorkerRequestType.TEST,
+            data: "123"
+        });
+    }
+} 

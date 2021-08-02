@@ -2,6 +2,7 @@ import { StateMutationType } from "./state_mutation";
 import { Result, createResultObject } from "./core_result";
 import store from '../app';
 import * as profiler_core from '../../crate/pkg/shell';
+//import { WorkerAPI } from "../worker_api";
 
 
 
@@ -12,7 +13,11 @@ export interface FileInfo {
 
 export class WebFile {
 
+    //worker = new WorkerAPI;
+
     public setNewFile(fileName: string, file: File, requestingComponent: string): void {
+
+        //this.worker.registerFile(file);
 
         store.dispatch({
             type: StateMutationType.SET_FILENAME,

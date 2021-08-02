@@ -8,6 +8,8 @@ export class WorkerAPI {
         this.worker = new Worker(new URL('./worker.ts', import.meta.url));
     }
 
+    //Requests from Main to Worker:
+
     public registerFile(file: File) {
         this.worker.postMessage({
             type: model.WorkerRequestType.REGISTER_FILE,
@@ -31,4 +33,12 @@ export class WorkerAPI {
             data: "123"
         });
     }
+
+    //Responses from Worker to Main:
+    
+/*     this.worker.onmessage( {
+
+    }) */
+    
+ 
 } 

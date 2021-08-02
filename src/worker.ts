@@ -98,8 +98,9 @@ worker.onmessage = (message) => {
           console.log(uInt8ArrayChunk);
 
           worker.postMessage({
-            messageId: 10,
-            requestId: 10,
+            //TODO message IDs, counter for request IDs
+            messageId: 201,
+            requestId: 201,
             type: WorkerResponseType.SENT_UINT8,
             data: uInt8ArrayChunk,
           });

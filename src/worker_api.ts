@@ -1,3 +1,4 @@
+import { storeWorkerResultInCore } from './controller/web_file_controller';
 import * as model from './worker';
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
@@ -27,6 +28,13 @@ export class WorkerAPI {
                 chunkSize: chunkSize,
             }
         });
+/*         this.worker.onmessage = (responeMessage) => {
+            if(responeMessage.data.type == model.WorkerResponseType.SENT_UINT8){
+                console.log(responeMessage);
+                return responeMessage.data.data;
+            }
+
+        } */
     }
 
     public testWorker() {
@@ -41,7 +49,27 @@ export class WorkerAPI {
 //Responses from Worker to Main:
 
 worker.addEventListener('message', message => {
-    console.log(message);
+
+    if (!message.type) return;
+
+    const messageType = message.data.type;
+    const messageData = message.data.data;
+
+
+    switch (messageType) {
+
+        case model.WorkerResponseType.SENT_UINT8:
+            console.log(messageData);
+            storeWorkerResultInCore(messageData);
+            break;
+            
+
+        default:
+            console.log(`UNKNOWN RESPONSE TYPE ${messageType}`);
+
+
+
+    }
 });
 
 

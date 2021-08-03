@@ -28,13 +28,44 @@ export class WorkerAPI {
                 chunkSize: chunkSize,
             }
         });
-/*         this.worker.onmessage = (responeMessage) => {
-            if(responeMessage.data.type == model.WorkerResponseType.SENT_UINT8){
-                console.log(responeMessage);
-                return responeMessage.data.data;
-            }
 
-        } */
+        return new Promise((resolve, reject) => {
+
+            worker.onmessage = responeMessage => {
+                if (responeMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
+                    resolve(responeMessage.data.data);
+                    //worker.terminate();
+                }
+            };
+
+            worker.onerror = error => {
+                reject(error);
+                //worker.terminate();
+            };
+        })
+        /* 
+                let promise = new Promise((resolve, reject) => {
+                    // the function is executed automatically when the promise is constructed
+        
+                    this.worker.onmessage = (responeMessage) => {
+                        if (responeMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
+                            console.log(responeMessage);
+        
+                            resolve(responeMessage.data.data);
+                        }
+                    }
+                });
+        
+                return promise; */
+
+
+        /*         this.worker.onmessage = (responeMessage) => {
+                    if(responeMessage.data.type == model.WorkerResponseType.SENT_UINT8){
+                        console.log(responeMessage);
+                        return responeMessage.data.data;
+                    }
+        
+                } */
     }
 
     public testWorker() {
@@ -62,7 +93,7 @@ worker.addEventListener('message', message => {
             console.log(messageData);
             storeWorkerResultInCore(messageData);
             break;
-            
+
 
         default:
             console.log(`UNKNOWN RESPONSE TYPE ${messageType}`);

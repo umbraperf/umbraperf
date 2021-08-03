@@ -53,13 +53,25 @@ export class WebFileController {
         this.worker.registerFile(file);
 
         //TODO remove:
-        this.worker.readChunk(0, 100);
-
+        //this.worker.readChunk(0, 100);
+        let a = this.askJsForChunk(0, 10);
+        console.log(a);
 
     }
 
     public askJsForChunk(offset: number, chunkSize: number) {
-        this.worker.readChunk(offset, chunkSize);
+        /*         let promise = new Promise(function(resolve, reject) {
+                    // executor (the producing code, "singer")
+                  }); */
+        //console.log(this.worker.readChunk(offset, chunkSize));
+
+        const awaitPromise = async () => {
+            const resolvedPromise = (await this.worker.readChunk(offset, chunkSize)) as Uint8Array;
+            console.log(resolvedPromise);
+            return resolvedPromise;
+          };
+
+        return awaitPromise();
     }
 
     public storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {

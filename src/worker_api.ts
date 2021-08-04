@@ -1,6 +1,5 @@
-import { storeWorkerResultInCore } from './controller/web_file_controller';
+import { storeResultFromRust } from './controller/web_file_controller';
 import * as model from './worker';
-import * as profiler_core from '../crate/pkg/shell';
 
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
@@ -98,6 +97,7 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
+            //storeResultFromRust(messageData);
             //TODO result from rust in redux, stop loading redux
             break;
 

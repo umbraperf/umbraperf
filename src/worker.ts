@@ -114,7 +114,7 @@ worker.onmessage = (message) => {
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
 
-      profiler_core.analyzeFile();
+      profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
 
       /*       //TODO remove
             registeredFile = {

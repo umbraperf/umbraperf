@@ -14,7 +14,7 @@ impl WebFileReader {
     pub fn new_from_file(file_size: i32) -> Self {
         Self {
             offset: 0,
-            length: file_size
+            length: file_size as u64
         }
     }
 }

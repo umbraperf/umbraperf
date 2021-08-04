@@ -6394,6 +6394,11 @@ void-elements@^2.0.0:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
+wait.for-es6@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/wait.for-es6/-/wait.for-es6-0.1.0.tgz#3390c6ceada9bb03658ced7600dff0aa8b36403d"
+  integrity sha1-M5DGzq2puwNljO12AN/wqos2QD0=
+
 warning@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
@@ -6668,19 +6673,6 @@ word-wrap@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
-
-worker-loader@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/worker-loader/-/worker-loader-3.0.8.tgz#5fc5cda4a3d3163d9c274a4e3a811ce8b60dbb37"
-  integrity sha512-XQyQkIFeRVC7f7uRhFdNMe/iJOdO6zxAaR3EWbDp45v3mDhrTi+++oswKNxShUNjPC/1xUp5DB29YKLhFo129g==
-  dependencies:
-    loader-utils "^2.0.0"
-    schema-utils "^3.0.0"
-
-workerjs@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/workerjs/-/workerjs-0.1.1.tgz#b7939ed54400937c1c1ef35b74b37dd9bbcbdde6"
-  integrity sha1-t5Oe1UQAk3wcHvNbdLN92bvL3eY=
 
 wrap-ansi@^5.1.0:
   version "5.1.0"

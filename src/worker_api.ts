@@ -1,5 +1,7 @@
 import { storeWorkerResultInCore } from './controller/web_file_controller';
 import * as model from './worker';
+import * as profiler_core from '../crate/pkg/shell';
+
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
 
@@ -18,6 +20,15 @@ export class WorkerAPI {
             type: model.WorkerRequestType.REGISTER_FILE,
             data: file
         });
+
+        this.worker.onmessage = responseMessage => {
+            if (responseMessage.data.type == model.WorkerResponseType.REGISTERED_FILE) {
+                console.log(this.worker);
+                profiler_core.startFileReading(this.worker);
+                //worker.terminate();
+            }
+
+        }
     }
 
     public readChunk(offset: number, chunkSize: number) {
@@ -31,9 +42,9 @@ export class WorkerAPI {
 
         return new Promise((resolve, reject) => {
 
-            worker.onmessage = responeMessage => {
-                if (responeMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
-                    resolve(responeMessage.data.data);
+            worker.onmessage = responseMessage => {
+                if (responseMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
+                    resolve(responseMessage.data.data);
                     //worker.terminate();
                 }
             };

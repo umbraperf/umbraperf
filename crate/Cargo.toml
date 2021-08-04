@@ -31,6 +31,7 @@ features = [
   'HtmlCanvasElement',
   'WebSocket',
   'Performance',
+  'Worker'
   ]
 
 [dependencies]

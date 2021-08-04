@@ -71,7 +71,7 @@ pub fn analyze_file(file_size: i32){
 
     let mut newrdr = ReaderBuilder::new();
     newrdr.has_headers(false);
-    newrdr.buffer_capacity(12);
+    newrdr.buffer_capacity(6);
     let mut rdr = newrdr.from_reader(WebFileReader::new_from_file(file_size));
 
     let mut record = ByteRecord::new();

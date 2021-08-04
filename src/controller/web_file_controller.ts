@@ -52,7 +52,7 @@ export class WebFileController {
 
         //TODO remove:
         //this.worker.readChunk(0, 100);
-        let a = this.askJsForChunk(0, 10);
+        //let a = this.askJsForChunk(0, 10);
 
     }
 

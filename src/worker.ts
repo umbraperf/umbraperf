@@ -9,7 +9,8 @@ export enum WorkerRequestType {
 };
 
 export enum WorkerResponseType {
-  SENT_UINT8 = 'SENT_UINT8'
+  SENT_UINT8 = 'SENT_UINT8',
+  REGISTERED_FILE = 'REGISTERED_FILE',
 };
 
 export type WorkerRequest<T, P> = {
@@ -31,7 +32,9 @@ export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.SENT_UINT8, Uint8Array>;
+  WorkerResponse<WorkerResponseType.SENT_UINT8, Uint8Array> |
+  WorkerResponse<WorkerResponseType.REGISTERED_FILE, string> 
+  ;
 
 
 export interface IRequestWorker {
@@ -72,7 +75,14 @@ worker.onmessage = (message) => {
         size: (messageData as File).size,
       }
 
-      profiler_core.triggerScanFile(this);
+      worker.postMessage({
+        //TODO message IDs, counter for request IDs
+        messageId: 201,
+        requestId: 201,
+        type: WorkerResponseType.REGISTERED_FILE,
+        data: registeredFile.file!.name,
+      });
+
       break;
 
     case WorkerRequestType.READ_CHUNK:

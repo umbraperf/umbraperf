@@ -21,16 +21,23 @@ export class WorkerAPI {
             data: file
         });
 
-        this.worker.onmessage = responseMessage => {
+        //profiler_core.startFileReading(this.worker);
+        console.log(this.worker);
+
+
+
+/*         this.worker.onmessage = responseMessage => {
             if (responseMessage.data.type == model.WorkerResponseType.REGISTERED_FILE) {
                 console.log(this.worker);
-                profiler_core.startFileReading(this.worker);
+                //profiler_core.analyzeFile();
                 //worker.terminate();
+                return 5;
             }
 
-        }
+        } */
     }
 
+    //TODO remove
     public readChunk(offset: number, chunkSize: number) {
         this.worker.postMessage({
             type: model.WorkerRequestType.READ_CHUNK,
@@ -42,17 +49,6 @@ export class WorkerAPI {
 
         return new Promise((resolve, reject) => {
 
-            worker.onmessage = responseMessage => {
-                if (responseMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
-                    resolve(responseMessage.data.data);
-                    //worker.terminate();
-                }
-            };
-
-            worker.onerror = error => {
-                reject(error);
-                //worker.terminate();
-            };
         })
         /* 
                 let promise = new Promise((resolve, reject) => {
@@ -100,9 +96,9 @@ worker.addEventListener('message', message => {
 
     switch (messageType) {
 
-        case model.WorkerResponseType.SENT_UINT8:
+        case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
-            storeWorkerResultInCore(messageData);
+            //TODO result from rust in redux, stop loading redux
             break;
 
 

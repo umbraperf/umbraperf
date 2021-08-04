@@ -9,7 +9,7 @@ export enum WorkerRequestType {
 };
 
 export enum WorkerResponseType {
-  SENT_UINT8 = 'SENT_UINT8',
+  STORE_RESULT = 'STORE_RESULT',
   REGISTERED_FILE = 'REGISTERED_FILE',
 };
 
@@ -32,8 +32,8 @@ export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.SENT_UINT8, Uint8Array> |
-  WorkerResponse<WorkerResponseType.REGISTERED_FILE, string> 
+  WorkerResponse<WorkerResponseType.STORE_RESULT, number> |
+  WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
   ;
 
 
@@ -42,23 +42,64 @@ export interface IRequestWorker {
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
 }
 
+interface IGlobalFileDictionary {
+  [key: number]: File;
+}
+
+let globalFileIdCounter = 0;
+let globalFileDictionary: IGlobalFileDictionary = {}
+
+const worker: IRequestWorker = self as any;
+console.log("I WAS AT THE NEW WORKER");
+
 interface IRegisteredFile {
   file: File | undefined,
   size: number | undefined,
 }
-
-const worker: IRequestWorker = self as any;
 let registeredFile: IRegisteredFile = {
   file: undefined,
   size: undefined,
 };
 
-console.log("I WAS AT THE NEW WORKER");
+export function readFileChunk(offset: number, chunkSize: number) {
+
+  if (globalFileDictionary[0]) {
+    const file = globalFileDictionary[0];
+    const remainingFileSize = file.size - offset;
+
+    let chunk = undefined;
+
+    if (remainingFileSize > 0) {
+      const readPart = Math.min(remainingFileSize, chunkSize);
+      chunk = file.slice(offset, offset + readPart);
+
+      const reader = new FileReaderSync();
+      const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
+      const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
+
+      console.log(uInt8ArrayChunk);
+
+      return uInt8ArrayChunk;
+    }
+  }
+}
+
+function stroreResultFromRust(result: number) {
+
+  worker.postMessage({
+    //TODO message IDs, counter for request IDs
+    messageId: 201,
+    requestId: 201,
+    type: WorkerResponseType.STORE_RESULT,
+    data: result,
+  });
+
+}
 
 // Receive from the main thread
 worker.onmessage = (message) => {
 
-  console.log(message);
+  console.log("message:" + message);
 
   if (!message.type) return;
 
@@ -70,53 +111,61 @@ worker.onmessage = (message) => {
     case WorkerRequestType.REGISTER_FILE:
       console.log("REGISTER FILE");
       console.log(messageData);
-      registeredFile = {
-        file: messageData as File,
-        size: (messageData as File).size,
-      }
 
+      globalFileDictionary[globalFileIdCounter] = messageData as File;
+
+      profiler_core.analyzeFile();
+
+      /*       //TODO remove
+            registeredFile = {
+              file: messageData as File,
+              size: (messageData as File).size,
+            } */
+
+
+      //TODO remove
       worker.postMessage({
-        //TODO message IDs, counter for request IDs
         messageId: 201,
         requestId: 201,
         type: WorkerResponseType.REGISTERED_FILE,
-        data: registeredFile.file!.name,
+        data: globalFileDictionary[0].name,
       });
 
+      globalFileIdCounter++;
       break;
 
-    case WorkerRequestType.READ_CHUNK:
-      if (registeredFile.file) {
-        console.log(`Read Chunk at ${(messageData as any).offset}`)
-        console.log(registeredFile);
-
-        const offset = (messageData as any).offset;
-        const chunkSize = (messageData as any).chunkSize;
-        const file = registeredFile.file;
-        const remainingFileSize = file.size - offset;
-
-        let chunk = undefined;
-
-        if (remainingFileSize > 0) {
-          const readPart = Math.min(remainingFileSize, chunkSize);
-          chunk = file.slice(offset, offset + readPart);
-
-          const reader = new FileReaderSync();
-          const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
-          const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
-
-          console.log(uInt8ArrayChunk);
-
-          worker.postMessage({
-            //TODO message IDs, counter for request IDs
-            messageId: 201,
-            requestId: 201,
-            type: WorkerResponseType.SENT_UINT8,
-            data: uInt8ArrayChunk,
-          });
-        }
-      }
-      break;
+    /*     case WorkerRequestType.READ_CHUNK:
+          if (registeredFile.file) {
+            console.log(`Read Chunk at ${(messageData as any).offset}`)
+            console.log(registeredFile);
+    
+            const offset = (messageData as any).offset;
+            const chunkSize = (messageData as any).chunkSize;
+            const file = registeredFile.file;
+            const remainingFileSize = file.size - offset;
+    
+            let chunk = undefined;
+    
+            if (remainingFileSize > 0) {
+              const readPart = Math.min(remainingFileSize, chunkSize);
+              chunk = file.slice(offset, offset + readPart);
+    
+              const reader = new FileReaderSync();
+              const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
+              const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
+    
+              console.log(uInt8ArrayChunk);
+    
+              worker.postMessage({
+                //TODO message IDs, counter for request IDs
+                messageId: 201,
+                requestId: 201,
+                type: WorkerResponseType.SENT_UINT8,
+                data: uInt8ArrayChunk,
+              });
+            }
+          } */
+    //break;
 
     case WorkerRequestType.TEST:
       console.log(messageData);

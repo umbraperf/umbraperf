@@ -1,20 +1,16 @@
 use std::io::{Seek, SeekFrom, Read};
 use std::io::Result;
-use super::bindings::WebFile;
 
 pub struct WebFileReader {
-    file: WebFile,
     offset: u64,
     length: u64,
 }
 
 impl WebFileReader {
-    pub fn new_from_file(file: WebFile) -> Self {
-        let file_length: u64 = file.length();
+    pub fn new_from_file() -> Self {
         Self {
-            file,
             offset: 0,
-            length: file_length
+            length: 0
         }
     }
 }
@@ -39,9 +35,9 @@ impl Seek for WebFileReader {
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
         /* let read_here = out.length.min(self.length - self.offset);
-        let read = self.file.ask_js_for_chunk(out, read_here);
+        let worker = self.file.ask_js_for_chunk(out, read_here);
 
-        worker.onMes
+        ....onmessage(worker).add -> 
         self.offset += read_here;
         Ok(read_here) */
         let size: usize = 0;

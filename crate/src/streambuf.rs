@@ -11,10 +11,10 @@ pub struct WebFileReader {
 }
 
 impl WebFileReader {
-    pub fn new_from_file() -> Self {
+    pub fn new_from_file(file_size: i32) -> Self {
         Self {
             offset: 0,
-            length: 12
+            length: file_size
         }
     }
 }

@@ -73,17 +73,11 @@ pub fn analyze_file(file_size: i32){
     newrdr.has_headers(false);
     newrdr.buffer_capacity(12);
     let mut rdr = newrdr.from_reader(WebFileReader::new_from_file(file_size));
-    
-    print_to_js("Test1");
-    let mut record = ByteRecord::new();
-    let outreader = rdr.read_byte_record(&mut record);
-    print_to_js_with_obj(&format!("{:?}", &mut record).into());
-    let outreader = rdr.read_byte_record(&mut record);
-    print_to_js("Test2");
-    print_to_js_with_obj(&format!("{:?}", &mut record).into());
-    print_to_js_with_obj(&format!("{:?}", &outreader.unwrap()).into());
 
-    
+    let mut record = ByteRecord::new();
+    while rdr.read_byte_record(&mut record).unwrap() == true {
+        print_to_js_with_obj(&format!("{:?}", &record).into());
+    }
 
     /* let arrow_reader_builder = arrow::c&sv::reader::ReaderBuilder::new();
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file());

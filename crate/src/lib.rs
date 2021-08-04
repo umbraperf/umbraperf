@@ -66,13 +66,13 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 
 
 #[wasm_bindgen(js_name = "analyzeFile")]
-pub fn analyze_file(){
+pub fn analyze_file(file_size: i32){
     print_to_js("Analyzing is started");
 
     let mut newrdr = ReaderBuilder::new();
     newrdr.has_headers(false);
     newrdr.buffer_capacity(12);
-    let mut rdr = newrdr.from_reader(WebFileReader::new_from_file());
+    let mut rdr = newrdr.from_reader(WebFileReader::new_from_file(file_size));
     
     print_to_js("Test1");
     let mut record = ByteRecord::new();

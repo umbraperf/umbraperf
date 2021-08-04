@@ -103,4 +103,3 @@ worker.addEventListener('message', message => {
     }
 });
 
-

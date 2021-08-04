@@ -1,9 +1,7 @@
 import { StateMutationType } from "../model/state_mutation";
 import { Result, createResultObject } from "../model/core_result";
 import store from '../app';
-import * as profiler_core from '../../crate/pkg/shell';
-import { WorkerAPI } from "src/worker_api";
-
+import { WorkerAPI} from "src/worker_api";
 
 
 export interface FileInfo {
@@ -55,7 +53,6 @@ export class WebFileController {
         //TODO remove:
         //this.worker.readChunk(0, 100);
         let a = this.askJsForChunk(0, 10);
-        console.log(a);
 
     }
 
@@ -71,7 +68,15 @@ export class WebFileController {
             return resolvedPromise;
           };
 
-        return awaitPromise();
+        return awaitPromise().then(
+            (result) => {
+                return result;
+            }
+        ).catch(
+            (error) => {
+                return error;
+            }
+        );
     }
 
     public storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {

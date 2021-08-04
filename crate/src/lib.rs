@@ -1,23 +1,22 @@
 extern crate wasm_bindgen;
+use arrow::csv::Reader;
+use streambuf::WebFileReader;
 use wasm_bindgen::prelude::*;
-use bindings::*;
+use csv::ReaderBuilder;
+use csv::ByteRecord;
 
-use js_sys::{Uint8Array};
-
-use std::sync::Arc;
 use std::cell::RefCell;
-use std::io::{BufRead};
-use std::{io};
+
+use std::io::{BufRead, Read};
 
 extern crate arrow;
-use arrow::array::Array;
 
 extern crate console_error_panic_hook;
 
-mod bindings;
 mod console;
 mod console_js_log;
 mod streambuf;
+mod bindings;
 
 //STATE
 pub struct State {
@@ -64,16 +63,34 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 }
 
 
+
+
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(){
-    print_to_js("Analyze");
-    let result = binding_read_chunk_from_js(0, 10);
-    print_to_js(&result.to_string());
-}
+    print_to_js("Analyzing is started");
 
-#[wasm_bindgen]
-pub fn binding_read_chunk_from_js(offset: i32, bytes: i32) -> i32 {
-    return bindings::read_file_chunk(offset, bytes)
+    let mut newrdr = ReaderBuilder::new();
+    let mut rdr = newrdr.from_reader(WebFileReader::new_from_file());
+    print_to_js("Test1");
+    let mut record = ByteRecord::new();
+    let outreader = rdr.read_byte_record(&mut record);
+    print_to_js("Test2");
+    print_to_js_with_obj(&format!("{:?}", &mut record).into());
+    print_to_js_with_obj(&format!("{:?}", &outreader.unwrap()).into());
+    print_to_js_with_obj(&format!("{:?}", &mut record).into());
+
+
+    
+
+    /* let arrow_reader_builder = arrow::c&sv::reader::ReaderBuilder::new();
+    let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file());
+    let mut reader = cursor_reader.unwrap();
+
+    print_to_js("Reader");
+
+    let batch = &reader.next().unwrap().unwrap();
+    print_to_js_with_obj(&format!("{:?}", &batch).into()); */
+
 }
 
 

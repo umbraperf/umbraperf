@@ -17,28 +17,6 @@ export class WebFileController {
         this.worker = worker;
     }
 
-    /*     public setNewFile(fileName: string, file: File, requestingComponent: string): void {
-    
-            //this.worker.registerFile(file);
-    
-            store.dispatch({
-                type: StateMutationType.SET_FILENAME,
-                data: fileName,
-            });
-    
-            store.dispatch({
-                type: StateMutationType.SET_FILE,
-                data: file,
-            });
-    
-            store.dispatch({
-                type: StateMutationType.SET_RESULT,
-                data: undefined,
-            });
-    
-            profiler_core.triggerScanFile(this);
-    
-        } */
 
     public getLength() {
         if (undefined !== store.getState().file) {
@@ -56,11 +34,7 @@ export class WebFileController {
 
     }
 
-    public askJsForChunk(offset: number, chunkSize: number) {
-        /*         let promise = new Promise(function(resolve, reject) {
-                    // executor (the producing code, "singer")
-                  }); */
-        //console.log(this.worker.readChunk(offset, chunkSize));
+/*     public askJsForChunk(offset: number, chunkSize: number) {
 
         const awaitPromise = async () => {
             const resolvedPromise = (await this.worker.readChunk(offset, chunkSize)) as Uint8Array;
@@ -77,27 +51,24 @@ export class WebFileController {
                 return error;
             }
         );
-    }
+    } */
 
-    public storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {
 
-        console.log("result received from rust!");
-        const result = createResultObject(request, x, y, z);
-        console.log(result);
-
-        store.dispatch({
-            type: StateMutationType.SET_RESULTLOADING,
-            data: false,
-        });
-        store.dispatch({
-            type: StateMutationType.SET_RESULT,
-            data: result,
-        });
-        console.log(store.getState());
-    }
 }
 
-export function storeWorkerResultInCore(chunk: Uint8Array) {
-    console.log(chunk);
-    return chunk;
+export function storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {
+
+    console.log("result received from rust!");
+    const result = createResultObject(request, x, y, z);
+    console.log(result);
+
+    store.dispatch({
+        type: StateMutationType.SET_RESULTLOADING,
+        data: false,
+    });
+    store.dispatch({
+        type: StateMutationType.SET_RESULT,
+        data: result,
+    });
+    console.log(store.getState());
 }

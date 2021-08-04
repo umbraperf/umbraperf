@@ -1,5 +1,9 @@
+
 use std::io::{Seek, SeekFrom, Read};
 use std::io::Result;
+use wasm_bindgen::prelude::*;
+
+use crate::bindings;
 
 pub struct WebFileReader {
     offset: u64,
@@ -10,7 +14,7 @@ impl WebFileReader {
     pub fn new_from_file() -> Self {
         Self {
             offset: 0,
-            length: 0
+            length: 6
         }
     }
 }
@@ -34,13 +38,46 @@ impl Seek for WebFileReader {
 
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
-        /* let read_here = out.length.min(self.length - self.offset);
-        let worker = self.file.ask_js_for_chunk(out, read_here);
+        print_to_js("IAM READING");
+        let array_length = out.len() as u64;
+        let read_size = array_length.min(self.length - self.offset);
+        print_to_js("READ_SIZE");
+        print_to_js(&read_size.to_string());
 
-        ....onmessage(worker).add -> 
-        self.offset += read_here;
-        Ok(read_here) */
-        let size: usize = 0;
-        Ok(size)
+        let left_to_read = self.length - read_size;
+
+        if read_size == 0 {
+            return   Ok(left_to_read as usize)
+        }
+        let uint8array = bindings::read_file_chunk(self.offset as i32,read_size as i32);
+        
+        let mut counter = 0;
+        let vec = uint8array.to_vec();
+        let length = vec.len() as i32;
+
+        print_to_js("LENGTH");
+        print_to_js_with_obj(&format!("{:?}", &length).into()); 
+
+        while counter < length {
+            out[counter as usize] = vec[*&counter as usize];
+            print_to_js(&out[*&counter as usize].to_string());
+            print_to_js_with_obj(&format!("{:?}", &out).into()); 
+            counter += 1;
+        }
+
+        print_to_js_with_obj(&format!("{:?}", &out).into()); 
+        
+        self.offset += read_size as u64;
+        Ok(left_to_read as usize)
     }
+}
+
+fn print_to_js(s: &str) {
+    use web_sys::console;
+    unsafe { console::log_1(&format!("{}", s).into()); }
+}
+
+fn print_to_js_with_obj(s: &JsValue) {
+    use web_sys::console;
+    unsafe { console::log_1(s); }
 }

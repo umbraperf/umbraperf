@@ -1,5 +1,6 @@
 extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
+use bindings::*;
 
 use js_sys::{Uint8Array};
 
@@ -10,7 +11,6 @@ use std::{io};
 
 extern crate arrow;
 use arrow::array::Array;
-use web_sys::Worker;
 
 extern crate console_error_panic_hook;
 
@@ -18,8 +18,6 @@ mod bindings;
 mod console;
 mod console_js_log;
 mod streambuf;
-
-use bindings::WebFile;
 
 //STATE
 pub struct State {
@@ -65,22 +63,19 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
     return 0;
 }
 
-#[wasm_bindgen(js_name = "startFileReading")]
-pub fn start_file_reading(wo: web_sys::Worker) {
-    print_to_js_with_obj(&wo);
-    web_sys::Worker::post_message(&wo, &format!("HALLO").into());
-    print_to_js("Start File Reading triggerd.");
+
+#[wasm_bindgen(js_name = "analyzeFile")]
+pub fn analyze_file(){
+    print_to_js("Analyze");
+    let result = binding_read_chunk_from_js(0, 10);
+    print_to_js(&result.to_string());
 }
 
-
-async fn read_chunk(p: &WebFile, from: i32, size: i32) -> Result<Uint8Array, js_sys::Error> {
-    let s: &str = "t";
-    let array = p.ask_js_for_chunk(from, size).await?.into();  
-    
-    print_to_js("Print js-chunk");
-    print_to_js_with_obj(&format!("{:?}",&array).into());
-    Ok(array)
+#[wasm_bindgen]
+pub fn binding_read_chunk_from_js(offset: i32, bytes: i32) -> i32 {
+    return bindings::read_file_chunk(offset, bytes)
 }
+
 
 // PRINTING
 fn print_to_js(s: &str) {

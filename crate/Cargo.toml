@@ -31,7 +31,9 @@ features = [
   'HtmlCanvasElement',
   'WebSocket',
   'Performance',
-  'Worker'
+  'Worker',
+  'EventTarget',
+  'EventListener'
   ]
 
 [dependencies]

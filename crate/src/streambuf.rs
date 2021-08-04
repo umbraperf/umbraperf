@@ -1,6 +1,7 @@
 
 use std::io::{Seek, SeekFrom, Read};
 use std::io::Result;
+use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 
 use crate::bindings;
@@ -56,14 +57,14 @@ impl Read for WebFileReader {
         let uint8array = bindings::read_file_chunk(self.offset as i32,read_size as i32);
         
         let mut counter = 0;
-        let vec = uint8array.to_vec();
-        let length = vec.len() as i32;
+        //let vec = uint8array.to_vec();
+        let length = Uint8Array::byte_length(&uint8array);
 
         print_to_js("LENGTH");
         print_to_js_with_obj(&format!("{:?}", &length).into()); 
 
         while counter < length {
-            out[counter as usize] = vec[*&counter as usize];
+            out[counter as usize] = Uint8Array::get_index(&uint8array,counter as u32);
             print_to_js(&out[*&counter as usize].to_string());
             print_to_js_with_obj(&format!("{:?}", &out).into()); 
             counter += 1;

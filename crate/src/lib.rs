@@ -70,15 +70,18 @@ pub fn analyze_file(){
     print_to_js("Analyzing is started");
 
     let mut newrdr = ReaderBuilder::new();
+    newrdr.has_headers(false);
+    newrdr.buffer_capacity(12);
     let mut rdr = newrdr.from_reader(WebFileReader::new_from_file());
+    
     print_to_js("Test1");
     let mut record = ByteRecord::new();
+    let outreader = rdr.read_byte_record(&mut record);
+    print_to_js_with_obj(&format!("{:?}", &mut record).into());
     let outreader = rdr.read_byte_record(&mut record);
     print_to_js("Test2");
     print_to_js_with_obj(&format!("{:?}", &mut record).into());
     print_to_js_with_obj(&format!("{:?}", &outreader.unwrap()).into());
-    print_to_js_with_obj(&format!("{:?}", &mut record).into());
-
 
     
 

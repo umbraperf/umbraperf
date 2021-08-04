@@ -14,7 +14,7 @@ impl WebFileReader {
     pub fn new_from_file() -> Self {
         Self {
             offset: 0,
-            length: 6
+            length: 12
         }
     }
 }
@@ -46,9 +46,7 @@ impl Read for WebFileReader {
 
         let left_to_read = self.length - read_size;
 
-        if read_size == 0 {
-            return   Ok(left_to_read as usize)
-        }
+        
         let uint8array = bindings::read_file_chunk(self.offset as i32,read_size as i32);
         
         let mut counter = 0;
@@ -68,7 +66,10 @@ impl Read for WebFileReader {
         print_to_js_with_obj(&format!("{:?}", &out).into()); 
         
         self.offset += read_size as u64;
-        Ok(left_to_read as usize)
+        if read_size == 0 {
+            return   Ok(read_size as usize)
+        }
+        Ok(read_size as usize)
     }
 }
 

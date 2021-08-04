@@ -12,6 +12,8 @@ pub struct WebFileReader {
 
 impl WebFileReader {
     pub fn new_from_file(file_size: i32) -> Self {
+        print_to_js("LLLLLLEENGHT");
+        print_to_js_with_obj(&format!("{:?}", &file_size).into());
         Self {
             offset: 0,
             length: file_size as u64
@@ -38,9 +40,13 @@ impl Seek for WebFileReader {
 
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
+        
         print_to_js("IAM READING");
         let array_length = out.len() as u64;
         let read_size = array_length.min(self.length - self.offset);
+        if read_size == 0 {
+            return Ok(read_size as usize)
+        }
         print_to_js("READ_SIZE");
         print_to_js(&read_size.to_string());
 
@@ -66,9 +72,7 @@ impl Read for WebFileReader {
         print_to_js_with_obj(&format!("{:?}", &out).into()); 
         
         self.offset += read_size as u64;
-        if read_size == 0 {
-            return   Ok(read_size as usize)
-        }
+       
         Ok(read_size as usize)
     }
 }

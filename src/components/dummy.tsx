@@ -6,7 +6,7 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
 import * as profiler_core from '../../crate/pkg/shell';
 
-import styles from '../style/dummy.module.css';
+import styles from '../style/upload.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { Result } from 'src/model/core_result';
 

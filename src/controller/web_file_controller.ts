@@ -26,7 +26,7 @@ export class WebFileController {
 export function storeResultFromRust(requestId: number, result: number) {
 
     console.log("result received from rust!");
-    const resultObject = createResultObject(result, requestId, [], undefined, undefined);
+    const resultObject = createResultObject(result, requestId, [1,2,3], undefined, undefined);
     console.log(resultObject);
 
     store.dispatch({

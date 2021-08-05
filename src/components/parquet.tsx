@@ -71,9 +71,10 @@ class Parquet extends React.Component<Props> {
         { id: "test5", value: 5 }];
 
         const test: Result = {
-            request: "parquet",
+            request: 100,
             x: ["test3", "test4", "test5"],
             y: [5, 4, 3],
+            test: 1,
         };
 
         const testFromRust: Result = this.props.result!;
@@ -130,9 +131,7 @@ class Parquet extends React.Component<Props> {
     componentDidUpdate(prevProps: Props): void {
         ;
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            if (this.props.result.request === "parquet") {
                 this.createVisualization();
-            }
         }
     }
 

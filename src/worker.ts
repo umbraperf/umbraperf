@@ -84,15 +84,17 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
-function stroreResultFromRust(result: number) {
+export function stroreResultFromRust(result: number, requestId: number) {
 
-  worker.postMessage({
-    //TODO message IDs, counter for request IDs
-    messageId: 201,
-    requestId: 201,
-    type: WorkerResponseType.STORE_RESULT,
-    data: result,
-  });
+  if(result){
+    worker.postMessage({
+      //TODO message IDs, counter for request IDs
+      messageId: 201,
+      requestId: requestId,
+      type: WorkerResponseType.STORE_RESULT,
+      data: result,
+    });  
+  }
 
 }
 
@@ -121,15 +123,6 @@ worker.onmessage = (message) => {
               file: messageData as File,
               size: (messageData as File).size,
             } */
-
-
-      //TODO remove
-      worker.postMessage({
-        messageId: 201,
-        requestId: 201,
-        type: WorkerResponseType.REGISTERED_FILE,
-        data: globalFileDictionary[0].name,
-      });
 
       globalFileIdCounter++;
       break;

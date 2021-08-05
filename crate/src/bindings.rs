@@ -9,7 +9,3 @@ extern "C" {
     pub fn read_file_chunk(offset: i32, bytes: i32) -> Uint8Array;
 
 }
-
-pub fn binding_read_chunk_from_js(offset: i32, bytes: i32) -> Uint8Array {
-    return read_file_chunk(offset, bytes);
-}

@@ -1,41 +1,30 @@
 extern crate wasm_bindgen;
-use arrow::array::Int64Array;
-use arrow::array::PrimitiveArray;
-use arrow::csv::Reader;
-use arrow::datatypes::Int64Type;
-use arrow::record_batch::RecordBatch;
-use streambuf::WebFileReader;
 use wasm_bindgen::prelude::*;
-use csv::ReaderBuilder;
-use csv::ByteRecord;
 
 use std::cell::RefCell;
-use arrow::compute::kernels::aggregate;
 
-use std::io::{BufRead, Read};
-
+// Arrow
 extern crate arrow;
+use arrow::datatypes::Int64Type;
+use arrow::record_batch::RecordBatch;
 
 extern crate console_error_panic_hook;
 
 mod console;
 mod console_js_log;
 mod streambuf;
+use streambuf::WebFileReader;
+
+use crate::bindings::{store_result_from_rust};
 mod bindings;
 
 //STATE
 pub struct State {
-    pub vec: Vec<u8>,
-    pub processed_chunks: i32,
-    pub expected_chunks: i32,
     pub sum: i32,
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
-        vec: Vec::new(),
-        processed_chunks: 0,
-        expected_chunks: 0,
         sum: 0,
     });
 }
@@ -60,29 +49,14 @@ pub fn get_state() -> i32 {
     with_state(|s| s.sum)
 }
 
-pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
-    with_state_mut(|s| {
-        s.expected_chunks = expected_chunks;
-    });
-    return 0;
+pub fn set_sum(new_sum: i32) {
+    with_state_mut(|s| s.sum = new_sum);
 }
-
-
 
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
     print_to_js("Analyzing is started");
-
-    /* let mut newrdr = ReaderBuilder::new();
-    newrdr.has_headers(false);
-    newrdr.buffer_capacity(6);
-    let mut rdr = newrdr.from_reader(WebFileReader::new_from_file(file_size));
-
-    let mut record = ByteRecord::new();
-    while rdr.read_byte_record(&mut record).unwrap() == true {
-        print_to_js_with_obj(&format!("{:?}", &record).into());
-    } */
 
     let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(false).with_batch_size(4000);
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
@@ -96,22 +70,23 @@ pub fn analyze_file(file_size: i32){
 
 }
 
-fn aggregate_sum(recordBatch: &RecordBatch) {
-    let array = recordBatch.column(1);
+fn aggregate_sum(record_batch: &RecordBatch) {
+    let array = record_batch.column(1);
     let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
     let sum = arrow::compute::kernels::aggregate::sum(primitive_array);
     print_to_js_with_obj(&format!("{}", sum.unwrap()).into());
-
+    set_sum(sum.unwrap() as i32);
+    store_result_from_rust(sum.unwrap() as i32, 0);
 }
 
 
 // PRINTING
 fn print_to_js(s: &str) {
     use web_sys::console;
-    unsafe { console::log_1(&format!("{}", s).into()); }
+    console::log_1(&format!("{}", s).into()); 
 }
 
 fn print_to_js_with_obj(s: &JsValue) {
     use web_sys::console;
-    unsafe { console::log_1(s); }
+    console::log_1(s); 
 }

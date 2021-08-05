@@ -1,5 +1,8 @@
 extern crate wasm_bindgen;
+use arrow::array::Int64Array;
+use arrow::array::PrimitiveArray;
 use arrow::csv::Reader;
+use arrow::datatypes::Int64Type;
 use arrow::record_batch::RecordBatch;
 use streambuf::WebFileReader;
 use wasm_bindgen::prelude::*;
@@ -89,10 +92,15 @@ pub fn analyze_file(file_size: i32){
 
     let batch = &reader.next().unwrap().unwrap();
     print_to_js_with_obj(&format!("{:?}", &batch).into()); 
+    aggregate_sum(&batch);
 
 }
 
 fn aggregate_sum(recordBatch: &RecordBatch) {
+    let array = recordBatch.column(1);
+    let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
+    let sum = arrow::compute::kernels::aggregate::sum(primitive_array);
+    print_to_js_with_obj(&format!("{}", sum.unwrap()).into());
 
 }
 

@@ -7,6 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
 
 import './globals.css';
+import styles from './style/main-app.module.css';
 
 import Dummy from './components/dummy';
 import Parquet from './components/parquet';
@@ -49,37 +50,42 @@ ReactDOM.render(
     <AppContextProvider value={appContext}>
         <ReduxProvider store={store}>
             <BrowserRouter>
-                <PersistentDrawerLeft></PersistentDrawerLeft>
 
-                <div>
-                    <h3>Navigation:</h3>
-                    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                        <ul className="navbar-nav mr-auto">
-                            <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
-                            <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
-                        </ul>
-                    </nav>
-                    <hr />
+                {/*                 style: css module with additional static class (cloud also be a seccond module)
+ */}                <div className={`app ${styles.app}`}>
+
+                    <div className="appNavigation">
+                        <PersistentDrawerLeft></PersistentDrawerLeft>
+
+                        <h3>Navigation:</h3>
+                        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                            <ul className="navbar-nav mr-auto">
+                                <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
+                                <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
+                            </ul>
+                        </nav>
+                        <hr />
+                    </div>
+
+                    <div className="appBody">
+                        <Switch>
+
+                            <Route exact path="/">
+                                <Redirect to="/parquet" />
+                            </Route>
+
+                            {routes.map((route: any) => (
+                                <Route exact path={route.path} key={route.path}>
+                                    <route.component />
+                                </Route>
+                            ))}
+                            <Route path="*">
+                                <NoMatch />
+                            </Route>
+                        </Switch>
+                    </div>
                 </div>
 
-                <Switch>
-
-                    <Route exact path="/">
-                        <Redirect to="/parquet" />
-                    </Route>
-
-                    {routes.map((route: any) => (
-                        <Route exact path={route.path} key={route.path}>
-                            <route.component />
-                        </Route>
-                    ))}
-
-                    {/*                 <Route exact path="/dummy" component={Dummy} />
- */}
-                    <Route path="*">
-                        <NoMatch />
-                    </Route>
-                </Switch>
             </BrowserRouter>
 
         </ReduxProvider>

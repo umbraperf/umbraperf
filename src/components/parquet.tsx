@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import * as d3 from 'd3';
-import styles from '../style/dummy.module.css';
+import styles from '../style/upload.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
@@ -198,7 +198,3 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
-
-
-
-

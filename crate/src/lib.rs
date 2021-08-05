@@ -1,11 +1,13 @@
 extern crate wasm_bindgen;
 use arrow::csv::Reader;
+use arrow::record_batch::RecordBatch;
 use streambuf::WebFileReader;
 use wasm_bindgen::prelude::*;
 use csv::ReaderBuilder;
 use csv::ByteRecord;
 
 use std::cell::RefCell;
+use arrow::compute::kernels::aggregate;
 
 use std::io::{BufRead, Read};
 
@@ -69,7 +71,7 @@ pub fn set_expected_chunks(expected_chunks: i32) -> i32 {
 pub fn analyze_file(file_size: i32){
     print_to_js("Analyzing is started");
 
-    let mut newrdr = ReaderBuilder::new();
+    /* let mut newrdr = ReaderBuilder::new();
     newrdr.has_headers(false);
     newrdr.buffer_capacity(6);
     let mut rdr = newrdr.from_reader(WebFileReader::new_from_file(file_size));
@@ -77,16 +79,20 @@ pub fn analyze_file(file_size: i32){
     let mut record = ByteRecord::new();
     while rdr.read_byte_record(&mut record).unwrap() == true {
         print_to_js_with_obj(&format!("{:?}", &record).into());
-    }
+    } */
 
-    /* let arrow_reader_builder = arrow::c&sv::reader::ReaderBuilder::new();
-    let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file());
+    let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(false).with_batch_size(4000);
+    let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
     let mut reader = cursor_reader.unwrap();
 
     print_to_js("Reader");
 
     let batch = &reader.next().unwrap().unwrap();
-    print_to_js_with_obj(&format!("{:?}", &batch).into()); */
+    print_to_js_with_obj(&format!("{:?}", &batch).into()); 
+
+}
+
+fn aggregate_sum(recordBatch: &RecordBatch) {
 
 }
 

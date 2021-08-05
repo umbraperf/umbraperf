@@ -25,6 +25,7 @@ impl WebFileReader {
 impl Seek for WebFileReader {
     // XXX Fix negative offsets
     fn seek(&mut self, pos: SeekFrom) -> Result<u64> {
+        print_to_js("I'am Seeking");
         self.offset = match pos {
             SeekFrom::Current(ofs) => self.offset + (self.length - self.offset).min(ofs as u64),
             SeekFrom::Start(ofs) => self.length.min(ofs as u64),
@@ -42,7 +43,6 @@ impl Seek for WebFileReader {
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
         
-        print_to_js("IAM READING");
         let array_length = out.len() as u64;
         let read_size = array_length.min(self.length - self.offset);
         if read_size == 0 {
@@ -57,7 +57,7 @@ impl Read for WebFileReader {
         let uint8array = bindings::read_file_chunk(self.offset as i32,read_size as i32);
         
         let mut counter = 0;
-        //let vec = uint8array.to_vec();
+        
         let length = Uint8Array::byte_length(&uint8array);
 
         print_to_js("LENGTH");
@@ -65,13 +65,13 @@ impl Read for WebFileReader {
 
         while counter < length {
             out[counter as usize] = Uint8Array::get_index(&uint8array,counter as u32);
-            print_to_js(&out[*&counter as usize].to_string());
-            print_to_js_with_obj(&format!("{:?}", &out).into()); 
+           /*  print_to_js(&out[*&counter as usize].to_string());
+            print_to_js_with_obj(&format!("{:?}", &out).into());  */
             counter += 1;
         }
 
-        print_to_js_with_obj(&format!("{:?}", &out).into()); 
-        
+/*         print_to_js_with_obj(&format!("{:?}", &out).into()); 
+ */        
         self.offset += read_size as u64;
        
         Ok(read_size as usize)

@@ -6394,11 +6394,6 @@ void-elements@^2.0.0:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
-wait.for-es6@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/wait.for-es6/-/wait.for-es6-0.1.0.tgz#3390c6ceada9bb03658ced7600dff0aa8b36403d"
-  integrity sha1-M5DGzq2puwNljO12AN/wqos2QD0=
-
 warning@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"

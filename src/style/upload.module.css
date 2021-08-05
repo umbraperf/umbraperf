@@ -12,6 +12,7 @@
     color: #bdbdbd;
     outline: none;
     transition: border .24s ease-in-out;
+    transition: background-color .24s ease-in-out;
     margin: 50px;
     align-items: center;
     text-align: center;
@@ -20,16 +21,22 @@
 .dropzoneActive{
     composes: dropzoneBase;
     border-color:#2196f3;
+    background-color: #bdddf7;
+
 }
 
 .dropzoneAccept{
     composes: dropzoneBase;
     border-color:#00e676;
+    background-color: #d5ebdf;
+
+
 }
 
 .dropzoneReject{
     composes: dropzoneBase;
     border-color:#ff1744;
+    background-color: #ebc5cc;
 }
 
 p{

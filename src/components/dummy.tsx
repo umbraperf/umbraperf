@@ -4,8 +4,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 
-import * as profiler_core from '../../crate/pkg/shell';
-
 import styles from '../style/upload.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { Result } from 'src/model/core_result';
@@ -143,7 +141,7 @@ class Dummy extends React.Component<Props> {
                     {this.props.resultLoading ?
                         <CircularProgress />
                         :
-                        this.props.result}
+                        this.props.result?.test}
                 </p>
             </div>
         </div>;

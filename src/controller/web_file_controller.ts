@@ -27,7 +27,7 @@ export function storeResultFromRust(requestId: number, result: number) {
 
     console.log("result received from rust!");
     const resultObject = createResultObject(result, requestId, [], undefined, undefined);
-    console.log(result);
+    console.log(resultObject);
 
 /*     store.dispatch({
         type: StateMutationType.SET_RESULTLOADING,

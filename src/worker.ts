@@ -87,8 +87,8 @@ export function readFileChunk(offset: number, chunkSize: number) {
 export function stroreResultFromRust(result: number, requestId: number) {
 
   if(result){
+    console.log("send result to main");
     worker.postMessage({
-      //TODO message IDs, counter for request IDs
       messageId: 201,
       requestId: requestId,
       type: WorkerResponseType.STORE_RESULT,

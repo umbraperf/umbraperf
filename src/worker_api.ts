@@ -46,9 +46,8 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
-            storeResultFromRust(messageData.requestId, messageData.data);
-            //storeResultFromRust(messageData);
-            //TODO result from rust in redux, stop loading redux
+            console.log("main got result from worker.");
+            storeResultFromRust(message.data.requestId, messageData);
             break;
 
 

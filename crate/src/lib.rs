@@ -14,6 +14,8 @@ mod console;
 mod console_js_log;
 mod streambuf;
 use streambuf::WebFileReader;
+
+use crate::bindings::{store_result_from_rust};
 mod bindings;
 
 //STATE
@@ -47,6 +49,10 @@ pub fn get_state() -> i32 {
     with_state(|s| s.sum)
 }
 
+pub fn set_sum(new_sum: i32) {
+    with_state_mut(|s| s.sum = new_sum);
+}
+
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
@@ -69,6 +75,8 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
     let sum = arrow::compute::kernels::aggregate::sum(primitive_array);
     print_to_js_with_obj(&format!("{}", sum.unwrap()).into());
+    set_sum(sum.unwrap() as i32);
+    store_result_from_rust(sum.unwrap() as i32, 0);
 }
 
 

@@ -1,5 +1,4 @@
 import * as model from '../model';
-import store from '../app';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
@@ -8,7 +7,7 @@ import styles from '../style/dummy.module.css';
 import { CircularProgress } from '@material-ui/core';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
-import {WebFileController} from '../controller/web_file_controller';
+import { WebFileController } from '../controller/web_file_controller';
 
 interface Props {
     appContext: IAppContext;
@@ -16,9 +15,7 @@ interface Props {
     fileName: string | undefined;
     resultLoading: boolean;
     result: Result | undefined;
-    chunksNumber: number;
     setResultLoading: (newResultLoading: boolean) => void;
-    setChunksNumber: (newChunksNumber: number) => void;
 }
 
 class Parquet extends React.Component<Props> {
@@ -41,7 +38,7 @@ class Parquet extends React.Component<Props> {
             const file = acceptedFiles[0];
             const webFileControllerInstance = new WebFileController(this.props.appContext.worker);
             webFileControllerInstance.registerFileAtWorker(file);
-            
+
         }
     }
 
@@ -129,20 +126,13 @@ class Parquet extends React.Component<Props> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        ;
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-                this.createVisualization();
+            this.createVisualization();
         }
     }
 
     public render() {
         return <div>
-            {/*             <form  >
-                <label>Wählen Sie eine Textdatei (*.txt, *.html usw.) von Ihrem Rechner aus.
-                    <input type="file" />
-                </label>
-                <button>… und ab geht die Post!</button>
-            </form> */}
             <div className={"dropzone-container"}>
                 <p>
                     Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
@@ -174,10 +164,17 @@ class Parquet extends React.Component<Props> {
             </div>
 
             <div className={"resultArea"} >
-                {this.props.resultLoading ?
-                    <CircularProgress />
+                {(this.props.resultLoading || this.props.result) ?
+                    (this.props.resultLoading ?
+                        <CircularProgress />
+                        :
+                        <div>
+                            <p>Result of computation from rust is: {this.props.result?.test}</p>
+                            <div id="bar-chart-ref" ref={this.barChartRef}></div>
+                        </div>
+                    )
                     :
-                    <div id="bar-chart-ref" ref={this.barChartRef}></div>
+                    <p>Select a file.</p>
                 }
             </div>
         </div>;
@@ -190,7 +187,6 @@ const mapStateToProps = (state: model.AppState) => ({
     fileName: state.fileName,
     resultLoading: state.resultLoading,
     result: state.result,
-    chunksNumber: state.chunksNumber,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -199,15 +195,9 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: newResultLoading,
         }),
-    setChunksNumber: (newChunksNumber: number) =>
-        dispatch({
-            type: model.StateMutationType.SET_CHUNKSNUMBER,
-            data: newChunksNumber,
-        }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(Parquet));
-//export default connect(mapStateToProps, mapDispatchToProps)(Parquet);
 
 
 

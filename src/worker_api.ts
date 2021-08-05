@@ -22,56 +22,6 @@ export class WorkerAPI {
 
         //profiler_core.startFileReading(this.worker);
         console.log(this.worker);
-
-
-
-/*         this.worker.onmessage = responseMessage => {
-            if (responseMessage.data.type == model.WorkerResponseType.REGISTERED_FILE) {
-                console.log(this.worker);
-                //profiler_core.analyzeFile();
-                //worker.terminate();
-                return 5;
-            }
-
-        } */
-    }
-
-    //TODO remove
-    public readChunk(offset: number, chunkSize: number) {
-        this.worker.postMessage({
-            type: model.WorkerRequestType.READ_CHUNK,
-            data: {
-                offset: offset,
-                chunkSize: chunkSize,
-            }
-        });
-
-        return new Promise((resolve, reject) => {
-
-        })
-        /* 
-                let promise = new Promise((resolve, reject) => {
-                    // the function is executed automatically when the promise is constructed
-        
-                    this.worker.onmessage = (responeMessage) => {
-                        if (responeMessage.data.type == model.WorkerResponseType.SENT_UINT8) {
-                            console.log(responeMessage);
-        
-                            resolve(responeMessage.data.data);
-                        }
-                    }
-                });
-        
-                return promise; */
-
-
-        /*         this.worker.onmessage = (responeMessage) => {
-                    if(responeMessage.data.type == model.WorkerResponseType.SENT_UINT8){
-                        console.log(responeMessage);
-                        return responeMessage.data.data;
-                    }
-        
-                } */
     }
 
     public testWorker() {
@@ -84,7 +34,6 @@ export class WorkerAPI {
 }
 
 //Responses from Worker to Main:
-
 worker.addEventListener('message', message => {
 
     if (!message.type) return;
@@ -97,6 +46,7 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
+            storeResultFromRust(messageData.requestId, messageData.data);
             //storeResultFromRust(messageData);
             //TODO result from rust in redux, stop loading redux
             break;
@@ -104,8 +54,6 @@ worker.addEventListener('message', message => {
 
         default:
             console.log(`UNKNOWN RESPONSE TYPE ${messageType}`);
-
-
 
     }
 });

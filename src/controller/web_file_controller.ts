@@ -23,19 +23,19 @@ export class WebFileController {
     }
 }
 
-export function storeResultFromRust(request: string, x: Array<any>, y?: Array<any>, z?: Array<any>) {
+export function storeResultFromRust(requestId: number, result: number) {
 
     console.log("result received from rust!");
-    const result = createResultObject(request, x, y, z);
+    const resultObject = createResultObject(result, requestId, [], undefined, undefined);
     console.log(result);
 
-    store.dispatch({
+/*     store.dispatch({
         type: StateMutationType.SET_RESULTLOADING,
         data: false,
-    });
-    store.dispatch({
+    }); */
+/*     store.dispatch({
         type: StateMutationType.SET_RESULT,
         data: result,
-    });
-    console.log(store.getState());
+    }); */
+    //console.log(store.getState());
 }

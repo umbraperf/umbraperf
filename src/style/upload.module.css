@@ -42,3 +42,8 @@
 p{
     font-size: large;
 }
+
+.spinnerArea{
+    text-align: center;
+    padding: 20px;
+}

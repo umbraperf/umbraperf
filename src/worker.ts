@@ -32,7 +32,7 @@ export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.STORE_RESULT, number> |
+  WorkerResponse<WorkerResponseType.STORE_RESULT, any> |
   WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
   ;
 
@@ -92,7 +92,8 @@ export function stroreResultFromRust(result: number, requestId: number) {
       messageId: 201,
       requestId: requestId,
       type: WorkerResponseType.STORE_RESULT,
-      data: result,
+      //TODO::
+      data: 10,
     });  
   }
 

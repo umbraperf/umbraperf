@@ -8,6 +8,14 @@ extern crate arrow;
 use arrow::datatypes::Int64Type;
 use arrow::record_batch::RecordBatch;
 
+//Test Write for JS
+use arrow::ipc::writer;
+use std::io::Write;
+use std::fs::File;
+use std::io::Cursor;
+
+
+
 extern crate console_error_panic_hook;
 
 mod console;
@@ -77,6 +85,27 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     print_to_js_with_obj(&format!("{}", sum.unwrap()).into());
     set_sum(sum.unwrap() as i32);
     store_result_from_rust(sum.unwrap() as i32, 0);
+
+
+    //let mut file = File::create("foo.txt").unwrap();
+
+    let mut buff = Cursor::new(vec![]);
+
+    let options = arrow::ipc::writer::IpcWriteOptions::default();
+    let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
+    //let encoded = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(), &options);
+    let encoded = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch, &mut dict, &options);
+    arrow::ipc::writer::write_message(&mut buff, encoded.unwrap().1, &options);
+
+
+/*     let mut file_writer = arrow::ipc::writer::FileWriter::try_new(&mut buff, &record_batch.schema());
+    let mut unwrap = file_writer.unwrap();
+    arrow::ipc::writer::FileWriter::write(&mut unwrap, &record_batch);
+    arrow::ipc::writer::FileWriter::finish(&mut unwrap); */
+
+
+    print_to_js_with_obj(&format!("{:?}", &mut buff).into());
+
 }
 
 

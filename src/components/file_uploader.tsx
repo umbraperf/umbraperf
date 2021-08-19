@@ -53,6 +53,10 @@ class FileUploader extends React.Component<Props> {
         ));
     }
 
+    componentDidMount(): void {
+        model.createDefaultState();
+    }
+
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
             //TODO: activate tabs

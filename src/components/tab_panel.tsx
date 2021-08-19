@@ -81,7 +81,7 @@ function ScrollableTabsButtonForce(props: any) {
                     {routes.map((prop, key) => {
                         if(prop.path !== "/"){
                             return (
-                                <Tab label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} />
+                                <Tab label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );
                         }
                     })}

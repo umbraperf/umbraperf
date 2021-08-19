@@ -9,13 +9,14 @@ import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react
 import './globals.css';
 import styles from './style/main-app.module.css';
 
+import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
 import Parquet from './components/parquet';
-import PersistentDrawerLeft from './components/drawer';
 import TabPanel from './components/tab_panel';
 import { WorkerAPI } from './worker_api';
-import HelpIcon from '@material-ui/icons/Help';
 
+import HelpIcon from '@material-ui/icons/Help';
+import BackupIcon from '@material-ui/icons/Backup';
 
 
 //Create Redux stroe
@@ -35,19 +36,25 @@ export const routes = [
         path: '/',
         sidebarName: 'Start',
         component: Dummy,
-        icon: () => {return (<HelpIcon />)},
+        icon: () => { return (<HelpIcon />) },
     },
     {
         path: '/dummy',
         sidebarName: 'Dummy',
         component: Dummy,
-        icon: () => {return (<HelpIcon />)},
+        icon: () => { return (<HelpIcon />) },
     },
     {
         path: '/parquet',
         sidebarName: 'Parquet',
         component: Parquet,
-        icon: () => {return (<HelpIcon />)},
+        icon: () => { return (<HelpIcon />) },
+    },
+    {
+        path: '/upload',
+        sidebarName: 'Upload File',
+        component: FileUploader,
+        icon: () => { return (<BackupIcon />) },
     }
 
 ];
@@ -60,13 +67,11 @@ ReactDOM.render(
                 {/*                 style: css module with additional static class (cloud also be a seccond module)
  */}                <div className={`app ${styles.app}`}>
 
-                    <PersistentDrawerLeft></PersistentDrawerLeft>
-
                     <div className="appBody">
                         <Switch>
 
                             <Route exact path="/">
-                                <Redirect to="/parquet" />
+                                <Redirect to="/upload" />
                             </Route>
 
                             {routes.map((route: any) => (
@@ -80,18 +85,10 @@ ReactDOM.render(
                         </Switch>
                     </div>
 
-
                     <div className="appNavigation">
 
                         <TabPanel></TabPanel>
 
-                        <h3>Navigation:</h3>
-                        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                            <ul className="navbar-nav mr-auto">
-                                <li><Link to={'/parquet'} className="nav-link"> Parquet </Link></li>
-                                <li><Link to={'/dummy'} className="nav-link"> Dummy </Link></li>
-                            </ul>
-                        </nav>
                         <hr />
                     </div>
                 </div>

@@ -99,6 +99,22 @@ export function stroreResultFromRust(result: number, requestId: number) {
 
 }
 
+export function stroreArrowResultFromRust(result: any) {
+
+  if(result){
+    console.log("send result to main");
+    console.log(result);
+    worker.postMessage({
+      messageId: 201,
+      requestId: 100,
+      type: WorkerResponseType.STORE_RESULT,
+      //TODO::
+      data: result,
+    });  
+  }
+
+}
+
 // Receive from the main thread
 worker.onmessage = (message) => {
 

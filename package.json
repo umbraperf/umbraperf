@@ -16,10 +16,12 @@
         "node": ">=14.13"
     },
     "dependencies": {
-        "@apache-arrow/ts": "^5.0.0",
+        "@apache-arrow/es5-cjs": "^5.0.0",
+        "@apache-arrow/ts": "5.0.0",
         "@material-ui/core": "^4.12.1",
         "@material-ui/icons": "^4.11.2",
         "@types/d3": "^7.0.0",
+        "apache-arrow": "5.0.0",
         "bootstrap": "^5.0.1",
         "classnames": "^2.3.1",
         "d3": "^7.0.0",

@@ -12,8 +12,10 @@ import styles from './style/main-app.module.css';
 import Dummy from './components/dummy';
 import Parquet from './components/parquet';
 import PersistentDrawerLeft from './components/drawer';
+import TabPanel from './components/tab_panel';
 import { WorkerAPI } from './worker_api';
-import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import HelpIcon from '@material-ui/icons/Help';
+
 
 
 //Create Redux stroe
@@ -32,17 +34,20 @@ export const routes = [
     {
         path: '/',
         sidebarName: 'Start',
-        component: Dummy
+        component: Dummy,
+        icon: () => {return (<HelpIcon />)},
     },
     {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: Dummy
+        component: Dummy,
+        icon: () => {return (<HelpIcon />)},
     },
     {
         path: '/parquet',
         sidebarName: 'Parquet',
-        component: Parquet
+        component: Parquet,
+        icon: () => {return (<HelpIcon />)},
     }
 
 ];
@@ -78,13 +83,7 @@ ReactDOM.render(
 
                     <div className="appNavigation">
 
-                        <BottomNavigation
-                            showLabels
-                        >
-                            <BottomNavigationAction label="Recents" />
-                            <BottomNavigationAction label="Favorites" />
-                            <BottomNavigationAction label="Nearby" />
-                        </BottomNavigation>
+                        <TabPanel></TabPanel>
 
                         <h3>Navigation:</h3>
                         <nav className="navbar navbar-expand-lg navbar-light bg-light">

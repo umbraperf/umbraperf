@@ -1,3 +1,5 @@
+//Depreciated
+
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -93,6 +95,7 @@ function PersistentDrawerLeft(props: any) {
         setOpen(false);
     };
 
+    //get route information from react router
     const activeRoute = (routeName: any) => {
         return props.location.pathname === routeName ? true : false;
       }

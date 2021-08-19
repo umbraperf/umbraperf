@@ -1,7 +1,6 @@
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';
-import { Table } from '@apache-arrow/ts';
 
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
@@ -104,7 +103,6 @@ export function stroreArrowResultFromRust(result: any) {
 
   if(result){
     console.log("send result to main");
-    console.log(result);
     worker.postMessage({
       messageId: 201,
       requestId: 100,

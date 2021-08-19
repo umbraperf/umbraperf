@@ -6,6 +6,7 @@ import styles from '../style/upload.module.css';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
 import { WebFileController } from '../controller/web_file_controller';
+import { CircularProgress } from '@material-ui/core';
 
 interface Props {
     appContext: IAppContext;
@@ -94,6 +95,17 @@ class FileUploader extends React.Component<Props> {
                             </section>)
                     }}
                 </Dropzone>
+            </div>
+            <div className={"spinnerArea"} >
+                {(this.props.resultLoading || this.props.result) ?
+                    (this.props.resultLoading ?
+                        <CircularProgress />
+                        :
+                        <p>Loading of file finished. Select a visualization: </p>
+                    )
+                    :
+                    <p>Select a file.</p>
+                }
             </div>
 
         </div>;

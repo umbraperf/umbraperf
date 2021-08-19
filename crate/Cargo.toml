@@ -47,7 +47,7 @@ lazy_static = "1.4.0"
 encode_unicode = "0.3.6"
 unicode-width = "0.1.8"
 csv = "1.1.6"
-arrow = {version = "5.0", default-features = false, features = ["js","csv"] }
+arrow = {version = "5.0", default-features = false, features = ["js","csv", "ipc"] }
 futures = {version = "0.3.1", features = ["thread-pool"]}
 
 [dev-dependencies]

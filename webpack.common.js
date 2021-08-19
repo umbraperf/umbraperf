@@ -22,7 +22,7 @@ export function configure(params) {
             clean: true,
         },
         resolve: {
-            extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm'],
+            extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm', '.mjs'],
         },
         module: {
             rules: [
@@ -100,6 +100,12 @@ export function configure(params) {
                     options: {
                         name: 'static/[name].[contenthash].[ext]',
                     },
+                },
+                {
+                    test: /\.m?js/,
+                    resolve: {
+                        fullySpecified: false
+                    }
                 },
             ],
         },

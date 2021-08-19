@@ -2,7 +2,21 @@
 # yarn lockfile v1
 
 
-"@apache-arrow/ts@^5.0.0":
+"@apache-arrow/es5-cjs@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@apache-arrow/es5-cjs/-/es5-cjs-5.0.0.tgz#bcedc1e05604a19e4c0a1df71b6e52b5f3aa23a9"
+  integrity sha512-1XnjKFvZ+vnhOizxm13ss6akz4h4vs1w1i9cxKKEdIsRu8EL5O2PPPM2jlgxtaQnjbP3xCLNt7jqUl6f6Z+Q/w==
+  dependencies:
+    "@types/flatbuffers" "^1.10.0"
+    "@types/node" "^15.6.1"
+    command-line-args "5.1.1"
+    command-line-usage "6.1.1"
+    flatbuffers "1.12.0"
+    json-bignum "^0.0.3"
+    pad-left "^2.1.0"
+    tslib "^2.3.0"
+
+"@apache-arrow/ts@5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@apache-arrow/ts/-/ts-5.0.0.tgz#6e84d762404b628904e9813d59144cb2e3629b59"
   integrity sha512-sLQ9nsxpC9XcIf4BopAQ96xFHe+kY/Bk2iPDCd9TCOWE6h6fD2i923YwNWRArvX3ZB5VoG/ZLlpO2irEzzJghg==
@@ -893,6 +907,20 @@ anymatch@~3.1.2:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
+
+apache-arrow@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/apache-arrow/-/apache-arrow-5.0.0.tgz#8af341f97ed5ce05615cd69c339f81966e96dd9e"
+  integrity sha512-Iogghl8f4cBAXI+kNUoy1carTTCj0Jr8bwlsaFrH2/XGyAHRyuxvkE6j4poRbH/ytW8AiZZ5A8mejRmpYDHSZg==
+  dependencies:
+    "@types/flatbuffers" "^1.10.0"
+    "@types/node" "^15.6.1"
+    command-line-args "5.1.1"
+    command-line-usage "6.1.1"
+    flatbuffers "1.12.0"
+    json-bignum "^0.0.3"
+    pad-left "^2.1.0"
+    tslib "^2.3.0"
 
 argparse@^1.0.7:
   version "1.0.10"

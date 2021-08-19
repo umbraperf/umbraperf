@@ -96,7 +96,7 @@ class FileUploader extends React.Component<Props> {
                     }}
                 </Dropzone>
             </div>
-            <div className={"spinnerArea"} >
+            <div className={styles.spinnerArea} >
                 {(this.props.resultLoading || this.props.result) ?
                     (this.props.resultLoading ?
                         <CircularProgress />

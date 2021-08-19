@@ -17,6 +17,7 @@ import { WorkerAPI } from './worker_api';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 
 
 //Create Redux stroe
@@ -64,8 +65,18 @@ ReactDOM.render(
         <ReduxProvider store={store}>
             <BrowserRouter>
 
-                {/*                 style: css module with additional static class (cloud also be a seccond module)
- */}                <div className={`app ${styles.app}`}>
+                {/*                 style: css module with additional static class (cloud also be a seccond module) */}
+                <div className={`app ${styles.app}`}>
+
+                    <div className="appHeader">
+                        <AppBar position="static">
+                            <Toolbar>
+                                <Typography variant="h6" className={styles.appHeaderTitle}>
+                                    Umbra-Profiler
+                                </Typography>
+                            </Toolbar>
+                        </AppBar>
+                    </div>
 
                     <div className="appBody">
                         <Switch>
@@ -89,7 +100,6 @@ ReactDOM.render(
 
                         <TabPanel></TabPanel>
 
-                        <hr />
                     </div>
                 </div>
 

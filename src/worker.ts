@@ -1,6 +1,7 @@
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';
+import { Table } from '@apache-arrow/ts';
 
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',

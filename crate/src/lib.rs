@@ -87,21 +87,13 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     store_result_from_rust(sum.unwrap() as i32, 0);
 
 
-    //let mut file = File::create("foo.txt").unwrap();
-
     let mut buff = Cursor::new(vec![]);
-
     let options = arrow::ipc::writer::IpcWriteOptions::default();
     let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-    //let encoded = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(), &options);
     let encoded = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch, &mut dict, &options);
     arrow::ipc::writer::write_message(&mut buff, encoded.unwrap().1, &options);
 
-
-/*     let mut file_writer = arrow::ipc::writer::FileWriter::try_new(&mut buff, &record_batch.schema());
-    let mut unwrap = file_writer.unwrap();
-    arrow::ipc::writer::FileWriter::write(&mut unwrap, &record_batch);
-    arrow::ipc::writer::FileWriter::finish(&mut unwrap); */
+    store_arrow_result_from_rust(buff.into_inner());
 
 
     print_to_js_with_obj(&format!("{:?}", &mut buff).into());

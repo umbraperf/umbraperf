@@ -34,7 +34,10 @@
         "react-dropzone": "^11.3.4",
         "react-redux": "^7.2.4",
         "react-router-dom": "^5.2.0",
+        "react-vega": "^7.4.3",
         "redux": "^4.1.0",
+        "vega": "^5.20.2",
+        "vega-lite": "^5.1.0",
         "wasm-pack": "^0.9.1"
     },
     "devDependencies": {

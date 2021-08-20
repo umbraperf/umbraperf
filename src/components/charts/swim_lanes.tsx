@@ -1,13 +1,14 @@
 import * as model from '../../model';
 import React from 'react';
 import { connect } from 'react-redux';
-import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
-import * as d3 from 'd3';
-import styles from '../style/upload.module.css';
-import { CircularProgress } from '@material-ui/core';
-import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../../app_context';
-import { WebFileController } from '../../controller/web_file_controller';
+import { Vega } from 'react-vega';
+import { Result } from 'src/model/core_result';
+import { VisualizationSpec } from "../../../node_modules/react-vega/src";
+import styles from '../../style/charts.module.css';
+
+
+
 
 interface Props {
     appContext: IAppContext;
@@ -19,14 +20,113 @@ interface Props {
 
 class SwimLanes extends React.Component<Props> {
 
-
     constructor(props: Props) {
         super(props);
 
+        this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
-    createVisualization() {
+    createVisualizationSpec() {
+        const visData = this.createVisualizationData();
 
+        const spec: VisualizationSpec = {
+            $schema: 'https://vega.github.io/schema/vega/v5.json',
+            width: 1000,
+            height: 500,
+            padding: { left: 5, right: 5, top: 5, bottom: 5 },
+
+            data: [ 
+                visData
+            ],
+
+            signals: [
+                {
+                    name: 'tooltip',
+                    value: {},
+                    on: [
+                        { events: 'rect:mouseover', update: 'datum' },
+                        { events: 'rect:mouseout', update: '{}' },
+                    ],
+                },
+            ],
+
+            scales: [
+                {
+                    name: 'xscale',
+                    type: 'band',
+                    domain: { data: 'table', field: 'category' },
+                    range: 'width',
+                },
+                {
+                    name: 'yscale',
+                    domain: { data: 'table', field: 'amount' },
+                    nice: true,
+                    range: 'height',
+                },
+            ],
+
+            axes: [
+                { orient: 'bottom', scale: 'xscale' },
+                { orient: 'left', scale: 'yscale' },
+            ],
+
+            marks: [
+                {
+                    type: 'rect',
+                    from: { data: 'table' },
+                    encode: {
+                        enter: {
+                            x: { scale: 'xscale', field: 'category', offset: 1 },
+                            width: { scale: 'xscale', band: 1, offset: -1 },
+                            y: { scale: 'yscale', field: 'amount' },
+                            y2: { scale: 'yscale', value: 0 },
+                        },
+                        update: {
+                            fill: { value: 'steelblue' },
+                        },
+                        hover: {
+                            fill: { value: 'red' },
+                        },
+                    },
+                },
+                {
+                    type: 'text',
+                    encode: {
+                        enter: {
+                            align: { value: 'center' },
+                            baseline: { value: 'bottom' },
+                            fill: { value: '#333' },
+                        },
+                        update: {
+                            x: { scale: 'xscale', signal: 'tooltip.category', band: 0.5 },
+                            y: { scale: 'yscale', signal: 'tooltip.amount', offset: -2 },
+                            text: { signal: 'tooltip.amount' },
+                            fillOpacity: [{ test: 'datum === tooltip', value: 0 }, { value: 1 }],
+                        },
+                    },
+                },
+            ],
+        } as VisualizationSpec;
+
+        return spec;
+    }
+
+    createVisualizationData() {
+        const data = {
+            name: 'table',
+            values: [
+                { category: 'A', amount: 28 },
+                { category: 'B', amount: 55 },
+                { category: 'C', amount: 43 },
+                { category: 'D', amount: 91 },
+                { category: 'E', amount: 81 },
+                { category: 'F', amount: 53 },
+                { category: 'G', amount: 19 },
+                { category: 'H', amount: 87 },
+            ],
+        }; 
+    
+        return data;
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -39,11 +139,17 @@ class SwimLanes extends React.Component<Props> {
         //this.createVisualization();
     }
 
+    //const signalListeners = { hover: handleHover };
+
+
     public render() {
         return <div>
 
-            <div className={"resultArea"} >
-                <p>A Swim Lane Componente.</p>
+            <div className={styles.resultArea} >
+                <div className={"vegaContainer"}>
+                                    {/*                 <Vega spec={spec} data={barData} signalListeners={signalListeners} />
+ */}                <Vega spec={this.createVisualizationSpec()} />
+                </div>
             </div>
         </div>;
     }

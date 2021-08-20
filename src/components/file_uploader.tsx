@@ -68,9 +68,6 @@ class FileUploader extends React.Component<Props> {
     public render() {
         return <div>
             <div className={"dropzone-container"}>
-                <p>
-                    Selected file: {this.props.fileName ? this.props.fileName : "select a file"}
-                </p>
 
                 <Dropzone
                     accept={['.parquet', '.csv']}

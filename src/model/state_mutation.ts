@@ -17,6 +17,7 @@ export enum StateMutationType {
     SET_RESULT = 'SET_RESULT',
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
+    RESET_STATE = 'RESET_STATE',
     OTHER = 'OTHER',
 }
 
@@ -28,6 +29,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
+    | StateMutation<StateMutationType.RESET_STATE, undefined>
     ;
 
 // The action dispatch
@@ -66,6 +68,15 @@ export class AppStateMutation {
                     ...state,
                     helloworld: mutation.data,
                 };
+            case StateMutationType.RESET_STATE:
+                return {
+                    ...state,
+                    fileName: undefined,
+                    resultLoading: false,
+                    result: undefined,
+                    chunksNumber: 0,
+                    file: undefined,
+                }
         }
     }
 }

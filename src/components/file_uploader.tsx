@@ -15,6 +15,7 @@ interface Props {
     resultLoading: boolean;
     result: Result | undefined;
     setResultLoading: (newResultLoading: boolean) => void;
+    setResetState: () => void;
 }
 
 class FileUploader extends React.Component<Props> {
@@ -56,6 +57,8 @@ class FileUploader extends React.Component<Props> {
 
     componentDidMount(): void {
         model.createDefaultState();
+        this.props.setResetState();
+        console.log(this.props);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -122,6 +125,11 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: newResultLoading,
+        }),
+    setResetState: () =>
+        dispatch({
+            type: model.StateMutationType.RESET_STATE,
+            data: undefined,
         }),
 });
 

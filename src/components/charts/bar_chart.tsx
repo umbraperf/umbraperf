@@ -7,6 +7,7 @@ import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
+import { createRef } from 'react';
 
 
 interface Props {
@@ -15,10 +16,21 @@ interface Props {
     result: Result | undefined;
 }
 
-class BarChart extends React.Component<Props> {
+interface State {
+    width: number,
+    height: number,
+}
+
+class BarChart extends React.Component<Props, State> {
+
+    chartWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
         super(props);
+        this.state = {
+            width: 1000,
+            height: 500,
+        };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
@@ -46,9 +58,11 @@ class BarChart extends React.Component<Props> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: 1000,
-            height: 500,
+            width: this.state.width,
+            height: this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
+            resize: true,
+            autosize: 'fit',
 
             data: [
                 visData
@@ -132,11 +146,37 @@ class BarChart extends React.Component<Props> {
         }
     }
 
-    componentDidMount(): void {
-        //this.createVisualization();
+    componentDidMount() {
+        addEventListener('resize', (event) => {
+            this.resizeListener();
+        });
     }
 
-    //const signalListeners = { hover: handleHover };
+    componentWillUnmount() {
+        removeEventListener('resize', (event) =>{
+            this.resizeListener();
+        });
+    }
+
+    resizeListener() {
+        if (!this.chartWrapper) return;
+    
+        const child = this.chartWrapper.current;
+        if (child){
+            const newWidth = child.clientWidth;
+            
+            child.style.display = 'none';  
+            
+            this.setState((state, props) => ({
+                ...state,
+                width: newWidth,
+              })); 
+
+            child.style.display = 'block';
+        }
+    
+    
+    }
 
 
     public render() {
@@ -146,7 +186,7 @@ class BarChart extends React.Component<Props> {
 
         return <div>
             <div className={styles.resultArea} >
-                <div className={"vegaContainer"}>
+                <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
             </div>

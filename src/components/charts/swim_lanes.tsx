@@ -7,6 +7,7 @@ import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
+import { createRef } from 'react';
 
 
 interface Props {
@@ -15,27 +16,104 @@ interface Props {
     result: Result | undefined;
 }
 
-class SwimLanes extends React.Component<Props> {
+interface State {
+    width: number,
+    height: number,
+}
+
+class SwimLanes extends React.Component<Props, State> {
+
+    chartWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
         super(props);
+        this.state = {
+            width: 1000,
+            height: 500,
+        };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
+    componentDidUpdate(prevProps: Props): void {
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+            //TODO
+        }
+    }
+
+    componentDidMount() {
+        addEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+    }
+
+    componentWillUnmount() {
+        removeEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+    }
+
+    resizeListener() {
+        if (!this.chartWrapper) return;
+
+        const child = this.chartWrapper.current;
+        if (child) {
+            const newWidth = child.clientWidth;
+
+            child.style.display = 'none';
+
+            this.setState((state, props) => ({
+                ...state,
+                width: newWidth,
+            }));
+
+            child.style.display = 'block';
+        }
+
+
+    }
+
+
+    public render() {
+        if (!this.props.result) {
+            return <Redirect to={"/upload"} />
+        }
+
+        return <div>
+            <div className={styles.resultArea} >
+                <div className={"vegaContainer"} ref={this.chartWrapper}>
+                    <Vega spec={this.createVisualizationSpec()} />
+                </div>
+            </div>
+            <div>
+                <p>Result of computation from rust is: {this.props.result?.test}</p>
+            </div>
+        </div>;
+    }
+
     createVisualizationData() {
         const data = {
-            name: 'table',
-            values: [
-                { category: 'A', amount: 28 },
-                { category: 'B', amount: 55 },
-                { category: 'C', amount: 43 },
-                { category: 'D', amount: 91 },
-                { category: 'E', amount: 81 },
-                { category: 'F', amount: 53 },
-                { category: 'G', amount: 19 },
-                { category: 'H', amount: 87 },
+            "name": "table",
+            "values": [
+                { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
+                { "x": 1, "y": 43, "c": 0 }, { "x": 1, "y": 91, "c": 1 },
+                { "x": 2, "y": 81, "c": 0 }, { "x": 2, "y": 53, "c": 1 },
+                { "x": 3, "y": 19, "c": 0 }, { "x": 3, "y": 87, "c": 1 },
+                { "x": 4, "y": 52, "c": 0 }, { "x": 4, "y": 48, "c": 1 },
+                { "x": 5, "y": 24, "c": 0 }, { "x": 5, "y": 49, "c": 1 },
+                { "x": 6, "y": 87, "c": 0 }, { "x": 6, "y": 66, "c": 1 },
+                { "x": 7, "y": 17, "c": 0 }, { "x": 7, "y": 27, "c": 1 },
+                { "x": 8, "y": 68, "c": 0 }, { "x": 8, "y": 16, "c": 1 },
+                { "x": 9, "y": 49, "c": 0 }, { "x": 9, "y": 15, "c": 1 }
             ],
+            "transform": [
+                {
+                    "type": "stack",
+                    "groupby": ["x"],
+                    "sort": { "field": "c" },
+                    "field": "y"
+                }
+            ]
         };
 
         return data;
@@ -45,113 +123,116 @@ class SwimLanes extends React.Component<Props> {
         const visData = this.createVisualizationData();
 
         const spec: VisualizationSpec = {
-            $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: 1000,
-            height: 500,
+            $schema: "https://vega.github.io/schema/vega/v5.json",
+            width: this.state.width,
+            height: this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
+            resize: true,
+            autosize: 'fit',
 
             data: [
                 visData
             ],
 
-            signals: [
-                {
-                    name: 'tooltip',
-                    value: {},
-                    on: [
-                        { events: 'rect:mouseover', update: 'datum' },
-                        { events: 'rect:mouseout', update: '{}' },
-                    ],
-                },
-            ],
-
             scales: [
                 {
-                    name: 'xscale',
-                    type: 'band',
-                    domain: { data: 'table', field: 'category' },
-                    range: 'width',
+                    name: "x",
+                    type: "point",
+                    range: "width",
+                    domain: {
+                        data: "table",
+                        field: "x"
+                    }
                 },
                 {
-                    name: 'yscale',
-                    domain: { data: 'table', field: 'amount' },
+                    name: "y",
+                    type: "linear",
+                    range: "height",
                     nice: true,
-                    range: 'height',
+                    zero: true,
+                    domain: {
+                        data: "table",
+                        field: "y1"
+                    }
                 },
+                {
+                    name: "color",
+                    type: "ordinal",
+                    range: "category",
+                    domain: {
+                        data: "table",
+                        field: "c"
+                    }
+                }
             ],
-
             axes: [
-                { orient: 'bottom', scale: 'xscale' },
-                { orient: 'left', scale: 'yscale' },
+                {
+                    orient: "bottom",
+                    scale: "x",
+                    zindex: 1
+                },
+                {
+                    orient: "left",
+                    scale: "y",
+                    zindex: 1
+                }
             ],
-
             marks: [
                 {
-                    type: 'rect',
-                    from: { data: 'table' },
-                    encode: {
-                        enter: {
-                            x: { scale: 'xscale', field: 'category', offset: 1 },
-                            width: { scale: 'xscale', band: 1, offset: -1 },
-                            y: { scale: 'yscale', field: 'amount' },
-                            y2: { scale: 'yscale', value: 0 },
-                        },
-                        update: {
-                            fill: { value: 'steelblue' },
-                        },
-                        hover: {
-                            fill: { value: 'red' },
-                        },
+                    type: "group",
+                    from: {
+                        facet: {
+                            name: "series",
+                            data: "table",
+                            groupby: "c"
+                        }
                     },
-                },
-                {
-                    type: 'text',
-                    encode: {
-                        enter: {
-                            align: { value: 'center' },
-                            baseline: { value: 'bottom' },
-                            fill: { value: '#333' },
-                        },
-                        update: {
-                            x: { scale: 'xscale', signal: 'tooltip.category', band: 0.5 },
-                            y: { scale: 'yscale', signal: 'tooltip.amount', offset: -2 },
-                            text: { signal: 'tooltip.amount' },
-                            fillOpacity: [{ test: 'datum === tooltip', value: 0 }, { value: 1 }],
-                        },
-                    },
-                },
-            ],
+                    marks: [
+                        {
+                            type: "area",
+                            from: {
+                                data: "series"
+                            },
+                            encode: {
+                                enter: {
+                                    interpolate: {
+                                        value: "monotone"
+                                    },
+                                    x: {
+                                        scale: "x",
+                                        field: "x"
+                                    },
+                                    y: {
+                                        scale: "y",
+                                        field: "y0"
+                                    },
+                                    y2: {
+                                        scale: "y",
+                                        field: "y1"
+                                    },
+                                    fill: {
+                                        scale: "color",
+                                        field: "c"
+                                    }
+                                },
+                                update: {
+                                    fillOpacity: {
+                                        value: 1
+                                    }
+                                },
+                                hover: {
+                                    fillOpacity: {
+                                        value: 0.5
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         } as VisualizationSpec;
 
         return spec;
-    }
-
-    componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            //TODO
-        }
-    }
-
-    componentDidMount(): void {
-        //this.createVisualization();
-    }
-
-    //const signalListeners = { hover: handleHover };
-
-
-    public render() {
-        if (!this.props.result) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div>
-
-            <div className={styles.resultArea} >
-                <div className={"vegaContainer"}>
-                    <Vega spec={this.createVisualizationSpec()} />
-                </div>
-            </div>
-        </div>;
     }
 
 }
@@ -163,3 +244,6 @@ const mapStateToProps = (state: model.AppState) => ({
 
 
 export default connect(mapStateToProps)(withAppContext(SwimLanes));
+
+
+

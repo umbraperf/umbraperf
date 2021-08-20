@@ -11,12 +11,13 @@ import styles from './style/main-app.module.css';
 
 import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
-import Parquet from './components/parquet';
+import BarChart from './components/charts/bar_chart';
 import TabPanel from './components/tab_panel';
 import { WorkerAPI } from './worker_api';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 
 
@@ -40,23 +41,23 @@ export const routes = [
         icon: () => { return (<HelpIcon />) },
     },
     {
+        path: '/upload',
+        sidebarName: 'Upload File',
+        component: FileUploader,
+        icon: () => { return (<BackupIcon />) },
+    },
+    {
+        path: '/bar-chart',
+        sidebarName: 'Bar Chart',
+        component: BarChart,
+        icon: () => { return (<AssessmentIcon />) },
+    },
+    {
         path: '/dummy',
         sidebarName: 'Dummy',
         component: Dummy,
         icon: () => { return (<HelpIcon />) },
     },
-    {
-        path: '/parquet',
-        sidebarName: 'Parquet',
-        component: Parquet,
-        icon: () => { return (<HelpIcon />) },
-    },
-    {
-        path: '/upload',
-        sidebarName: 'Upload File',
-        component: FileUploader,
-        icon: () => { return (<BackupIcon />) },
-    }
 
 ];
 

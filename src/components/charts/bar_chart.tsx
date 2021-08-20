@@ -35,6 +35,62 @@ class BarChart extends React.Component<Props, State> {
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
+    componentDidUpdate(prevProps: Props): void {
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+            //TODO
+        }
+    }
+
+    componentDidMount() {
+        addEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+    }
+
+    componentWillUnmount() {
+        removeEventListener('resize', (event) =>{
+            this.resizeListener();
+        });
+    }
+
+    resizeListener() {
+        if (!this.chartWrapper) return;
+    
+        const child = this.chartWrapper.current;
+        if (child){
+            const newWidth = child.clientWidth;
+            
+            child.style.display = 'none';  
+            
+            this.setState((state, props) => ({
+                ...state,
+                width: newWidth,
+              })); 
+
+            child.style.display = 'block';
+        }
+    
+    
+    }
+
+
+    public render() {
+        if (!this.props.result) {
+            return <Redirect to={"/upload"} />
+        }
+
+        return <div>
+            <div className={styles.resultArea} >
+                <div className={"vegaContainer"} ref={this.chartWrapper}>
+                    <Vega spec={this.createVisualizationSpec()} />
+                </div>
+            </div>
+            <div>
+                <p>Result of computation from rust is: {this.props.result?.test}</p>
+            </div>
+        </div>;
+    }
+
     createVisualizationData() {
         const data = {
             name: 'table',
@@ -138,62 +194,6 @@ class BarChart extends React.Component<Props, State> {
         } as VisualizationSpec;
 
         return spec;
-    }
-
-    componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            //TODO
-        }
-    }
-
-    componentDidMount() {
-        addEventListener('resize', (event) => {
-            this.resizeListener();
-        });
-    }
-
-    componentWillUnmount() {
-        removeEventListener('resize', (event) =>{
-            this.resizeListener();
-        });
-    }
-
-    resizeListener() {
-        if (!this.chartWrapper) return;
-    
-        const child = this.chartWrapper.current;
-        if (child){
-            const newWidth = child.clientWidth;
-            
-            child.style.display = 'none';  
-            
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-              })); 
-
-            child.style.display = 'block';
-        }
-    
-    
-    }
-
-
-    public render() {
-        if (!this.props.result) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div>
-            <div className={styles.resultArea} >
-                <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega spec={this.createVisualizationSpec()} />
-                </div>
-            </div>
-            <div>
-                <p>Result of computation from rust is: {this.props.result?.test}</p>
-            </div>
-        </div>;
     }
 
 }

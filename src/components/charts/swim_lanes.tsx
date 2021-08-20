@@ -9,8 +9,6 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 
 
-
-
 interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
@@ -24,7 +22,7 @@ class SwimLanes extends React.Component<Props> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
-    
+
     createVisualizationData() {
         const data = {
             name: 'table',
@@ -38,7 +36,7 @@ class SwimLanes extends React.Component<Props> {
                 { category: 'G', amount: 19 },
                 { category: 'H', amount: 87 },
             ],
-        }; 
+        };
 
         return data;
     }
@@ -52,7 +50,7 @@ class SwimLanes extends React.Component<Props> {
             height: 500,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
 
-            data: [ 
+            data: [
                 visData
             ],
 
@@ -150,8 +148,7 @@ class SwimLanes extends React.Component<Props> {
 
             <div className={styles.resultArea} >
                 <div className={"vegaContainer"}>
-                                    {/*                 <Vega spec={spec} data={barData} signalListeners={signalListeners} />
- */}                <Vega spec={this.createVisualizationSpec()} />
+                    <Vega spec={this.createVisualizationSpec()} />
                 </div>
             </div>
         </div>;

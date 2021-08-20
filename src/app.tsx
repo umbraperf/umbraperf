@@ -12,12 +12,14 @@ import styles from './style/main-app.module.css';
 import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
 import BarChart from './components/charts/bar_chart';
+import SwimLanes from './components/charts/swim_lanes';
 import TabPanel from './components/tab_panel';
 import { WorkerAPI } from './worker_api';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import SortIcon from '@material-ui/icons/Sort';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 
 
@@ -51,6 +53,12 @@ export const routes = [
         sidebarName: 'Bar Chart',
         component: BarChart,
         icon: () => { return (<AssessmentIcon />) },
+    },
+    {
+        path: '/swim_lanes',
+        sidebarName: 'Swim Lanes',
+        component: SwimLanes,
+        icon: () => { return (<SortIcon />) },
     },
     {
         path: '/dummy',

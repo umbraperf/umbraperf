@@ -3,18 +3,15 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
 import HelpIcon from '@material-ui/icons/Help';
-import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
-import ThumbDown from '@material-ui/icons/ThumbDown';
-import ThumbUp from '@material-ui/icons/ThumbUp';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
+import {AppState} from '../model/state';
+
 import { withRouter, Link } from 'react-router-dom';
 import { routes } from '../app';
+import { useSelector } from 'react-redux';
 
 
 interface TabPanelProps {
@@ -56,6 +53,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
     },
+    tabsDisabled: {
+        color: 'white',
+        pointerEvents: 'none',
+        opacity: '0.4',
+    }
+
 }));
 
 function ScrollableTabsButtonForce(props: any) {
@@ -65,6 +68,9 @@ function ScrollableTabsButtonForce(props: any) {
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };
+
+    const resultLoading = useSelector((state: AppState) => state.resultLoading);
+    const result = useSelector((state: AppState) => state.result);
 
     return (
         <div className={classes.root}>
@@ -77,9 +83,10 @@ function ScrollableTabsButtonForce(props: any) {
                     indicatorColor="primary"
                     textColor="primary"
                     aria-label="scrollable force tabs example"
+                    className={(resultLoading || result === undefined) ? classes.tabsDisabled : ""}
                 >
                     {routes.map((prop, key) => {
-                        if(prop.path !== "/"){
+                        if (prop.path !== "/") {
                             return (
                                 <Tab label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );

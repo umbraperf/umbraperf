@@ -99,9 +99,11 @@ ReactDOM.render(
                                     <route.component />
                                 </Route>
                             ))}
+
                             <Route path="*">
                                 <NoMatch />
                             </Route>
+
                         </Switch>
                     </div>
 

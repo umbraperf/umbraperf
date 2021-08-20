@@ -6,14 +6,13 @@ import { Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
+import { Redirect } from 'react-router-dom';
 
 
 
 
 interface Props {
     appContext: IAppContext;
-    file: undefined | File;
-    fileName: string | undefined;
     resultLoading: boolean;
     result: Result | undefined;
 }
@@ -24,6 +23,24 @@ class SwimLanes extends React.Component<Props> {
         super(props);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+    }
+    
+    createVisualizationData() {
+        const data = {
+            name: 'table',
+            values: [
+                { category: 'A', amount: 28 },
+                { category: 'B', amount: 55 },
+                { category: 'C', amount: 43 },
+                { category: 'D', amount: 91 },
+                { category: 'E', amount: 81 },
+                { category: 'F', amount: 53 },
+                { category: 'G', amount: 19 },
+                { category: 'H', amount: 87 },
+            ],
+        }; 
+
+        return data;
     }
 
     createVisualizationSpec() {
@@ -111,24 +128,6 @@ class SwimLanes extends React.Component<Props> {
         return spec;
     }
 
-    createVisualizationData() {
-        const data = {
-            name: 'table',
-            values: [
-                { category: 'A', amount: 28 },
-                { category: 'B', amount: 55 },
-                { category: 'C', amount: 43 },
-                { category: 'D', amount: 91 },
-                { category: 'E', amount: 81 },
-                { category: 'F', amount: 53 },
-                { category: 'G', amount: 19 },
-                { category: 'H', amount: 87 },
-            ],
-        }; 
-    
-        return data;
-    }
-
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
             //TODO
@@ -143,6 +142,10 @@ class SwimLanes extends React.Component<Props> {
 
 
     public render() {
+        if (!this.props.result) {
+            return <Redirect to={"/upload"} />
+        }
+
         return <div>
 
             <div className={styles.resultArea} >
@@ -157,8 +160,6 @@ class SwimLanes extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    file: state.file,
-    fileName: state.fileName,
     resultLoading: state.resultLoading,
     result: state.result,
 });

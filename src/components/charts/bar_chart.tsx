@@ -30,12 +30,6 @@ class BarChart extends React.Component<Props> {
 
     createVisualization() {
 
-        const data = [{ id: "test1", value: 1 },
-        { id: "test2", value: 2 },
-        { id: "test3", value: 3 },
-        { id: "test4", value: 4 },
-        { id: "test5", value: 5 }];
-
         const test: Result = {
             request: 100,
             x: ["test3", "test4", "test5"],
@@ -43,9 +37,7 @@ class BarChart extends React.Component<Props> {
             test: 1,
         };
 
-        const testFromRust: Result = this.props.result!;
-        console.log(testFromRust);
-
+    
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 30, bottom: 70, left: 60 },
             width = 460 - margin.left - margin.right,
@@ -74,7 +66,7 @@ class BarChart extends React.Component<Props> {
 
         // Add Y axis
         const y = d3.scaleLinear()
-            .domain([0, d3.max(testFromRust.x!) as number]).nice()
+            .domain([0, d3.max(test.x!) as number]).nice()
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
@@ -87,17 +79,21 @@ class BarChart extends React.Component<Props> {
             //.attr("x", (d) => x(d.id) || 0)
             .attr("x", (d) => x(d) || 0)
             //.attr("y", (d) => y(d.value))
-            .attr("y", (d, i) => y(testFromRust.x![i]))
+            .attr("y", (d, i) => y(test.x![i]))
             .attr("width", x.bandwidth())
-            .attr("height", function (d, i) { return y(0) - y(testFromRust.x![i]); })
+            .attr("height", function (d, i) { return y(0) - y(test.y![i]); })
             .attr("fill", "#69b3a2")
 
     }
 
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            this.createVisualization();
+            //TODO
         }
+    }
+
+    componentDidMount(): void {
+        this.createVisualization();
     }
 
     public render() {

@@ -1,6 +1,7 @@
 import { storeResultFromRust } from './controller/web_file_controller';
 import * as model from './worker';
 //import {Table} from "@apache-arrow/ts";
+const table = require("../node_modules/apache-arrow/table");
 
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
@@ -48,7 +49,7 @@ worker.addEventListener('message', message => {
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
             //TODO:
-            //const arrowArray = Table.from(messageData);
+            const arrowArray = table.from(messageData);
             //console.log(arrowArray);
             console.log("main got result from worker.");
             storeResultFromRust(message.data.requestId, messageData);

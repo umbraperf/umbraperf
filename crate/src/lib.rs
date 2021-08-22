@@ -91,9 +91,11 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     let mut buff = Cursor::new(vec![]);
     let options = arrow::ipc::writer::IpcWriteOptions::default();
     let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-    let encoded = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(),  &options);
-    arrow::ipc::writer::write_message(&mut buff, encoded, &options);
+    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(),  &options);
+    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch,  &mut dict, &options);
 
+    arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
+    arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
 
     store_arrow_result_from_rust(buff.into_inner());
 

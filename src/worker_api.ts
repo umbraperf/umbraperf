@@ -50,6 +50,7 @@ worker.addEventListener('message', message => {
             //TODO:
             const arrowArray = ArrowTable.Table.from(messageData);
             console.log(arrowArray);
+            console.log(arrowArray.data);
             console.log("main got result from worker.");
             storeResultFromRust(message.data.requestId, messageData);
             break;

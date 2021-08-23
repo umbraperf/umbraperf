@@ -25,6 +25,7 @@ export class WorkerAPI {
         console.log(this.worker);
     }
 
+    //TODO remove
     public testWorker() {
         this.worker.postMessage({
             type: model.WorkerRequestType.TEST,
@@ -47,10 +48,23 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
+
             //TODO:
+            
             const arrowArray = ArrowTable.Table.from(messageData);
             console.log(arrowArray);
             console.log(arrowArray.data);
+            const col0 = arrowArray.getColumn("column_2");
+
+            if(col0){
+                const array = col0.toArray()!;
+                const jsarray = Array.from(array);
+
+                console.log(jsarray);
+            }
+
+
+
             console.log("main got result from worker.");
             storeResultFromRust(message.data.requestId, messageData);
             break;

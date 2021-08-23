@@ -85,9 +85,6 @@ class BarChart extends React.Component<Props, State> {
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
             </div>
-            <div>
-                <p>Result of computation from rust is: {this.props.result?.test}</p>
-            </div>
         </div>;
     }
 

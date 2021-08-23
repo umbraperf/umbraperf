@@ -141,7 +141,7 @@ class Dummy extends React.Component<Props> {
                     {this.props.resultLoading ?
                         <CircularProgress />
                         :
-                        this.props.result?.test}
+                        "See visualization."}
                 </p>
             </div>
         </div>;

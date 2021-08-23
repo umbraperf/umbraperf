@@ -1,11 +1,13 @@
 extern crate wasm_bindgen;
+use arrow::datatypes::{DataType, Field, Int64Type, Schema};
 use wasm_bindgen::prelude::*;
 
 use std::cell::RefCell;
+use std::sync::Arc;
 
 // Arrow
 extern crate arrow;
-use arrow::datatypes::Int64Type;
+use arrow::{array::Int8Array, datatypes::Int8Type};
 use arrow::record_batch::RecordBatch;
 
 //Test Write for JS
@@ -88,17 +90,36 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     store_result_from_rust(sum.unwrap() as i32, 0);
 
 
+    
+    let id_array = Int8Array::from(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+    let schema = Schema::new(vec![
+    Field::new("id", DataType::Int8, false)
+    ]);
+
+    let batch = RecordBatch::try_new(
+    Arc::new(schema),
+    vec![Arc::new(id_array)]
+    );
+
+    let batch_un = batch.expect("batch to be");
+
+
     let mut buff = Cursor::new(vec![]);
     let options = arrow::ipc::writer::IpcWriteOptions::default();
     let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(),  &options);
-    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch,  &mut dict, &options);
+    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &batch_un.schema(),  &options);
+    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &batch_un,  &mut dict, &options);
 
     arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
     arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
 
     store_arrow_result_from_rust(buff.into_inner());
 
+}
+
+fn send_record_batch() {
+
+    
 }
 
 

@@ -49,24 +49,18 @@ worker.addEventListener('message', message => {
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
 
-            //TODO:
-            
-            const arrowArray = ArrowTable.Table.from(messageData);
-            console.log(arrowArray);
-            console.log(arrowArray.data);
-            const col0 = arrowArray.getColumn("column_2");
+            const arrowTable = ArrowTable.Table.from(messageData);
+            console.log(arrowTable);
 
-            if(col0){
+/*             if(col0){
                 const array = col0.toArray()!;
                 const jsarray = Array.from(array);
 
                 console.log(jsarray);
-            }
-
-
+            } */
 
             console.log("main got result from worker.");
-            storeResultFromRust(message.data.requestId, messageData);
+            storeResultFromRust(message.data.requestId, arrowTable);
             break;
 
 

@@ -89,8 +89,14 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     set_sum(sum.unwrap() as i32);
     store_result_from_rust(sum.unwrap() as i32, 0);
 
+    let cursor = write_record_batch_to_cursor(create_record_batch());
 
-    
+    store_arrow_result_from_rust(cursor.into_inner());
+
+}
+
+
+fn create_record_batch() -> RecordBatch {
     let id_array = Int8Array::from(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
     let schema = Schema::new(vec![
     Field::new("id", DataType::Int8, false)
@@ -101,25 +107,25 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     vec![Arc::new(id_array)]
     );
 
-    let batch_un = batch.expect("batch to be");
+    batch.unwrap()
+}
 
+// Write Record Batch to IPC
+// return: Vec<u8> to send to JavaScript
+fn write_record_batch_to_cursor(record_batch: RecordBatch) -> Cursor<Vec<u8>> {
 
     let mut buff = Cursor::new(vec![]);
+
     let options = arrow::ipc::writer::IpcWriteOptions::default();
     let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &batch_un.schema(),  &options);
-    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &batch_un,  &mut dict, &options);
+
+    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(),  &options);
+    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch,  &mut dict, &options);
 
     arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
     arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
 
-    store_arrow_result_from_rust(buff.into_inner());
-
-}
-
-fn send_record_batch() {
-
-    
+    buff
 }
 
 

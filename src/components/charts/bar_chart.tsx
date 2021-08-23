@@ -48,29 +48,29 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentWillUnmount() {
-        removeEventListener('resize', (event) =>{
+        removeEventListener('resize', (event) => {
             this.resizeListener();
         });
     }
 
     resizeListener() {
         if (!this.chartWrapper) return;
-    
+
         const child = this.chartWrapper.current;
-        if (child){
+        if (child) {
             const newWidth = child.clientWidth;
-            
-            child.style.display = 'none';  
-            
+
+            child.style.display = 'none';
+
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth,
-              })); 
+            }));
 
             child.style.display = 'block';
         }
-    
-    
+
+
     }
 
 
@@ -92,21 +92,21 @@ class BarChart extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
+
+        let cat = ["a", "b", "c"];
+        let am = [1, 2, 3];
+
         const data = {
-            name: 'table',
+
+            transform: [{ type: "flatten", fields: ["category", "amount"] }],
+            name: "table",
             values: [
-                { category: 'A', amount: 28 },
-                { category: 'B', amount: 55 },
-                { category: 'C', amount: 43 },
-                { category: 'D', amount: 91 },
-                { category: 'E', amount: 81 },
-                { category: 'F', amount: 53 },
-                { category: 'G', amount: 19 },
-                { category: 'H', amount: 87 },
-            ],
+                { category: cat, amount: am }
+            ]
         };
 
-        return data;
+
+        return  data ;
     }
 
     createVisualizationSpec() {
@@ -121,7 +121,7 @@ class BarChart extends React.Component<Props, State> {
             autosize: 'fit',
 
             data: [
-                visData
+                visData,
             ],
 
             signals: [

@@ -1,5 +1,5 @@
 import { StateMutationType } from "../model/state_mutation";
-import { Result, createResultObject } from "../model/core_result";
+import { createResultObject } from "../model/core_result";
 import store from '../app';
 import { WorkerAPI } from "src/worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";

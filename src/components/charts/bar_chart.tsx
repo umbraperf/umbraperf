@@ -85,23 +85,26 @@ class BarChart extends React.Component<Props, State> {
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
             </div>
-            <div>
-                <p>Result of computation from rust is: {this.props.result?.test}</p>
-            </div>
         </div>;
     }
 
     createVisualizationData() {
+
+        const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
+        console.log(operatorsArray);
+        const valueArray= this.props.result?.resultTable.getColumn("cycles").toArray();
+        console.log(valueArray);
+
 
         let cat = ["a", "b", "c"];
         let am = [1, 2, 3];
 
         const data = {
 
-            transform: [{ type: "flatten", fields: ["category", "amount"] }],
+            transform: [{ type: "flatten", fields: ["operators", "values"] }],
             name: "table",
             values: [
-                { category: cat, amount: am }
+                { operators: operatorsArray, values: valueArray }
             ]
         };
 
@@ -139,12 +142,12 @@ class BarChart extends React.Component<Props, State> {
                 {
                     name: 'xscale',
                     type: 'band',
-                    domain: { data: 'table', field: 'category' },
+                    domain: { data: 'table', field: 'operators' },
                     range: 'width',
                 },
                 {
                     name: 'yscale',
-                    domain: { data: 'table', field: 'amount' },
+                    domain: { data: 'table', field: 'values' },
                     nice: true,
                     range: 'height',
                 },
@@ -161,9 +164,9 @@ class BarChart extends React.Component<Props, State> {
                     from: { data: 'table' },
                     encode: {
                         enter: {
-                            x: { scale: 'xscale', field: 'category', offset: 1 },
+                            x: { scale: 'xscale', field: 'operators', offset: 1 },
                             width: { scale: 'xscale', band: 1, offset: -1 },
-                            y: { scale: 'yscale', field: 'amount' },
+                            y: { scale: 'yscale', field: 'values' },
                             y2: { scale: 'yscale', value: 0 },
                         },
                         update: {
@@ -183,9 +186,9 @@ class BarChart extends React.Component<Props, State> {
                             fill: { value: '#333' },
                         },
                         update: {
-                            x: { scale: 'xscale', signal: 'tooltip.category', band: 0.5 },
-                            y: { scale: 'yscale', signal: 'tooltip.amount', offset: -2 },
-                            text: { signal: 'tooltip.amount' },
+                            x: { scale: 'xscale', signal: 'tooltip.operators', band: 0.5 },
+                            y: { scale: 'yscale', signal: 'tooltip.values', offset: -2 },
+                            text: { signal: 'tooltip.values' },
                             fillOpacity: [{ test: 'datum === tooltip', value: 0 }, { value: 1 }],
                         },
                     },

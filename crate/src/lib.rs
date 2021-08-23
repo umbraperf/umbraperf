@@ -1,5 +1,7 @@
 extern crate wasm_bindgen;
+use arrow::array::StringArray;
 use arrow::datatypes::{DataType, Field, Int64Type, Schema};
+use arrow::ipc::{Utf8, Utf8Builder};
 use wasm_bindgen::prelude::*;
 
 use std::cell::RefCell;
@@ -7,15 +9,11 @@ use std::sync::Arc;
 
 // Arrow
 extern crate arrow;
-use arrow::{array::Int8Array, datatypes::Int8Type};
+use arrow::{array::Int8Array};
 use arrow::record_batch::RecordBatch;
 
 //Test Write for JS
-use arrow::ipc::writer;
-use std::io::Write;
-use std::fs::File;
 use std::io::Cursor;
-use js_sys::Uint8Array;
 
 
 
@@ -89,7 +87,7 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     set_sum(sum.unwrap() as i32);
     store_result_from_rust(sum.unwrap() as i32, 0);
 
-    let cursor = write_record_batch_to_cursor(create_record_batch());
+    let cursor = write_record_batch_to_cursor(&create_record_batch());
 
     store_arrow_result_from_rust(cursor.into_inner());
 
@@ -97,14 +95,22 @@ fn aggregate_sum(record_batch: &RecordBatch) {
 
 
 fn create_record_batch() -> RecordBatch {
-    let id_array = Int8Array::from(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+    let operator_array = StringArray::from(vec![Some("foo"), Some("bar")]);
+    let cycles_array = Int8Array::from(vec![1,2]);
     let schema = Schema::new(vec![
-    Field::new("id", DataType::Int8, false)
+    Field::new("operator", DataType::Utf8, false),
+    Field::new("cycles", DataType::Int8, false)
     ]);
+
+    use arrow::array::ArrayRef;
+    let a: ArrayRef = Arc::new(operator_array);
+    let b: ArrayRef = Arc::new(cycles_array);
+
 
     let batch = RecordBatch::try_new(
     Arc::new(schema),
-    vec![Arc::new(id_array)]
+    vec![a, b]
+
     );
 
     batch.unwrap()
@@ -112,7 +118,7 @@ fn create_record_batch() -> RecordBatch {
 
 // Write Record Batch to IPC
 // return: Vec<u8> to send to JavaScript
-fn write_record_batch_to_cursor(record_batch: RecordBatch) -> Cursor<Vec<u8>> {
+fn write_record_batch_to_cursor(record_batch: &RecordBatch) -> Cursor<Vec<u8>> {
 
     let mut buff = Cursor::new(vec![]);
 

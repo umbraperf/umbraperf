@@ -31,13 +31,13 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
     const resultObject = createResultObject(requestId, result);
     console.log(resultObject);
 
-    // store.dispatch({
-    //     type: StateMutationType.SET_RESULTLOADING,
-    //     data: false,
-    // });
-    // store.dispatch({
-    //     type: StateMutationType.SET_RESULT,
-    //     data: resultObject,
-    // });
-    // console.log(store.getState()); 
+    store.dispatch({
+        type: StateMutationType.SET_RESULTLOADING,
+        data: false,
+    });
+    store.dispatch({
+        type: StateMutationType.SET_RESULT,
+        data: resultObject,
+    });
+    console.log(store.getState()); 
 }

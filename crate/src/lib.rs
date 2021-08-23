@@ -1,6 +1,8 @@
 extern crate wasm_bindgen;
-use arrow::array::StringArray;
+use arrow::array::{BooleanArray, StringArray};
+use arrow::compute::Filter;
 use arrow::datatypes::{DataType, Field, Int64Type, Schema};
+use arrow::error::ArrowError;
 use arrow::ipc::{Utf8, Utf8Builder};
 use wasm_bindgen::prelude::*;
 
@@ -80,8 +82,11 @@ pub fn analyze_file(file_size: i32){
 }
 
 fn aggregate_sum(record_batch: &RecordBatch) {
+
+
     let array = record_batch.column(1);
     let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
+
     let sum = arrow::compute::kernels::aggregate::sum(primitive_array);
     print_to_js_with_obj(&format!("{}", sum.unwrap()).into());
     set_sum(sum.unwrap() as i32);
@@ -90,6 +95,27 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     let cursor = write_record_batch_to_cursor(&create_record_batch());
 
     store_arrow_result_from_rust(cursor.into_inner());
+
+}
+
+
+fn filter_record_batch(record_batch: &RecordBatch, at_index: usize) -> BooleanArray {
+    let array = record_batch.column(at_index);
+    let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
+    let values = primitive_array.values();
+
+    let mut vec = Vec::new();
+
+    let compare_to = 2 as i64;
+    for v in values {
+        if v == &compare_to {
+            vec.push(true)
+        } else {
+            vec.push(false)
+        }
+    }
+    
+    BooleanArray::from(vec)
 
 }
 

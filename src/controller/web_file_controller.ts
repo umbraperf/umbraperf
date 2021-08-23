@@ -2,6 +2,8 @@ import { StateMutationType } from "../model/state_mutation";
 import { Result, createResultObject } from "../model/core_result";
 import store from '../app';
 import { WorkerAPI } from "src/worker_api";
+import * as ArrowTable from "../../node_modules/apache-arrow/table";
+
 
 
 export interface FileInfo {
@@ -23,19 +25,19 @@ export class WebFileController {
     }
 }
 
-export function storeResultFromRust(requestId: number, result: number) {
+export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {
 
     console.log("result received from rust!");
-    const resultObject = createResultObject(result, requestId, [1,2,3], undefined, undefined);
+    const resultObject = createResultObject(requestId, result);
     console.log(resultObject);
 
-    store.dispatch({
-        type: StateMutationType.SET_RESULTLOADING,
-        data: false,
-    });
-    store.dispatch({
-        type: StateMutationType.SET_RESULT,
-        data: resultObject,
-    });
-    console.log(store.getState());
+    // store.dispatch({
+    //     type: StateMutationType.SET_RESULTLOADING,
+    //     data: false,
+    // });
+    // store.dispatch({
+    //     type: StateMutationType.SET_RESULT,
+    //     data: resultObject,
+    // });
+    // console.log(store.getState()); 
 }

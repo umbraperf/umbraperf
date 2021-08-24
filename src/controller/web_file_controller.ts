@@ -11,8 +11,8 @@ export interface FileInfo {
 }
 
 export enum ChartType{
-    BAR_CHART = "bar-chart",
-    SWIM_LANES = "swim-lanes",
+    BAR_CHART = "bar_chart",
+    SWIM_LANES = "swim_lanes",
 }
 
 const worker = new WorkerAPI();

@@ -29,8 +29,8 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest> |
-  WorkerRequest<WorkerRequestType.TEST, string>;
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest> 
+  ;
 
 export type WorkerResponseVariant =
   WorkerResponse<WorkerResponseType.STORE_EVENTS, any> |
@@ -135,6 +135,7 @@ worker.onmessage = (message) => {
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
 
+      //TODO: add file id to rust request
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
 
       globalFileIdCounter++;
@@ -143,11 +144,6 @@ worker.onmessage = (message) => {
     case WorkerRequestType.CALCULATE_CHART_DATA:
       console.log("CALCULATE CHART DATA");
       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event);
-      break;
-
-      //TODO remove
-    case WorkerRequestType.TEST:
-      console.log(messageData);
       break;
 
     default:

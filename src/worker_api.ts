@@ -5,7 +5,6 @@ import * as ArrowTable from "../node_modules/apache-arrow/table";
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
 
-
 export class WorkerAPI {
     worker!: Worker;
 
@@ -31,14 +30,6 @@ export class WorkerAPI {
         });
     }
 
-    //TODO remove
-    public testWorker() {
-        this.worker.postMessage({
-            type: model.WorkerRequestType.TEST,
-            data: "123"
-        });
-    }
-
 }
 
 //Responses from Worker to Main:
@@ -59,14 +50,12 @@ worker.addEventListener('message', message => {
             storeEventsFromRust(message.data.requestId, events);
             break;
 
-
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
             const arrowResultTable = ArrowTable.Table.from(messageData);
             console.log("main got result from worker.");
             storeResultFromRust(message.data.requestId, arrowResultTable);
             break;
-
 
         default:
             console.log(`UNKNOWN RESPONSE TYPE ${messageType}`);

@@ -83,6 +83,7 @@ export class AppStateMutation {
                     result: undefined,
                     chunksNumber: 0,
                     events: undefined,
+                    eventsLoading: false,
                     file: undefined,
                 }
         }

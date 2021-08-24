@@ -9,6 +9,8 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import { ChartType } from '../../controller/web_file_controller';
+
 
 
 interface Props {
@@ -40,13 +42,15 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+            window.alert("refetch data from rust");
+            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
+
             //TODO
         }
     }
 
     componentDidMount() {
-        //this.webFileControllerInstance.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

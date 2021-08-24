@@ -7,22 +7,10 @@ import { ctx } from '../app_context';
 import * as model from '../model';
 import { FormControl } from 'react-bootstrap';
 import { InputLabel, Select } from '@material-ui/core';
+import styles from "../style/events-dropdown.module.css";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        formControl: {
-            margin: theme.spacing(1),
-            minWidth: 120,
-        },
-        selectEmpty: {
-            marginTop: theme.spacing(2),
-        },
-    }),
-);
 
 export default function EventsDropdown() {
-
-    const styles = useStyles();
 
     const events = useSelector((state: AppState) => state.events);
     const currentChart = useSelector((state: AppState) => state.currentChart);
@@ -45,9 +33,9 @@ export default function EventsDropdown() {
 
 
     return (
-        <div>
-            <InputLabel id="demo-simple-select-label">Choose Event</InputLabel>
-            <Select
+        <div className={styles.eventDropdownSelectorContainer}>
+            <InputLabel className={styles.eventDropdownSelectorLabel} id="event-selector-label">Choose Event:</InputLabel>
+            <Select className={styles.eventDropdownSelector}
                 labelId="event-selector-label"
                 id="event-selector"
                 value={currentEvent}

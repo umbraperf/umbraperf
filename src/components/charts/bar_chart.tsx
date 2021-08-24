@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsDropdown from '../events_dropdown';
 
@@ -103,9 +103,6 @@ class BarChart extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <EventsDropdown></EventsDropdown>
-                <Typography variant="subtitle1">
-                    Visualized Event: {this.props.currentEvent}
-                </Typography>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>

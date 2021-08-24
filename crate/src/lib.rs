@@ -80,7 +80,9 @@ pub fn analyze_file(file_size: i32){
     for event in events {
         match event {
             Some(x) => {
-                vec.push(x.parse::<i32>().unwrap());
+                for byte in x.as_bytes() {
+                    vec.push(*byte);
+                }
             }
             None => {
             }
@@ -88,6 +90,8 @@ pub fn analyze_file(file_size: i32){
     }
 
     send_events_to_js(vec);
+
+    print_to_js("test");
     
     let tuple = Analyze::data_for_bar_chart(&batch, "cycles:ppp");
     

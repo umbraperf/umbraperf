@@ -17,6 +17,7 @@ export enum StateMutationType {
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
     SET_EVENTS = 'SET_EVENTS',
+    SET_EVENTSLOADING = 'SET_EVENTSLOADING',
     RESET_STATE = 'RESET_STATE',
     OTHER = 'OTHER',
 }
@@ -29,6 +30,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
+    | StateMutation<StateMutationType.SET_EVENTSLOADING, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     ;
 
@@ -68,6 +70,11 @@ export class AppStateMutation {
                     ...state,
                     events: mutation.data,
                 }
+            case StateMutationType.SET_EVENTSLOADING:
+                return {
+                    ...state,
+                    eventsLoading: mutation.data,
+                };
             case StateMutationType.RESET_STATE:
                 return {
                     ...state,

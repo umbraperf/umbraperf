@@ -10,7 +10,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress, Typography } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
-import EventDropdownMenu from '../events_dropdown';
+import EventsDropdown from '../events_dropdown';
 
 
 
@@ -102,7 +102,7 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <EventDropdownMenu></EventDropdownMenu>
+                <EventsDropdown></EventsDropdown>
                 <Typography variant="subtitle1">
                     Visualized Event: {this.props.currentEvent}
                 </Typography>

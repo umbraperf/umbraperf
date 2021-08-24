@@ -1,50 +1,32 @@
 import React, { useCallback, useContext } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Menu, { MenuProps } from '@material-ui/core/Menu';
+import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../model/state';
 import { ctx } from '../app_context';
 import * as model from '../model';
+import { FormControl } from 'react-bootstrap';
+import { InputLabel, Select } from '@material-ui/core';
 
-
-const StyledMenu = withStyles({
-    paper: {
-        border: '1px solid #d3d4d5',
-    },
-})((props: MenuProps) => (
-    <Menu
-        elevation={0}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-        }}
-        transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-        }}
-        {...props}
-    />
-));
-
-const StyledMenuItem = withStyles((theme) => ({
-    root: {
-        '&:focus': {
-            backgroundColor: theme.palette.primary.main,
-            '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-                color: theme.palette.common.white,
-            },
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 120,
         },
-    },
-}))(MenuItem);
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
+    }),
+);
 
-export default function EventDropdownMenu() {
+export default function EventsDropdown() {
+
+    const styles = useStyles();
 
     const events = useSelector((state: AppState) => state.events);
     const currentChart = useSelector((state: AppState) => state.currentChart);
+    const currentEvent = useSelector((state: AppState) => state.currentEvent);
     const context = useContext(ctx);
     const dispatch = useDispatch();
     const setNewCurrentEvent = useCallback(
@@ -53,49 +35,28 @@ export default function EventDropdownMenu() {
             data: newCurrentEvent,
         }),
         [dispatch]
-      );
-
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-    const handleButtonClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    );
 
     const handleOnItemClick = (elem: string) => {
-        handleClose();
         setNewCurrentEvent(elem);
         context!.controller.calculateChartData(currentChart, elem);
 
     };
 
+
     return (
         <div>
-            <Button
-                aria-controls="customized-menu"
-                aria-haspopup="true"
-                variant="contained"
-                color="primary"
-                onClick={handleButtonClick}
-            >
-                Choose Event to Visualize
-            </Button>
-
-            <StyledMenu
-                id="customized-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
+            <InputLabel id="demo-simple-select-label">Choose Event</InputLabel>
+            <Select
+                labelId="event-selector-label"
+                id="event-selector"
+                value={currentEvent}
             >
                 {events!.map((elem, index) =>
-                (<StyledMenuItem onClick={() => handleOnItemClick(elem)} key={index} selected={false}>
-                    <ListItemText primary={elem} />
-                </StyledMenuItem>)
+                (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)
                 )}
-            </StyledMenu>
+            </Select>
+
         </div>
     );
 }

@@ -7,6 +7,7 @@ export interface AppState {
     result: Result | undefined;
     chunksNumber: number;
     events: Array<string> | undefined;
+    eventsLoading: boolean;
     file: undefined | File;
 }
 
@@ -17,6 +18,7 @@ export function createDefaultState(): AppState {
         result: undefined,
         chunksNumber: 0,
         events: undefined,
+        eventsLoading: false,
         file: undefined,
     };
 }

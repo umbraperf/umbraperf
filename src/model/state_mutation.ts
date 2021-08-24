@@ -12,11 +12,11 @@ export type StateMutation<T, P> = {
 /// A mutation type
 export enum StateMutationType {
     SET_FILENAME = 'SET_FILENAME',
-    SET_GREETER = 'SET_GREETER',
     SET_RESULTLOADING = 'SET_RESULTLOADING',
     SET_RESULT = 'SET_RESULT',
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
+    SET_EVENTS = 'SET_EVENTS',
     RESET_STATE = 'RESET_STATE',
     OTHER = 'OTHER',
 }
@@ -24,11 +24,11 @@ export enum StateMutationType {
 /// An state mutation variant
 export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
-    | StateMutation<StateMutationType.SET_GREETER, string>
     | StateMutation<StateMutationType.SET_RESULTLOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
+    | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     ;
 
@@ -63,11 +63,11 @@ export class AppStateMutation {
                     ...state,
                     file: mutation.data,
                 };
-            case StateMutationType.SET_GREETER:
+            case StateMutationType.SET_EVENTS:
                 return {
                     ...state,
-                    helloworld: mutation.data,
-                };
+                    events: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     ...state,
@@ -75,6 +75,7 @@ export class AppStateMutation {
                     resultLoading: false,
                     result: undefined,
                     chunksNumber: 0,
+                    events: undefined,
                     file: undefined,
                 }
         }

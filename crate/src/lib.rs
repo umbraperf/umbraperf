@@ -20,7 +20,7 @@ use record_batch_util::RecordBatchUtil;
 mod analyze;
 use analyze::Analyze;
 
-use crate::bindings::{store_arrow_result_from_rust};
+use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
 mod bindings;
 
 //STATE
@@ -72,6 +72,22 @@ pub fn analyze_file(file_size: i32){
 
     let semi_colon = 59;
     let batch = get_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
+
+    let events = Analyze::events(&batch);
+
+    let mut vec = Vec::new();
+
+    for event in events {
+        match event {
+            Some(x) => {
+                vec.push(x.parse::<i32>().unwrap());
+            }
+            None => {
+            }
+        }
+    }
+
+    send_events_to_js(vec);
     
     let tuple = Analyze::data_for_bar_chart(&batch, "cycles:ppp");
     
@@ -79,7 +95,7 @@ pub fn analyze_file(file_size: i32){
 
     let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
 
-    store_arrow_result_from_rust(cursor.into_inner());
+    send_arrow_result_to_js(cursor.into_inner());
 
 }
 

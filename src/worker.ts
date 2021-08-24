@@ -72,7 +72,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
     if (remainingFileSize > 0) {
       const readPart = Math.min(remainingFileSize, chunkSize);
       chunk = file.slice(offset, offset + readPart);
-
+      console.log(readPart);
       const reader = new FileReaderSync();
       const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
       const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);

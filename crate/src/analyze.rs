@@ -7,7 +7,7 @@ pub struct Analyze {
 
 impl Analyze {
 
-    pub fn data_for_bar_chart(batch: &RecordBatch) -> (Vec<Option<&str>>, Vec<i32>) {
+    pub fn data_for_bar_chart<'a>(batch: &'a RecordBatch, event_name: &'a str) -> (Vec<Option<&'a str>>, Vec<i32>) {
 
         use std::collections::HashMap;
         let mut operator_number_map = HashMap::new();
@@ -25,7 +25,7 @@ impl Analyze {
             let event = arrow_event_name.value(counter);
             let operator = arrow.value(counter);
 
-            if event.contains("cycles:ppp") {
+            if event.contains(event_name) {
                 if let Some(sum) = operator_number_map.get(operator) {
                     operator_number_map.insert(operator, sum + 1);
                 } else {

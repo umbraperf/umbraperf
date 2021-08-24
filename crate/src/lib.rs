@@ -1,5 +1,5 @@
 extern crate wasm_bindgen;
-use arrow::{datatypes::Schema, record_batch::RecordBatch};
+use arrow::{record_batch::RecordBatch};
 use wasm_bindgen::prelude::*;
 
 use std::cell::RefCell;
@@ -25,13 +25,11 @@ mod bindings;
 
 //STATE
 pub struct State {
-    pub sum: i32,
     pub record_batch: Option<RecordBatch>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
-        sum: 0,
         record_batch: None
     });
 }
@@ -50,14 +48,6 @@ where
     Callback: FnOnce(&mut State) -> ReturnType,
 {
     STATE.with(|s| cb(&mut s.borrow_mut()))
-}
-
-pub fn get_state() -> i32 {
-    with_state(|s| s.sum)
-}
-
-pub fn set_sum(new_sum: i32) {
-    with_state_mut(|s| s.sum = new_sum);
 }
 
 fn get_record_batch_from_state() ->  Option<RecordBatch> {
@@ -90,10 +80,9 @@ pub fn analyze_file(file_size: i32){
 
     let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&event_batch);
 
-    send_events_to_js(event_cursor.into_inner());
-
     set_record_batch(batch);
 
+    send_events_to_js(event_cursor.into_inner());
 }
 
 #[wasm_bindgen(js_name = "requestChartData")]
@@ -106,7 +95,7 @@ pub fn request_chart_data(chart_name: &str, event_name: &str) {
             let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
             send_arrow_result_to_js(cursor.into_inner());
         }
-        "swim_lane" => {
+        "swim_lanes" => {
             todo!()
         }
         &_ => {

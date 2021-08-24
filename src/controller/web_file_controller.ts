@@ -48,6 +48,7 @@ export function storeEventsFromRust(requestId: number, events: Array<string>){
         data: events,
     });
 
+    console.log(store.getState());
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {

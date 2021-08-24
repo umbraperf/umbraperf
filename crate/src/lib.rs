@@ -2,11 +2,10 @@ extern crate wasm_bindgen;
 use arrow::{record_batch::RecordBatch};
 use wasm_bindgen::prelude::*;
 
-use std::cell::RefCell;
+use std::{cell::RefCell};
 
 // Arrow
 extern crate arrow;
-
 
 extern crate console_error_panic_hook;
 
@@ -71,8 +70,13 @@ fn get_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
 
+    let now = instant::Instant::now();
+
     let semi_colon = 59;
     let batch = get_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
+
+    let elapsed = now.elapsed();
+    print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
 
     let events = Analyze::events(&batch);
 

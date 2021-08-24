@@ -1,5 +1,5 @@
 extern crate wasm_bindgen;
-use arrow::array::{BooleanArray, StringArray};
+use arrow::array::{Array, BooleanArray, Int32Array, StringArray};
 use arrow::compute::Filter;
 use arrow::datatypes::{DataType, Field, Int64Type, Schema};
 use arrow::error::ArrowError;
@@ -67,24 +67,69 @@ pub fn set_sum(new_sum: i32) {
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
-    print_to_js("Analyzing is started");
 
-    let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(false).with_batch_size(4000);
+    let semi_colon = 59;
+    let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(false).with_delimiter(semi_colon).with_projection(vec![0 as usize, 5 as usize]);
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
     let mut reader = cursor_reader.unwrap();
 
-    print_to_js("Reader");
-
     let batch = &reader.next().unwrap().unwrap();
     print_to_js_with_obj(&format!("{:?}", &batch).into()); 
-    aggregate_sum(&batch);
+    //aggregate_sum(&batch);
+    use std::collections::HashMap;
+    let mut operator_number_map = HashMap::new();
+
+
+    let column = batch.column(0);
+    let arrow = arrow::array::as_string_array(column);
+
+    let column_ev_name = batch.column(1);
+    let arrow_event_name = arrow::array::as_string_array(column_ev_name);
+
+    let mut counter = 0;
+    while counter < arrow.len() {
+
+        let event = arrow_event_name.value(counter);
+        let operator = arrow.value(counter);
+
+        if event.contains("cycles:ppp") {
+            if let Some(sum) = operator_number_map.get(operator) {
+                operator_number_map.insert(operator, sum + 1);
+            } else {
+                operator_number_map.insert(operator, 1);
+            }
+        }
+        counter += 1;
+    }
+
+    print_to_js_with_obj(&format!("{:?}", operator_number_map).into());
+
+    let mut k_vec = Vec::new();
+    let mut v_vec = Vec::new();
+    for (k, &v) in operator_number_map.iter() {
+        k_vec.push(Some(*k));
+        v_vec.push(v);
+    }
+    
+
+    let string_vec = k_vec;
+
+    let int_vec = v_vec;
+
+    let batch = create_record_batch(string_vec, int_vec);
+
+    let cursor = write_record_batch_to_cursor(&batch);
+
+    store_arrow_result_from_rust(cursor.into_inner());
+
+
 
 }
 
 fn aggregate_sum(record_batch: &RecordBatch) {
 
 
-    let array = record_batch.column(1);
+    let array = record_batch.column(0);
     let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
 
     let sum = arrow::compute::kernels::aggregate::sum(primitive_array);
@@ -92,40 +137,19 @@ fn aggregate_sum(record_batch: &RecordBatch) {
     set_sum(sum.unwrap() as i32);
     store_result_from_rust(sum.unwrap() as i32, 0);
 
-    let cursor = write_record_batch_to_cursor(&create_record_batch());
+    // let cursor = write_record_batch_to_cursor(&create_record_batch());
 
-    store_arrow_result_from_rust(cursor.into_inner());
-
-}
-
-
-fn filter_record_batch(record_batch: &RecordBatch, at_index: usize) -> BooleanArray {
-    let array = record_batch.column(at_index);
-    let primitive_array = arrow::array::as_primitive_array::<Int64Type>(array);
-    let values = primitive_array.values();
-
-    let mut vec = Vec::new();
-
-    let compare_to = 2 as i64;
-    for v in values {
-        if v == &compare_to {
-            vec.push(true)
-        } else {
-            vec.push(false)
-        }
-    }
-    
-    BooleanArray::from(vec)
+    //store_arrow_result_from_rust(cursor.into_inner());
 
 }
 
 
-fn create_record_batch() -> RecordBatch {
-    let operator_array = StringArray::from(vec![Some("foo"), Some("bar")]);
-    let cycles_array = Int8Array::from(vec![1,2]);
+fn create_record_batch(string_vec: Vec<Option<&str>>, int_vec: Vec<i32>) -> RecordBatch {
+    let operator_array = StringArray::from(string_vec);
+    let cycles_array = Int32Array::from(int_vec);
     let schema = Schema::new(vec![
     Field::new("operator", DataType::Utf8, false),
-    Field::new("cycles", DataType::Int8, false)
+    Field::new("cycles", DataType::Int32, false)
     ]);
 
     use arrow::array::ArrayRef;

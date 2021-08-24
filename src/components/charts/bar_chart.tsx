@@ -8,12 +8,15 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
+import { CircularProgress } from '@material-ui/core';
 
 
 interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
     result: Result | undefined;
+    eventsLoading: boolean;
+    events: Array<string> | undefined;
 }
 
 interface State {
@@ -75,8 +78,14 @@ class BarChart extends React.Component<Props, State> {
 
 
     public render() {
-        if (!this.props.result) {
+        if (!this.props.events) {
             return <Redirect to={"/upload"} />
+        }
+
+        if (!this.props.result || this.props.resultLoading) {
+            return <div className={styles.spinnerArea} >
+                <CircularProgress />
+            </div>
         }
 
         return <div>
@@ -92,12 +101,8 @@ class BarChart extends React.Component<Props, State> {
 
         const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
         console.log(operatorsArray);
-        const valueArray= this.props.result?.resultTable.getColumn("cycles").toArray();
+        const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray();
         console.log(valueArray);
-
-
-        let cat = ["a", "b", "c"];
-        let am = [1, 2, 3];
 
         const data = {
 
@@ -109,7 +114,7 @@ class BarChart extends React.Component<Props, State> {
         };
 
 
-        return  data ;
+        return data;
     }
 
     createVisualizationSpec() {
@@ -204,6 +209,8 @@ class BarChart extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
+    eventsLoading: state.eventsLoading,
+    events: state.events,
 });
 
 

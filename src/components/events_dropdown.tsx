@@ -64,7 +64,7 @@ export default function EventDropdownMenu() {
     const handleOnItemClick = (elem: string) => {
         handleClose();
         console.log(elem);
-        context?.controller.calculateChartData("bar_chart", elem);
+        context!.controller.calculateChartData("bar_chart", elem);
 
     };
 

@@ -1,5 +1,5 @@
 extern crate wasm_bindgen;
-use arrow::{record_batch::RecordBatch};
+use arrow::{datatypes::Schema, record_batch::RecordBatch};
 use wasm_bindgen::prelude::*;
 
 use std::cell::RefCell;
@@ -26,11 +26,13 @@ mod bindings;
 //STATE
 pub struct State {
     pub sum: i32,
+    pub record_batch: Option<RecordBatch>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
         sum: 0,
+        record_batch: None
     });
 }
 
@@ -58,6 +60,15 @@ pub fn set_sum(new_sum: i32) {
     with_state_mut(|s| s.sum = new_sum);
 }
 
+fn get_record_batch_from_state() ->  Option<RecordBatch> {
+    with_state(|s| s.record_batch.clone())
+}
+
+fn set_record_batch(record_batch: RecordBatch) {
+    with_state_mut(|s| s.record_batch = Some(record_batch));
+}
+
+
 fn get_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
 
     let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(with_header).with_delimiter(with_delimiter).with_projection(with_projection);
@@ -81,16 +92,27 @@ pub fn analyze_file(file_size: i32){
 
     send_events_to_js(event_cursor.into_inner());
 
-    print_to_js("test");
-    
-    let tuple = Analyze::data_for_bar_chart(&batch, "cycles:ppp");
-    
-    let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
+    set_record_batch(batch);
 
-    let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
+}
 
-    send_arrow_result_to_js(cursor.into_inner());
-
+#[wasm_bindgen(js_name = "requestChartData")]
+pub fn request_chart_data(chart_name: &str, event_name: &str) {
+    match chart_name {
+        "bar_chart" => {
+            let batch = get_record_batch_from_state().unwrap();
+            let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
+            let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
+            let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
+            send_arrow_result_to_js(cursor.into_inner());
+        }
+        "swim_lane" => {
+            todo!()
+        }
+        &_ => {
+            todo!()
+        }
+    }
 }
 
 

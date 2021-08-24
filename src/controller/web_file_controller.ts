@@ -25,6 +25,10 @@ export class WebFileController {
     }
 }
 
+export function storeEventsFromRust(requestId: number, result: Array<string>){
+
+}
+
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {
 
     console.log("result received from rust!");

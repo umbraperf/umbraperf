@@ -9,7 +9,7 @@ extern "C" {
     pub fn read_file_chunk(offset: i32, bytes: i32) -> Uint8Array;
 
     #[wasm_bindgen(js_name = "storeEventsFromRust")]
-    pub fn send_events_to_js(events_results: Vec<i32>);
+    pub fn send_events_to_js(events_results: Vec<u8>);
 
     #[wasm_bindgen(js_name = "stroreArrowResultFromRust")]
     pub fn send_arrow_result_to_js(arrow_result: Vec<u8>);

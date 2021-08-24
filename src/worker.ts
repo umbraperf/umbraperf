@@ -5,7 +5,6 @@ import * as profiler_core from '../crate/pkg/shell';
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
   CALCULATE_CHART_DATA = 'CALCULATE_CHART_DATA',
-  READ_CHUNK = 'READ_CHUNK',
   TEST = 'TEST',
 };
 
@@ -31,7 +30,6 @@ export type WorkerResponse<T, P> = {
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
   WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, {chartType: string, event: string}> |
-  WorkerRequest<WorkerRequestType.READ_CHUNK, { offset: number, chunkSize: number }> |
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
@@ -139,6 +137,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       console.log("CALCULATE CHART DATA");
+      profiler_core.requestChartData("bar_chart", "cycles:ppp");
       //TODO rust call with message data
       break;
 

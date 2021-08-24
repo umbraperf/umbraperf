@@ -51,6 +51,7 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

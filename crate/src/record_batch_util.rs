@@ -2,11 +2,30 @@ use std::{io::Cursor, sync::Arc};
 
 use arrow::{array::{Int32Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
+use arrow::array::ArrayRef;
+
 pub struct RecordBatchUtil {
 }
 
 
 impl RecordBatchUtil {
+
+    pub fn create_record_batch_events(string_vec: Vec<Option<&str>>) -> RecordBatch {
+        let event_array = StringArray::from(string_vec);
+        let schema = Schema::new(vec![
+        Field::new("event_name", DataType::Utf8, false),
+        ]);
+
+        let a: ArrayRef = Arc::new(event_array);
+
+        let batch = RecordBatch::try_new(
+        Arc::new(schema),
+        vec![a]
+
+        );
+
+        batch.unwrap()
+    }
 
     pub fn create_record_batch(string_vec: Vec<Option<&str>>, int_vec: Vec<i32>) -> RecordBatch {
         let operator_array = StringArray::from(string_vec);

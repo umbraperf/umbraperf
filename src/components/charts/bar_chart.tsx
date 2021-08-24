@@ -45,13 +45,11 @@ class BarChart extends React.Component<Props, State> {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
-
-            //TODO
         }
     }
 
     componentDidMount() {
-        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.events![0]);
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

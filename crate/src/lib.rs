@@ -75,21 +75,11 @@ pub fn analyze_file(file_size: i32){
 
     let events = Analyze::events(&batch);
 
-    let mut vec = Vec::new();
+    let event_batch = RecordBatchUtil::create_record_batch_events(events);
 
-    for event in events {
-        match event {
-            Some(x) => {
-                for byte in x.as_bytes() {
-                    vec.push(*byte);
-                }
-            }
-            None => {
-            }
-        }
-    }
+    let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&event_batch);
 
-    send_events_to_js(vec);
+    send_events_to_js(event_cursor.into_inner());
 
     print_to_js("test");
     

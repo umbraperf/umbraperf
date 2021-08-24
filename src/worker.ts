@@ -4,6 +4,7 @@ import * as profiler_core from '../crate/pkg/shell';
 
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
+  CALCULATE_CHART_DATA = 'CALCULATE_CHART_DATA',
   READ_CHUNK = 'READ_CHUNK',
   TEST = 'TEST',
 };
@@ -29,6 +30,7 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, {chartType: string, event: string}> |
   WorkerRequest<WorkerRequestType.READ_CHUNK, { offset: number, chunkSize: number }> |
   WorkerRequest<WorkerRequestType.TEST, string>;
 
@@ -86,6 +88,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
+
 export function storeEventsFromRust(events: any){
   console.log("events result to main");
   worker.postMessage({
@@ -97,21 +100,6 @@ export function storeEventsFromRust(events: any){
 
 }
 
-/* export function stroreResultFromRust(result: number, requestId: number) {
-
-  if(result){
-    console.log("send result to main");
-    worker.postMessage({
-      messageId: 201,
-      requestId: requestId,
-      type: WorkerResponseType.STORE_RESULT,
-      //TODO::
-      data: 10,
-    });  
-  }
-
-}
- */
 export function stroreArrowResultFromRust(result: any) {
 
   if(result){
@@ -146,48 +134,15 @@ worker.onmessage = (message) => {
 
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
 
-      /*       //TODO remove
-            registeredFile = {
-              file: messageData as File,
-              size: (messageData as File).size,
-            } */
-
       globalFileIdCounter++;
       break;
 
-    /*     case WorkerRequestType.READ_CHUNK:
-          if (registeredFile.file) {
-            console.log(`Read Chunk at ${(messageData as any).offset}`)
-            console.log(registeredFile);
-    
-            const offset = (messageData as any).offset;
-            const chunkSize = (messageData as any).chunkSize;
-            const file = registeredFile.file;
-            const remainingFileSize = file.size - offset;
-    
-            let chunk = undefined;
-    
-            if (remainingFileSize > 0) {
-              const readPart = Math.min(remainingFileSize, chunkSize);
-              chunk = file.slice(offset, offset + readPart);
-    
-              const reader = new FileReaderSync();
-              const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
-              const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
-    
-              console.log(uInt8ArrayChunk);
-    
-              worker.postMessage({
-                //TODO message IDs, counter for request IDs
-                messageId: 201,
-                requestId: 201,
-                type: WorkerResponseType.SENT_UINT8,
-                data: uInt8ArrayChunk,
-              });
-            }
-          } */
-    //break;
+    case WorkerRequestType.CALCULATE_CHART_DATA:
+      console.log("CALCULATE CHART DATA");
+      //TODO rust call with message data
+      break;
 
+      //TODO remove
     case WorkerRequestType.TEST:
       console.log(messageData);
       break;
@@ -196,6 +151,4 @@ worker.onmessage = (message) => {
       console.log(`UNKNOWN REQUEST TYPE ${messageType}`);
   }
 
-  // Send to the main thread
-  //worker.postMessage("answer from worker!");
 };

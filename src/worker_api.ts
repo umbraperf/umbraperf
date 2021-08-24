@@ -21,8 +21,14 @@ export class WorkerAPI {
             data: file
         });
 
-        //profiler_core.startFileReading(this.worker);
         console.log(this.worker);
+    }
+
+    public calculateChartData(chartType: string, event: string){
+        this.worker.postMessage({
+            type: model.WorkerRequestType.CALCULATE_CHART_DATA,
+            data: {chartType: chartType, event: event},
+        });
     }
 
     //TODO remove

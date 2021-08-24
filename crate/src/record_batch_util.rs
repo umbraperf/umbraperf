@@ -35,7 +35,6 @@ impl RecordBatchUtil {
         Field::new("cycles", DataType::Int32, false)
         ]);
 
-        use arrow::array::ArrayRef;
         let a: ArrayRef = Arc::new(operator_array);
         let b: ArrayRef = Arc::new(cycles_array);
 

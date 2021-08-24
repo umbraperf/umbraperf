@@ -1,5 +1,5 @@
 use arrow::{array::Array, record_batch::RecordBatch};
-use std::collections::HashMap;
+use std::collections::{BTreeMap};
 
 pub struct Analyze {
 }
@@ -11,7 +11,7 @@ impl Analyze {
     // pub fn meta_data()
     pub fn events(batch: &RecordBatch) -> Vec<Option<&str>> {
 
-        let mut operator_number_map = HashMap::new();
+        let mut operator_number_map = BTreeMap::new();
 
         let column_ev_name = batch.column(1);
         let arrow_event_name = arrow::array::as_string_array(column_ev_name);
@@ -35,13 +35,13 @@ impl Analyze {
             k_vec.push(Some(*k));
         }
 
-         k_vec
+        k_vec
 
     }
 
     pub fn data_for_bar_chart<'a>(batch: &'a RecordBatch, event_name: &'a str) -> (Vec<Option<&'a str>>, Vec<i32>) {
 
-        let mut operator_number_map = HashMap::new();
+        let mut operator_number_map = BTreeMap::new();
 
         let column = batch.column(0);
         let arrow = arrow::array::as_string_array(column);
@@ -71,7 +71,6 @@ impl Analyze {
             k_vec.push(Some(*k));
             v_vec.push(v);
         }
-        
 
         let string_vec = k_vec;
 

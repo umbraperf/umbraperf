@@ -14,23 +14,25 @@ import Dummy from './components/dummy';
 import BarChart from './components/charts/bar_chart';
 import SwimLanes from './components/charts/swim_lanes';
 import TabPanel from './components/tab_panel';
-import { WorkerAPI } from './worker_api';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import { WebFileController } from './controller/web_file_controller';
 
 
 //Create Redux stroe
 const store = createProdStore();
 
 //Create WorkerAPI
-const workerAPI = new WorkerAPI();
+// const workerAPI = new WorkerAPI();
+const webFileController = new WebFileController();
 
 const appContext: IAppContext = {
-    worker: workerAPI,
+    // worker: workerAPI,
+    controller: webFileController,
 };
 
 const element = document.getElementById('root');

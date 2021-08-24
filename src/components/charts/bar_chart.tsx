@@ -24,6 +24,7 @@ interface State {
     height: number,
 }
 
+
 class BarChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
@@ -45,6 +46,7 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        //this.webFileControllerInstance.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

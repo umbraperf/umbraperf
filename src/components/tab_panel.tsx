@@ -69,8 +69,8 @@ function ScrollableTabsButtonForce(props: any) {
         setValue(newValue);
     };
 
-    const resultLoading = useSelector((state: AppState) => state.resultLoading);
-    const result = useSelector((state: AppState) => state.result);
+    const eventsLoading = useSelector((state: AppState) => state.eventsLoading);
+    const events = useSelector((state: AppState) => state.events);
 
     return (
         <div className={classes.root}>
@@ -83,7 +83,7 @@ function ScrollableTabsButtonForce(props: any) {
                     indicatorColor="primary"
                     textColor="primary"
                     aria-label="scrollable force tabs example"
-                    className={(resultLoading || result === undefined) ? classes.tabsDisabled : ""}
+                    className={(eventsLoading || events === undefined) ? classes.tabsDisabled : ""}
                 >
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {

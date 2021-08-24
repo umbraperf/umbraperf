@@ -5,7 +5,7 @@ export interface IAppContext {
     controller: WebFileController,
 }
 
-const ctx = React.createContext<IAppContext | null>(null);
+export const ctx = React.createContext<IAppContext | null>(null);
 export const AppContextProvider = ctx.Provider;
 export const AppContextConsumer = ctx.Consumer;
 

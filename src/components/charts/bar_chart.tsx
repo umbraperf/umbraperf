@@ -10,6 +10,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
+import EventDropdownMenu from '../events_dropdown';
 
 
 
@@ -45,13 +46,11 @@ class BarChart extends React.Component<Props, State> {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
-
-            //TODO
         }
     }
 
     componentDidMount() {
-        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.events![0]);
         addEventListener('resize', (event) => {
             this.resizeListener();
         });
@@ -97,6 +96,7 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
+                <EventDropdownMenu></EventDropdownMenu>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>

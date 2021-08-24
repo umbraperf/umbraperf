@@ -29,7 +29,7 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, {chartType: string, event: string}> |
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest> |
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
@@ -42,6 +42,11 @@ export type WorkerResponseVariant =
 export interface IRequestWorker {
   postMessage: (answerMessage: WorkerResponseVariant) => void;
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
+}
+
+interface ChartEventRequest {
+  chartType: string;
+  event: string;
 }
 
 interface IGlobalFileDictionary {
@@ -137,8 +142,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       console.log("CALCULATE CHART DATA");
-      profiler_core.requestChartData("bar_chart", "cycles:ppp");
-      //TODO rust call with message data
+      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event);
       break;
 
       //TODO remove

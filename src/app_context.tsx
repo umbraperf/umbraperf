@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { WorkerAPI } from './worker_api';
+import { WebFileController } from './controller/web_file_controller';
 
 export interface IAppContext {
-    //worker: Worker
-    worker: WorkerAPI,
+    controller: WebFileController,
 }
 
 const ctx = React.createContext<IAppContext | null>(null);

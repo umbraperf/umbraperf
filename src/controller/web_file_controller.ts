@@ -1,10 +1,8 @@
 import { StateMutationType } from "../model/state_mutation";
 import { createResultObject } from "../model/core_result";
 import store from '../app';
-import { WorkerAPI } from "src/worker_api";
+import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
-import { EventSeatOutlined } from "@material-ui/icons";
-
 
 
 export interface FileInfo {
@@ -17,21 +15,16 @@ export enum ChartType{
     SWIM_LANES = "swim-lanes",
 }
 
+const worker = new WorkerAPI();
 
 export class WebFileController {
 
-    worker: WorkerAPI;
-
-    constructor(worker: WorkerAPI) {
-        this.worker = worker;
-    }
-
     public registerFileAtWorker(file: File) {
-        this.worker.registerFile(file);
+        worker.registerFile(file);
     }
 
     public calculateChartData(chartType: string, event: string){
-        this.worker.calculateChartData(chartType, event);
+        worker.calculateChartData(chartType, event);
     }
 }
 

@@ -5,7 +5,6 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import styles from '../style/upload.module.css';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
-import { WebFileController } from '../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 
 interface Props {
@@ -36,9 +35,7 @@ class FileUploader extends React.Component<Props> {
             this.props.setEventsLoading(true);
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
-            const webFileControllerInstance = new WebFileController(this.props.appContext.worker);
-            webFileControllerInstance.registerFileAtWorker(file);
-
+            this.props.appContext.controller.registerFileAtWorker(file);
         }
     }
 

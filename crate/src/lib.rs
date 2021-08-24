@@ -73,7 +73,7 @@ pub fn analyze_file(file_size: i32){
     let semi_colon = 59;
     let batch = get_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
     
-    let tuple = Analyze::data_for_bar_chart(&batch);
+    let tuple = Analyze::data_for_bar_chart(&batch, "cycles:ppp");
     
     let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
 

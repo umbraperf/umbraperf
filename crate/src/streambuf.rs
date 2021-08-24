@@ -46,11 +46,14 @@ impl Read for WebFileReader {
         let chunk = bindings::read_file_chunk(self.offset as i32,read_size as i32);
         let len = Uint8Array::byte_length(&chunk);
 
-        // Copy to out
-        let mut index = 0;
-        while index < len {
-            out[index as usize] = Uint8Array::get_index(&chunk, index as u32);
-            index += 1;
+        if len == array_length as u32 {
+            chunk.copy_to(out);
+        } else {
+            let mut index = 0;
+            while index < len {
+                out[index as usize] = Uint8Array::get_index(&chunk, index as u32);
+                index += 1;
+                }
         }
 
         // Update offset

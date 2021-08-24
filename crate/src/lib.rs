@@ -1,26 +1,33 @@
+// Wasm Bindgen
 extern crate wasm_bindgen;
-use arrow::{record_batch::RecordBatch};
 use wasm_bindgen::prelude::*;
 
+extern crate console_error_panic_hook;
 use std::{cell::RefCell};
 
 // Arrow
 extern crate arrow;
+use arrow::{record_batch::RecordBatch};
 
-extern crate console_error_panic_hook;
-
+// Console
 mod console;
 mod console_js_log;
+
+// Stream Buff
 mod streambuf;
 use streambuf::WebFileReader;
+
+// Record Batch
 mod record_batch_util;
 use record_batch_util::RecordBatchUtil;
 
+// Analyze
 mod analyze;
 use analyze::Analyze;
 
-use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
+// Bindings
 mod bindings;
+use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
 
 //STATE
 pub struct State {
@@ -49,7 +56,7 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-fn get_record_batch_from_state() ->  Option<RecordBatch> {
+fn get_record_batch() ->  Option<RecordBatch> {
     with_state(|s| s.record_batch.clone())
 }
 
@@ -58,7 +65,7 @@ fn set_record_batch(record_batch: RecordBatch) {
 }
 
 
-fn get_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
+fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
 
     let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(with_header).with_delimiter(with_delimiter).with_projection(with_projection);
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
@@ -73,7 +80,7 @@ pub fn analyze_file(file_size: i32){
     let now = instant::Instant::now();
 
     let semi_colon = 59;
-    let batch = get_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
+    let batch = init_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
@@ -93,7 +100,7 @@ pub fn analyze_file(file_size: i32){
 pub fn request_chart_data(chart_name: &str, event_name: &str) {
     match chart_name {
         "bar_chart" => {
-            let batch = get_record_batch_from_state().unwrap();
+            let batch = get_record_batch().unwrap();
             let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
             let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
             let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);

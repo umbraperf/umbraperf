@@ -13,6 +13,7 @@ interface Props {
     file: undefined | File;
     fileName: string | undefined;
     eventsLoading: boolean;
+    events: Array<string> | undefined;
     resultLoading: boolean;
     result: Result | undefined;
     setEventsLoading: (newEventsLoading: boolean) => void;
@@ -89,7 +90,7 @@ class FileUploader extends React.Component<Props> {
                                     <input {...getInputProps()} />
                                     <p> Drag files here, or click to select files.
                                         <br></br>
-                                        Only parquet files are allowed.
+                                        Only csv files are allowed.
                                     </p>
                                     {acceptedFiles.length != 0 ?
                                         <p>Selected file (valid): {this.listAcceptedFiles(acceptedFiles)}</p> :
@@ -100,11 +101,11 @@ class FileUploader extends React.Component<Props> {
                 </Dropzone>
             </div>
             <div className={styles.spinnerArea} >
-                {(this.props.resultLoading || this.props.result) ?
-                    (this.props.resultLoading ?
+                {(this.props.eventsLoading || this.props.events) ?
+                    (this.props.eventsLoading ?
                         <CircularProgress />
                         :
-                        <p>Loading of file finished. Select a visualization: </p>
+                        <p>Loading of file finished. Select a visualization to start rendering: </p>
                     )
                     :
                     <p>Select a file.</p>
@@ -120,6 +121,7 @@ const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
     fileName: state.fileName,
     eventsLoading: state.eventsLoading,
+    events: state.events,
     resultLoading: state.resultLoading,
     result: state.result,
 });

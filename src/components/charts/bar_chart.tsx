@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventDropdownMenu from '../events_dropdown';
 
@@ -20,6 +20,10 @@ interface Props {
     result: Result | undefined;
     eventsLoading: boolean;
     events: Array<string> | undefined;
+    currentChart: string;
+    currentEvent: string;
+    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 interface State {
@@ -45,12 +49,14 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
-            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
+            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
         }
     }
 
     componentDidMount() {
-        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.events![0]);
+        this.props.setCurrentChart(ChartType.BAR_CHART);
+        this.props.setCurrentEvent(this.props.events![0]);
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
         addEventListener('resize', (event) => {
             this.resizeListener();
         });
@@ -97,6 +103,9 @@ class BarChart extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <EventDropdownMenu></EventDropdownMenu>
+                <Typography variant="subtitle1">
+                    Visualized Event: {this.props.currentEvent}
+                </Typography>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
@@ -218,10 +227,23 @@ const mapStateToProps = (state: model.AppState) => ({
     result: state.result,
     eventsLoading: state.eventsLoading,
     events: state.events,
+    currentChart: state.currentChart,
+    currentEvent: state.currentEvent,
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentChart: (newCurrentChart: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTCHART,
+        data: newCurrentChart,
+    }),
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
+    }),
 });
 
 
-export default connect(mapStateToProps)(withAppContext(BarChart));
+export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(BarChart));
 
 
 

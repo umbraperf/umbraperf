@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
@@ -8,10 +8,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../model/state';
-import {ctx} from '../app_context';
+import { ctx } from '../app_context';
 import { svgElements } from 'framer-motion/types/render/svg/supported-elements';
+import * as model from '../model';
+
 
 
 
@@ -49,11 +51,20 @@ const StyledMenuItem = withStyles((theme) => ({
 export default function EventDropdownMenu() {
 
     const events = useSelector((state: AppState) => state.events);
+    const currentChart = useSelector((state: AppState) => state.currentChart);
     const context = useContext(ctx);
+    const dispatch = useDispatch();
+    const setNewCurrentEvent = useCallback(
+        (newCurrentEvent) => dispatch({
+            type: model.StateMutationType.SET_CURRENTEVENT,
+            data: newCurrentEvent,
+        }),
+        [dispatch]
+      );
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const handleButtonClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -63,8 +74,8 @@ export default function EventDropdownMenu() {
 
     const handleOnItemClick = (elem: string) => {
         handleClose();
-        console.log(elem);
-        context!.controller.calculateChartData("bar_chart", elem);
+        setNewCurrentEvent(elem);
+        context!.controller.calculateChartData(currentChart, elem);
 
     };
 
@@ -75,7 +86,7 @@ export default function EventDropdownMenu() {
                 aria-haspopup="true"
                 variant="contained"
                 color="primary"
-                onClick={handleClick}
+                onClick={handleButtonClick}
             >
                 Choose Event to Visualize
             </Button>
@@ -86,12 +97,11 @@ export default function EventDropdownMenu() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                {events!.map((elem, index) => {
-                    console.log(events);
-                    return (<StyledMenuItem onClick={() => handleOnItemClick(elem)} key={index}>
-                        <ListItemText primary={elem} />
-                    </StyledMenuItem>)
-                })}
+                {events!.map((elem, index) =>
+                (<StyledMenuItem onClick={() => handleOnItemClick(elem)} key={index} selected={false}>
+                    <ListItemText primary={elem} />
+                </StyledMenuItem>)
+                )}
             </StyledMenu>
         </div>
     );

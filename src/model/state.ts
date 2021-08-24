@@ -9,6 +9,8 @@ export interface AppState {
     events: Array<string> | undefined;
     eventsLoading: boolean;
     file: undefined | File;
+    currentChart: string;
+    currentEvent: string;
 }
 
 export function createDefaultState(): AppState {
@@ -20,5 +22,7 @@ export function createDefaultState(): AppState {
         events: undefined,
         eventsLoading: false,
         file: undefined,
+        currentChart: "",
+        currentEvent: "",
     };
 }

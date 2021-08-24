@@ -19,6 +19,8 @@ export enum StateMutationType {
     SET_EVENTS = 'SET_EVENTS',
     SET_EVENTSLOADING = 'SET_EVENTSLOADING',
     RESET_STATE = 'RESET_STATE',
+    SET_CURRENTCHART = 'SET_CURRENTCHART',
+    SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     OTHER = 'OTHER',
 }
 
@@ -32,6 +34,8 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_EVENTSLOADING, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
+    | StateMutation<StateMutationType.SET_CURRENTCHART, string>
+    | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     ;
 
 // The action dispatch
@@ -75,6 +79,16 @@ export class AppStateMutation {
                     ...state,
                     eventsLoading: mutation.data,
                 };
+            case StateMutationType.SET_CURRENTCHART:
+                return {
+                    ...state,
+                    currentChart: mutation.data,
+                };
+            case StateMutationType.SET_CURRENTEVENT:
+                return {
+                    ...state,
+                    currentEvent: mutation.data,
+                };
             case StateMutationType.RESET_STATE:
                 return {
                     ...state,
@@ -85,6 +99,8 @@ export class AppStateMutation {
                     events: undefined,
                     eventsLoading: false,
                     file: undefined,
+                    currentChart: "",
+                    currentEvent: "",
                 }
         }
     }

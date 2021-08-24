@@ -57,7 +57,7 @@ export const routes = [
         icon: () => { return (<AssessmentIcon />) },
     },
     {
-        path: '/swim_lanes',
+        path: '/swim-lanes',
         sidebarName: 'Swim Lanes',
         component: SwimLanes,
         icon: () => { return (<SortIcon />) },

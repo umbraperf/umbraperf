@@ -32,6 +32,7 @@ class FileUploader extends React.Component<Props> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
+            this.props.setResetState();
             this.props.setEventsLoading(true);
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
@@ -57,8 +58,6 @@ class FileUploader extends React.Component<Props> {
     }
 
     componentDidMount(): void {
-        model.createDefaultState();
-        this.props.setResetState();
         console.log(this.props);
     }
 

@@ -1,22 +1,15 @@
 extern crate wasm_bindgen;
 use arrow::array::{Array, BooleanArray, Int32Array, StringArray};
-use arrow::compute::Filter;
 use arrow::datatypes::{DataType, Field, Int64Type, Schema};
-use arrow::error::ArrowError;
 use arrow::ipc::{Utf8, Utf8Builder};
 use wasm_bindgen::prelude::*;
 
 use std::cell::RefCell;
-use std::sync::Arc;
 
 // Arrow
 extern crate arrow;
 use arrow::{array::Int8Array};
 use arrow::record_batch::RecordBatch;
-
-//Test Write for JS
-use std::io::Cursor;
-
 
 
 extern crate console_error_panic_hook;
@@ -25,6 +18,8 @@ mod console;
 mod console_js_log;
 mod streambuf;
 use streambuf::WebFileReader;
+mod record_batch_util;
+use record_batch_util::RecordBatchUtil;
 
 use crate::bindings::{store_result_from_rust, store_arrow_result_from_rust};
 mod bindings;
@@ -116,9 +111,9 @@ pub fn analyze_file(file_size: i32){
 
     let int_vec = v_vec;
 
-    let batch = create_record_batch(string_vec, int_vec);
+    let batch = RecordBatchUtil::create_record_batch(string_vec, int_vec);
 
-    let cursor = write_record_batch_to_cursor(&batch);
+    let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
 
     store_arrow_result_from_rust(cursor.into_inner());
 
@@ -144,45 +139,6 @@ fn aggregate_sum(record_batch: &RecordBatch) {
 }
 
 
-fn create_record_batch(string_vec: Vec<Option<&str>>, int_vec: Vec<i32>) -> RecordBatch {
-    let operator_array = StringArray::from(string_vec);
-    let cycles_array = Int32Array::from(int_vec);
-    let schema = Schema::new(vec![
-    Field::new("operator", DataType::Utf8, false),
-    Field::new("cycles", DataType::Int32, false)
-    ]);
-
-    use arrow::array::ArrayRef;
-    let a: ArrayRef = Arc::new(operator_array);
-    let b: ArrayRef = Arc::new(cycles_array);
-
-
-    let batch = RecordBatch::try_new(
-    Arc::new(schema),
-    vec![a, b]
-
-    );
-
-    batch.unwrap()
-}
-
-// Write Record Batch to IPC
-// return: Vec<u8> to send to JavaScript
-fn write_record_batch_to_cursor(record_batch: &RecordBatch) -> Cursor<Vec<u8>> {
-
-    let mut buff = Cursor::new(vec![]);
-
-    let options = arrow::ipc::writer::IpcWriteOptions::default();
-    let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-
-    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch.schema(),  &options);
-    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(&arrow::ipc::writer::IpcDataGenerator::default(), &record_batch,  &mut dict, &options);
-
-    arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
-    arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
-
-    buff
-}
 
 
 // PRINTING

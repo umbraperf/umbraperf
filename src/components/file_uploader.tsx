@@ -12,8 +12,10 @@ interface Props {
     appContext: IAppContext;
     file: undefined | File;
     fileName: string | undefined;
+    eventsLoading: boolean;
     resultLoading: boolean;
     result: Result | undefined;
+    setEventsLoading: (newEventsLoading: boolean) => void;
     setResultLoading: (newResultLoading: boolean) => void;
     setResetState: () => void;
 }
@@ -30,6 +32,7 @@ class FileUploader extends React.Component<Props> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
+            this.props.setEventsLoading(true);
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
             const webFileControllerInstance = new WebFileController(this.props.appContext.worker);
@@ -116,11 +119,16 @@ class FileUploader extends React.Component<Props> {
 const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
     fileName: state.fileName,
+    eventsLoading: state.eventsLoading,
     resultLoading: state.resultLoading,
     result: state.result,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setEventsLoading: (newEventsLoading: boolean) => dispatch({
+        type: model.StateMutationType.SET_EVENTSLOADING,
+        data: newEventsLoading,
+    }),
     setResultLoading: (newResultLoading: boolean) =>
         dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,

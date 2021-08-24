@@ -1,0 +1,13 @@
+.eventDropdownSelector{
+    width: 300px;
+    text-align: left;
+}
+
+.eventDropdownSelectorLabel{
+    padding-left: 10px;
+}
+
+.eventDropdownSelectorContainer{
+    margin: 20px;
+}    
+

@@ -54,8 +54,11 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_EVENTS:
             console.log(messageData);
-            const arrowEventsTable = ArrowTable.Table.from(messageData);
-            const events: Array<string> = arrowEventsTable?.getColumn(0).toArray();
+            const bytesEvents: Array<string> = Array.from(messageData);
+            const events = bytesEvents.map((elem) => String.fromCharCode(elem as any));
+            /* const arrowEventsTable = ArrowTable.Table.from(messageData);
+            const events: Array<string> = arrowEventsTable?.getColumn(0).toArray(); */
+            console.log(events);
             storeEventsFromRust(message.data.requestId, events);
             break;
 

@@ -1,4 +1,4 @@
-import { storeResultFromRust } from './controller/web_file_controller';
+import { storeEventsFromRust, storeResultFromRust } from './controller/web_file_controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 
@@ -46,21 +46,19 @@ worker.addEventListener('message', message => {
 
     switch (messageType) {
 
+        case model.WorkerResponseType.STORE_EVENTS:
+            console.log(messageData);
+            const arrowEventsTable = ArrowTable.Table.from(messageData);
+            const events: Array<string> = arrowEventsTable?.getColumn(0).toArray();
+            storeEventsFromRust(message.data.requestId, events);
+            break;
+
+
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
-
-            const arrowTable = ArrowTable.Table.from(messageData);
-            console.log(arrowTable);
-
-/*             if(col0){
-                const array = col0.toArray()!;
-                const jsarray = Array.from(array);
-
-                console.log(jsarray);
-            } */
-
+            const arrowResultTable = ArrowTable.Table.from(messageData);
             console.log("main got result from worker.");
-            storeResultFromRust(message.data.requestId, arrowTable);
+            storeResultFromRust(message.data.requestId, arrowResultTable);
             break;
 
 

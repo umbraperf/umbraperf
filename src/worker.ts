@@ -9,6 +9,7 @@ export enum WorkerRequestType {
 };
 
 export enum WorkerResponseType {
+  STORE_EVENTS = 'STORE_EVENTS',
   STORE_RESULT = 'STORE_RESULT',
   REGISTERED_FILE = 'REGISTERED_FILE',
 };
@@ -32,6 +33,7 @@ export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.TEST, string>;
 
 export type WorkerResponseVariant =
+  WorkerResponse<WorkerResponseType.STORE_EVENTS, any> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, any> |
   WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
   ;
@@ -50,7 +52,7 @@ let globalFileIdCounter = 0;
 let globalFileDictionary: IGlobalFileDictionary = {}
 
 const worker: IRequestWorker = self as any;
-console.log("I WAS AT THE NEW WORKER");
+console.log("I WAS AT THE WORKER");
 
 interface IRegisteredFile {
   file: File | undefined,
@@ -84,7 +86,18 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
-export function stroreResultFromRust(result: number, requestId: number) {
+export function storeEventsFromRust(events: any){
+  console.log("events result to main");
+  worker.postMessage({
+    messageId: 201,
+    requestId: 100,
+    type: WorkerResponseType.STORE_EVENTS,
+    data: events,
+  });  
+
+}
+
+/* export function stroreResultFromRust(result: number, requestId: number) {
 
   if(result){
     console.log("send result to main");
@@ -98,7 +111,7 @@ export function stroreResultFromRust(result: number, requestId: number) {
   }
 
 }
-
+ */
 export function stroreArrowResultFromRust(result: any) {
 
   if(result){
@@ -107,7 +120,6 @@ export function stroreArrowResultFromRust(result: any) {
       messageId: 201,
       requestId: 100,
       type: WorkerResponseType.STORE_RESULT,
-      //TODO::
       data: result,
     });  
   }

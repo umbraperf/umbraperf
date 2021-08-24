@@ -9,6 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import { WebFileController, ChartType } from '../../controller/web_file_controller';
 
 
 interface Props {
@@ -24,9 +25,11 @@ interface State {
     height: number,
 }
 
+
 class BarChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
+    webFileControllerInstance = new WebFileController(this.props.appContext.worker);
 
     constructor(props: Props) {
         super(props);
@@ -45,6 +48,7 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        this.webFileControllerInstance.calculateChartData(ChartType.BAR_CHART, "cycles:ppp");
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

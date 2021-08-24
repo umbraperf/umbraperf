@@ -12,6 +12,11 @@ export interface FileInfo {
     file: File | undefined;
 }
 
+export enum ChartType{
+    BAR_CHART = "bar-chart",
+    SWIM_LANES = "swim-lanes",
+}
+
 
 export class WebFileController {
 
@@ -23,6 +28,10 @@ export class WebFileController {
 
     public registerFileAtWorker(file: File) {
         this.worker.registerFile(file);
+    }
+
+    public calculateChartData(chartType: string, event: string){
+        this.worker.calculateChartData(chartType, event);
     }
 }
 

@@ -67,7 +67,7 @@ fn set_record_batch(record_batch: RecordBatch) {
 
 fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
 
-    let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(with_header).with_delimiter(with_delimiter).with_projection(with_projection);
+    let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(with_header).with_delimiter(with_delimiter).with_projection(with_projection).with_batch_size(100000);
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
     let mut reader = cursor_reader.unwrap();
 
@@ -80,7 +80,7 @@ pub fn analyze_file(file_size: i32){
     let now = instant::Instant::now();
 
     let semi_colon = 59;
-    let batch = init_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize]);
+    let batch = init_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
@@ -98,16 +98,16 @@ pub fn analyze_file(file_size: i32){
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(chart_name: &str, event_name: &str) {
+    let batch = get_record_batch().unwrap();
     match chart_name {
         "bar_chart" => {
-            let batch = get_record_batch().unwrap();
             let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
             let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
             let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
             send_arrow_result_to_js(cursor.into_inner());
         }
         "swim_lanes" => {
-            todo!()
+            let test = Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
         }
         &_ => {
             todo!()

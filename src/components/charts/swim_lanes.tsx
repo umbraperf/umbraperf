@@ -124,7 +124,7 @@ class SwimLanes extends React.Component<Props, State> {
         //TODO:
         this.props.setCurrentChart(ChartType.SWIM_LANES);
         this.props.setCurrentEvent(this.props.events![0]);
-        //this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent);
+        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent);
         addEventListener('resize', (event) => {
             this.resizeListener();
         });

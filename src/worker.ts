@@ -142,7 +142,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       console.log("CALCULATE CHART DATA");
-      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event);
+      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, { name: "test" } as any );
       break;
 
       //TODO remove

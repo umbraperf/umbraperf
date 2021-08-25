@@ -29,6 +29,10 @@ use analyze::Analyze;
 mod bindings;
 use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
 
+extern crate serde;
+use serde::{Serialize, Deserialize};
+
+
 
 //STATE
 pub struct State {
@@ -39,6 +43,11 @@ thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
         record_batch: None
     });
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Param {
+    pub name: String,
 }
 
 
@@ -99,8 +108,11 @@ pub fn analyze_file(file_size: i32){
 
 
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(chart_name: &str, event_name: &str) {
-    
+pub fn request_chart_data(chart_name: &str, event_name: &str, param: &JsValue) {
+
+    let param: Param = param.into_serde().unwrap();
+    print_to_js_with_obj(&format!("{:?}", param.name).into()); 
+
     let batch = get_record_batch().unwrap();
     match chart_name {
         "bar_chart" => {

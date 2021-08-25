@@ -1,4 +1,4 @@
-use arrow::{array::{Array, Int32Array}, datatypes::{Float64Type, Int32Type}, record_batch::RecordBatch};
+use arrow::{array::{Array}, datatypes::{Float64Type}, record_batch::RecordBatch};
 use std::collections::{BTreeMap};
 
 use crate::{print_to_js, print_to_js_with_obj};
@@ -41,7 +41,7 @@ impl Analyze {
 
     }
 
-    // pipeline while not be given
+    // TODO pipeline will not be given and return an array of pipelines
     pub fn data_for_swim_line(batch: &RecordBatch, event_name: &str, pipeline_name: &str, bucket_size: f64) {
 
         print_to_js_with_obj(&format!("{:?}", &batch).into()); 

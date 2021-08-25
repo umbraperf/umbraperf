@@ -102,22 +102,25 @@ fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with
 
     let schema = Schema::new(vec![field_operator, field_uir_code, field_srcline, field_comm, field_dso, field_ev_name, field_symbol, field_brstack, field_brstacksym, field_callchain, field_ip, field_pid, field_datasrc, field_time, field_period, field_tid, field_cpu, field_iregs, field_mapping_via, field_dump_linenr, field_pipeline, field_addr, field_phys_addr, field_time_delta]);
 
-    let mut reader = arrow::csv::Reader::new(WebFileReader::new_from_file(file_size), Arc::new(schema), with_header, Some(with_delimiter), 1000000000, None, Some(with_projection));
+    let mut reader = arrow::csv::Reader::new(WebFileReader::new_from_file(file_size), Arc::new(schema), with_header, Some(with_delimiter), 1024, None, Some(with_projection));
 
-    print_to_js("IJEORIJ");
+    let mut vec = Vec::new();
 
-    let batch = reader.next().unwrap().unwrap();
+    while let Some(item) = reader.next() {
+        let batch = item.unwrap();
+        print_to_js_with_obj(&format!("{:?}", &batch).into());
+        vec.push(batch);
+    }
 
-    print_to_js("huhu");
+    let output = vec.get(0);
 
-
-    print_to_js_with_obj(&format!("{:?}", &batch).into());
-
-    print_to_js("Whatever");
-
-
-    batch
-
+    if let Some(x) = output {
+        x.to_owned()
+    } else {
+        let field_operator = Field::new("operator", DataType::Utf8, false);
+        let schema = Schema::new(vec![field_operator]);
+        arrow::record_batch::RecordBatch::new_empty(Arc::new(schema.clone()))
+    }
 }
 
 #[wasm_bindgen(js_name = "analyzeFile")]
@@ -159,8 +162,8 @@ pub fn request_chart_data(chart_name: &str, event_name: &str, args: &JsValue) {
         }
         "swim_lanes" => {
             Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
-            let param: Param = args.into_serde().unwrap();
-            print_to_js_with_obj(&format!("{:?}", param.bucketsize).into()); 
+            //let param: Param = args.into_serde().unwrap();
+            //print_to_js_with_obj(&format!("{:?}", param.bucketsize).into()); 
         }
         &_ => {
             todo!()

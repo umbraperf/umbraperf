@@ -1,5 +1,7 @@
-use arrow::{array::Array, record_batch::RecordBatch};
+use arrow::{array::{Array}, datatypes::{Float64Type}, record_batch::RecordBatch};
 use std::collections::{BTreeMap};
+
+use crate::{print_to_js, print_to_js_with_obj};
 
 pub struct Analyze {
 }
@@ -36,6 +38,83 @@ impl Analyze {
         }
 
         k_vec
+
+    }
+
+    // TODO pipeline will not be given and return an array of pipelines
+    pub fn data_for_swim_line(batch: &RecordBatch, event_name: &str, pipeline_name: &str, bucket_size: f64) {
+
+        print_to_js_with_obj(&format!("{:?}", &batch).into()); 
+
+
+        let mut bucket_map = Vec::new();
+        let mut operator_number_per_bucket = BTreeMap::new();
+
+        let column_operator = batch.column(0);
+        let column_time = batch.column(2);
+
+        // Filter
+        let column_event = batch.column(1);
+        let column_pipeline = batch.column(3);
+
+        let arrow_operator_arr =  arrow::array::as_string_array(column_operator);
+        let arrow_time_arr = arrow::array::as_primitive_array::<Float64Type>(column_time);
+
+        // Filter
+        let arrow_event_arr = arrow::array::as_string_array(column_event);
+        let arrow_pipeline_arr = arrow::array::as_string_array(column_pipeline);
+
+        print_to_js_with_obj(&format!("{:?}", arrow_operator_arr).into()); 
+
+
+
+        let mut index = 0;
+        let mut bucket_to_time: f64 = -1.;
+        let mut bucket_number = 0;
+        while index < arrow_operator_arr.len() {
+
+            print_to_js_with_obj(&format!("{:?}", bucket_to_time).into()); 
+
+            // Init time
+            if bucket_to_time == -1. {
+                bucket_to_time = bucket_size;
+            } else {
+                if arrow_time_arr.value(index) <= bucket_to_time {
+
+                } else {
+                    bucket_map.push((bucket_number, operator_number_per_bucket));
+                    operator_number_per_bucket = BTreeMap::new();
+                    while arrow_time_arr.value(index) > bucket_to_time {
+                        bucket_to_time = bucket_to_time + bucket_size;
+                        bucket_number = bucket_number + 1;
+                    }
+                   
+                }
+               
+            }
+
+            //let event = arrow_event_arr.value(index);
+            let operator = arrow_pipeline_arr.value(index);
+            print_to_js_with_obj(&format!("{:?}", operator).into()); 
+
+
+            // TODO FILTER THIS
+            if true {//event.contains(event_name) && operator.contains(pipeline_name) {
+                if let Some(sum) = operator_number_per_bucket.get(operator) {
+                    operator_number_per_bucket.insert(operator, sum + 1);
+                } else {
+                    operator_number_per_bucket.insert(operator, 1);
+                }
+            }
+            index += 1;
+        }
+        bucket_map.push((bucket_number, operator_number_per_bucket));
+
+        print_to_js_with_obj(&format!("{:?}", bucket_map).into()); 
+
+
+
+
 
     }
 

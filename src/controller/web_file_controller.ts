@@ -10,6 +10,10 @@ export interface FileInfo {
     file: File | undefined;
 }
 
+export interface CalculateChartData {
+   // bucketSize
+}
+
 export enum ChartType{
     BAR_CHART = "bar_chart",
     SWIM_LANES = "swim_lanes",
@@ -23,7 +27,8 @@ export class WebFileController {
         worker.registerFile(file);
     }
 
-    public calculateChartData(chartType: string, event: string){
+    public calculateChartData(chartType: string, event: string, partialData?: Object){
+        // TODO partial data
         worker.calculateChartData(chartType, event);
     }
 }

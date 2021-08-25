@@ -2,7 +2,7 @@ use std::io::{Seek, SeekFrom, Read};
 use std::io::Result;
 use js_sys::Uint8Array;
 
-use crate::bindings;
+use crate::{bindings, print_to_js, print_to_js_with_obj};
 
 pub struct WebFileReader {
     offset: u64,
@@ -36,12 +36,17 @@ impl Seek for WebFileReader {
 // Read implementation for WebFileReader
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
+
+        print_to_js("Reading");
         
         let array_length = out.len() as u64;
         let read_size = array_length.min(self.length - self.offset);
         if read_size == 0 {
             return Ok(read_size as usize)
         }
+
+        print_to_js_with_obj(&format!("{:?}", &read_size).into());
+
         
         let chunk = bindings::read_file_chunk(self.offset as i32,read_size as i32);
         let len = Uint8Array::byte_length(&chunk);

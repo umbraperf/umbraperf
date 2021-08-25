@@ -24,10 +24,10 @@ export class WorkerAPI {
         console.log(this.worker);
     }
 
-    public calculateChartData(chartType: string, event: string){
+    public calculateChartData(chartType: string, event: string, params: any){
         this.worker.postMessage({
             type: model.WorkerRequestType.CALCULATE_CHART_DATA,
-            data: {chartType: chartType, event: event},
+            data: {chartType: chartType, event: event, params: params},
         });
     }
 

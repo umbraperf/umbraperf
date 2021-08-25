@@ -32,8 +32,6 @@ use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
 extern crate serde;
 use serde::{Serialize, Deserialize};
 
-
-
 //STATE
 pub struct State {
     pub record_batch: Option<RecordBatch>
@@ -47,9 +45,8 @@ thread_local! {
 
 #[derive(Serialize, Deserialize)]
 pub struct Param {
-    pub name: String,
+    pub bucketsize: i32
 }
-
 
 // STATE ACCESS
 fn with_state<Callback, ReturnType>(cb: Callback) -> ReturnType
@@ -77,6 +74,7 @@ fn set_record_batch(record_batch: RecordBatch) {
 
 fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
 
+    // TODO variable Batch Size
     let arrow_reader_builder = arrow::csv::reader::ReaderBuilder::new().has_header(with_header).with_delimiter(with_delimiter).with_projection(with_projection).with_batch_size(100000);
     let cursor_reader =  arrow::csv::reader::ReaderBuilder::build(arrow_reader_builder, WebFileReader::new_from_file(file_size));
     let mut reader = cursor_reader.unwrap();
@@ -108,10 +106,10 @@ pub fn analyze_file(file_size: i32){
 
 
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(chart_name: &str, event_name: &str, param: &JsValue) {
+pub fn request_chart_data(chart_name: &str, event_name: &str, args: &JsValue) {
 
-    let param: Param = param.into_serde().unwrap();
-    print_to_js_with_obj(&format!("{:?}", param.name).into()); 
+    let param: Param = args.into_serde().unwrap();
+    print_to_js_with_obj(&format!("{:?}", param.bucketsize).into()); 
 
     let batch = get_record_batch().unwrap();
     match chart_name {
@@ -122,7 +120,7 @@ pub fn request_chart_data(chart_name: &str, event_name: &str, param: &JsValue) {
             send_arrow_result_to_js(cursor.into_inner());
         }
         "swim_lanes" => {
-            let test = Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
+            Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
         }
         &_ => {
             todo!()

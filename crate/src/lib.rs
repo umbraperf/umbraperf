@@ -131,9 +131,6 @@ pub fn analyze_file(file_size: i32){
     let semi_colon = 59;
     let batch = init_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
 
-    print_to_js("test4");
-
-
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
 

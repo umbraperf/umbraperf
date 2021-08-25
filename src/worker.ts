@@ -47,7 +47,6 @@ export interface IRequestWorker {
 interface ChartEventRequest {
   chartType: string;
   event: string;
-  Param: any;
 }
 
 interface IGlobalFileDictionary {
@@ -143,7 +142,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       console.log("CALCULATE CHART DATA");
-      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).Param);
+      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event);
       break;
 
       //TODO remove

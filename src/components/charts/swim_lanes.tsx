@@ -21,6 +21,41 @@ interface State {
     height: number,
 }
 
+const result = [[
+    { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
+    { "x": 1, "y": 43, "c": 0 }, { "x": 1, "y": 91, "c": 1 },
+    { "x": 2, "y": 81, "c": 0 }, { "x": 2, "y": 53, "c": 1 },
+    { "x": 3, "y": 19, "c": 0 }, { "x": 3, "y": 87, "c": 1 },
+    { "x": 4, "y": 52, "c": 0 }, { "x": 4, "y": 48, "c": 1 },
+    { "x": 5, "y": 24, "c": 0 }, { "x": 5, "y": 49, "c": 1 },
+    { "x": 6, "y": 87, "c": 0 }, { "x": 6, "y": 66, "c": 1 },
+    { "x": 7, "y": 17, "c": 0 }, { "x": 7, "y": 27, "c": 1 },
+    { "x": 8, "y": 68, "c": 0 }, { "x": 8, "y": 16, "c": 1 },
+    { "x": 9, "y": 49, "c": 0 }, { "x": 9, "y": 15, "c": 1 }
+], [
+    { "x": 0, "y": 28, "c": 3 }, { "x": 0, "y": 55, "c": 4 },
+    { "x": 1, "y": 43, "c": 3 }, { "x": 1, "y": 91, "c": 4 },
+    { "x": 2, "y": 81, "c": 3 }, { "x": 2, "y": 53, "c": 4 },
+    { "x": 3, "y": 19, "c": 3 }, { "x": 3, "y": 87, "c": 4 },
+    { "x": 4, "y": 52, "c": 3 }, { "x": 4, "y": 48, "c": 4 },
+    { "x": 5, "y": 24, "c": 3 }, { "x": 5, "y": 49, "c": 4 },
+    { "x": 6, "y": 87, "c": 3 }, { "x": 6, "y": 66, "c": 4 },
+    { "x": 7, "y": 17, "c": 3 }, { "x": 7, "y": 27, "c": 4 },
+    { "x": 8, "y": 68, "c": 3 }, { "x": 8, "y": 16, "c": 4 },
+    { "x": 9, "y": 49, "c": 3 }, { "x": 9, "y": 15, "c": 4 }
+], [
+    { "x": 0, "y": 28, "c": 5 }, { "x": 0, "y": 55, "c": 6 },
+    { "x": 1, "y": 43, "c": 5 }, { "x": 1, "y": 91, "c": 6 },
+    { "x": 2, "y": 81, "c": 5 }, { "x": 2, "y": 53, "c": 6 },
+    { "x": 3, "y": 19, "c": 5 }, { "x": 3, "y": 87, "c": 6 },
+    { "x": 4, "y": 52, "c": 5 }, { "x": 4, "y": 48, "c": 6 },
+    { "x": 5, "y": 24, "c": 5 }, { "x": 5, "y": 49, "c": 6 },
+    { "x": 6, "y": 87, "c": 5 }, { "x": 6, "y": 66, "c": 6 },
+    { "x": 7, "y": 17, "c": 5 }, { "x": 7, "y": 27, "c": 6 },
+    { "x": 8, "y": 68, "c": 5 }, { "x": 8, "y": 16, "c": 6 },
+    { "x": 9, "y": 49, "c": 5 }, { "x": 9, "y": 15, "c": 6 }
+]];
+
 class SwimLanes extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
@@ -73,7 +108,6 @@ class SwimLanes extends React.Component<Props, State> {
 
     }
 
-
     public render() {
         if (!this.props.result) {
             return <Redirect to={"/upload"} />
@@ -82,7 +116,7 @@ class SwimLanes extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega spec={this.createVisualizationSpec()} />
+                    {result.map((elem, index)=> (<Vega className={`vegaSwimlane${index}`} spec={this.createVisualizationSpec()} />))}
                 </div>
             </div>
         </div>;

@@ -8,18 +8,80 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
+import { ChartType } from '../../controller/web_file_controller';
+import { CircularProgress } from '@material-ui/core';
 
 
 interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
     result: Result | undefined;
+    eventsLoading: boolean;
+    events: Array<string> | undefined;
+    currentChart: string;
+    currentEvent: string;
+    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 interface State {
     width: number,
     height: number,
 }
+
+const testBuckets = [1,2,3,4,5];
+const testOperatorsGruop = [0, 0, 0.5, 0.7, 1];
+const testOperatorsJoin= [0, 0.5, 0.3, 0.3, 0];
+const testOperatorsTable = [1, 0.5, 0.2, 0, 0];
+
+const result = [[
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
+    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+], [
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
+    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+], [
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
+    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+]];
+
+const resultorig = [[
+    { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
+    { "x": 1, "y": 43, "c": 0 }, { "x": 1, "y": 91, "c": 1 },
+    { "x": 2, "y": 81, "c": 0 }, { "x": 2, "y": 53, "c": 1 },
+    { "x": 3, "y": 19, "c": 0 }, { "x": 3, "y": 87, "c": 1 },
+    { "x": 4, "y": 52, "c": 0 }, { "x": 4, "y": 48, "c": 1 },
+    { "x": 5, "y": 24, "c": 0 }, { "x": 5, "y": 49, "c": 1 },
+    { "x": 6, "y": 87, "c": 0 }, { "x": 6, "y": 66, "c": 1 },
+    { "x": 7, "y": 17, "c": 0 }, { "x": 7, "y": 27, "c": 1 },
+    { "x": 8, "y": 68, "c": 0 }, { "x": 8, "y": 16, "c": 1 },
+    { "x": 9, "y": 49, "c": 0 }, { "x": 9, "y": 15, "c": 1 }
+], [
+    { "x": 0, "y": 28, "c": 3 }, { "x": 0, "y": 55, "c": 4 },
+    { "x": 1, "y": 43, "c": 3 }, { "x": 1, "y": 91, "c": 4 },
+    { "x": 2, "y": 81, "c": 3 }, { "x": 2, "y": 53, "c": 4 },
+    { "x": 3, "y": 19, "c": 3 }, { "x": 3, "y": 87, "c": 4 },
+    { "x": 4, "y": 52, "c": 3 }, { "x": 4, "y": 48, "c": 4 },
+    { "x": 5, "y": 24, "c": 3 }, { "x": 5, "y": 49, "c": 4 },
+    { "x": 6, "y": 87, "c": 3 }, { "x": 6, "y": 66, "c": 4 },
+    { "x": 7, "y": 17, "c": 3 }, { "x": 7, "y": 27, "c": 4 },
+    { "x": 8, "y": 68, "c": 3 }, { "x": 8, "y": 16, "c": 4 },
+    { "x": 100, "y": 49, "c": 3 }, { "x": 9, "y": 15, "c": 4 }
+], [
+    { "x": 0, "y": 28, "c": 5 }, { "x": 0, "y": 55, "c": 6 },
+    { "x": 1, "y": 43, "c": 5 }, { "x": 1, "y": 91, "c": 6 },
+    { "x": 2, "y": 81, "c": 5 }, { "x": 2, "y": 53, "c": 6 },
+    { "x": 3, "y": 19, "c": 5 }, { "x": 3, "y": 87, "c": 6 },
+    { "x": 4, "y": 52, "c": 5 }, { "x": 4, "y": 48, "c": 6 },
+    { "x": 5, "y": 24, "c": 5 }, { "x": 5, "y": 49, "c": 6 },
+    { "x": 6, "y": 87, "c": 5 }, { "x": 6, "y": 66, "c": 6 },
+    { "x": 7, "y": 17, "c": 5 }, { "x": 7, "y": 27, "c": 6 },
+    { "x": 8, "y": 68, "c": 5 }, { "x": 8, "y": 16, "c": 6 },
+    { "x": 9, "y": 49, "c": 5 }, { "x": 9, "y": 15, "c": 6 }
+]];
 
 class SwimLanes extends React.Component<Props, State> {
 
@@ -36,12 +98,17 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
-            //TODO
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+            window.alert("refetch data from rust");
+            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
         }
     }
 
     componentDidMount() {
+        //TODO:
+        this.props.setCurrentChart(ChartType.SWIM_LANES);
+        this.props.setCurrentEvent(this.props.events![0]);
+        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
         addEventListener('resize', (event) => {
             this.resizeListener();
         });
@@ -73,37 +140,36 @@ class SwimLanes extends React.Component<Props, State> {
 
     }
 
-
     public render() {
-        if (!this.props.result) {
+/*  TODO:       
+        if (!this.props.events) {
             return <Redirect to={"/upload"} />
-        }
+        } */
+
+/*         if (!this.props.result || this.props.resultLoading) {
+            return <div className={styles.spinnerArea} >
+                <CircularProgress />
+            </div>
+        } */
 
         return <div>
             <div className={styles.resultArea} >
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega spec={this.createVisualizationSpec()} />
+                    {result.map((elem, index)=> (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                 </div>
             </div>
         </div>;
     }
 
-    createVisualizationData() {
+    createVisualizationData(chartId: number) {
         const data = {
             "name": "table",
-            "values": [
-                { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
-                { "x": 1, "y": 43, "c": 0 }, { "x": 1, "y": 91, "c": 1 },
-                { "x": 2, "y": 81, "c": 0 }, { "x": 2, "y": 53, "c": 1 },
-                { "x": 3, "y": 19, "c": 0 }, { "x": 3, "y": 87, "c": 1 },
-                { "x": 4, "y": 52, "c": 0 }, { "x": 4, "y": 48, "c": 1 },
-                { "x": 5, "y": 24, "c": 0 }, { "x": 5, "y": 49, "c": 1 },
-                { "x": 6, "y": 87, "c": 0 }, { "x": 6, "y": 66, "c": 1 },
-                { "x": 7, "y": 17, "c": 0 }, { "x": 7, "y": 27, "c": 1 },
-                { "x": 8, "y": 68, "c": 0 }, { "x": 8, "y": 16, "c": 1 },
-                { "x": 9, "y": 49, "c": 0 }, { "x": 9, "y": 15, "c": 1 }
-            ],
+            "values": result[chartId],
             "transform": [
+                { 
+                    type: "flatten", 
+                    fields: ["x", "y"] 
+                },
                 {
                     "type": "stack",
                     "groupby": ["x"],
@@ -116,14 +182,14 @@ class SwimLanes extends React.Component<Props, State> {
         return data;
     }
 
-    createVisualizationSpec() {
-        const visData = this.createVisualizationData();
+    createVisualizationSpec(chartId: number) {
+        const visData = this.createVisualizationData(chartId);
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width,
             height: this.state.height,
-            padding: { left: 5, right: 5, top: 5, bottom: 5 },
+            padding: { left: 10, right: 10, top: 20, bottom: 20 },
             resize: true,
             autosize: 'fit',
 
@@ -193,7 +259,7 @@ class SwimLanes extends React.Component<Props, State> {
                             encode: {
                                 enter: {
                                     interpolate: {
-                                        value: "monotone"
+                                        value: "step"
                                     },
                                     x: {
                                         scale: "x",
@@ -237,10 +303,25 @@ class SwimLanes extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
+    eventsLoading: state.eventsLoading,
+    events: state.events,
+    currentChart: state.currentChart,
+    currentEvent: state.currentEvent,
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentChart: (newCurrentChart: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTCHART,
+        data: newCurrentChart,
+    }),
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
+    }),
 });
 
 
-export default connect(mapStateToProps)(withAppContext(SwimLanes));
+export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(SwimLanes));
 
 
 

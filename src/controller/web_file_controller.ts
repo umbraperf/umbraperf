@@ -10,8 +10,12 @@ export interface FileInfo {
     file: File | undefined;
 }
 
-export interface CalculateChartData {
-   // bucketSize
+export interface CalculateChartParams {
+   bucketsize: number | undefined;
+}
+
+const emptyCalculateChartParams: CalculateChartParams =  {
+    bucketsize: undefined,
 }
 
 export enum ChartType{
@@ -27,9 +31,9 @@ export class WebFileController {
         worker.registerFile(file);
     }
 
-    public calculateChartData(chartType: string, event: string, partialData?: Object){
-        // TODO partial data
-        worker.calculateChartData(chartType, event);
+    public calculateChartData(chartType: string, event: string, partialData?: any){
+        const completeParams: CalculateChartParams = {...emptyCalculateChartParams, ...partialData}
+        worker.calculateChartData(chartType, event, completeParams);
     }
 }
 

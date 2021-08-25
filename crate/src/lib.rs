@@ -1,6 +1,6 @@
 // Wasm Bindgen
 extern crate wasm_bindgen;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
 extern crate console_error_panic_hook;
 use std::{cell::RefCell};
@@ -28,6 +28,7 @@ use analyze::Analyze;
 // Bindings
 mod bindings;
 use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
+
 
 //STATE
 pub struct State {
@@ -96,8 +97,17 @@ pub fn analyze_file(file_size: i32){
     send_events_to_js(event_cursor.into_inner());
 }
 
+
+#[wasm_bindgen]
+pub struct Param {
+    pub name: i32,
+}
+
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(chart_name: &str, event_name: &str) {
+pub fn request_chart_data(chart_name: &str, event_name: &str, params: Param) {
+    print_to_js_with_obj(&format!("{}", params.name).into()); 
+
+    
     let batch = get_record_batch().unwrap();
     match chart_name {
         "bar_chart" => {

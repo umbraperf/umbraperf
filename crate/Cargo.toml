@@ -51,6 +51,8 @@ arrow = {version = "5.0", default-features = false, features = ["js","csv", "ipc
 futures = {version = "0.3.1", features = ["thread-pool"]}
 boolvec = "0.2.6"
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
+serde = "^1.0.101"
+serde_derive = "^1.0.101"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12"

@@ -112,10 +112,10 @@ fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with
         vec.push(batch);
     }
 
-    let output = vec.get(0);
+    let first_batch = vec.get(0);
 
-    if let Some(x) = output {
-        x.to_owned()
+    if let Some(batch) = first_batch {
+        batch.to_owned()
     } else {
         let field_operator = Field::new("operator", DataType::Utf8, false);
         let schema = Schema::new(vec![field_operator]);

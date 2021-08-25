@@ -659,6 +659,8 @@ dependencies = [
  "js-sys",
  "lazy_static",
  "log",
+ "serde",
+ "serde_derive",
  "unicode-width",
  "wasm-bindgen",
  "wasm-bindgen-futures",

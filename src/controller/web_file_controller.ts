@@ -28,7 +28,8 @@ export class WebFileController {
     }
 
     public calculateChartData(chartType: string, event: string, partialData?: Object){
-        worker.calculateChartData(chartType, event, {});
+        // TODO partial data
+        worker.calculateChartData(chartType, event);
     }
 }
 

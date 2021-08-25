@@ -9,6 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
+import { CircularProgress } from '@material-ui/core';
 
 
 interface Props {
@@ -49,7 +50,7 @@ const result = [[
     { "x": 6, "y": 87, "c": 3 }, { "x": 6, "y": 66, "c": 4 },
     { "x": 7, "y": 17, "c": 3 }, { "x": 7, "y": 27, "c": 4 },
     { "x": 8, "y": 68, "c": 3 }, { "x": 8, "y": 16, "c": 4 },
-    { "x": 9, "y": 49, "c": 3 }, { "x": 9, "y": 15, "c": 4 }
+    { "x": 100, "y": 49, "c": 3 }, { "x": 9, "y": 15, "c": 4 }
 ], [
     { "x": 0, "y": 28, "c": 5 }, { "x": 0, "y": 55, "c": 6 },
     { "x": 1, "y": 43, "c": 5 }, { "x": 1, "y": 91, "c": 6 },
@@ -85,9 +86,10 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        //TODO:
         this.props.setCurrentChart(ChartType.SWIM_LANES);
         this.props.setCurrentEvent(this.props.events![0]);
-        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent);
+        //this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent);
         addEventListener('resize', (event) => {
             this.resizeListener();
         });
@@ -120,34 +122,30 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     public render() {
-        if (!this.props.result) {
+/*  TODO:       
+        if (!this.props.events) {
             return <Redirect to={"/upload"} />
-        }
+        } */
+
+/*         if (!this.props.result || this.props.resultLoading) {
+            return <div className={styles.spinnerArea} >
+                <CircularProgress />
+            </div>
+        } */
 
         return <div>
             <div className={styles.resultArea} >
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    {result.map((elem, index)=> (<Vega className={`vegaSwimlane${index}`} spec={this.createVisualizationSpec()} />))}
+                    {result.map((elem, index)=> (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                 </div>
             </div>
         </div>;
     }
 
-    createVisualizationData() {
+    createVisualizationData(chartId: number) {
         const data = {
             "name": "table",
-            "values": [
-                { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
-                { "x": 1, "y": 43, "c": 0 }, { "x": 1, "y": 91, "c": 1 },
-                { "x": 2, "y": 81, "c": 0 }, { "x": 2, "y": 53, "c": 1 },
-                { "x": 3, "y": 19, "c": 0 }, { "x": 3, "y": 87, "c": 1 },
-                { "x": 4, "y": 52, "c": 0 }, { "x": 4, "y": 48, "c": 1 },
-                { "x": 5, "y": 24, "c": 0 }, { "x": 5, "y": 49, "c": 1 },
-                { "x": 6, "y": 87, "c": 0 }, { "x": 6, "y": 66, "c": 1 },
-                { "x": 7, "y": 17, "c": 0 }, { "x": 7, "y": 27, "c": 1 },
-                { "x": 8, "y": 68, "c": 0 }, { "x": 8, "y": 16, "c": 1 },
-                { "x": 9, "y": 49, "c": 0 }, { "x": 9, "y": 15, "c": 1 }
-            ],
+            "values": result[chartId],
             "transform": [
                 {
                     "type": "stack",
@@ -161,8 +159,8 @@ class SwimLanes extends React.Component<Props, State> {
         return data;
     }
 
-    createVisualizationSpec() {
-        const visData = this.createVisualizationData();
+    createVisualizationSpec(chartId: number) {
+        const visData = this.createVisualizationData(chartId);
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",

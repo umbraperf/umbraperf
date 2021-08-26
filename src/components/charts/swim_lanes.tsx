@@ -10,6 +10,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
+import EventsDropdown from '../events_dropdown';
 
 
 interface Props {
@@ -29,23 +30,23 @@ interface State {
     height: number,
 }
 
-const testBuckets = [1,2,3,4,5];
+const testBuckets = [1, 2, 3, 4, 5];
 const testOperatorsGruop = [0, 0, 0.5, 0.7, 1];
-const testOperatorsJoin= [0, 0.5, 0.3, 0.3, 0];
+const testOperatorsJoin = [0, 0.5, 0.3, 0.3, 0];
 const testOperatorsTable = [1, 0.5, 0.2, 0, 0];
 
 const result = [[
-    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
-    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
-    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 },
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 },
+    { x: testBuckets, y: testOperatorsTable, "c": 2 },
 ], [
-    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
-    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
-    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 },
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 },
+    { x: testBuckets, y: testOperatorsTable, "c": 2 },
 ], [
-    { x: testBuckets, y: testOperatorsGruop, "c": 0 }, 
-    { x: testBuckets, y: testOperatorsJoin, "c": 1 }, 
-    { x: testBuckets, y: testOperatorsTable, "c": 2 }, 
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 },
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 },
+    { x: testBuckets, y: testOperatorsTable, "c": 2 },
 ]];
 
 const resultorig = [[
@@ -141,21 +142,22 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     public render() {
-/*  TODO:       
-        if (!this.props.events) {
-            return <Redirect to={"/upload"} />
-        } */
+        /*  TODO:       
+                if (!this.props.events) {
+                    return <Redirect to={"/upload"} />
+                } */
 
-/*         if (!this.props.result || this.props.resultLoading) {
-            return <div className={styles.spinnerArea} >
-                <CircularProgress />
-            </div>
-        } */
+        /*         if (!this.props.result || this.props.resultLoading) {
+                    return <div className={styles.spinnerArea} >
+                        <CircularProgress />
+                    </div>
+                } */
 
         return <div>
             <div className={styles.resultArea} >
+                <EventsDropdown></EventsDropdown>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    {result.map((elem, index)=> (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+                    {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                 </div>
             </div>
         </div>;
@@ -166,9 +168,9 @@ class SwimLanes extends React.Component<Props, State> {
             "name": "table",
             "values": result[chartId],
             "transform": [
-                { 
-                    type: "flatten", 
-                    fields: ["x", "y"] 
+                {
+                    type: "flatten",
+                    fields: ["x", "y"]
                 },
                 {
                     "type": "stack",

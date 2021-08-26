@@ -19,8 +19,9 @@ import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
-import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, createTheme, ThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
+import { Shadows } from '@material-ui/core/styles/shadows';
 
 
 //Create Redux stroe
@@ -34,6 +35,11 @@ const appContext: IAppContext = {
     // worker: workerAPI,
     controller: webFileController,
 };
+
+const materialUiTheme = createTheme({
+    // TODO no shadow
+    shadows: Array(25).fill("none") as Shadows,
+});
 
 const element = document.getElementById('root');
 
@@ -74,49 +80,52 @@ export const routes = [
 ReactDOM.render(
     <AppContextProvider value={appContext}>
         <ReduxProvider store={store}>
-            <BrowserRouter>
+            <ThemeProvider theme={materialUiTheme}>
 
-                {/*                 style: css module with additional static class (cloud also be a seccond module) */}
-                <div className={`app ${styles.app}`}>
+                <BrowserRouter>
 
-                    <div className="appHeader">
-                        <AppBar position="static">
-                            <Toolbar>
-                                <Typography variant="h6" className={styles.appHeaderTitle}>
-                                    Umbra-Profiler
-                                </Typography>
-                            </Toolbar>
-                        </AppBar>
-                    </div>
+                    {/*                 style: css module with additional static class (cloud also be a seccond module) */}
+                    <div className={`app ${styles.app}`}>
 
-                    <div className="appBody">
-                        <Switch>
+                        <div className="appHeader">
+                            <AppBar position="static">
+                                <Toolbar>
+                                    <Typography variant="h6" className={styles.appHeaderTitle}>
+                                        Umbra-Profiler
+                                    </Typography>
+                                </Toolbar>
+                            </AppBar>
+                        </div>
 
-                            <Route exact path="/">
-                                <Redirect to="/upload" />
-                            </Route>
+                        <div className="appBody">
+                            <Switch>
 
-                            {routes.map((route: any) => (
-                                <Route exact path={route.path} key={route.path}>
-                                    <route.component />
+                                <Route exact path="/">
+                                    <Redirect to="/upload" />
                                 </Route>
-                            ))}
 
-                            <Route path="*">
-                                <NoMatch />
-                            </Route>
+                                {routes.map((route: any) => (
+                                    <Route exact path={route.path} key={route.path}>
+                                        <route.component />
+                                    </Route>
+                                ))}
 
-                        </Switch>
+                                <Route path="*">
+                                    <NoMatch />
+                                </Route>
+
+                            </Switch>
+                        </div>
+
+                        <div className={`appNavigation ${styles.appNavigation}`}>
+
+                            <TabPanel></TabPanel>
+
+                        </div>
                     </div>
 
-                    <div className="appNavigation">
-
-                        <TabPanel></TabPanel>
-
-                    </div>
-                </div>
-
-            </BrowserRouter>
+                </BrowserRouter>
+            </ThemeProvider>
 
         </ReduxProvider>
     </AppContextProvider>

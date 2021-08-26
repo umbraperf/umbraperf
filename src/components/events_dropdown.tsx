@@ -7,7 +7,7 @@ import { ctx } from '../app_context';
 import * as model from '../model';
 import { FormControl } from 'react-bootstrap';
 import { InputLabel, Select } from '@material-ui/core';
-import styles from "../style/events-dropdown.module.css";
+import styles from "../style/dropdown.module.css";
 
 
 export default function EventsDropdown() {

@@ -11,6 +11,7 @@ import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import EventsDropdown from '../events_dropdown';
+import InterpolationDropdown from '../interpolation_dropdown';
 
 
 interface Props {
@@ -28,6 +29,7 @@ interface Props {
 interface State {
     width: number,
     height: number,
+    interpolation: string;
 }
 
 const testBuckets = [1, 2, 3, 4, 5];
@@ -93,9 +95,11 @@ class SwimLanes extends React.Component<Props, State> {
         this.state = {
             width: 1000,
             height: 500,
+            interpolation: "step",
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleInterpolationChange = this.handleInterpolationChange.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -137,11 +141,21 @@ class SwimLanes extends React.Component<Props, State> {
 
             child.style.display = 'block';
         }
-
-
     }
 
+    handleInterpolationChange(newInterpolation: string) {
+        this.setState({
+            ...this.state,
+            interpolation: newInterpolation,
+        });
+    }
+
+
     public render() {
+        const interpolationDropdownProps = {
+            currentInterpolation: this.state.interpolation,
+            changeInterpolation: this.handleInterpolationChange,
+        }
         /*  TODO:       
                 if (!this.props.events) {
                     return <Redirect to={"/upload"} />
@@ -155,7 +169,10 @@ class SwimLanes extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <EventsDropdown></EventsDropdown>
+                <div className={styles.dropdownArea} >
+                    <EventsDropdown></EventsDropdown>
+                    <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                 </div>
@@ -261,7 +278,7 @@ class SwimLanes extends React.Component<Props, State> {
                             encode: {
                                 enter: {
                                     interpolate: {
-                                        value: "step"
+                                        value: this.state.interpolation,
                                     },
                                     x: {
                                         scale: "x",

@@ -19,7 +19,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
-import { AppBar, createTheme, ThemeProvider, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, createTheme, MuiThemeProvider , Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
@@ -37,9 +37,13 @@ const appContext: IAppContext = {
 };
 
 const materialUiTheme = createTheme({
-    // TODO no shadow
     shadows: Array(25).fill("none") as Shadows,
-});
+    palette: {
+       secondary: {
+           main: '#b8b8b8'
+       }
+    }
+  })
 
 const element = document.getElementById('root');
 
@@ -80,14 +84,14 @@ export const routes = [
 ReactDOM.render(
     <AppContextProvider value={appContext}>
         <ReduxProvider store={store}>
-            <ThemeProvider theme={materialUiTheme}>
+            <MuiThemeProvider theme={materialUiTheme}>
 
                 <BrowserRouter>
 
                     {/*                 style: css module with additional static class (cloud also be a seccond module) */}
                     <div className={`app ${styles.app}`}>
 
-                        <div className="appHeader">
+                        <div className={styles.appHeader}>
                             <AppBar position="static">
                                 <Toolbar>
                                     <Typography variant="h6" className={styles.appHeaderTitle}>
@@ -97,7 +101,7 @@ ReactDOM.render(
                             </AppBar>
                         </div>
 
-                        <div className="appBody">
+                        <div className={styles.appBody}>
                             <Switch>
 
                                 <Route exact path="/">
@@ -125,7 +129,7 @@ ReactDOM.render(
                     </div>
 
                 </BrowserRouter>
-            </ThemeProvider>
+            </MuiThemeProvider>
 
         </ReduxProvider>
     </AppContextProvider>

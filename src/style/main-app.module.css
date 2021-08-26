@@ -1,11 +1,15 @@
 .app{
     background-color: rgb(247, 251, 255);
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    height: 100%;
+    padding-bottom: 150px;
 }
 
 .appHeaderTitle{
     flex-grow: 1,
+}
+
+.appNavigation{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }

@@ -14,32 +14,6 @@ import { routes } from '../app';
 import { useSelector } from 'react-redux';
 
 
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-force-tabpanel-${index}`}
-            aria-labelledby={`scrollable-force-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={3}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
 function a11yProps(index: any) {
     return {
         id: `scrollable-force-tab-${index}`,
@@ -76,6 +50,7 @@ function ScrollableTabsButtonForce(props: any) {
         <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Tabs
+                    centered={true}
                     value={props.location.pathname}
                     onChange={handleChange}
                     variant="scrollable"
@@ -95,27 +70,6 @@ function ScrollableTabsButtonForce(props: any) {
                     <Tab label="DummyButton" icon={<HelpIcon />} {...a11yProps(6)} />
                 </Tabs>
             </AppBar>
-            <TabPanel value={value} index={0}>
-                Item One
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                Item Three
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-                Item Four
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-                Item Five
-            </TabPanel>
-            <TabPanel value={value} index={5}>
-                Item Six
-            </TabPanel>
-            <TabPanel value={value} index={6}>
-                Item Seven
-            </TabPanel>
         </div>
     );
 }

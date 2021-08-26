@@ -102,7 +102,9 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <EventsDropdown></EventsDropdown>
+                <div className={styles.dropdownArea} >
+                    <EventsDropdown></EventsDropdown>
+                </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>

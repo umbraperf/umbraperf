@@ -7,3 +7,9 @@
     text-align: center;
     padding: 20px;
 }
+
+.dropdownArea{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

@@ -1,0 +1,38 @@
+.dropdownSelector{
+    width: 300px;
+    text-align: left;
+}
+
+.dropdownSelectorLabel{
+    padding-left: 10px;
+
+}
+
+.dropdownSelectorContainer{
+    margin: 20px;
+}
+
+
+.eventDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.eventDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.eventDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
+}    
+
+.interpolationDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.interpolationDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.interpolationDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
+}  

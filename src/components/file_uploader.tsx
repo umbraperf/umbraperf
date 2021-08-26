@@ -5,7 +5,7 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import styles from '../style/upload.module.css';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, LinearProgress } from '@material-ui/core';
 
 interface Props {
     appContext: IAppContext;
@@ -51,7 +51,7 @@ class FileUploader extends React.Component<Props> {
 
     listAcceptedFiles(acceptedFiles: File[]) {
         return acceptedFiles.map(file => (
-            <li key={file.name}>
+            <li className={styles.acceptedFilesList} key={file.name}>
                 {file.name} - {file.size} bytes
             </li>
         ));
@@ -67,21 +67,27 @@ class FileUploader extends React.Component<Props> {
     }
 
     public render() {
-        return <div>
-            <div className={"dropzone-container"}>
+        return <div className={styles.dropzoneContainer}>
+            {this.props.eventsLoading ?
+                <div className={styles.fileUploaderLinearProgressContainer}>
+                    <LinearProgress color="secondary"/>
+                </div>
+                :
+                <div></div>
+            }
+            <Dropzone
+                accept={['.parquet', '.csv']}
+                multiple={false}
+                onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
+                {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {
 
-                <Dropzone
-                    accept={['.parquet', '.csv']}
-                    multiple={false}
-                    onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
-                    {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {
+                    const dropzoneStyle: string = this.defineDropzoneStyle(isDragActive, acceptedFiles, fileRejections);
 
-                        const dropzoneStyle: string = this.defineDropzoneStyle(isDragActive, acceptedFiles, fileRejections);
-
-                        return (
-                            <section className={styles[dropzoneStyle]}>
-                                <div {...getRootProps()} style={{ width: "100%", height: "100%" }}>
-                                    <input {...getInputProps()} />
+                    return (
+                        <section className={styles[dropzoneStyle]}>
+                            <div className={styles.dropzoneInner} {...getRootProps()} style={{ width: "100%", height: "100%" }}>
+                                <input {...getInputProps()} />
+                                <div className={styles.dropzoneInnerText}>
                                     <p> Drag files here, or click to select files.
                                         <br></br>
                                         Only csv files are allowed.
@@ -90,23 +96,11 @@ class FileUploader extends React.Component<Props> {
                                         <p>Selected file (valid): {this.listAcceptedFiles(acceptedFiles)}</p> :
                                         (fileRejections.length != 0 ? <p>File not valid!</p> : <p>No files selected.</p>)}
                                 </div>
-                            </section>)
-                    }}
-                </Dropzone>
-            </div>
-            <div className={styles.spinnerArea} >
-                {(this.props.eventsLoading || this.props.events) ?
-                    (this.props.eventsLoading ?
-                        <CircularProgress />
-                        :
-                        <p>Loading of file finished. Select a visualization to start rendering: </p>
-                    )
-                    :
-                    <p>Select a file.</p>
-                }
-            </div>
-
-        </div>;
+                            </div>
+                        </section>)
+                }}
+            </Dropzone>
+        </div >;
     }
 
 }

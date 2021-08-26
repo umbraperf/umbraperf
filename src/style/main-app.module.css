@@ -1,6 +1,19 @@
 .app{
     background-color: rgb(247, 251, 255);
-    height: calc(100% - 70px);
+}
+
+.appHeader{
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.appBody{
+    position: fixed;
+    top: 64px;
+    bottom: 71px;
+    width: 100%;
+    overflow-y: scroll;
 }
 
 .appHeaderTitle{

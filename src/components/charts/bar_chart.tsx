@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { Button, CircularProgress, Color } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsDropdown from '../events_dropdown';
 
@@ -216,10 +216,10 @@ class BarChart extends React.Component<Props, State> {
                             y2: { scale: 'yscale', value: 0 },
                         },
                         update: {
-                            fill: { value: 'steelblue' },
+                            fill: { value: this.props.appContext.secondaryColor },
                         },
                         hover: {
-                            fill: { value: 'red' },
+                            fill: { value: this.props.appContext.primaryColor },
                         },
                     },
                 },

@@ -12,6 +12,7 @@ import { ChartType } from '../../controller/web_file_controller';
 import { Button, CircularProgress } from '@material-ui/core';
 import EventsDropdown from '../utils/events_dropdown';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
+import EventsButtons from '../utils/events_buttons';
 
 
 interface Props {
@@ -158,12 +159,6 @@ class SwimLanes extends React.Component<Props, State> {
         });
     }
 
-    handleEventButtonClick(elem: string){
-        this.props.setCurrentEvent(elem);
-        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, elem);
-    }
-
-
 
     public render() {
         const interpolationDropdownProps = {
@@ -184,19 +179,7 @@ class SwimLanes extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={styles.optionsArea} >
-                    <div className={"eventButtonsArea"}>
-                        {this.props.events.map((elem, index) => (
-                            <Button
-                                className={styles.eventButton}
-                                variant="contained"
-                                color={this.props.currentEvent === elem ? "primary" : "default"}
-                                onClick={() => this.handleEventButtonClick(elem)}
-                                style={{ width: 200, borderRadius: 100, margin: 10 }}
-                            >
-                                {elem}
-                            </Button>
-                        ))}
-                    </div>
+                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
                     <div className={styles.dropdownArea} >
                         <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
                     </div>

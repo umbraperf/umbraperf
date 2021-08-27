@@ -35,6 +35,7 @@ const startSize = {
     width: 500,
     height: 500,
 }
+
 class BarChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();

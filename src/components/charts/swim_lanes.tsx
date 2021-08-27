@@ -32,9 +32,14 @@ interface State {
     interpolation: string;
 }
 
+const startSize = {
+    width: 750,
+    height: 200,
+}
+
 const testBuckets = [1, 2, 3, 4, 5];
-const testOperatorsGruop = [0, 0, 0.5, 0.7, 1];
-const testOperatorsJoin = [0, 0.5, 0.3, 0.3, 0];
+const testOperatorsGruop = [0, 0, 0.5, 0.4, 0.7];
+const testOperatorsJoin = [0, 0.5, 0.1, 0.3, 0];
 const testOperatorsTable = [1, 0.5, 0.2, 0, 0];
 
 const result = [[
@@ -93,8 +98,8 @@ class SwimLanes extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            width: 1000,
-            height: 500,
+            width: startSize.width,
+            height: startSize.height,
             interpolation: "step",
         };
 
@@ -131,12 +136,14 @@ class SwimLanes extends React.Component<Props, State> {
         const child = this.chartWrapper.current;
         if (child) {
             const newWidth = child.clientWidth;
+            const newHeight = child.clientHeight;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
-                width: newWidth,
+                width: newWidth > startSize.width ? startSize.width : newWidth,
+                //height: newHeight,
             }));
 
             child.style.display = 'block';
@@ -240,7 +247,9 @@ class SwimLanes extends React.Component<Props, State> {
                 {
                     name: "color",
                     type: "ordinal",
-                    range: "category",
+                    range: {
+                        scheme: "tableau20",
+                    },
                     domain: {
                         data: "table",
                         field: "c"

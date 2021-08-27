@@ -7,7 +7,7 @@
 .dropzoneBase{
     display: flex;
     align-items: center;
-    margin: 20px;
+    margin: 20px 60px 20px 60px;
     min-height: 250px;
     height: 70%;
     flex: 1;

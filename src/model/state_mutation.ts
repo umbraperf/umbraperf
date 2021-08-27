@@ -91,7 +91,6 @@ export class AppStateMutation {
                 };
             case StateMutationType.RESET_STATE:
                 return {
-                    ...state,
                     fileName: undefined,
                     resultLoading: false,
                     result: undefined,

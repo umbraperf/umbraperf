@@ -6,6 +6,7 @@ import styles from '../style/upload.module.css';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
 import { CircularProgress, LinearProgress } from '@material-ui/core';
+import { Redirect } from 'react-router-dom';
 
 interface Props {
     appContext: IAppContext;
@@ -20,10 +21,17 @@ interface Props {
     setResetState: () => void;
 }
 
-class FileUploader extends React.Component<Props> {
+interface State {
+    allowRedirect: boolean;
+}
+
+class FileUploader extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+        this.state = {
+            allowRedirect: false,
+        };
 
         this.receiveFileOnDrop = this.receiveFileOnDrop.bind(this);
         this.defineDropzoneStyle = this.defineDropzoneStyle.bind(this);
@@ -32,7 +40,6 @@ class FileUploader extends React.Component<Props> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
-            this.props.setResetState();
             this.props.setEventsLoading(true);
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
@@ -58,23 +65,29 @@ class FileUploader extends React.Component<Props> {
     }
 
     componentDidMount(): void {
+        this.props.setResetState();
         console.log(this.props);
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading) {
+        if (prevProps.events != this.props.events) {
+            if (!this.props.eventsLoading && this.props.events) {
+                this.setState({
+                    ...this.state,
+                    allowRedirect: true,
+                });
+            }
         }
     }
 
     public render() {
         return <div className={styles.dropzoneContainer}>
-            {this.props.eventsLoading ?
-                <div className={styles.fileUploaderLinearProgressContainer}>
-                    <LinearProgress color="primary"/>
-                </div>
-                :
-                <div></div>
-            }
+            {this.state.allowRedirect && <Redirect to={"/bar-chart"} />}
+
+            {this.props.eventsLoading && <div className={styles.fileUploaderLinearProgressContainer}>
+                <LinearProgress color="primary" />
+            </div>}
+            
             <Dropzone
                 accept={['.parquet', '.csv']}
                 multiple={false}

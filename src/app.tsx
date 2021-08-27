@@ -13,7 +13,7 @@ import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
 import BarChart from './components/charts/bar_chart';
 import SwimLanes from './components/charts/swim_lanes';
-import TabPanel from './components/tab_panel';
+import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';

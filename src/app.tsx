@@ -39,6 +39,9 @@ const appContext: IAppContext = {
 const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
     palette: {
+        primary: {
+            main: '#198fb0'
+        },
         secondary: {
             main: '#b8b8b8'
         }

@@ -14,13 +14,6 @@ import { routes } from '../app';
 import { useSelector } from 'react-redux';
 
 
-function a11yProps(index: any) {
-    return {
-        id: `scrollable-force-tab-${index}`,
-        'aria-controls': `scrollable-force-tabpanel-${index}`,
-    };
-}
-
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         flexGrow: 1,
@@ -31,17 +24,16 @@ const useStyles = makeStyles((theme: Theme) => ({
         color: 'white',
         pointerEvents: 'none',
         opacity: '0.4',
+    },
+    tabRoot: {
+        minWidth: '200px',
     }
-
 }));
 
-function ScrollableTabsButtonForce(props: any) {
-    const classes = useStyles();
-    const [value, setValue] = React.useState(-1);
 
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
-    };
+function ScrollableTabsButtonForce(props: any) {
+
+    const classes = useStyles();
 
     const eventsLoading = useSelector((state: AppState) => state.eventsLoading);
     const events = useSelector((state: AppState) => state.events);
@@ -50,24 +42,21 @@ function ScrollableTabsButtonForce(props: any) {
         <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Tabs
-                    centered={true}
                     value={props.location.pathname}
-                    onChange={handleChange}
                     variant="scrollable"
                     scrollButtons="on"
                     indicatorColor="primary"
                     textColor="primary"
                     aria-label="scrollable force tabs example"
-                    className={(eventsLoading || events === undefined) ? classes.tabsDisabled : ""}
+                    className={(eventsLoading || events === undefined) ? `${classes.tabsDisabled} ${classes.root}` : classes.root}
                 >
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
-                                <Tab label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
+                                <Tab classes={{ root: classes.tabRoot }} label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );
                         }
                     })}
-                    <Tab label="DummyButton" icon={<HelpIcon />} {...a11yProps(6)} />
                 </Tabs>
             </AppBar>
         </div>

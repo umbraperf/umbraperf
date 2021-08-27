@@ -31,19 +31,27 @@ const store = createProdStore();
 // const workerAPI = new WorkerAPI();
 const webFileController = new WebFileController();
 
+const appColor = {
+    primary: '#198fb0',
+    secondary: '#919191',
+}
+
 const appContext: IAppContext = {
     // worker: workerAPI,
     controller: webFileController,
+    primaryColor: appColor.primary,
+    secondaryColor: appColor.secondary,
+    
 };
 
 const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
     palette: {
         primary: {
-            main: '#198fb0'
+            main: appColor.primary
         },
         secondary: {
-            main: '#b8b8b8'
+            main: appColor.secondary
         }
     }
 })

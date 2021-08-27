@@ -70,7 +70,7 @@ class FileUploader extends React.Component<Props> {
         return <div className={styles.dropzoneContainer}>
             {this.props.eventsLoading ?
                 <div className={styles.fileUploaderLinearProgressContainer}>
-                    <LinearProgress color="secondary"/>
+                    <LinearProgress color="primary"/>
                 </div>
                 :
                 <div></div>

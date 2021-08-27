@@ -9,7 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
-import { CircularProgress } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import EventsDropdown from '../events_dropdown';
 import InterpolationDropdown from '../interpolation_dropdown';
 
@@ -158,6 +158,12 @@ class SwimLanes extends React.Component<Props, State> {
         });
     }
 
+    handleEventButtonClick(elem: string){
+        this.props.setCurrentEvent(elem);
+        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, elem);
+    }
+
+
 
     public render() {
         const interpolationDropdownProps = {
@@ -177,9 +183,23 @@ class SwimLanes extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <div className={styles.dropdownArea} >
-                    <EventsDropdown></EventsDropdown>
-                    <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                <div className={styles.optionsArea} >
+                    <div className={"eventButtonsArea"}>
+                        {this.props.events.map((elem, index) => (
+                            <Button
+                                className={styles.eventButton}
+                                variant="contained"
+                                color={this.props.currentEvent === elem ? "primary" : "default"}
+                                onClick={() => this.handleEventButtonClick(elem)}
+                                style={{ width: 200, borderRadius: 100, margin: 10 }}
+                            >
+                                {elem}
+                            </Button>
+                        ))}
+                    </div>
+                    <div className={styles.dropdownArea} >
+                        <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                    </div>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}

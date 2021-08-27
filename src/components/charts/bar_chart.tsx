@@ -10,7 +10,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
-import EventsDropdown from '../events_dropdown';
+import EventsDropdown from '../utils/events_dropdown';
 
 
 

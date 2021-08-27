@@ -10,8 +10,8 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
 import { Button, CircularProgress } from '@material-ui/core';
-import EventsDropdown from '../events_dropdown';
-import InterpolationDropdown from '../interpolation_dropdown';
+import EventsDropdown from '../utils/events_dropdown';
+import InterpolationDropdown from '../utils/interpolation_dropdown';
 
 
 interface Props {

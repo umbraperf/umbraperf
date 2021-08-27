@@ -1,13 +1,7 @@
-import React, { useCallback, useContext } from 'react';
-import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
+import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '../model/state';
-import { ctx } from '../app_context';
-import * as model from '../model';
-import { FormControl } from 'react-bootstrap';
 import { InputLabel, Select } from '@material-ui/core';
-import styles from "../style/dropdown.module.css";
+import styles from "../../style/dropdown.module.css";
 
 
 export default function InterpolationDropdown(props: any) {

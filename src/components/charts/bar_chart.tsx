@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { Button, CircularProgress, Color } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsDropdown from '../events_dropdown';
 
@@ -96,8 +96,14 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
+    handleEventButtonClick(elem: string){
+        this.props.setCurrentEvent(elem);
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
+    }
+
 
     public render() {
+
         if (!this.props.events) {
             return <Redirect to={"/upload"} />
         }
@@ -110,7 +116,19 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <div className={styles.dropdownArea} >
+                <div className={styles.optionsArea} >
+                    <div className={styles.eventButtonsArea}>
+                    {this.props.events.map((elem, index) => (
+                        <Button 
+                        className={styles.eventButton} 
+                        variant="contained" 
+                        color={this.props.currentEvent === elem ? "primary" : "default"}
+                        onClick={() => this.handleEventButtonClick(elem)}
+                        >
+                            {elem}
+                        </Button>
+                    ))}
+                    </div>
                     <EventsDropdown></EventsDropdown>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>

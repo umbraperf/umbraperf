@@ -31,7 +31,10 @@ interface State {
     height: number,
 }
 
-
+const startSize = {
+    width: 500,
+    height: 500,
+}
 class BarChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
@@ -39,8 +42,8 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            width: 1000,
-            height: 500,
+            width: startSize.width,
+            height: startSize.height,
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
@@ -74,12 +77,14 @@ class BarChart extends React.Component<Props, State> {
         const child = this.chartWrapper.current;
         if (child) {
             const newWidth = child.clientWidth;
+            const newHeight = child.clientHeight;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
-                width: newWidth,
+                width: newWidth > startSize.width ? startSize.width : newWidth,
+                //height: newHeight,
             }));
 
             child.style.display = 'block';

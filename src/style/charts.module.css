@@ -18,10 +18,5 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-.eventButton{
-    width: 200px;
-    border-radius: 200px;
-    margin: 25px;
+    margin-bottom: 40px;
 }

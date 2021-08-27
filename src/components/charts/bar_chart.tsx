@@ -117,19 +117,19 @@ class BarChart extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={styles.optionsArea} >
-                    <div className={styles.eventButtonsArea}>
+                    <div className={"eventButtonsArea"}>
                     {this.props.events.map((elem, index) => (
                         <Button 
                         className={styles.eventButton} 
                         variant="contained" 
                         color={this.props.currentEvent === elem ? "primary" : "default"}
                         onClick={() => this.handleEventButtonClick(elem)}
+                        style={{ width: 200, borderRadius: 100, margin: 10 }}
                         >
                             {elem}
                         </Button>
                     ))}
                     </div>
-                    <EventsDropdown></EventsDropdown>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />

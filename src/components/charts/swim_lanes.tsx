@@ -115,13 +115,14 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        //TODO:
-        this.props.setCurrentChart(ChartType.SWIM_LANES);
-        this.props.setCurrentEvent(this.props.events![0]);
-        this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
-        addEventListener('resize', (event) => {
-            this.resizeListener();
-        });
+        if (this.props.events) {
+            this.props.setCurrentChart(ChartType.SWIM_LANES);
+            this.props.setCurrentEvent(this.props.events![0]);
+            this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
+            addEventListener('resize', (event) => {
+                this.resizeListener();
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -163,12 +164,12 @@ class SwimLanes extends React.Component<Props, State> {
             currentInterpolation: this.state.interpolation,
             changeInterpolation: this.handleInterpolationChange,
         }
-        /*  TODO:       
-                if (!this.props.events) {
-                    return <Redirect to={"/upload"} />
-                } */
 
-        /*         if (!this.props.result || this.props.resultLoading) {
+        if (!this.props.events) {
+            return <Redirect to={"/upload"} />
+        }
+
+        /*   TODO      if (!this.props.result || this.props.resultLoading) {
                     return <div className={styles.spinnerArea} >
                         <CircularProgress />
                     </div>

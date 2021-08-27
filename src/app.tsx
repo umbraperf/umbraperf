@@ -19,7 +19,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
-import { AppBar, createTheme, MuiThemeProvider , Toolbar, Typography } from '@material-ui/core';
+import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
@@ -39,11 +39,11 @@ const appContext: IAppContext = {
 const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
     palette: {
-       secondary: {
-           main: '#b8b8b8'
-       }
+        secondary: {
+            main: '#b8b8b8'
+        }
     }
-  })
+})
 
 const element = document.getElementById('root');
 
@@ -104,15 +104,20 @@ ReactDOM.render(
                         <div className={styles.appBody}>
                             <Switch>
 
-                                <Route exact path="/">
+                                <Route exact path="/" key="/">
                                     <Redirect to="/upload" />
                                 </Route>
 
-                                {routes.map((route: any) => (
-                                    <Route exact path={route.path} key={route.path}>
+                                <Route exact path="/upload" key="/upload">
+                                    <FileUploader />
+                                </Route>
+
+                                {routes.map((route: any) => {
+                                    console.log(store.getState());
+                                    return <Route exact path={route.path} key={route.path}>
                                         <route.component />
                                     </Route>
-                                ))}
+                                })}
 
                                 <Route path="*">
                                     <NoMatch />

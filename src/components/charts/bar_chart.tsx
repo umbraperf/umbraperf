@@ -10,8 +10,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
-import EventsDropdown from '../utils/events_dropdown';
-
+import EventsButtons from '../utils/events_buttons';
 
 
 interface Props {
@@ -58,7 +57,7 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        if(this.props.events){
+        if (this.props.events) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
             this.props.setCurrentEvent(this.props.events![0]);
             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
@@ -96,7 +95,7 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
-    handleEventButtonClick(elem: string){
+    handleEventButtonClick(elem: string) {
         this.props.setCurrentEvent(elem);
         this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
     }
@@ -117,19 +116,7 @@ class BarChart extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={styles.optionsArea} >
-                    <div className={"eventButtonsArea"}>
-                    {this.props.events.map((elem, index) => (
-                        <Button 
-                        className={styles.eventButton} 
-                        variant="contained" 
-                        color={this.props.currentEvent === elem ? "primary" : "default"}
-                        onClick={() => this.handleEventButtonClick(elem)}
-                        style={{ width: 200, borderRadius: 100, margin: 10 }}
-                        >
-                            {elem}
-                        </Button>
-                    ))}
-                    </div>
+                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />

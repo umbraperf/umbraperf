@@ -150,11 +150,11 @@ function NoMatch() {
 
     return (
         <div>
-            <h3>
+            <h2>
                 404: No subpage found for <code>{location.pathname}</code>.
                 <br></br>
-                You can return to homepage: <Link to={'/'} className="nav-link"> Home </Link>
-            </h3>
+                You can upload a file to start profiling: <Link to={'/'} className="nav-link"> File Uploader </Link>
+            </h2>
         </div>
     );
 }

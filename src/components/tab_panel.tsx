@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         opacity: '0.4',
     },
     tabRoot: {
-        minWidth: '200px',
+        //minWidth: '200px',
     }
 }));
 
@@ -43,8 +43,9 @@ function ScrollableTabsButtonForce(props: any) {
             <AppBar position="static" color="default">
                 <Tabs
                     value={props.location.pathname}
-                    variant="scrollable"
-                    scrollButtons="on"
+/*                     variant="scrollable"
+ */                    scrollButtons="on"
+                    variant="fullWidth"
                     indicatorColor="primary"
                     textColor="primary"
                     aria-label="scrollable force tabs example"

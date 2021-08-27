@@ -58,12 +58,14 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.setCurrentChart(ChartType.BAR_CHART);
-        this.props.setCurrentEvent(this.props.events![0]);
-        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
-        addEventListener('resize', (event) => {
-            this.resizeListener();
-        });
+        if(this.props.events){
+            this.props.setCurrentChart(ChartType.BAR_CHART);
+            this.props.setCurrentEvent(this.props.events![0]);
+            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
+            addEventListener('resize', (event) => {
+                this.resizeListener();
+            });
+        }
     }
 
     componentWillUnmount() {

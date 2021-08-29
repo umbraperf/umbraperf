@@ -141,7 +141,10 @@ pub fn analyze_file(file_size: i32){
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
 
-    let batches = set_record_batches(batches);
+    // let batches = set_record_batches(batches);
+
+    let analyze = Analyze::new();
+    let columns = analyze.get_columns(batches, vec!["time"]);
 
 
     /* let events = Analyze::events(&batch);

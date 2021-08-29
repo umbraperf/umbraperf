@@ -1,10 +1,32 @@
-use arrow::{array::{Array}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayData, Float64Builder}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
 use std::{collections::{BTreeMap}, sync::Arc};
 
-use crate::{print_to_js, print_to_js_with_obj};
+use crate::{print_to_js_with_obj};
 
 pub struct Analyze {
     btree: BTreeMap<String, (i32, DataType)>,
+}
+
+
+pub fn convert_record_batch_to_arrays(batches: Vec<RecordBatch>, column_num: usize) -> Vec<Arc<dyn Array>> {
+    let mut vec = Vec::new();
+    for batch in &batches {
+        let array = batch.column(column_num).to_owned();
+        vec.push(array);
+    }
+    vec
+}
+
+pub fn convert_arrays_to_one_arraydata(array: Vec<Arc<dyn Array>>, data_type: DataType) -> ArrayData {
+
+    let mut array_data_builder = arrow::array::ArrayDataBuilder::new(data_type);
+
+    for item in array {
+        array_data_builder = array_data_builder.add_child_data(item.data().to_owned());
+    }
+
+    array_data_builder.build()
+
 }
 
 
@@ -22,36 +44,48 @@ impl Analyze {
         }
     }
 
+    
+    
 
     pub fn get_columns(self, batches: Vec<RecordBatch>, names: Vec<&str> ) {
 
-/* 
+ 
         for name in names {
             let column_num = self.btree.get(&String::from(name));
-            let column_num = column_num.expect("Operator needs to be in the rust list!").0;
+            let column_num = (column_num.expect("Operator needs to be in the rust list!").0) as usize;
 
             let data_type = self.btree.get(&String::from(name));
-            let data_type = data_type.expect("Operator needs to be in the rust list!").1;
+            let data_type = &data_type.expect("Operator needs to be in the rust list!").1;
 
             match data_type {
                 DataType::Utf8 => {
-                    let builder = arrow::array::StringBuilder::new(100);
-                    for batch in batches {
-                        
-                    }
+                    let array = convert_record_batch_to_arrays(batches.to_owned(), column_num);
+                    
+
+
+
+                    let array_data = convert_arrays_to_one_arraydata(array, DataType::Utf8); 
+                    let string_array = arrow::array::StringArray::from(array_data);
+                    print_to_js_with_obj(&format!("{:?}", string_array).into());
+                    
                 }
                 DataType::Float64 => {
-                    let builder = arrow::array::Float64Builder::new(100);
-                    for batch in batches {
 
-                    }
+                    let array = convert_record_batch_to_arrays(batches.to_owned(), column_num);
+                    print_to_js_with_obj(&format!("{:?}", array).into());
+                    let array_data = convert_arrays_to_one_arraydata(array, DataType::Float64);   
+                    print_to_js_with_obj(&format!("{:?}", array_data).into());
+                    let float_array = arrow::array::PrimitiveArray::<Float64Type>::from(array_data);
+                    print_to_js_with_obj(&format!("{:?}", float_array).into());
+
+
                 }
                 _ => {
                     panic!();
                 }
             }
           
-    } */
+    } 
     }
    /*  // TODO, maybe later metadata request at the beginning to get most important data
     // pub fn meta_data()

@@ -1,15 +1,59 @@
-use arrow::{array::{Array}, datatypes::{Float64Type}, record_batch::RecordBatch};
-use std::collections::{BTreeMap};
+use arrow::{array::{Array}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
+use std::{collections::{BTreeMap}, sync::Arc};
 
 use crate::{print_to_js, print_to_js_with_obj};
 
 pub struct Analyze {
+    btree: BTreeMap<String, (i32, DataType)>,
 }
 
 
 impl Analyze {
 
-    // TODO, maybe later metadata request at the beginning to get most important data
+    // Init map
+    pub fn new() -> Self {
+        let mut dict = BTreeMap::new();
+        dict.insert(String::from("operator"), (0, DataType::Utf8));
+        dict.insert(String::from("ev_name"), (1, DataType::Utf8));
+        dict.insert(String::from("time"), (2, DataType::Float64));
+        dict.insert(String::from("pipeline"), (3, DataType::Utf8));
+        Self {
+            btree: dict
+        }
+    }
+
+
+    pub fn get_columns(self, batches: Vec<RecordBatch>, names: Vec<&str> ) {
+
+/* 
+        for name in names {
+            let column_num = self.btree.get(&String::from(name));
+            let column_num = column_num.expect("Operator needs to be in the rust list!").0;
+
+            let data_type = self.btree.get(&String::from(name));
+            let data_type = data_type.expect("Operator needs to be in the rust list!").1;
+
+            match data_type {
+                DataType::Utf8 => {
+                    let builder = arrow::array::StringBuilder::new(100);
+                    for batch in batches {
+                        
+                    }
+                }
+                DataType::Float64 => {
+                    let builder = arrow::array::Float64Builder::new(100);
+                    for batch in batches {
+
+                    }
+                }
+                _ => {
+                    panic!();
+                }
+            }
+          
+    } */
+    }
+   /*  // TODO, maybe later metadata request at the beginning to get most important data
     // pub fn meta_data()
     pub fn events(batch: &RecordBatch) -> Vec<Option<&str>> {
 
@@ -160,7 +204,7 @@ impl Analyze {
         tuple
 
 
-    }
+    } */
         
 
 }

@@ -8,6 +8,7 @@ use std::{cell::RefCell, sync::Arc};
 // Arrow
 extern crate arrow;
 use arrow::{datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
+use arrow::csv::Reader;
 
 // Console
 mod console;
@@ -34,12 +35,12 @@ use serde::{Serialize, Deserialize};
 
 //STATE
 pub struct State {
-    pub record_batch: Option<RecordBatch>
+    pub record_batches: Option<Vec<RecordBatch>>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
-        record_batch: None
+        record_batches: None
     });
 }
 
@@ -63,16 +64,15 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-fn get_record_batch() ->  Option<RecordBatch> {
-    with_state(|s| s.record_batch.clone())
+fn get_record_batches() ->  Option<Vec<RecordBatch>> {
+    with_state(|s| s.record_batches.clone())
 }
 
-fn set_record_batch(record_batch: RecordBatch) {
-    with_state_mut(|s| s.record_batch = Some(record_batch));
+fn set_record_batches(record_batches: Vec<RecordBatch>) {
+    with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
-
-fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> RecordBatch {
+fn init_schema() -> Schema {
 
     let field_operator = Field::new("operator", DataType::Utf8, false);
     let field_uir_code = Field::new("uir_code", DataType::Utf8, false);
@@ -87,7 +87,7 @@ fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with
     let field_ip = Field::new("ip", DataType::Utf8, false);
     let field_pid = Field::new("pid", DataType::Utf8, false);
     let field_datasrc = Field::new("datasrc", DataType::Utf8, false);
-    let field_time = Field::new("field_time", DataType::Float64, false);
+    let field_time = Field::new("time", DataType::Float64, false);
     let field_period = Field::new("period", DataType::Utf8, false);
     let field_tid = Field::new("tid", DataType::Utf8, false);
     let field_cpu = Field::new("cpu", DataType::Utf8, false);
@@ -102,7 +102,22 @@ fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with
 
     let schema = Schema::new(vec![field_operator, field_uir_code, field_srcline, field_comm, field_dso, field_ev_name, field_symbol, field_brstack, field_brstacksym, field_callchain, field_ip, field_pid, field_datasrc, field_time, field_period, field_tid, field_cpu, field_iregs, field_mapping_via, field_dump_linenr, field_pipeline, field_addr, field_phys_addr, field_time_delta]);
 
-    let mut reader = arrow::csv::Reader::new(WebFileReader::new_from_file(file_size), Arc::new(schema), with_header, Some(with_delimiter), 1024, None, Some(with_projection));
+    schema
+}
+
+
+fn init_record_batches(file_size: i32, with_delimiter: u8, with_header: bool, with_projection: Vec<usize>) -> Vec<RecordBatch> {
+
+    let schema = init_schema();
+
+    let mut reader = Reader::new(
+    WebFileReader::new_from_file(file_size),
+    Arc::new(schema),
+    with_header,
+    Some(with_delimiter),
+    1024,
+    None,
+    Some(with_projection));
 
     let mut vec = Vec::new();
 
@@ -112,15 +127,7 @@ fn init_record_batch(file_size: i32, with_delimiter: u8, with_header: bool, with
         vec.push(batch);
     }
 
-    let first_batch = vec.get(0);
-
-    if let Some(batch) = first_batch {
-        batch.to_owned()
-    } else {
-        let field_operator = Field::new("operator", DataType::Utf8, false);
-        let schema = Schema::new(vec![field_operator]);
-        arrow::record_batch::RecordBatch::new_empty(Arc::new(schema.clone()))
-    }
+    vec
 }
 
 #[wasm_bindgen(js_name = "analyzeFile")]
@@ -129,12 +136,15 @@ pub fn analyze_file(file_size: i32){
     let now = instant::Instant::now();
 
     let semi_colon = 59;
-    let batch = init_record_batch(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
+    let batches = init_record_batches(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
 
-    let events = Analyze::events(&batch);
+    let batches = set_record_batches(batches);
+
+
+    /* let events = Analyze::events(&batch);
 
     let event_batch = RecordBatchUtil::create_record_batch_events(events);
 
@@ -142,24 +152,24 @@ pub fn analyze_file(file_size: i32){
 
     set_record_batch(batch);
 
-    send_events_to_js(event_cursor.into_inner());
+    send_events_to_js(event_cursor.into_inner()); */
 }
 
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(chart_name: &str, event_name: &str, args: &JsValue) {
 
-    let batch = get_record_batch().unwrap();
+    let batch = get_record_batches().unwrap();
     match chart_name {
         "bar_chart" => {
-            let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
+           /*  let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
             let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
             let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
-            send_arrow_result_to_js(cursor.into_inner());
+            send_arrow_result_to_js(cursor.into_inner()); */
         }
         "swim_lanes" => {
-            Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
-            //let param: Param = args.into_serde().unwrap();
+/*             Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
+ */            //let param: Param = args.into_serde().unwrap();
             //print_to_js_with_obj(&format!("{:?}", param.bucketsize).into()); 
         }
         &_ => {

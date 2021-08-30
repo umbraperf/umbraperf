@@ -144,7 +144,13 @@ pub fn analyze_file(file_size: i32){
     // let batches = set_record_batches(batches);
 
     let analyze = Analyze::new();
-    let columns = analyze.get_columns(batches, vec!["time"]);
+    let batch = analyze.get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
+    print_to_js_with_obj(&format!("{:?}", batch).into());
+
+    let analyze2 = Analyze::new();
+    let filtered_batch = analyze2.filter("operator", "No Operator", &batch);
+
+    print_to_js_with_obj(&format!("{:?}", filtered_batch).into());
 
 
     /* let events = Analyze::events(&batch);

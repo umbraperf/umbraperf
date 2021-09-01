@@ -1,8 +1,8 @@
-pub struct Controller {
+pub struct Analyze_API {
 }
 
 
-impl Controller {
+impl Analyze_API {
 
 
     // Filters?

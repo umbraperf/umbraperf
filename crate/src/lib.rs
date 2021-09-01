@@ -24,11 +24,10 @@ use record_batch_util::RecordBatchUtil;
 
 // Analyze
 mod analyze;
-use analyze::Analyze;
 
 // Bindings
 mod bindings;
-use crate::bindings::{send_arrow_result_to_js, send_events_to_js};
+use crate::{analyze::{filter_with, get_columns, sort_batch}, bindings::{send_arrow_result_to_js, send_events_to_js}};
 
 extern crate serde;
 use serde::{Serialize, Deserialize};
@@ -143,12 +142,14 @@ pub fn analyze_file(file_size: i32){
 
     // let batches = set_record_batches(batches);
 
-    let analyze = Analyze::new();
-    let batch = analyze.get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
+    let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
     print_to_js_with_obj(&format!("{:?}", batch).into());
 
-    let analyze2 = Analyze::new();
-    let filtered_batch = analyze2.filter("operator", "No Operator", &batch);
+    let sorted_batch = sort_batch(&batch, 2);
+
+    print_to_js_with_obj(&format!("{:?}", sorted_batch).into());
+
+    let filtered_batch = filter_with("operator", "No Operator", &batch);
 
     print_to_js_with_obj(&format!("{:?}", filtered_batch).into());
 

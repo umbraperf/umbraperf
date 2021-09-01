@@ -1,47 +1,42 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{filter, sort}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
-use std::{collections::{BTreeMap, HashMap}};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{filter, sort, sort_to_indices, sum, take}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
+use std::{collections::{BTreeMap, HashMap}, sync::Arc};
+use arrow::error::Result as ArrowResult;
 
 use crate::{print_to_js, print_to_js_with_obj};
 
-pub struct Analyze {
-    btree: BTreeMap<String, (i32, DataType)>,
-}
-
-
-impl Analyze {
 
     // Init map
-    pub fn new() -> Self {
+    pub fn get_dict() -> BTreeMap<String, (i32, DataType)> {
         let mut dict = BTreeMap::new();
         dict.insert(String::from("operator"), (0, DataType::Utf8));
         dict.insert(String::from("ev_name"), (1, DataType::Utf8));
         dict.insert(String::from("time"), (2, DataType::Float64));
         dict.insert(String::from("pipeline"), (3, DataType::Utf8));
-        Self {
-            btree: dict
-        }
+        dict
     }
 
-    pub fn get_column_num(&self, name: &str) -> usize {
-        let column_num = self.btree.get(&String::from(name));
+    pub fn get_column_num(name: &str) -> usize {
+        let dict = get_dict();
+        let column_num = dict.get(&String::from(name));
         let column_num = (column_num.expect("Operator needs to be in the rust list!").0) as usize;
         column_num
     }
 
-    pub fn get_data_type(&self, name: &str) -> DataType {
-        let data_type = self.btree.get(&String::from(name));
+    pub fn get_data_type(name: &str) -> DataType {
+        let dict = get_dict();
+        let data_type = dict.get(&String::from(name));
         let data_type = &data_type.expect("Operator needs to be in the rust list!").1;
         data_type.to_owned()
     }
 
 
-    pub fn get_columns(self, batches: Vec<RecordBatch>, names: Vec<&str> ) -> RecordBatch {
+    pub fn get_columns(batches: Vec<RecordBatch>, names: Vec<&str> ) -> RecordBatch {
 
         let mut map = BTreeMap::<usize, Vec<&dyn Array>>::new();
         for batch in &batches {
 
             for name in &names {
-                let column_num = self.get_column_num(name);
+                let column_num = get_column_num(name);
 
                 let array = batch.column(column_num).as_ref();
                 
@@ -69,10 +64,10 @@ impl Analyze {
         batch
     }
 
-    pub fn filter(self, name: &str, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
+    pub fn filter_with(name: &str, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
 
-        let column_num = self.get_column_num(name);
-        let data_type = self.get_data_type(name);
+        let column_num = get_column_num(name);
+        let data_type = get_data_type(name);
 
         // if data_type == DataType::Utf8 {
 
@@ -87,30 +82,94 @@ impl Analyze {
     
         let mut arrays: Vec<ArrayRef> = Vec::new();
     
-        // Iterate over the columns and apply filter
         for idx in 0..batch.num_columns() {
             let array = batch.column(idx).as_ref();
     
-            // Apply filter to column;
-            let filtered = filter(array, &filter_array).unwrap();
+            let filtered = arrow::compute::filter(array, &filter_array).unwrap();
     
             arrays.push(filtered);
         }
     
-        // Create a new record batch from filtered results
         RecordBatch::try_new(batch.schema(), arrays).unwrap()
         
     }
 
-    pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) {
-        let mut groups = sort(batch.column(column_index_to_sort), None)
-        .unwrap()
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
+
+        // if data_type == DataType::Utf8 {
+        let options = arrow::compute::SortOptions{
+            descending: true,
+            nulls_first: false,
+        };
+
+        let indices = sort_to_indices(batch.column(column_index_to_sort), Some(options), None).unwrap();
+
+        RecordBatch::try_new(
+            batch.schema(),batch
+                .columns()
+                .iter()
+                .map(|column| take(column.as_ref(), &indices, None))
+                .collect::<ArrowResult<Vec<ArrayRef>>>().unwrap(),
+        ).unwrap()
+        
     }
 
 
-        
+    pub fn sum_over(batch: &RecordBatch, column_index_to_sum: usize)  {
 
-}
+        let sum = arrow::compute::sum(batch.column(column_index_to_sum).as_any().downcast_ref::<PrimitiveArray<Float64Type>>().unwrap()).unwrap();
+
+    }
+
+    pub fn find_unique_with_sort(batch: &RecordBatch, column_index_for_unqiue: usize) -> Vec<i64> {
+
+        let mut vec = sort(batch.column(column_index_for_unqiue), None).unwrap()
+            .as_any()
+            .downcast_ref::<Int64Array>()
+            .unwrap()
+            .values()
+            .to_vec();
+
+        vec.dedup();
+
+        vec
+
+    }
+
+    fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
+
+        let vec = find_unique_with_sort(batch, column_to_groupby_over);
+
+        let mut builder =  Float64Array::builder(vec.len());  
+    
+        for group in &vec {
+            let mut group_index = 0;
+            let group_batch = filter_with("todo", "t", batch);
+    
+            let row_count = group_batch.num_rows() as f64;
+    
+             builder.append_value(row_count);
+        } 
+    }
+
+    fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
+
+        let vec = find_unique_with_sort(batch, column_to_groupby_over);
+
+        let mut builder =  Float64Array::builder(vec.len());  
+    
+        for group in &vec {
+            let mut group_index = 0;
+            let group_batch = filter_with("todo", "t", batch);
+    
+            let array = group_batch.column(column_to_sum_over)
+            .as_any()
+            .downcast_ref::<Float64Array>()
+            .unwrap();
+            let sum = sum(array).unwrap() ;
+    
+             builder.append_value(sum);
+
+        } 
+    
+    }

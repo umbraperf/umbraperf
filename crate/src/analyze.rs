@@ -1,53 +1,25 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{filter, sort, sort_to_indices, sum, take}, datatypes::{DataType, Float64Type}, record_batch::RecordBatch};
-use std::{collections::{BTreeMap, HashMap}, sync::Arc};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{Float64Type}, record_batch::RecordBatch};
+use std::{collections::{BTreeMap}};
 use arrow::error::Result as ArrowResult;
 
-use crate::{print_to_js, print_to_js_with_obj};
 
-
-    // Init map
-    pub fn get_dict() -> BTreeMap<String, (i32, DataType)> {
-        let mut dict = BTreeMap::new();
-        dict.insert(String::from("operator"), (0, DataType::Utf8));
-        dict.insert(String::from("ev_name"), (1, DataType::Utf8));
-        dict.insert(String::from("time"), (2, DataType::Float64));
-        dict.insert(String::from("pipeline"), (3, DataType::Utf8));
-        dict
-    }
-
-    pub fn get_column_num(name: &str) -> usize {
-        let dict = get_dict();
-        let column_num = dict.get(&String::from(name));
-        let column_num = (column_num.expect("Operator needs to be in the rust list!").0) as usize;
-        column_num
-    }
-
-    pub fn get_data_type(name: &str) -> DataType {
-        let dict = get_dict();
-        let data_type = dict.get(&String::from(name));
-        let data_type = &data_type.expect("Operator needs to be in the rust list!").1;
-        data_type.to_owned()
-    }
-
-
-    pub fn get_columns(batches: Vec<RecordBatch>, names: Vec<&str> ) -> RecordBatch {
+    pub fn get_columns(batches: Vec<RecordBatch>, column_index: Vec<usize> ) -> RecordBatch {
 
         let mut map = BTreeMap::<usize, Vec<&dyn Array>>::new();
         for batch in &batches {
 
-            for name in &names {
-                let column_num = get_column_num(name);
+            for index in &column_index {
 
-                let array = batch.column(column_num).as_ref();
+                let array = batch.column(*index).as_ref();
                 
-                if let Some(x) = map.get(&column_num) {
+                if let Some(x) = map.get(&index) {
                     let mut vec = x.clone();
                     vec.push(array);
-                    map.insert(column_num, vec);
+                    map.insert(*index, vec);
                 } else {
                     let mut vec = Vec::new();
                     vec.push(array);
-                    map.insert(column_num, vec);
+                    map.insert(*index, vec);
                 }
             }
 
@@ -64,12 +36,7 @@ use crate::{print_to_js, print_to_js_with_obj};
         batch
     }
 
-    pub fn filter_with(name: &str, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
-
-        let column_num = get_column_num(name);
-        let data_type = get_data_type(name);
-
-        // if data_type == DataType::Utf8 {
+    pub fn filter_with(column_num: usize, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
 
         let filter_array = batch
             .column(column_num)
@@ -115,10 +82,10 @@ use crate::{print_to_js, print_to_js_with_obj};
     }
 
 
-    pub fn sum_over(batch: &RecordBatch, column_index_to_sum: usize)  {
+    pub fn sum_over(batch: &RecordBatch, column_index_to_sum: usize) -> f64  {
 
         let sum = arrow::compute::sum(batch.column(column_index_to_sum).as_any().downcast_ref::<PrimitiveArray<Float64Type>>().unwrap()).unwrap();
-
+        sum
     }
 
     pub fn find_unique_with_sort(batch: &RecordBatch, column_index_for_unqiue: usize) -> Vec<i64> {
@@ -144,7 +111,7 @@ use crate::{print_to_js, print_to_js_with_obj};
     
         for group in &vec {
             let mut group_index = 0;
-            let group_batch = filter_with("todo", "t", batch);
+            let group_batch = filter_with(column_to_groupby_over, "t", batch);
     
             let row_count = group_batch.num_rows() as f64;
     
@@ -160,7 +127,7 @@ use crate::{print_to_js, print_to_js_with_obj};
     
         for group in &vec {
             let mut group_index = 0;
-            let group_batch = filter_with("todo", "t", batch);
+            let group_batch = filter_with(column_to_groupby_over, "t", batch);
     
             let array = group_batch.column(column_to_sum_over)
             .as_any()

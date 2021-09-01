@@ -20,14 +20,13 @@ use streambuf::WebFileReader;
 
 // Record Batch
 mod record_batch_util;
-use record_batch_util::RecordBatchUtil;
 
 // Analyze
 mod analyze;
 
 // Bindings
 mod bindings;
-use crate::{analyze::{filter_with, get_columns, sort_batch}, bindings::{send_arrow_result_to_js, send_events_to_js}};
+use crate::analyze::{filter_with, get_columns, sort_batch};
 
 extern crate serde;
 use serde::{Serialize, Deserialize};
@@ -56,7 +55,7 @@ where
     STATE.with(|s| cb(&s.borrow()))
 }
 
-fn with_state_mut<Callback, ReturnType>(cb: Callback) -> ReturnType
+fn _with_state_mut<Callback, ReturnType>(cb: Callback) -> ReturnType
 where
     Callback: FnOnce(&mut State) -> ReturnType,
 {
@@ -67,8 +66,8 @@ fn get_record_batches() ->  Option<Vec<RecordBatch>> {
     with_state(|s| s.record_batches.clone())
 }
 
-fn set_record_batches(record_batches: Vec<RecordBatch>) {
-    with_state_mut(|s| s.record_batches = Some(record_batches));
+fn _set_record_batches(record_batches: Vec<RecordBatch>) {
+    _with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
 fn init_schema() -> Schema {
@@ -142,14 +141,16 @@ pub fn analyze_file(file_size: i32){
 
     // let batches = set_record_batches(batches);
 
-    let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
+    //let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
+    let batch = get_columns(batches, vec![0,1,2,3]);
     print_to_js_with_obj(&format!("{:?}", batch).into());
 
     let sorted_batch = sort_batch(&batch, 2);
 
     print_to_js_with_obj(&format!("{:?}", sorted_batch).into());
 
-    let filtered_batch = filter_with("operator", "No Operator", &batch);
+    //let filtered_batch = filter_with("operator", "No Operator", &batch);
+    let filtered_batch = filter_with(1,"", &batch);
 
     print_to_js_with_obj(&format!("{:?}", filtered_batch).into());
 

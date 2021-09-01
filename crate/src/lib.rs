@@ -83,19 +83,19 @@ fn init_schema() -> Schema {
     let field_brstacksym =  Field::new("brstacksym", DataType::Utf8, false);
     let field_callchain =  Field::new("callchain", DataType::Utf8, false);
     let field_ip = Field::new("ip", DataType::Utf8, false);
-    let field_pid = Field::new("pid", DataType::Utf8, false);
-    let field_datasrc = Field::new("datasrc", DataType::Utf8, false);
+    let field_pid = Field::new("pid", DataType::Int64, false);
+    let field_datasrc = Field::new("datasrc", DataType::Int64, false);
     let field_time = Field::new("time", DataType::Float64, false);
-    let field_period = Field::new("period", DataType::Utf8, false);
-    let field_tid = Field::new("tid", DataType::Utf8, false);
-    let field_cpu = Field::new("cpu", DataType::Utf8, false);
-    let field_iregs = Field::new("iregs", DataType::Utf8, false);
+    let field_period = Field::new("period", DataType::Int64, false);
+    let field_tid = Field::new("tid", DataType::Int64, false);
+    let field_cpu = Field::new("cpu", DataType::Int64, false);
+    let field_iregs = Field::new("iregs", DataType::Int64, false);
     let field_mapping_via = Field::new("mapping_via", DataType::Utf8, false);
-    let field_dump_linenr = Field::new("dump_linenr", DataType::Utf8, false);
+    let field_dump_linenr = Field::new("dump_linenr", DataType::Int64, false);
     let field_pipeline = Field::new("pipeline", DataType::Utf8, false);
-    let field_addr = Field::new("addr", DataType::Utf8, false);
-    let field_phys_addr = Field::new("phys_addr", DataType::Utf8, false);
-    let field_time_delta = Field::new("time_delta", DataType::Utf8, false);
+    let field_addr = Field::new("addr", DataType::Int64, false);
+    let field_phys_addr = Field::new("phys_addr", DataType::Int64, false);
+    let field_time_delta = Field::new("time_delta", DataType::Int64, false);
 
 
     let schema = Schema::new(vec![field_operator, field_uir_code, field_srcline, field_comm, field_dso, field_ev_name, field_symbol, field_brstack, field_brstacksym, field_callchain, field_ip, field_pid, field_datasrc, field_time, field_period, field_tid, field_cpu, field_iregs, field_mapping_via, field_dump_linenr, field_pipeline, field_addr, field_phys_addr, field_time_delta]);

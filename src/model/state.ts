@@ -1,4 +1,5 @@
 import { Result } from "./core_result";
+import { SqlQueries } from "./sql_queries";
 
 export interface AppState {
     /// The registered files
@@ -10,6 +11,7 @@ export interface AppState {
     file: undefined | File;
     currentChart: string;
     currentEvent: string;
+    currentRequest: SqlQueries | undefined;
 }
 
 export function createDefaultState(): AppState {
@@ -22,5 +24,6 @@ export function createDefaultState(): AppState {
         file: undefined,
         currentChart: "",
         currentEvent: "",
+        currentRequest: undefined,
     };
 }

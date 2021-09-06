@@ -3,6 +3,7 @@ import { createResultObject } from "../model/core_result";
 import store from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
+import { SqlQueries } from "src/model/sql_queries";
 
 
 export interface FileInfo {
@@ -11,14 +12,14 @@ export interface FileInfo {
 }
 
 export interface CalculateChartParams {
-   bucketsize: number | undefined;
+    bucketsize: number | undefined;
 }
 
-const emptyCalculateChartParams: CalculateChartParams =  {
+const emptyCalculateChartParams: CalculateChartParams = {
     bucketsize: undefined,
 }
 
-export enum ChartType{
+export enum ChartType {
     BAR_CHART = "bar_chart",
     SWIM_LANES = "swim_lanes",
 }
@@ -31,18 +32,30 @@ export class WebFileController {
         worker.registerFile(file);
     }
 
-/*     public calculateChartData(chartType: string, event: string, partialData?: any){
-        const completeParams: CalculateChartParams = {...emptyCalculateChartParams, ...partialData}
-        worker.calculateChartData(chartType, event, completeParams);
-    } */
+    /*     public calculateChartData(chartType: string, event: string, partialData?: any){
+            const completeParams: CalculateChartParams = {...emptyCalculateChartParams, ...partialData}
+            worker.calculateChartData(chartType, event, completeParams);
+        } */
 
-    public calculateChartData(sqlQuery: string){
+    public calculateChartData(sqlQuery: SqlQueries) {
+        store.dispatch({
+            type: StateMutationType.SET_CURRENTREQUEST,
+            data: sqlQuery,
+        });
+        store.dispatch({
+            type: StateMutationType.SET_RESULTLOADING,
+            data: true,
+        });
+        store.dispatch({
+            type: StateMutationType.SET_RESULT,
+            data: undefined,
+        });
         worker.calculateChartData(sqlQuery);
     }
 }
 
-export function setCsvReadingFinished(requestId: number){
-    
+export function setCsvReadingFinished(requestId: number) {
+
     store.dispatch({
         // TODO:
         type: StateMutationType.SET_CSVPARSINGFINISHED,

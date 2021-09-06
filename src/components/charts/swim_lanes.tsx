@@ -10,7 +10,6 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
 import { Button, CircularProgress } from '@material-ui/core';
-import EventsDropdown from '../utils/events_dropdown';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 
@@ -19,8 +18,6 @@ interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
     result: Result | undefined;
-    eventsLoading: boolean;
-    events: Array<string> | undefined;
     currentChart: string;
     currentEvent: string;
     setCurrentChart: (newCurrentChart: string) => void;
@@ -111,19 +108,20 @@ class SwimLanes extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
-/*             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
- */        }
+//              this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
+         }
     }
 
+
     componentDidMount() {
-        if (this.props.events) {
+/*         if (this.props.events) {
             this.props.setCurrentChart(ChartType.SWIM_LANES);
             this.props.setCurrentEvent(this.props.events![0]);
-/*             this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
- */            addEventListener('resize', (event) => {
+//          this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
+             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
-        }
+        } */
     }
 
     componentWillUnmount() {
@@ -166,15 +164,16 @@ class SwimLanes extends React.Component<Props, State> {
             changeInterpolation: this.handleInterpolationChange,
         }
 
-        if (!this.props.events) {
+        //TODO: redirect when parsing not finished
+/*         if (!this.props.events) {
             return <Redirect to={"/upload"} />
-        }
+        } */
 
-        /*   TODO      if (!this.props.result || this.props.resultLoading) {
-                    return <div className={styles.spinnerArea} >
-                        <CircularProgress />
-                    </div>
-                } */
+        //    TODO      if (!this.props.result || this.props.resultLoading) {
+        //             return <div className={styles.spinnerArea} >
+        //                 <CircularProgress />
+        //             </div>
+        //         } 
 
         return <div>
             <div className={styles.resultArea} >
@@ -335,8 +334,6 @@ class SwimLanes extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
-    eventsLoading: state.eventsLoading,
-    events: state.events,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
 });

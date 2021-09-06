@@ -16,8 +16,7 @@ export enum StateMutationType {
     SET_RESULT = 'SET_RESULT',
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
-    SET_EVENTS = 'SET_EVENTS',
-    SET_EVENTSLOADING = 'SET_EVENTSLOADING',
+    SET_CSVPARSINGFINISHED = 'SET_CSVPARSINGFINISHED',
     RESET_STATE = 'RESET_STATE',
     SET_CURRENTCHART = 'SET_CURRENTCHART',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
@@ -31,8 +30,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
-    | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
-    | StateMutation<StateMutationType.SET_EVENTSLOADING, boolean>
+    | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
@@ -69,15 +67,10 @@ export class AppStateMutation {
                     ...state,
                     file: mutation.data,
                 };
-            case StateMutationType.SET_EVENTS:
+            case StateMutationType.SET_CSVPARSINGFINISHED:
                 return {
                     ...state,
-                    events: mutation.data,
-                }
-            case StateMutationType.SET_EVENTSLOADING:
-                return {
-                    ...state,
-                    eventsLoading: mutation.data,
+                    csvParsingFinished: mutation.data,
                 };
             case StateMutationType.SET_CURRENTCHART:
                 return {
@@ -95,8 +88,7 @@ export class AppStateMutation {
                     resultLoading: false,
                     result: undefined,
                     chunksNumber: 0,
-                    events: undefined,
-                    eventsLoading: false,
+                    csvParsingFinished: false,
                     file: undefined,
                     currentChart: "",
                     currentEvent: "",

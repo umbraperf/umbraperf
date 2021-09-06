@@ -6,7 +6,7 @@ import * as model from '../../model';
 import { Button } from '@material-ui/core';
 
 
-export default function EventsButtons(props: any) {
+export default function EventsButtons() {
 
     const events = useSelector((state: AppState) => state.events);
     const currentEvent = useSelector((state: AppState) => state.currentEvent);
@@ -22,7 +22,7 @@ export default function EventsButtons(props: any) {
 
     const handleEventButtonClick = (event: string) => {
         setNewCurrentEvent(event);
-        context!.controller.calculateChartData(props.chartType, event);
+        context!.controller.calculateChartData("test 2");
     }
 
     return (

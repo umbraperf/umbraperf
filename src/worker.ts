@@ -29,7 +29,7 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest>
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, string>
   ;
 
 export type WorkerResponseVariant =
@@ -135,7 +135,7 @@ worker.onmessage = (message) => {
     case WorkerRequestType.CALCULATE_CHART_DATA:
       /*       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
        */
-      profiler_core.requestChartData(messageData);
+      profiler_core.requestChartData(messageData as string);
 
       break;
 

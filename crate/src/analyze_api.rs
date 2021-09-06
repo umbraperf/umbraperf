@@ -1,11 +1,12 @@
      use std::collections::BTreeMap;
 
 use arrow::datatypes::DataType;
+use arrow::record_batch::RecordBatch;
 use sqlparser::ast::{Expr, SelectItem, SetExpr};
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
 
-use crate::print_to_js_with_obj;
+use crate::{analyze, print_to_js_with_obj};
 
 pub struct Query {
    
@@ -34,9 +35,10 @@ pub struct Query {
         data_type.to_owned()
     }
 
-    // for fast query exection:
-    // 1. filters
-    pub fn execute_query(projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>) {
+    // TODO MAPPING
+    pub fn execute_projections(batches: Vec<RecordBatch>, projections: Vec<SelectItem>)  {
+
+        let mut vec = Vec::new();
 
         for projection in projections {
             match projection {
@@ -44,6 +46,8 @@ pub struct Query {
                     match expr {
                         Expr::Identifier(ident) => {
                             let name = ident.value;
+                            let column_num = get_column_num(name.as_str());
+                            vec.push(column_num);
                             print_to_js_with_obj(&format!("{:?}", name).into());
                         }
                         _ => {
@@ -57,6 +61,13 @@ pub struct Query {
             }
         }
 
+        analyze::get_columns(batches , vec);
+        
+
+    }
+
+    pub fn execute_selections(selection: Option<Expr>)  {
+
         if let Some(expr) = selection {
             match expr {
                 Expr::BinaryOp{left: l, op: op, right: r} => {
@@ -69,6 +80,23 @@ pub struct Query {
         }
         	
     }
+
+    pub fn execute_computations() {
+
+    }
+
+    // for fast query exection:
+    // 1. filters
+    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>) {
+
+        execute_projections(batches, projections); // Vec<RecordBatch> -> RecordBatch
+
+        execute_selections(selection); // RecordBatch -> RecordBatch
+
+        execute_computations(); //
+
+   
+    }
     
     
     // Filters?
@@ -78,7 +106,7 @@ pub struct Query {
     // 
     // select is required
     // from and where are optional
-    pub fn query(sql_query: &str) {
+    pub fn query(batches: Vec<RecordBatch>, sql_query: &str) {
 
         let dialect = GenericDialect {};
 
@@ -97,7 +125,7 @@ pub struct Query {
                             let selection = select.selection;
                             let group_by = select.group_by;
                             let sort_by = select.sort_by;
-                            execute_query(projection, selection, group_by, sort_by);
+                            execute_query(batches.to_owned(), projection, selection, group_by, sort_by);
                         }
                         _ => {
                             panic!("Not implemented!");

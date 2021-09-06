@@ -131,7 +131,6 @@ fn init_record_batches(file_size: i32, with_delimiter: u8, with_header: bool, wi
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
 
-    let test = query("query");
 
     let now = instant::Instant::now();
 
@@ -170,7 +169,7 @@ pub fn request_chart_data(sql_query: &str) {
 
     let batch = get_record_batches().unwrap();
 
-    analyze_api::query(sql_query);
+    analyze_api::query(batch, sql_query);
     
 }
 

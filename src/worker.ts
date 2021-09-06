@@ -99,7 +99,7 @@ export function notifyJsFinishedReading(requestId: number) {
 
 }
 
-export function stroreArrowResultFromRust(result: any) {
+export function notifyJsQueryResult(result: any) {
 
   if (result) {
     worker.postMessage({

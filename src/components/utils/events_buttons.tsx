@@ -11,6 +11,7 @@ export default function EventsButtons(props: any) {
 
     const events = props.events as Array<any>;
     const currentEvent = useSelector((state: AppState) => state.currentEvent);
+    console.log(currentEvent);
     const context = useContext(ctx);
     const dispatch = useDispatch();
     const setNewCurrentEvent = useCallback(

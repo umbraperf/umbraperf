@@ -27,7 +27,7 @@ mod analyze_api;
 
 // Bindings
 mod bindings;
-use crate::{analyze::{filter_with, get_columns, sort_batch}, analyze_api::query};
+use crate::{analyze::{filter_with, get_columns, sort_batch}, analyze_api::query, bindings::notify_js_finished_reading};
 
 extern crate serde;
 use serde::{Serialize, Deserialize};

@@ -7,10 +7,6 @@ export type SqlQuery<T, P> = {
 export enum SqlQueryType {
     GET_EVENTS = "GET_EVENTS",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
-    get_operators = "select operators from xy",
-    get_events = 'select distinct ev_name from yx',
-    get_operator_frequency_per_event = "select operator, count(operator) from xy group by operator where ev_name = 'eventVonJs'",
-    test = "select operator, count(operator) from xy group by operator where ev_name = eventVonJs",
     other = "other"
 }
 

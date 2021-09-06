@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { Button, CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
@@ -29,8 +29,14 @@ interface Props {
 
 interface State {
     events: Array<any> | undefined,
+    chartData: undefined | IChartData,
     width: number,
     height: number,
+}
+
+interface IChartData {
+    operators: Array<string>,
+    frequency: Array<number>,
 }
 
 const startSize = {
@@ -45,7 +51,8 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            events: [],
+            events: undefined,
+            chartData: undefined,
             width: startSize.width,
             height: startSize.height,
         };
@@ -54,9 +61,14 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
+        console.log(prevProps);
+        console.log(this.props);
 
+        //ensure changed app state and only proceed when result available
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
-            
+
+            window.alert("did update!");
+
             //if type of current request is GET_EVENTS, then store result from rust in component state event property 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
                 const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
@@ -66,16 +78,35 @@ class BarChart extends React.Component<Props, State> {
                     events: events,
                 }));
 
-                //Set first event as current and calculate chart data for first event as default
+                //Set first event as current, triggers component did update and calculates chart data for first event as default
                 this.props.setCurrentEvent(currentEvent);
-                this.props.appContext.controller.calculateChartData(
-                    SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    SqlApi.createSqlQuery({
-                        type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                        data: {event: currentEvent},
-                    }));
+            }
+
+            //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
+            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {
+                const operators = this.props.result!.resultTable.getColumn('operators').toArray();
+                const frequency = this.props.result!.resultTable.getColumn('count').toArray();
+                this.setState((state, props) => ({
+                    ...state,
+                    chartData: {
+                        operators: operators,
+                        frequency: frequency,
+                    },
+                }));
             }
         }
+
+        //if current event changes, component did update is executed and queries new data for new event
+        if (this.props.currentEvent != prevProps.currentEvent) {
+            window.alert("event changed!");
+            this.props.appContext.controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                    data: { event: this.props.currentEvent },
+                }));
+        }
+
         /*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
                     window.alert("refetch data from rust");
                     this.props.appContext.controller.calculateChartData(SqlQueries.other);
@@ -128,6 +159,7 @@ class BarChart extends React.Component<Props, State> {
 
 
     public render() {
+        console.log(this.state.chartData);
 
         if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />

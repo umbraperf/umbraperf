@@ -63,6 +63,7 @@ class BarChart extends React.Component<Props, State> {
                     events: events,
                 }));
                 this.props.setCurrentEvent(events[0]);
+                this.props.appContext.controller.calculateChartData(SqlQueries.test);
             }
         }
 

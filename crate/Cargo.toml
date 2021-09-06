@@ -52,7 +52,7 @@ futures = {version = "0.3.1", features = ["thread-pool"]}
 boolvec = "0.2.6"
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
 serde = { version = "^1.0.129", features = [ "derive" ] }
-
+sqlparser = "0.10.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12"

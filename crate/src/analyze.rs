@@ -4,7 +4,7 @@ use arrow::error::Result as ArrowResult;
 
 
     pub fn get_columns(batches: Vec<RecordBatch>, column_index: Vec<usize> ) -> RecordBatch {
-
+        
         let mut map = BTreeMap::<usize, Vec<&dyn Array>>::new();
         for batch in &batches {
 

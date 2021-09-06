@@ -169,6 +169,8 @@ pub fn analyze_file(file_size: i32){
 pub fn request_chart_data(sql_query: &str) {
 
     let batch = get_record_batches().unwrap();
+
+    analyze_api::query(sql_query);
     
 }
 

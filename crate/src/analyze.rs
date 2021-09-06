@@ -1,6 +1,9 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{Float64Type}, record_batch::RecordBatch};
-use std::{collections::{BTreeMap}};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{Float64Type, Schema}, record_batch::RecordBatch};
+use log::Record;
+use std::{collections::{BTreeMap}, sync::Arc};
 use arrow::error::Result as ArrowResult;
+use crate::{print_to_js, print_to_js_with_obj};
+
 
 
     pub fn get_columns(batches: Vec<RecordBatch>, column_index: Vec<usize> ) -> RecordBatch {
@@ -32,7 +35,18 @@ use arrow::error::Result as ArrowResult;
             vec.push(concat_array.unwrap());
         }
 
-        let batch = RecordBatch::try_new(batches.get(0).unwrap().schema(), vec).unwrap();
+        let mut fields = Vec::new();
+        let old_schema = batches.get(0).unwrap().schema();
+
+        print_to_js_with_obj(&format!("{:?}", vec).into());
+
+        for index in &column_index {
+            fields.push(old_schema.field(*index).to_owned());
+        }
+
+        let new_schema = Schema::new(fields);
+
+        let batch = RecordBatch::try_new(Arc::new(new_schema), vec).unwrap();
         batch
     }
 
@@ -100,6 +114,35 @@ use arrow::error::Result as ArrowResult;
         vec.dedup();
 
         vec
+
+    }
+
+    pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
+
+        print_to_js("Unique");
+
+        let vec = batch.column(column_index_for_unqiue)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+        
+        let mut str_vec = Vec::new();
+        
+        for item in vec {
+            if let Some(x) = item {
+                str_vec.push(x);
+            }
+        }
+
+        str_vec.sort();
+
+        str_vec.dedup();
+
+        print_to_js_with_obj(&format!("{:?}", str_vec).into());
+
+        let array = StringArray::from(str_vec);
+            
+        RecordBatch::try_new(batch.schema(), vec![Arc::new(array)]).unwrap()
 
     }
 

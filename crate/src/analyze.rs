@@ -5,40 +5,48 @@ use arrow::error::Result as ArrowResult;
 use crate::{print_to_js, print_to_js_with_obj};
 
 
+    // Converts Vec<RecordBatch> to one whole RecordBatch
+    pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
 
-    pub fn get_columns(batches: Vec<RecordBatch>, column_index: Vec<usize> ) -> RecordBatch {
-        
-        let mut map = BTreeMap::<usize, Vec<&dyn Array>>::new();
-        for batch in &batches {
+        let number_columns = batches[0].num_columns() as i32;
 
-            for index in &column_index {
+        let mut to_concat_array = Vec::new();
 
-                let array = batch.column(*index).as_ref();
-                
-                if let Some(x) = map.get(&index) {
-                    let mut vec = x.clone();
-                    vec.push(array);
-                    map.insert(*index, vec);
-                } else {
-                    let mut vec = Vec::new();
-                    vec.push(array);
-                    map.insert(*index, vec);
-                }
+        for i in 0..number_columns {
+            let mut array_vec = Vec::new();
+            for batch in &batches {
+                array_vec.push(batch.column(i as usize).as_ref());
             }
-
+            to_concat_array.push(array_vec);
         }
 
         let mut vec = Vec::new();
 
-        for item in map {
-            let concat_array = arrow::compute::kernels::concat::concat(&item.1);
+        for array in to_concat_array {
+            let concat_array = arrow::compute::kernels::concat::concat(&array);
             vec.push(concat_array.unwrap());
         }
 
-        let mut fields = Vec::new();
-        let old_schema = batches.get(0).unwrap().schema();
+        let batch = RecordBatch::try_new(batches[0].schema(), vec).unwrap();
 
-        print_to_js_with_obj(&format!("{:?}", vec).into());
+        batch
+        
+    }
+
+
+    pub fn get_columns(batch: RecordBatch, column_index: Vec<usize> ) -> RecordBatch {
+
+        let mut vec = Vec::new();
+        
+        for index in &column_index {
+
+            let array = batch.column(*index).to_owned();
+                
+            vec.push(array);
+        }
+
+        let mut fields = Vec::new();
+        let old_schema = batch.schema();
 
         for index in &column_index {
             fields.push(old_schema.field(*index).to_owned());
@@ -119,8 +127,6 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
 
-        print_to_js("Unique");
-
         let vec = batch.column(column_index_for_unqiue)
             .as_any()
             .downcast_ref::<StringArray>()
@@ -138,23 +144,32 @@ use crate::{print_to_js, print_to_js_with_obj};
 
         str_vec.dedup();
 
-        print_to_js_with_obj(&format!("{:?}", str_vec).into());
-
         let array = StringArray::from(str_vec);
+
+        let schema = batch.schema();
+
+        let field = schema.field(column_index_for_unqiue);
+
+        let new_schema = Schema::new(vec![field.to_owned()]);
             
-        RecordBatch::try_new(batch.schema(), vec![Arc::new(array)]).unwrap()
+        RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
 
     }
 
-    fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
+    pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
 
-        let vec = find_unique_with_sort(batch, column_to_groupby_over);
+        let unique_batch = find_unique_string(batch, column_to_groupby_over);
 
+        let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    
         let mut builder =  Float64Array::builder(vec.len());  
     
-        for group in &vec {
-            let mut group_index = 0;
-            let group_batch = filter_with(column_to_groupby_over, "t", batch);
+        for group in vec {
+            let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
     
             let row_count = group_batch.num_rows() as f64;
     
@@ -162,7 +177,7 @@ use crate::{print_to_js, print_to_js_with_obj};
         } 
     }
 
-    fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
+    pub fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
 
         let vec = find_unique_with_sort(batch, column_to_groupby_over);
 

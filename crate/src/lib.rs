@@ -131,7 +131,6 @@ fn init_record_batches(file_size: i32, with_delimiter: u8, with_header: bool, wi
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
 
-
     let now = instant::Instant::now();
 
     let semi_colon = 59;
@@ -141,14 +140,6 @@ pub fn analyze_file(file_size: i32){
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
     
     set_record_batches(batches);
-
-    /* let events = Analyze::events(&batch);
-
-    let event_batch = RecordBatchUtil::create_record_batch_events(events);
-
-    let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&event_batch);
-
-    set_record_batch(batch); */
 
     notify_js_finished_reading(0); 
 }
@@ -160,8 +151,6 @@ pub fn request_chart_data(sql_query: &str) {
     print_to_js_with_obj(&format!("{:?}", sql_query).into());
 
     let batch = get_record_batches().unwrap();
-
-    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     analyze_api::query(batch, sql_query);
     

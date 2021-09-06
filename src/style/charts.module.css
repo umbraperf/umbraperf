@@ -13,3 +13,10 @@
     flex-direction: row;
     justify-content: center;
 }
+
+.optionsArea{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 40px;
+}

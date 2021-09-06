@@ -9,9 +9,10 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
-import { CircularProgress } from '@material-ui/core';
-import EventsDropdown from '../events_dropdown';
-import InterpolationDropdown from '../interpolation_dropdown';
+import { Button, CircularProgress } from '@material-ui/core';
+import EventsDropdown from '../utils/events_dropdown';
+import InterpolationDropdown from '../utils/interpolation_dropdown';
+import EventsButtons from '../utils/events_buttons';
 
 
 interface Props {
@@ -177,9 +178,11 @@ class SwimLanes extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <div className={styles.dropdownArea} >
-                    <EventsDropdown></EventsDropdown>
-                    <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                <div className={styles.optionsArea} >
+                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
+                    <div className={styles.dropdownArea} >
+                        <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                    </div>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}

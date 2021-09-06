@@ -1,4 +1,4 @@
-import { storeEventsFromRust, storeResultFromRust } from './controller/web_file_controller';
+import { setCsvReadingFinished, storeResultFromRust } from './controller/web_file_controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 
@@ -49,10 +49,10 @@ worker.addEventListener('message', message => {
 
     switch (messageType) {
 
-        case model.WorkerResponseType.STORE_EVENTS:
-            const arrowEventsTable = ArrowTable.Table.from(messageData);
-            const events: Array<string> = arrowEventsTable.getColumn("event_name")?.toArray();
-            storeEventsFromRust(message.data.requestId, events);
+        case model.WorkerResponseType.CSV_READING_FINISHED:
+            //const arrowEventsTable = ArrowTable.Table.from(messageData);
+            //const events: Array<string> = arrowEventsTable.getColumn("event_name")?.toArray();
+            setCsvReadingFinished(messageData as number);
             break;
 
         case model.WorkerResponseType.STORE_RESULT:

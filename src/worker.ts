@@ -9,7 +9,7 @@ export enum WorkerRequestType {
 };
 
 export enum WorkerResponseType {
-  STORE_EVENTS = 'STORE_EVENTS',
+  CSV_READING_FINISHED = 'CSV_READING_FINISHED',
   STORE_RESULT = 'STORE_RESULT',
   REGISTERED_FILE = 'REGISTERED_FILE',
 };
@@ -33,7 +33,7 @@ export type WorkerRequestVariant =
   ;
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.STORE_EVENTS, any> |
+  WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, any> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, any> |
   WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
   ;
@@ -89,12 +89,12 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 
-export function storeEventsFromRust(events: any) {
+export function notifyJsFinishedReading(requestId: number) {
   worker.postMessage({
     messageId: 201,
     requestId: 100,
-    type: WorkerResponseType.STORE_EVENTS,
-    data: events,
+    type: WorkerResponseType.CSV_READING_FINISHED,
+    data: requestId,
   });
 
 }

@@ -35,8 +35,7 @@ function ScrollableTabsButtonForce(props: any) {
 
     const classes = useStyles();
 
-    const eventsLoading = useSelector((state: AppState) => state.eventsLoading);
-    const events = useSelector((state: AppState) => state.events);
+    const csvParsingFinished = useSelector((state: AppState) => state.csvParsingFinished);
 
     return (
         <div className={classes.root}>
@@ -49,7 +48,7 @@ function ScrollableTabsButtonForce(props: any) {
                     indicatorColor="primary"
                     textColor="primary"
                     aria-label="scrollable force tabs example"
-                    className={(eventsLoading || events === undefined) ? `${classes.tabsDisabled} ${classes.root}` : classes.root}
+                    className={csvParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {

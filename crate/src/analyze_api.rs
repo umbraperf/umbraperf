@@ -1,18 +1,15 @@
-use std::collections::BTreeMap;
+     use std::collections::BTreeMap;
 
 use arrow::datatypes::DataType;
-use sqlparser::ast::SetExpr;
+use sqlparser::ast::{Expr, SelectItem, SetExpr};
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
 
 use crate::print_to_js_with_obj;
 
 pub struct Query {
-    fields: Vec<usize>,
-    filters: Vec<usize>,
-    compute: Vec<(usize, i64)> // column and operator (sum: 0, count: 1)
+   
 }
-
         // Init map
     pub fn get_dict() -> BTreeMap<String, (i32, DataType)> {
         let mut dict = BTreeMap::new();
@@ -36,6 +33,31 @@ pub struct Query {
         let data_type = &data_type.expect("Operator needs to be in the rust list!").1;
         data_type.to_owned()
     }
+
+    // for fast query exection:
+    // 1. filters
+    pub fn execute_query(projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>) {
+
+        for projection in projections {
+            match projection {
+                SelectItem::UnnamedExpr(expr) => {
+                    match expr {
+                        Expr::Identifier(ident) => {
+                            let name = ident.value;
+                            print_to_js_with_obj(&format!("{:?}", name).into());
+                        }
+                        _ => {
+                            panic!("Not implemented!");
+                        }
+                    }
+                }
+                _ => {
+                    panic!("Not implemented!");
+                }
+            }
+        }
+        	
+    }
     
     
     // Filters?
@@ -45,16 +67,11 @@ pub struct Query {
     // 
     // select is required
     // from and where are optional
-    pub fn query(query: &str) {
-        let s = String::from("select test, test2 from testq where test = test");
+    pub fn query(sql_query: &str) {
+
         let dialect = GenericDialect {};
 
-        let sql = "SELECT a, b, 123, myfunc(b) \
-           FROM table_1 \
-           WHERE a > b AND b < 100 \
-           ORDER BY a DESC, b";
-
-        let ast = Parser::parse_sql(&dialect, sql).unwrap();
+        let ast = Parser::parse_sql(&dialect, sql_query).unwrap();
 
         print_to_js_with_obj(&format!("{:?}", ast).into());
         
@@ -65,10 +82,11 @@ pub struct Query {
                     match body {
                         SetExpr::Select(select) => {
                             let projection = select.projection;
-                            let from = select.from;
+                            // let from = select.from;
                             let selection = select.selection;
                             let group_by = select.group_by;
                             let sort_by = select.sort_by;
+                            execute_query(projection, selection, group_by, sort_by);
                         }
                         _ => {
                             panic!("Not implemented!");
@@ -76,7 +94,7 @@ pub struct Query {
                     }
                 }
                 _ => {
-                    panic!("Not implemented!")
+                    panic!("Not implemented!");
                 }
             }
         }

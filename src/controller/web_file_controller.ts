@@ -39,8 +39,6 @@ export class WebFileController {
 
 export function storeEventsFromRust(requestId: number, events: Array<string>){
     
-    console.log("events received from rust!");
-
     store.dispatch({
         type: StateMutationType.SET_EVENTSLOADING,
         data: false,
@@ -50,14 +48,11 @@ export function storeEventsFromRust(requestId: number, events: Array<string>){
         data: events,
     });
 
-    console.log(store.getState());
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {
 
-    console.log("result received from rust!");
     const resultObject = createResultObject(requestId, result);
-    console.log(resultObject);
 
     store.dispatch({
         type: StateMutationType.SET_RESULTLOADING,
@@ -67,5 +62,4 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
         type: StateMutationType.SET_RESULT,
         data: resultObject,
     });
-    console.log(store.getState()); 
 }

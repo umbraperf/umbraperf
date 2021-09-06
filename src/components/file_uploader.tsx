@@ -66,7 +66,6 @@ class FileUploader extends React.Component<Props, State> {
 
     componentDidMount(): void {
         this.props.setResetState();
-        console.log(this.props);
     }
 
     componentDidUpdate(prevProps: Props): void {

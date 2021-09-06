@@ -58,7 +58,6 @@ let globalFileIdCounter = 0;
 let globalFileDictionary: IGlobalFileDictionary = {}
 
 const worker: IRequestWorker = self as any;
-console.log("I WAS AT THE WORKER");
 
 interface IRegisteredFile {
   file: File | undefined,
@@ -80,12 +79,9 @@ export function readFileChunk(offset: number, chunkSize: number) {
     if (remainingFileSize > 0) {
       const readPart = Math.min(remainingFileSize, chunkSize);
       chunk = file.slice(offset, offset + readPart);
-      console.log(readPart);
       const reader = new FileReaderSync();
       const arrayBufferChunk = reader.readAsArrayBuffer(chunk);
       const uInt8ArrayChunk = new Uint8Array(arrayBufferChunk!);
-
-      console.log(uInt8ArrayChunk);
 
       return uInt8ArrayChunk;
     }
@@ -94,7 +90,6 @@ export function readFileChunk(offset: number, chunkSize: number) {
 
 
 export function storeEventsFromRust(events: any){
-  console.log("events result to main");
   worker.postMessage({
     messageId: 201,
     requestId: 100,
@@ -107,7 +102,6 @@ export function storeEventsFromRust(events: any){
 export function stroreArrowResultFromRust(result: any) {
 
   if(result){
-    console.log("send result to main");
     worker.postMessage({
       messageId: 201,
       requestId: 100,
@@ -121,8 +115,6 @@ export function stroreArrowResultFromRust(result: any) {
 // Receive from the main thread
 worker.onmessage = (message) => {
 
-  console.log("message:" + message);
-
   if (!message.type) return;
 
   const messageType = message.data.type;
@@ -131,8 +123,6 @@ worker.onmessage = (message) => {
   switch (messageType) {
 
     case WorkerRequestType.REGISTER_FILE:
-      console.log("REGISTER FILE");
-      console.log(messageData);
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
 
@@ -143,12 +133,10 @@ worker.onmessage = (message) => {
       break;
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
-      console.log("CALCULATE CHART DATA");
       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
       break;
 
     default:
-      console.log(`UNKNOWN REQUEST TYPE ${messageType}`);
   }
 
 };

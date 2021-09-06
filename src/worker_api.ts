@@ -20,7 +20,6 @@ export class WorkerAPI {
             data: file
         });
 
-        console.log(this.worker);
     }
 
     public calculateChartData(chartType: string, event: string, params: any){
@@ -44,21 +43,17 @@ worker.addEventListener('message', message => {
     switch (messageType) {
 
         case model.WorkerResponseType.STORE_EVENTS:
-            console.log(messageData);
             const arrowEventsTable = ArrowTable.Table.from(messageData);
             const events: Array<string> = arrowEventsTable.getColumn("event_name")?.toArray();
             storeEventsFromRust(message.data.requestId, events);
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
-            console.log(messageData);
             const arrowResultTable = ArrowTable.Table.from(messageData);
-            console.log("main got result from worker.");
             storeResultFromRust(message.data.requestId, arrowResultTable);
             break;
 
         default:
-            console.log(`UNKNOWN RESPONSE TYPE ${messageType}`);
 
     }
 });

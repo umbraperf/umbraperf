@@ -36,7 +36,6 @@ class Dummy extends React.Component<Props> {
         const file = files[0];
         const fileSize = file.size;
         const chunkSize = 4000;
-        console.log(fileSize);
         let remaining = fileSize;
         let offset = 0;
         const numberOfChunks = Math.ceil(fileSize / chunkSize);
@@ -51,18 +50,15 @@ class Dummy extends React.Component<Props> {
  */            remaining -= readHere;
             offset += readHere;
         }
-        console.log(numberOfChunks);
     }
 
     public async awaitResultFromCore() {
         if (this.props.fileName) {
-            console.log(this.props.resultLoading);
             if (this.props.resultLoading) {
                 this.props.setResult(undefined);
             } else {
                 this.props.setResult(this.props.result);
             }
-            console.log("result from rust:" + this.props.result);
         }
     }
 
@@ -183,7 +179,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
 
 //get notification from rust
 export function update() {
-    console.log("notification from rust");
     const result = undefined;
     // const result = "" + profiler_core.getState();
 

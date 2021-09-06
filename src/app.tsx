@@ -113,7 +113,6 @@ ReactDOM.render(
                                 </Route>
 
                                 {routes.map((route: any) => {
-                                    console.log(store.getState());
                                     return <Route exact path={route.path} key={route.path}>
                                         <route.component />
                                     </Route>

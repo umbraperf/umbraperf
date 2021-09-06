@@ -56,19 +56,24 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
+            
+            //if type of current request is GET_EVENTS, then store result from rust in component state event property 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
                 const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
+                const currentEvent = events[0];
                 this.setState((state, props) => ({
                     ...state,
                     events: events,
                 }));
-                this.props.setCurrentEvent(events[0]);
-/*                 this.props.appContext.controller.calculateChartData(
-                    SqlApi.SqlQueryType.GET_EVENTS,
+
+                //Set first event as current and calculate chart data for first event as default
+                this.props.setCurrentEvent(currentEvent);
+                this.props.appContext.controller.calculateChartData(
+                    SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     SqlApi.createSqlQuery({
-                        type: SqlApi.SqlQueryType.GET_EVENTS,
-                        data: {},
-                    })); */
+                        type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                        data: {event: currentEvent},
+                    }));
             }
         }
         /*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {

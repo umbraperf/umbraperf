@@ -50,6 +50,8 @@ export class WebFileController {
             type: StateMutationType.SET_RESULT,
             data: undefined,
         });
+        console.log(sqlQueryType);
+        console.log(sqlQuery);
         worker.calculateChartData(sqlQuery);
     }
 }

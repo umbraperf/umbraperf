@@ -21,9 +21,12 @@ interface Props {
     currentChart: string;
     currentEvent: string;
     setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
+
 }
 
 interface State {
+    events: Array<string>,
     width: number,
     height: number,
 }
@@ -40,6 +43,7 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            events: [],
             width: startSize.width,
             height: startSize.height,
         };
@@ -57,7 +61,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            this.props.appContext.controller.calculateChartData("select test from xy");
+            this.props.appContext.controller.calculateChartData("select distinct ev_name from xy");
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -236,6 +240,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentChart: (newCurrentChart: string) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
+    }),
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
     }),
 });
 

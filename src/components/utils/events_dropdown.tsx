@@ -1,3 +1,5 @@
+//depreciated
+
 import React, { useCallback, useContext } from 'react';
 import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -27,8 +29,8 @@ export default function EventsDropdown() {
 
     const handleOnItemClick = (elem: string) => {
         setNewCurrentEvent(elem);
-        context!.controller.calculateChartData(currentChart, elem);
-
+/*         context!.controller.calculateChartData(currentChart, elem);
+ */
     };
 
 

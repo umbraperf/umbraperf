@@ -111,16 +111,16 @@ class SwimLanes extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
-            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
-        }
+/*             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
+ */        }
     }
 
     componentDidMount() {
         if (this.props.events) {
             this.props.setCurrentChart(ChartType.SWIM_LANES);
             this.props.setCurrentEvent(this.props.events![0]);
-            this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
-            addEventListener('resize', (event) => {
+/*             this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
+ */            addEventListener('resize', (event) => {
                 this.resizeListener();
             });
         }
@@ -179,7 +179,7 @@ class SwimLanes extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={styles.optionsArea} >
-                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
+                    <EventsButtons></EventsButtons>
                     <div className={styles.dropdownArea} >
                         <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
                     </div>

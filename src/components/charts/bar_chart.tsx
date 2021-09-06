@@ -52,7 +52,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
-            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
+            this.props.appContext.controller.calculateChartData("test");
         }
     }
 
@@ -60,7 +60,7 @@ class BarChart extends React.Component<Props, State> {
         if (this.props.events) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
             this.props.setCurrentEvent(this.props.events![0]);
-            this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
+            this.props.appContext.controller.calculateChartData("test");
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -95,13 +95,6 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
-    handleEventButtonClick(elem: string) {
-        this.props.setCurrentEvent(elem);
-        //this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
-        this.props.appContext.controller.calculateChartData("test");
-
-    }
-
 
     public render() {
 
@@ -118,7 +111,7 @@ class BarChart extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
                 <div className={styles.optionsArea} >
-                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
+                    <EventsButtons></EventsButtons>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />

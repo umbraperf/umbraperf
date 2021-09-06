@@ -31,9 +31,13 @@ export class WebFileController {
         worker.registerFile(file);
     }
 
-    public calculateChartData(chartType: string, event: string, partialData?: any){
+/*     public calculateChartData(chartType: string, event: string, partialData?: any){
         const completeParams: CalculateChartParams = {...emptyCalculateChartParams, ...partialData}
         worker.calculateChartData(chartType, event, completeParams);
+    } */
+
+    public calculateChartData(sqlQuery: string){
+        worker.calculateChartData(sqlQuery);
     }
 }
 

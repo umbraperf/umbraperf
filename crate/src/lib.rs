@@ -166,25 +166,10 @@ pub fn analyze_file(file_size: i32){
 
 
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(chart_name: &str, event_name: &str, args: &JsValue) {
+pub fn request_chart_data(sql_query: &str) {
 
     let batch = get_record_batches().unwrap();
-    match chart_name {
-        "bar_chart" => {
-           /*  let tuple = Analyze::data_for_bar_chart(&batch, &event_name);
-            let batch = RecordBatchUtil::create_record_batch(tuple.0, tuple.1);
-            let cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
-            send_arrow_result_to_js(cursor.into_inner()); */
-        }
-        "swim_lanes" => {
-/*             Analyze::data_for_swim_line(&batch, &event_name, "Todo", 0.200);
- */            //let param: Param = args.into_serde().unwrap();
-            //print_to_js_with_obj(&format!("{:?}", param.bucketsize).into()); 
-        }
-        &_ => {
-            todo!()
-        }
-    }
+    
 }
 
 

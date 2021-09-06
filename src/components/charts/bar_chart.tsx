@@ -11,6 +11,7 @@ import { createRef } from 'react';
 import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
+import { SqlQueries } from '../../model/sql_queries';
 
 
 interface Props {
@@ -20,13 +21,14 @@ interface Props {
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
+    currentRequest: SqlQueries | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
     setCurrentEvent: (newCurrentEvent: string) => void;
 
 }
 
 interface State {
-    events: Array<string>,
+    events: Array<string> |undefined,
     width: number,
     height: number,
 }
@@ -43,7 +45,7 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            events: [],
+            events: undefined,
             width: startSize.width,
             height: startSize.height,
         };
@@ -52,16 +54,25 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
+
+        if(prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished){
+            this.setState((state, props) => ({
+                ...state,
+                //events: this.,
+            }));
+        }
+
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
-            this.props.appContext.controller.calculateChartData("test");
+            this.props.appContext.controller.calculateChartData(SqlQueries.other);
         }
     }
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            this.props.appContext.controller.calculateChartData("select distinct ev_name from xy");
+            this.props.appContext.controller.calculateChartData(SqlQueries.get_events);
+
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -234,6 +245,7 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
+    currentRequest: state.currentRequest,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

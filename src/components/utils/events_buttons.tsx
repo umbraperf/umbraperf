@@ -4,6 +4,7 @@ import { AppState } from '../../model/state';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button } from '@material-ui/core';
+import { SqlQueries } from './../../model/sql_queries';
 
 
 export default function EventsButtons(props: any) {
@@ -22,7 +23,8 @@ export default function EventsButtons(props: any) {
 
     const handleEventButtonClick = (event: string) => {
         setNewCurrentEvent(event);
-        context!.controller.calculateChartData("test 2");
+        // TODO: wrong request
+        context!.controller.calculateChartData(SqlQueries.other);
     }
 
     //TODO: remove

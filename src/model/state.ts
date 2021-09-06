@@ -6,8 +6,7 @@ export interface AppState {
     resultLoading: boolean;
     result: Result | undefined;
     chunksNumber: number;
-    events: Array<string> | undefined;
-    eventsLoading: boolean;
+    csvParsingFinished: boolean;
     file: undefined | File;
     currentChart: string;
     currentEvent: string;
@@ -19,8 +18,7 @@ export function createDefaultState(): AppState {
         resultLoading: false,
         result: undefined,
         chunksNumber: 0,
-        events: undefined,
-        eventsLoading: false,
+        csvParsingFinished: false,
         file: undefined,
         currentChart: "",
         currentEvent: "",

@@ -41,17 +41,13 @@ export class WebFileController {
     }
 }
 
-export function storeEventsFromRust(requestId: number, events: Array<string>){
+export function setCsvReadingFinished(requestId: number){
     
     store.dispatch({
-        type: StateMutationType.SET_EVENTSLOADING,
-        data: false,
+        // TODO:
+        type: StateMutationType.SET_CSVPARSINGFINISHED,
+        data: true,
     });
-    store.dispatch({
-        type: StateMutationType.SET_EVENTS,
-        data: events,
-    });
-
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {

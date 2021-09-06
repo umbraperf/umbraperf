@@ -17,12 +17,10 @@ interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
     result: Result | undefined;
-    eventsLoading: boolean;
-    events: Array<string> | undefined;
+    csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
     setCurrentChart: (newCurrentChart: string) => void;
-    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 interface State {
@@ -57,10 +55,9 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        if (this.props.events) {
+        if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            this.props.setCurrentEvent(this.props.events![0]);
-            this.props.appContext.controller.calculateChartData("test");
+            this.props.appContext.controller.calculateChartData("select test from xy");
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -98,7 +95,7 @@ class BarChart extends React.Component<Props, State> {
 
     public render() {
 
-        if (!this.props.events) {
+        if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
         }
 
@@ -230,8 +227,7 @@ class BarChart extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
-    eventsLoading: state.eventsLoading,
-    events: state.events,
+    csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
 });
@@ -240,10 +236,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentChart: (newCurrentChart: string) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
-    }),
-    setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
-        data: newCurrentEvent,
     }),
 });
 

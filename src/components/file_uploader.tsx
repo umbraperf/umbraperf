@@ -5,18 +5,17 @@ import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import styles from '../style/upload.module.css';
 import { Result } from 'src/model/core_result';
 import { IAppContext, withAppContext } from '../app_context';
-import { CircularProgress, LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 
 interface Props {
     appContext: IAppContext;
     file: undefined | File;
     fileName: string | undefined;
-    eventsLoading: boolean;
-    events: Array<string> | undefined;
+    csvParsingFinished: boolean;
     resultLoading: boolean;
     result: Result | undefined;
-    setEventsLoading: (newEventsLoading: boolean) => void;
+    setCsvParsingFinished: (newCsvParsingFinished: boolean) => void;
     setResultLoading: (newResultLoading: boolean) => void;
     setResetState: () => void;
 }
@@ -40,7 +39,7 @@ class FileUploader extends React.Component<Props, State> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
-            this.props.setEventsLoading(true);
+            this.props.setCsvParsingFinished(false);
             this.props.setResultLoading(true);
             const file = acceptedFiles[0];
             this.props.appContext.controller.registerFileAtWorker(file);
@@ -69,8 +68,8 @@ class FileUploader extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.events != this.props.events) {
-            if (!this.props.eventsLoading && this.props.events) {
+        if (prevProps.csvParsingFinished != this.props.csvParsingFinished) {
+            if (this.props.csvParsingFinished) {
                 this.setState({
                     ...this.state,
                     allowRedirect: true,
@@ -83,7 +82,7 @@ class FileUploader extends React.Component<Props, State> {
         return <div className={styles.dropzoneContainer}>
             {this.state.allowRedirect && <Redirect to={"/bar-chart"} />}
 
-            {this.props.eventsLoading && <div className={styles.fileUploaderLinearProgressContainer}>
+            {!this.props.csvParsingFinished && <div className={styles.fileUploaderLinearProgressContainer}>
                 <LinearProgress color="primary" />
             </div>}
             
@@ -120,16 +119,15 @@ class FileUploader extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
     fileName: state.fileName,
-    eventsLoading: state.eventsLoading,
-    events: state.events,
+    csvParsingFinished: state.csvParsingFinished,
     resultLoading: state.resultLoading,
     result: state.result,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setEventsLoading: (newEventsLoading: boolean) => dispatch({
-        type: model.StateMutationType.SET_EVENTSLOADING,
-        data: newEventsLoading,
+    setCsvParsingFinished: (newCsvParsingFinished: boolean) => dispatch({
+        type: model.StateMutationType.SET_CSVPARSINGFINISHED,
+        data: newCsvParsingFinished,
     }),
     setResultLoading: (newResultLoading: boolean) =>
         dispatch({

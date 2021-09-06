@@ -7,10 +7,10 @@ import HelpIcon from '@material-ui/icons/Help';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
-import { AppState } from '../model/state';
+import { AppState } from '../../model/state';
 
 import { withRouter, Link } from 'react-router-dom';
-import { routes } from '../app';
+import { routes } from '../../app';
 import { useSelector } from 'react-redux';
 
 

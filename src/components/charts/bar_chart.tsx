@@ -8,10 +8,9 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
-import EventsDropdown from '../events_dropdown';
-
+import EventsButtons from '../utils/events_buttons';
 
 
 interface Props {
@@ -58,7 +57,7 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        if(this.props.events){
+        if (this.props.events) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
             this.props.setCurrentEvent(this.props.events![0]);
             this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
@@ -96,8 +95,14 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
+    handleEventButtonClick(elem: string) {
+        this.props.setCurrentEvent(elem);
+        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
+    }
+
 
     public render() {
+
         if (!this.props.events) {
             return <Redirect to={"/upload"} />
         }
@@ -110,8 +115,8 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             <div className={styles.resultArea} >
-                <div className={styles.dropdownArea} >
-                    <EventsDropdown></EventsDropdown>
+                <div className={styles.optionsArea} >
+                    <EventsButtons chartType={ChartType.SWIM_LANES}></EventsButtons>
                 </div>
                 <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega spec={this.createVisualizationSpec()} />
@@ -196,10 +201,10 @@ class BarChart extends React.Component<Props, State> {
                             y2: { scale: 'yscale', value: 0 },
                         },
                         update: {
-                            fill: { value: 'steelblue' },
+                            fill: { value: this.props.appContext.secondaryColor },
                         },
                         hover: {
-                            fill: { value: 'red' },
+                            fill: { value: this.props.appContext.primaryColor },
                         },
                     },
                 },

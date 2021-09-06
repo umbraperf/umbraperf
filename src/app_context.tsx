@@ -3,6 +3,8 @@ import { WebFileController } from './controller/web_file_controller';
 
 export interface IAppContext {
     controller: WebFileController,
+    primaryColor: string,
+    secondaryColor: string,
 }
 
 export const ctx = React.createContext<IAppContext | null>(null);

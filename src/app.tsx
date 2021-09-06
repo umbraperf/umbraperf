@@ -13,7 +13,7 @@ import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
 import BarChart from './components/charts/bar_chart';
 import SwimLanes from './components/charts/swim_lanes';
-import TabPanel from './components/tab_panel';
+import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
@@ -31,16 +31,27 @@ const store = createProdStore();
 // const workerAPI = new WorkerAPI();
 const webFileController = new WebFileController();
 
+const appColor = {
+    primary: '#198fb0',
+    secondary: '#919191',
+}
+
 const appContext: IAppContext = {
     // worker: workerAPI,
     controller: webFileController,
+    primaryColor: appColor.primary,
+    secondaryColor: appColor.secondary,
+    
 };
 
 const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
     palette: {
+        primary: {
+            main: appColor.primary
+        },
         secondary: {
-            main: '#b8b8b8'
+            main: appColor.secondary
         }
     }
 })
@@ -146,11 +157,11 @@ function NoMatch() {
 
     return (
         <div>
-            <h3>
+            <h2>
                 404: No subpage found for <code>{location.pathname}</code>.
                 <br></br>
-                You can return to homepage: <Link to={'/'} className="nav-link"> Home </Link>
-            </h3>
+                You can upload a file to start profiling: <Link to={'/'} className="nav-link"> File Uploader </Link>
+            </h2>
         </div>
     );
 }

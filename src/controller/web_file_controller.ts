@@ -3,7 +3,7 @@ import { createResultObject } from "../model/core_result";
 import store from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
-import { SqlQueries } from "src/model/sql_queries";
+import { SqlQueryType } from "src/model/sql_queries";
 
 
 export interface FileInfo {
@@ -37,10 +37,10 @@ export class WebFileController {
             worker.calculateChartData(chartType, event, completeParams);
         } */
 
-    public calculateChartData(sqlQuery: SqlQueries) {
+    public calculateChartData(sqlQueryType: SqlQueryType, sqlQuery: string) {
         store.dispatch({
             type: StateMutationType.SET_CURRENTREQUEST,
-            data: sqlQuery,
+            data: sqlQueryType,
         });
         store.dispatch({
             type: StateMutationType.SET_RESULTLOADING,
@@ -50,6 +50,8 @@ export class WebFileController {
             type: StateMutationType.SET_RESULT,
             data: undefined,
         });
+        console.log(sqlQueryType);
+        console.log(sqlQuery);
         worker.calculateChartData(sqlQuery);
     }
 }

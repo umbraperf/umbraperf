@@ -1,7 +1,7 @@
 import * as model from '../model';
 import { AppState } from './state';
 import { Result } from "./core_result";
-import { SqlQueries } from './sql_queries';
+import { SqlQueryType } from './sql_queries';
 
 
 /// A mutation
@@ -36,7 +36,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
-    | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueries>
+    | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
     ;
 
 // The action dispatch

@@ -6,9 +6,9 @@ import * as model from '../../model';
 import { Button } from '@material-ui/core';
 
 
-export default function EventsButtons() {
+export default function EventsButtons(props: any) {
 
-    const events = useSelector((state: AppState) => state.events);
+    //const events = props.events;
     const currentEvent = useSelector((state: AppState) => state.currentEvent);
     const context = useContext(ctx);
     const dispatch = useDispatch();
@@ -24,6 +24,9 @@ export default function EventsButtons() {
         setNewCurrentEvent(event);
         context!.controller.calculateChartData("test 2");
     }
+
+    //TODO: remove
+    const events = ["test 1", "test 2"]
 
     return (
         <div className={"eventButtonsArea"}>

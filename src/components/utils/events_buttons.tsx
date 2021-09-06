@@ -9,7 +9,7 @@ import { SqlQueries } from './../../model/sql_queries';
 
 export default function EventsButtons(props: any) {
 
-    //const events = props.events;
+    const events = props.events as Array<any>;
     const currentEvent = useSelector((state: AppState) => state.currentEvent);
     const context = useContext(ctx);
     const dispatch = useDispatch();
@@ -23,12 +23,9 @@ export default function EventsButtons(props: any) {
 
     const handleEventButtonClick = (event: string) => {
         setNewCurrentEvent(event);
-        // TODO: wrong request
-        context!.controller.calculateChartData(SqlQueries.other);
+        // TODO: wrong request, make request with correct event in component did update
+        // context!.controller.calculateChartData(SqlQueries.other);
     }
-
-    //TODO: remove
-    const events = ["test 1", "test 2"]
 
     return (
         <div className={"eventButtonsArea"}>

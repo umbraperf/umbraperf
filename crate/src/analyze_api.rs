@@ -8,7 +8,7 @@ use sqlparser::parser::Parser;
 
 use crate::bindings::notify_js_query_result;
 use crate::record_batch_util::RecordBatchUtil;
-use crate::{analyze, print_to_js_with_obj};
+use crate::{analyze, print_to_js, print_to_js_with_obj};
 
 pub struct Query {
    
@@ -38,7 +38,7 @@ pub struct Query {
     }
 
     // TODO MAPPING
-    pub fn execute_projections(batches: Vec<RecordBatch>, projections: Vec<SelectItem>) -> RecordBatch  {
+    pub fn execute_projections(batch: RecordBatch, projections: &Vec<SelectItem>) -> RecordBatch  {
 
         let mut vec = Vec::new();
 
@@ -47,47 +47,51 @@ pub struct Query {
                 SelectItem::UnnamedExpr(expr) => {
                     match expr {
                         Expr::Identifier(ident) => {
-                            let name = ident.value;
+                            let name = &ident.value;
                             let column_num = get_column_num(name.as_str());
                             vec.push(column_num);
                             print_to_js_with_obj(&format!("{:?}", name).into());
                         }
                         _ => {
-                            panic!("Not implemented!");
+                           // ignore
                         }
                     }
                 }
                 _ => {
-                    panic!("Not implemented!");
+                    //ignore
                 }
             }
         }
 
-        print_to_js_with_obj(&format!("{:?}", vec).into()); 
-
-        let record_batch = analyze::get_columns(batches , vec);
-        print_to_js_with_obj(&format!("{:?}", record_batch).into()); 
+        let record_batch = analyze::get_columns(batch, vec);
         
         record_batch
 
     }
 
-    pub fn execute_selections(selection: Option<Expr>)  {
+    // Filter
+    pub fn execute_selections(selection: Option<Expr>, record_batch: RecordBatch) -> RecordBatch {
 
         if let Some(expr) = selection {
-            match expr {
-                Expr::BinaryOp{left: l, op: op, right: r} => {
-
+            if let Expr::BinaryOp{left: l, op: op, right: r} = expr {
+                let mut column_num = 0;
+                let mut filter_str = "";
+                if let sqlparser::ast::BinaryOperator::Eq = op {   
+                    if let Expr::Identifier(ident)  = l.as_ref() {
+                        column_num = 0;//get_column_num(ident.value.as_str());
+                    }
+                    if let Expr::Identifier(ident)  = r.as_ref()  {
+                        filter_str = ident.value.as_str();
+                    }
                 }
-                _ => {
-                    panic!("Not implemented!");
-                }
-            }
+                return analyze::filter_with(column_num, filter_str, &record_batch);
+            } 
         }
-        	
+        return record_batch;
     }
+        	
 
-    pub fn execute_computations(batch: RecordBatch, is_distinct: bool) -> RecordBatch {
+    pub fn execute_distinct(batch: RecordBatch, is_distinct: bool) -> RecordBatch {
 
         if is_distinct == true {
             let unique_batch = analyze::find_unique_string(&batch, 0);
@@ -98,23 +102,62 @@ pub struct Query {
 
     }
 
+    pub fn execute_group_by(batch: RecordBatch, projections: Vec<SelectItem>, group_by: Vec<Expr>)  {
+
+        let expr = &group_by[0];
+
+        if let Expr::Identifier(ident) = expr {
+            let column_num = get_column_num(ident.value.as_str());
+            analyze::count_rows_over(&batch, column_num, column_num);
+        } else {
+            
+        }
+
+    }
+
     // for fast query exection:
-    // 1. filters
+    // 1. filters first
+    // Order of a sql statement: https://www.designcise.com/web/tutorial/what-is-the-order-of-execution-of-an-sql-query
+    // 0) CONVERT
+    // 1) WHERE
+    // 2) GROUPBY
+    // 3) SELECT -- select is here first as it converts the vector of record batches also to one batch
+    // 4) DISTINCT
+    // 5) ORDERBY
     pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool) {
 
-        let batch = execute_projections(batches, projections); // Vec<RecordBatch> -> RecordBatch
+        let convert = analyze::convert(batches);
 
-        //execute_selections(selection); // RecordBatch -> RecordBatch
+        print_to_js("After converting:");
 
-        let batch = execute_computations(batch, is_distinct); //
+        print_to_js_with_obj(&format!("{:?}", convert).into());
 
-        print_to_js_with_obj(&format!("{:?}", batch).into());
+        let filter = execute_selections(selection, convert); // 1
 
-        let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
+        print_to_js("After filter:");
 
-        notify_js_query_result(event_cursor.into_inner());
+        print_to_js_with_obj(&format!("{:?}", filter).into());
 
-   
+        let select = execute_projections(filter, &projections); // Vec<RecordBatch> -> RecordBatch // 3
+
+        print_to_js("After selection:");
+
+        print_to_js_with_obj(&format!("{:?}", select).into());
+
+    
+
+        //let group_by = execute_group_by(filter, projections, group_by); // 2
+
+        let distinct = execute_distinct(select, is_distinct); // 4
+
+        print_to_js("After distinct:");
+
+        print_to_js_with_obj(&format!("{:?}", distinct).into());
+
+        let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&distinct);
+
+        notify_js_query_result(event_cursor.into_inner()); 
+
     }
     
     
@@ -130,6 +173,9 @@ pub struct Query {
         let dialect = GenericDialect {};
 
         let ast = Parser::parse_sql(&dialect, sql_query).unwrap();
+
+        print_to_js("Query syntax is correct.");
+
 
         print_to_js_with_obj(&format!("{:?}", ast).into());
         

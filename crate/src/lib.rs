@@ -23,10 +23,11 @@ mod record_batch_util;
 
 // Analyze
 mod analyze;
+mod analyze_api;
 
 // Bindings
 mod bindings;
-use crate::analyze::{filter_with, get_columns, sort_batch};
+use crate::{analyze::{filter_with, get_columns, sort_batch}, analyze_api::query};
 
 extern crate serde;
 use serde::{Serialize, Deserialize};
@@ -130,6 +131,8 @@ fn init_record_batches(file_size: i32, with_delimiter: u8, with_header: bool, wi
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32){
+
+    let test = query("query");
 
     let now = instant::Instant::now();
 

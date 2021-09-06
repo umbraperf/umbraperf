@@ -600,6 +600,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e"
 
 [[package]]
+name = "sqlparser"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7dbcb26aebf44a0993c3c95e41d13860131b6cbf52edb2c53230056baa4d733f"
+dependencies = [
+ "log",
+]
+
+[[package]]
 name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -663,6 +672,7 @@ dependencies = [
  "lazy_static",
  "log",
  "serde",
+ "sqlparser",
  "unicode-width",
  "wasm-bindgen",
  "wasm-bindgen-futures",

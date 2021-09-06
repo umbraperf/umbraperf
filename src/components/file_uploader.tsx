@@ -15,6 +15,7 @@ interface Props {
     csvParsingFinished: boolean;
     resultLoading: boolean;
     result: Result | undefined;
+    setFile: (newFile: File) => void;
     setCsvParsingFinished: (newCsvParsingFinished: boolean) => void;
     setResultLoading: (newResultLoading: boolean) => void;
     setResetState: () => void;
@@ -39,9 +40,10 @@ class FileUploader extends React.Component<Props, State> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
+            const file = acceptedFiles[0];
+            this.props.setFile(file);
             this.props.setCsvParsingFinished(false);
             this.props.setResultLoading(true);
-            const file = acceptedFiles[0];
             this.props.appContext.controller.registerFileAtWorker(file);
         }
     }
@@ -82,7 +84,7 @@ class FileUploader extends React.Component<Props, State> {
         return <div className={styles.dropzoneContainer}>
             {this.state.allowRedirect && <Redirect to={"/bar-chart"} />}
 
-            {!this.props.csvParsingFinished && <div className={styles.fileUploaderLinearProgressContainer}>
+            {(!this.props.csvParsingFinished && undefined !== this.props.file) && <div className={styles.fileUploaderLinearProgressContainer}>
                 <LinearProgress color="primary" />
             </div>}
             
@@ -125,6 +127,10 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setFile: (newFile: File) => dispatch({
+        type: model.StateMutationType.SET_FILE,
+        data: newFile,
+    }),
     setCsvParsingFinished: (newCsvParsingFinished: boolean) => dispatch({
         type: model.StateMutationType.SET_CSVPARSINGFINISHED,
         data: newCsvParsingFinished,

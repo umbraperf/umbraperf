@@ -107,10 +107,6 @@ class BarChart extends React.Component<Props, State> {
                 }));
         }
 
-        /*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
-                    window.alert("refetch data from rust");
-                    this.props.appContext.controller.calculateChartData(SqlQueries.other);
-                } */
     }
 
     componentDidMount() {

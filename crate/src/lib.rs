@@ -122,7 +122,6 @@ fn init_record_batches(file_size: i32, with_delimiter: u8, with_header: bool, wi
 
     while let Some(item) = reader.next() {
         let batch = item.unwrap();
-        print_to_js_with_obj(&format!("{:?}", &batch).into());
         vec.push(batch);
     }
 
@@ -140,22 +139,18 @@ pub fn analyze_file(file_size: i32){
     let batches = init_record_batches(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
 
     let elapsed = now.elapsed();
-    print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
 
     // let batches = set_record_batches(batches);
 
     //let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
     let batch = get_columns(batches, vec![0,1,2,3]);
-    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     let sorted_batch = sort_batch(&batch, 2);
 
-    print_to_js_with_obj(&format!("{:?}", sorted_batch).into());
 
     //let filtered_batch = filter_with("operator", "No Operator", &batch);
     let filtered_batch = filter_with(1,"", &batch);
 
-    print_to_js_with_obj(&format!("{:?}", filtered_batch).into());
 
 
     /* let events = Analyze::events(&batch);

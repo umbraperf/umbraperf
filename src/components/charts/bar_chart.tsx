@@ -28,7 +28,7 @@ interface Props {
 }
 
 interface State {
-    events: Array<string> |undefined,
+    events: Array<any> | undefined,
     width: number,
     height: number,
 }
@@ -55,11 +55,14 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        if(prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished){
-            this.setState((state, props) => ({
-                ...state,
-                //events: this.,
-            }));
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
+            if (this.props.currentRequest === SqlQueries.get_events) {
+                this.setState((state, props) => ({
+                    ...state,
+                    events: this.props.result?.resultTable.getColumn("ev_name").toArray(),
+                }));
+            }
+
         }
 
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
@@ -114,21 +117,23 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        if (!this.props.result || this.props.resultLoading) {
+        if (!this.props.result || this.props.resultLoading || !this.state.events) {
             return <div className={styles.spinnerArea} >
                 <CircularProgress />
             </div>
         }
 
         return <div>
-            <div className={styles.resultArea} >
-                <div className={styles.optionsArea} >
-                    <EventsButtons></EventsButtons>
+            {this.state.events &&
+                <div className={styles.resultArea} >
+                    <div className={styles.optionsArea} >
+                        <EventsButtons events={this.state.events}></EventsButtons>
+                    </div>
+                    <div className={"vegaContainer"} ref={this.chartWrapper}>
+                        <Vega spec={this.createVisualizationSpec()} />
+                    </div>
                 </div>
-                <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega spec={this.createVisualizationSpec()} />
-                </div>
-            </div>
+            }
         </div>;
     }
 

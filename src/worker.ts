@@ -29,7 +29,7 @@ export type WorkerResponse<T, P> = {
 
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest> 
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ChartEventRequest>
   ;
 
 export type WorkerResponseVariant =
@@ -44,11 +44,11 @@ export interface IRequestWorker {
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
 }
 
-interface ChartEventRequest {
+/* interface ChartEventRequest {
   chartType: string;
   event: string;
   params: any;
-}
+} */
 
 interface IGlobalFileDictionary {
   [key: number]: File;
@@ -89,25 +89,25 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 
-export function storeEventsFromRust(events: any){
+export function storeEventsFromRust(events: any) {
   worker.postMessage({
     messageId: 201,
     requestId: 100,
     type: WorkerResponseType.STORE_EVENTS,
     data: events,
-  });  
+  });
 
 }
 
 export function stroreArrowResultFromRust(result: any) {
 
-  if(result){
+  if (result) {
     worker.postMessage({
       messageId: 201,
       requestId: 100,
       type: WorkerResponseType.STORE_RESULT,
       data: result,
-    });  
+    });
   }
 
 }
@@ -133,7 +133,10 @@ worker.onmessage = (message) => {
       break;
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
-      profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
+      /*       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
+       */
+      profiler_core.requestChartData(messageData);
+
       break;
 
     default:

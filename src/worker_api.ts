@@ -22,10 +22,17 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(chartType: string, event: string, params: any){
+/*     public calculateChartData(chartType: string, event: string, params: any){
         this.worker.postMessage({
             type: model.WorkerRequestType.CALCULATE_CHART_DATA,
             data: {chartType: chartType, event: event, params: params},
+        });
+    } */
+
+    public calculateChartData(sqlQuery: string){
+        this.worker.postMessage({
+            type: model.WorkerRequestType.CALCULATE_CHART_DATA,
+            data: sqlQuery,
         });
     }
 

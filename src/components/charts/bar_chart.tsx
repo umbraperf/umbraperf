@@ -11,7 +11,7 @@ import { createRef } from 'react';
 import { Button, CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
-import { SqlQueries } from '../../model/sql_queries';
+import * as SqlApi from '../../model/sql_queries';
 
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
-    currentRequest: SqlQueries | undefined;
+    currentRequest: SqlApi.SqlQueryType | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
     setCurrentEvent: (newCurrentEvent: string) => void;
 
@@ -56,27 +56,36 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
-            if (this.props.currentRequest === SqlQueries.get_events) {
+            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
                 const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
                 this.setState((state, props) => ({
                     ...state,
                     events: events,
                 }));
                 this.props.setCurrentEvent(events[0]);
-                this.props.appContext.controller.calculateChartData(SqlQueries.test);
+/*                 this.props.appContext.controller.calculateChartData(
+                    SqlApi.SqlQueryType.GET_EVENTS,
+                    SqlApi.createSqlQuery({
+                        type: SqlApi.SqlQueryType.GET_EVENTS,
+                        data: {},
+                    })); */
             }
         }
-
-/*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
-            window.alert("refetch data from rust");
-            this.props.appContext.controller.calculateChartData(SqlQueries.other);
-        } */
+        /*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+                    window.alert("refetch data from rust");
+                    this.props.appContext.controller.calculateChartData(SqlQueries.other);
+                } */
     }
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            this.props.appContext.controller.calculateChartData(SqlQueries.get_events);
+            this.props.appContext.controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_EVENTS,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_EVENTS,
+                    data: {},
+                }));
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -140,12 +149,12 @@ class BarChart extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
-/* 
-        const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
-        const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray(); */
+        /* 
+                const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
+                const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray(); */
 
         const operatorsArray = ["x", "y", "z"];
-        const valueArray = [1,2,3];
+        const valueArray = [1, 2, 3];
 
         const data = {
 

@@ -97,7 +97,9 @@ class BarChart extends React.Component<Props, State> {
 
     handleEventButtonClick(elem: string) {
         this.props.setCurrentEvent(elem);
-        this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
+        //this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, elem);
+        this.props.appContext.controller.calculateChartData("test");
+
     }
 
 

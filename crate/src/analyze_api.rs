@@ -6,6 +6,8 @@ use sqlparser::ast::{Expr, SelectItem, SetExpr};
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
 
+use crate::bindings::notify_js_query_result;
+use crate::record_batch_util::RecordBatchUtil;
 use crate::{analyze, print_to_js_with_obj};
 
 pub struct Query {
@@ -36,7 +38,7 @@ pub struct Query {
     }
 
     // TODO MAPPING
-    pub fn execute_projections(batches: Vec<RecordBatch>, projections: Vec<SelectItem>)  {
+    pub fn execute_projections(batches: Vec<RecordBatch>, projections: Vec<SelectItem>) -> RecordBatch  {
 
         let mut vec = Vec::new();
 
@@ -61,8 +63,12 @@ pub struct Query {
             }
         }
 
-        analyze::get_columns(batches , vec);
+        print_to_js_with_obj(&format!("{:?}", vec).into()); 
+
+        let record_batch = analyze::get_columns(batches , vec);
+        print_to_js_with_obj(&format!("{:?}", record_batch).into()); 
         
+        record_batch
 
     }
 
@@ -81,19 +87,32 @@ pub struct Query {
         	
     }
 
-    pub fn execute_computations() {
+    pub fn execute_computations(batch: RecordBatch, is_distinct: bool) -> RecordBatch {
+
+        if is_distinct == true {
+            let unique_batch = analyze::find_unique_string(&batch, 0);
+            return unique_batch;
+        }
+
+        batch
 
     }
 
     // for fast query exection:
     // 1. filters
-    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>) {
+    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool) {
 
-        execute_projections(batches, projections); // Vec<RecordBatch> -> RecordBatch
+        let batch = execute_projections(batches, projections); // Vec<RecordBatch> -> RecordBatch
 
-        execute_selections(selection); // RecordBatch -> RecordBatch
+        //execute_selections(selection); // RecordBatch -> RecordBatch
 
-        execute_computations(); //
+        let batch = execute_computations(batch, is_distinct); //
+
+        print_to_js_with_obj(&format!("{:?}", batch).into());
+
+        let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&batch);
+
+        notify_js_query_result(event_cursor.into_inner());
 
    
     }
@@ -120,12 +139,13 @@ pub struct Query {
                     let body = query.body;
                     match body {
                         SetExpr::Select(select) => {
+                            let is_distinct = select.distinct;
                             let projection = select.projection;
                             // let from = select.from;
                             let selection = select.selection;
                             let group_by = select.group_by;
                             let sort_by = select.sort_by;
-                            execute_query(batches.to_owned(), projection, selection, group_by, sort_by);
+                            execute_query(batches.to_owned(), projection, selection, group_by, sort_by, is_distinct);
                         }
                         _ => {
                             panic!("Not implemented!");

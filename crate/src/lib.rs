@@ -67,7 +67,7 @@ fn get_record_batches() ->  Option<Vec<RecordBatch>> {
     with_state(|s| s.record_batches.clone())
 }
 
-fn _set_record_batches(record_batches: Vec<RecordBatch>) {
+fn set_record_batches(record_batches: Vec<RecordBatch>) {
     _with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
@@ -139,18 +139,8 @@ pub fn analyze_file(file_size: i32){
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
-    // let batches = set_record_batches(batches);
-
-    //let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);
-    let batch = get_columns(batches, vec![0,1,2,3]);
-
-    let sorted_batch = sort_batch(&batch, 2);
-
-
-    //let filtered_batch = filter_with("operator", "No Operator", &batch);
-    let filtered_batch = filter_with(1,"", &batch);
-
-
+    
+    set_record_batches(batches);
 
     /* let events = Analyze::events(&batch);
 
@@ -167,7 +157,11 @@ pub fn analyze_file(file_size: i32){
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(sql_query: &str) {
 
+    print_to_js_with_obj(&format!("{:?}", sql_query).into());
+
     let batch = get_record_batches().unwrap();
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     analyze_api::query(batch, sql_query);
     

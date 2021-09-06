@@ -123,9 +123,7 @@ class BarChart extends React.Component<Props, State> {
     createVisualizationData() {
 
         const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
-        console.log(operatorsArray);
         const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray();
-        console.log(valueArray);
 
         const data = {
 

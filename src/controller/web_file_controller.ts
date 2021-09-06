@@ -57,7 +57,6 @@ export class WebFileController {
 export function setCsvReadingFinished(requestId: number) {
 
     store.dispatch({
-        // TODO:
         type: StateMutationType.SET_CSVPARSINGFINISHED,
         data: true,
     });

@@ -45,7 +45,7 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            events: undefined,
+            events: [],
             width: startSize.width,
             height: startSize.height,
         };
@@ -57,18 +57,19 @@ class BarChart extends React.Component<Props, State> {
 
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
             if (this.props.currentRequest === SqlQueries.get_events) {
+                const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
                 this.setState((state, props) => ({
                     ...state,
-                    events: this.props.result?.resultTable.getColumn("ev_name").toArray(),
+                    events: events,
                 }));
+                this.props.setCurrentEvent(events[0]);
             }
-
         }
 
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+/*         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
             window.alert("refetch data from rust");
             this.props.appContext.controller.calculateChartData(SqlQueries.other);
-        }
+        } */
     }
 
     componentDidMount() {
@@ -138,9 +139,12 @@ class BarChart extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
-
+/* 
         const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
-        const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray();
+        const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray(); */
+
+        const operatorsArray = ["x", "y", "z"];
+        const valueArray = [1,2,3];
 
         const data = {
 

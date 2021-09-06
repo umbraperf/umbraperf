@@ -159,9 +159,9 @@ pub fn analyze_file(file_size: i32){
 
     let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&event_batch);
 
-    set_record_batch(batch);
+    set_record_batch(batch); */
 
-    send_events_to_js(event_cursor.into_inner()); */
+    notify_js_finished_reading(0); 
 }
 
 

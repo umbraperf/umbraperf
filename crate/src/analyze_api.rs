@@ -56,6 +56,17 @@ pub struct Query {
                 }
             }
         }
+
+        if let Some(expr) = selection {
+            match expr {
+                Expr::BinaryOp{left: l, op: op, right: r} => {
+
+                }
+                _ => {
+                    panic!("Not implemented!");
+                }
+            }
+        }
         	
     }
     

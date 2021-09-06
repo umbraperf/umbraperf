@@ -139,7 +139,7 @@ pub fn analyze_file(file_size: i32){
     let batches = init_record_batches(file_size, semi_colon, true, vec![0 as usize, 5 as usize, 13 as usize, 20 as usize]);
 
     let elapsed = now.elapsed();
-
+    print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
     // let batches = set_record_batches(batches);
 
     //let batch = get_columns(batches, vec!["operator","time","ev_name","pipeline"]);

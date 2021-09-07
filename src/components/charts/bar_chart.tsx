@@ -67,8 +67,6 @@ class BarChart extends React.Component<Props, State> {
         //ensure changed app state and only proceed when result available
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
 
-            window.alert("did update!");
-
             //if type of current request is GET_EVENTS, then store result from rust in component state event property 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
                 const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
@@ -84,7 +82,7 @@ class BarChart extends React.Component<Props, State> {
 
             //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {
-                const operators = this.props.result!.resultTable.getColumn('operators').toArray();
+                const operators = this.props.result!.resultTable.getColumn('operator').toArray();
                 const frequency = this.props.result!.resultTable.getColumn('count').toArray();
                 this.setState((state, props) => ({
                     ...state,
@@ -98,7 +96,6 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
-            window.alert("event changed!");
             this.props.appContext.controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 SqlApi.createSqlQuery({
@@ -161,7 +158,7 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        if (!this.props.result || this.props.resultLoading || !this.state.events) {
+        if (!this.state.events) {
             return <div className={styles.spinnerArea} >
                 <CircularProgress />
             </div>
@@ -173,21 +170,22 @@ class BarChart extends React.Component<Props, State> {
                     <div className={styles.optionsArea} >
                         <EventsButtons events={this.state.events}></EventsButtons>
                     </div>
-                    <div className={"vegaContainer"} ref={this.chartWrapper}>
-                        <Vega spec={this.createVisualizationSpec()} />
-                    </div>
+                    {(!this.state.chartData || !this.props.result || this.props.resultLoading)
+                        ? <CircularProgress />
+                        : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                            <Vega spec={this.createVisualizationSpec()} />
+                        </div>
+                    }
+
                 </div>
             }
         </div>;
     }
 
     createVisualizationData() {
-        /* 
-                const operatorsArray = this.props.result?.resultTable.getColumn("operator").toArray();
-                const valueArray = this.props.result?.resultTable.getColumn("cycles").toArray(); */
 
-        const operatorsArray = ["x", "y", "z"];
-        const valueArray = [1, 2, 3];
+        const operatorsArray = this.state.chartData?.operators;
+        const valueArray = this.state.chartData?.frequency;
 
         const data = {
 

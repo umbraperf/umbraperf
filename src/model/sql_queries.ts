@@ -21,7 +21,7 @@ export function createSqlQuery(query: QueryVariant) {
         case SqlQueryType.GET_EVENTS:
             return 'select distinct ev_name from yx';
         case SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
-            return `select operator, count(operator) from xy where ev_name = '${query.data.event}' group by operator`;
+            return `select operator, count(operator)  from xy where ev_name = '${query.data.event}' group by operator`;
     }
 }
 

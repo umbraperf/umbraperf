@@ -116,7 +116,7 @@ class SwimLanes extends React.Component<Props, State> {
             height: startSize.height,
             events: undefined,
             chartData: undefined,
-            interpolation: "step",
+            interpolation: "basis",
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);

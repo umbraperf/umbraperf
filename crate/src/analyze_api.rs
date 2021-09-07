@@ -1,6 +1,3 @@
-     use std::collections::BTreeMap;
-
-use arrow::datatypes::DataType;
 use arrow::record_batch::RecordBatch;
 use sqlparser::ast::{Expr, SelectItem, SetExpr};
 use sqlparser::dialect::GenericDialect;
@@ -10,32 +7,25 @@ use crate::bindings::notify_js_query_result;
 use crate::record_batch_util::RecordBatchUtil;
 use crate::{analyze, print_to_js, print_to_js_with_obj};
 
-pub struct Query {
-   
-}
-        // Init map
-    pub fn get_dict() -> BTreeMap<String, (i32, DataType)> {
-        let mut dict = BTreeMap::new();
-        dict.insert(String::from("operator"), (0, DataType::Utf8));
-        dict.insert(String::from("ev_name"), (1, DataType::Utf8));
-        dict.insert(String::from("time"), (2, DataType::Float64));
-        dict.insert(String::from("pipeline"), (3, DataType::Utf8));
-        dict
+
+    pub fn get_column_num(name: &str, batch: &RecordBatch) -> usize {
+
+        let schema = batch.schema();
+
+        let fields = schema.fields();
+
+        let mut index = 0;
+        for field in fields {
+            let field_name = field.name();
+            if field_name == name {
+               return index;
+            }
+            index += 1;
+        }
+        return 0;
+
     }
-    
-    pub fn get_column_num(name: &str) -> usize {
-        let dict = get_dict();
-        let column_num = dict.get(&String::from(name));
-        let column_num = (column_num.expect("Operator needs to be in the rust list!").0) as usize;
-        column_num
-    }
-    
-    pub fn get_data_type(name: &str) -> DataType {
-        let dict = get_dict();
-        let data_type = dict.get(&String::from(name));
-        let data_type = &data_type.expect("Operator needs to be in the rust list!").1;
-        data_type.to_owned()
-    }
+
 
     // SELECT
     pub fn execute_projections(batch: RecordBatch, projections: &Vec<SelectItem>) -> RecordBatch  {
@@ -48,7 +38,7 @@ pub struct Query {
                     match expr {
                         Expr::Identifier(ident) => {
                             let name = &ident.value;
-                            let column_num = get_column_num(name.as_str());
+                            let column_num = get_column_num(name.as_str(), &batch);
                             vec.push(column_num);
                             print_to_js_with_obj(&format!("{:?}", name).into());
                         }
@@ -58,7 +48,7 @@ pub struct Query {
                            let ident = &func[0];
                            let str = &ident.value;
                            // TODO
-                          vec.push(1 as usize);
+                          vec.push(get_column_num(str, &batch));
                         }
                         _ => {
                            // ignore
@@ -86,7 +76,7 @@ pub struct Query {
                 let mut filter_str = "";
                 if let sqlparser::ast::BinaryOperator::Eq = op {   
                     if let Expr::Identifier(ident)  = l.as_ref() {
-                        column_num = get_column_num(ident.value.as_str());
+                        column_num = get_column_num(ident.value.as_str(), &record_batch);
                     }
                     if let Expr::Value(value) = r.as_ref() {
                         if let sqlparser::ast::Value::SingleQuotedString(str) = value {
@@ -119,7 +109,7 @@ pub struct Query {
         if group_by.len() > 0 {
             let expr = &group_by[0];
             if let Expr::Identifier(ident) = expr {
-                let column_num = get_column_num(ident.value.as_str());
+                let column_num = get_column_num(ident.value.as_str(), &batch);
                 print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
                 return analyze::count_rows_over(&batch, column_num, column_num);
             } else {

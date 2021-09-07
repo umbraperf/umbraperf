@@ -37,7 +37,7 @@ pub struct Query {
         data_type.to_owned()
     }
 
-    // TODO MAPPING
+    // SELECT
     pub fn execute_projections(batch: RecordBatch, projections: &Vec<SelectItem>) -> RecordBatch  {
 
         let mut vec = Vec::new();
@@ -51,6 +51,14 @@ pub struct Query {
                             let column_num = get_column_num(name.as_str());
                             vec.push(column_num);
                             print_to_js_with_obj(&format!("{:?}", name).into());
+                        }
+                        Expr::Function(func) => {
+                           let func_name = &func.name;
+                           let func = &func_name.0;
+                           let ident = &func[0];
+                           let str = &ident.value;
+                           // TODO
+                          vec.push(1 as usize);
                         }
                         _ => {
                            // ignore
@@ -69,7 +77,7 @@ pub struct Query {
 
     }
 
-    // Filter
+    // WHERE
     pub fn execute_selections(selection: Option<Expr>, record_batch: RecordBatch) -> RecordBatch {
 
         if let Some(expr) = selection {
@@ -78,10 +86,13 @@ pub struct Query {
                 let mut filter_str = "";
                 if let sqlparser::ast::BinaryOperator::Eq = op {   
                     if let Expr::Identifier(ident)  = l.as_ref() {
-                        column_num = 0;//get_column_num(ident.value.as_str());
+                        column_num = get_column_num(ident.value.as_str());
                     }
-                    if let Expr::Identifier(ident)  = r.as_ref()  {
-                        filter_str = ident.value.as_str();
+                    if let Expr::Value(value) = r.as_ref() {
+                        if let sqlparser::ast::Value::SingleQuotedString(str) = value {
+                            filter_str = str;
+                            print_to_js_with_obj(&format!("{:?}", filter_str).into());
+                        }
                     }
                 }
                 return analyze::filter_with(column_num, filter_str, &record_batch);
@@ -90,7 +101,7 @@ pub struct Query {
         return record_batch;
     }
         	
-
+    // DISTINCT
     pub fn execute_distinct(batch: RecordBatch, is_distinct: bool) -> RecordBatch {
 
         if is_distinct == true {
@@ -102,17 +113,21 @@ pub struct Query {
 
     }
 
-    pub fn execute_group_by(batch: RecordBatch, projections: Vec<SelectItem>, group_by: Vec<Expr>)  {
+    // GROUPBY
+    pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>) -> RecordBatch {
 
-        let expr = &group_by[0];
-
-        if let Expr::Identifier(ident) = expr {
-            let column_num = get_column_num(ident.value.as_str());
-            analyze::count_rows_over(&batch, column_num, column_num);
+        if group_by.len() > 0 {
+            let expr = &group_by[0];
+            if let Expr::Identifier(ident) = expr {
+                let column_num = get_column_num(ident.value.as_str());
+                print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
+                return analyze::count_rows_over(&batch, column_num, column_num);
+            } else {
+                return batch;
+            }
         } else {
-            
+            return batch;
         }
-
     }
 
     // for fast query exection:
@@ -126,33 +141,43 @@ pub struct Query {
     // 5) ORDERBY
     pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool) {
 
+        // ****************************************************
         let convert = analyze::convert(batches);
 
         print_to_js("After converting:");
 
         print_to_js_with_obj(&format!("{:?}", convert).into());
 
+        // WHERE
         let filter = execute_selections(selection, convert); // 1
 
         print_to_js("After filter:");
 
         print_to_js_with_obj(&format!("{:?}", filter).into());
+        
+        // GROUPBY
+        let group_by = execute_group_by(filter, &projections, group_by); // 2
 
-        let select = execute_projections(filter, &projections); // Vec<RecordBatch> -> RecordBatch // 3
+        print_to_js("After group by:");
+
+        print_to_js_with_obj(&format!("{:?}", group_by).into());
+
+        // SELECT
+        let select = execute_projections(group_by, &projections); // Vec<RecordBatch> -> RecordBatch // 3
 
         print_to_js("After selection:");
 
         print_to_js_with_obj(&format!("{:?}", select).into());
 
-    
-
-        //let group_by = execute_group_by(filter, projections, group_by); // 2
-
+        // DISTINCT
         let distinct = execute_distinct(select, is_distinct); // 4
 
         print_to_js("After distinct:");
 
         print_to_js_with_obj(&format!("{:?}", distinct).into());
+
+        // ****************************************************
+
 
         let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&distinct);
 

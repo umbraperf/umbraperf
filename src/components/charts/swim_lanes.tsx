@@ -47,12 +47,16 @@ const startSize = {
     height: 200,
 }
 
-const testBuckets = [1, 2, 3, 4, 5];
-const testOperatorsGruop = [0, 0, 0.5, 0.4, 0.7];
-const testOperatorsJoin = [0, 0.5, 0.1, 0.3, 0];
-const testOperatorsTable = [1, 0.5, 0.2, 0, 0];
+const testBuckets = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const testOperatorsGruop = [0, 0, 0.5, 0.4, 0.7, 0.4, 0.3, 0.1, 0, 0];
+const testOperatorsJoin = [0, 0.5, 0.1, 0.3, 0, 0, 0, 0.3, 0.5, 0.6];
+const testOperatorsTable = [1, 0.5, 0.2, 0, 0, 0.1, 0.4, 0.2, 0, 0.2];
 
 const result = [[
+    { x: testBuckets, y: testOperatorsGruop, "c": 0 },
+    { x: testBuckets, y: testOperatorsJoin, "c": 1 },
+    { x: testBuckets, y: testOperatorsTable, "c": 2 },
+], [
     { x: testBuckets, y: testOperatorsGruop, "c": 0 },
     { x: testBuckets, y: testOperatorsJoin, "c": 1 },
     { x: testBuckets, y: testOperatorsTable, "c": 2 },
@@ -242,9 +246,9 @@ class SwimLanes extends React.Component<Props, State> {
                             <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
                         </div>
                     </div>
-                    {(!this.state.chartData || !this.props.result || this.props.resultLoading)
+                    {/* (!this.state.chartData || !this.props.result || this.props.resultLoading)
                         ? <CircularProgress />
-                        : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                        : */ <div className={"vegaContainer"} ref={this.chartWrapper}>
                             {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                         </div>
                     }

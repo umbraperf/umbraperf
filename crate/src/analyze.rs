@@ -156,7 +156,7 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-    pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) -> RecordBatch {
+    pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
 
         let unique_batch = find_unique_string(batch, column_to_groupby_over);
 
@@ -193,24 +193,43 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-    pub fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) {
+    pub fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) -> RecordBatch {
 
-        let vec = find_unique_with_sort(batch, column_to_groupby_over);
+        let unique_batch = find_unique_string(batch, column_to_groupby_over);
 
-        let mut builder =  Float64Array::builder(vec.len());  
+        // Vector of unique strings
+        let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
     
-        for group in &vec {
-            let mut group_index = 0;
-            let group_batch = filter_with(column_to_groupby_over, "t", batch);
+        // For each unique string there will be one result, therefore vec.len()
+        let mut result_builder =  Float64Array::builder(vec.len());  
     
-            let array = group_batch.column(column_to_sum_over)
+        for group in vec {
+            // Filter unique string as filter_str
+            let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
+    
+            let sum_column = group_batch.column(column_to_sum_over)
             .as_any()
-            .downcast_ref::<Float64Array>()
-            .unwrap();
-            let sum = sum(array).unwrap() ;
-    
-             builder.append_value(sum);
+            .downcast_ref::<Float64Array>();
 
-        } 
+            let result = arrow::compute::sum(sum_column.unwrap());
     
+             result_builder.append_value(result.unwrap());
+        } 
+
+        let builder = result_builder.finish();
+
+        // old_schema + new count field
+        let field = Field::new("operator", DataType::Utf8, false);        
+        let result_field = Field::new("count", DataType::Float64, false);
+
+        let schema = Schema::new(vec![field, result_field]);
+
+        let vec = unique_batch.column(0).to_owned();
+
+        RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap()
+
     }

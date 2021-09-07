@@ -118,7 +118,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
             if let Expr::Identifier(ident) = expr {
                 let column_num = get_column_num(ident.value.as_str(), &batch);
                 print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
-                return analyze::count_rows_over(&batch, column_num, column_num);
+                return analyze::count_rows_over(&batch, column_num);
             } else {
                 return batch;
             }

@@ -311,6 +311,3 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(BarChart));
-
-
-

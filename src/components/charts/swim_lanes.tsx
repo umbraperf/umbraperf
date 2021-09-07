@@ -12,22 +12,34 @@ import { ChartType } from '../../controller/web_file_controller';
 import { Button, CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
+import * as SqlApi from '../../model/sql_queries';
+
 
 
 interface Props {
     appContext: IAppContext;
     resultLoading: boolean;
     result: Result | undefined;
+    csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
+    currentRequest: SqlApi.SqlQueryType | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
     setCurrentEvent: (newCurrentEvent: string) => void;
+
 }
 
 interface State {
+    events: Array<any> | undefined,
+    chartData: undefined | IChartData,
     width: number,
     height: number,
     interpolation: string;
+}
+
+interface IChartData {
+    operators: Array<string>,
+    frequency: Array<number>,
 }
 
 const startSize = {
@@ -98,6 +110,8 @@ class SwimLanes extends React.Component<Props, State> {
         this.state = {
             width: startSize.width,
             height: startSize.height,
+            events: undefined,
+            chartData: undefined,
             interpolation: "step",
         };
 
@@ -106,22 +120,66 @@ class SwimLanes extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
-            window.alert("refetch data from rust");
-//              this.props.appContext.controller.calculateChartData(ChartType.BAR_CHART, this.props.currentEvent);
-         }
+        console.log(prevProps);
+        console.log(this.props);
+
+        //ensure changed app state and only proceed when result available
+        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
+
+            //if type of current request is GET_EVENTS, then store result from rust in component state event property 
+            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
+                const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
+                const currentEvent = events[0];
+                this.setState((state, props) => ({
+                    ...state,
+                    events: events,
+                }));
+
+                //Set first event as current, triggers component did update and calculates chart data for first event as default
+                this.props.setCurrentEvent(currentEvent);
+            }
+
+            //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
+            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {
+                /*                         const operators = this.props.result!.resultTable.getColumn('operator').toArray();
+                                        const frequency = this.props.result!.resultTable.getColumn('count').toArray();
+                                        this.setState((state, props) => ({
+                                            ...state,
+                                            chartData: {
+                                                operators: operators,
+                                                frequency: frequency,
+                                            },
+                                        })); */
+            }
+        }
+
+        //if current event changes, component did update is executed and queries new data for new event
+        if (this.props.currentEvent != prevProps.currentEvent) {
+            /* this.props.appContext.controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                    data: { event: this.props.currentEvent },
+                })); */
+        }
+
     }
 
 
     componentDidMount() {
-/*         if (this.props.events) {
+        if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.SWIM_LANES);
-            this.props.setCurrentEvent(this.props.events![0]);
-//          this.props.appContext.controller.calculateChartData(ChartType.SWIM_LANES, this.props.currentEvent, {});
-             addEventListener('resize', (event) => {
+            this.props.appContext.controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_EVENTS,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_EVENTS,
+                    data: {},
+                }));
+
+            addEventListener('resize', (event) => {
                 this.resizeListener();
             });
-        } */
+        }
     }
 
     componentWillUnmount() {
@@ -159,34 +217,39 @@ class SwimLanes extends React.Component<Props, State> {
 
 
     public render() {
+
         const interpolationDropdownProps = {
             currentInterpolation: this.state.interpolation,
             changeInterpolation: this.handleInterpolationChange,
         }
 
-        //TODO: redirect when parsing not finished
-/*         if (!this.props.events) {
+        if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
-        } */
+        }
 
-        //    TODO      if (!this.props.result || this.props.resultLoading) {
-        //             return <div className={styles.spinnerArea} >
-        //                 <CircularProgress />
-        //             </div>
-        //         } 
+        if (!this.state.events) {
+            return <div className={styles.spinnerArea} >
+                <CircularProgress />
+            </div>
+        }
 
         return <div>
-            <div className={styles.resultArea} >
-                <div className={styles.optionsArea} >
-                    <EventsButtons></EventsButtons>
-                    <div className={styles.dropdownArea} >
-                        <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+            {this.state.events &&
+                <div className={styles.resultArea} >
+                    <div className={styles.optionsArea} >
+                        <EventsButtons events={this.state.events}></EventsButtons>
+                        <div className={styles.dropdownArea} >
+                            <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                        </div>
                     </div>
+                    {(!this.state.chartData || !this.props.result || this.props.resultLoading)
+                        ? <CircularProgress />
+                        : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                            {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+                        </div>
+                    }
                 </div>
-                <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
-                </div>
-            </div>
+            }
         </div>;
     }
 
@@ -334,8 +397,10 @@ class SwimLanes extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
+    csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
+    currentRequest: state.currentRequest,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

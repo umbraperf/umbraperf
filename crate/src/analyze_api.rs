@@ -78,10 +78,17 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
                     if let Expr::Identifier(ident)  = l.as_ref() {
                         column_num = get_column_num(ident.value.as_str(), &record_batch);
                     }
+                    if let Expr::Value(value) = l.as_ref() {
+                        if let sqlparser::ast::Value::SingleQuotedString(str) = value {
+                            filter_str = str;
+                        }
+                    }
+                    if let Expr::Identifier(ident)  = r.as_ref() {
+                        column_num = get_column_num(ident.value.as_str(), &record_batch);
+                    }
                     if let Expr::Value(value) = r.as_ref() {
                         if let sqlparser::ast::Value::SingleQuotedString(str) = value {
                             filter_str = str;
-                            print_to_js_with_obj(&format!("{:?}", filter_str).into());
                         }
                     }
                 }
@@ -167,7 +174,6 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
         print_to_js_with_obj(&format!("{:?}", distinct).into());
 
         // ****************************************************
-
 
         let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&distinct);
 

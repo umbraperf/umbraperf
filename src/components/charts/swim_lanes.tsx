@@ -9,7 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { ChartType } from '../../controller/web_file_controller';
-import { Button, CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';

@@ -131,8 +131,10 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
                 if let Expr::Identifier(ident2) = expr2 {
                     let column_num1 = get_column_num(ident1.value.as_str(), &batch);
                     let column_num2 = get_column_num(ident2.value.as_str(), &batch);
-                    // if group by operator is count (TODO when is sum  )
-                    //let record_batch = analyze::count_rows_over(&batch, column_num);
+
+                    print_to_js_with_obj(&format!("{:?}", "IN GROUP BY").into());
+
+                    let batch = analyze::rel_freq_in_bucket_of_operators(&batch, column_num1, column_num2);
                     return batch;
                 }
             }

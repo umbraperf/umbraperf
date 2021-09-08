@@ -13,6 +13,7 @@ import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
+import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 
 
 
@@ -123,6 +124,7 @@ class SwimLanes extends React.Component<Props, State> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleInterpolationChange = this.handleInterpolationChange.bind(this);
+        this.handleBucketsizeChange = this.handleBucketsizeChange.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -258,6 +260,7 @@ class SwimLanes extends React.Component<Props, State> {
                         <EventsButtons events={this.state.events}></EventsButtons>
                         <div className={styles.dropdownArea} >
                             <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                            <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                         </div>
                     </div>
                     {/* (!this.state.chartData || !this.props.result || this.props.resultLoading)

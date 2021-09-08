@@ -104,7 +104,7 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize) -> RecordBatch {
+    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize)  {
 
         /* let unique_operator = find_unique_string(batch, column_for_operator);
 

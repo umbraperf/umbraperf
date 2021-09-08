@@ -14085,7 +14085,11 @@ class SwimLanes extends React.Component<Props, State> {
                                     fill: {
                                         scale: "color",
                                         field: "c"
-                                    }
+                                    },
+                                    tooltip: {
+                                        "field": "x",
+                                    },
+                                
                                 },
                                 update: {
                                     fillOpacity: {

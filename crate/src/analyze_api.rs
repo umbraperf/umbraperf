@@ -113,17 +113,30 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     // GROUPBY
     pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>) -> RecordBatch {
 
-        if group_by.len() > 0 {
+        if group_by.len() == 1 {
             let expr = &group_by[0];
             if let Expr::Identifier(ident) = expr {
                 let column_num = get_column_num(ident.value.as_str(), &batch);
                 print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
                 // if group by operator is count (TODO when is sum  )
                 let record_batch = analyze::count_rows_over(&batch, column_num);
-                return execute_group_by(record_batch, projections, group_by.split_first().unwrap().1.to_vec());
+                return record_batch;
             } else {
                 return batch;
             }
+        } else if  group_by.len() == 2  {
+            let expr1 = &group_by[0];
+            let expr2 = &group_by[1];
+            if let Expr::Identifier(ident1) = expr1 {
+                if let Expr::Identifier(ident2) = expr2 {
+                    let column_num1 = get_column_num(ident1.value.as_str(), &batch);
+                    let column_num2 = get_column_num(ident2.value.as_str(), &batch);
+                    // if group by operator is count (TODO when is sum  )
+                    let record_batch = analyze::count_rows_over(&batch, column_num);
+                    return record_batch;
+                }
+            }
+            return batch;
         } else {
             return batch;
         }
@@ -171,6 +184,8 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
         print_to_js_with_obj(&format!("{:?}", filter).into());
 
         // RANGE
+
+        print_to_js_with_obj(&format!("{:?}", range_str).into());
 
         let range = execute_range(filter, range_str);
 

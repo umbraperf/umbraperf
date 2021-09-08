@@ -1,4 +1,4 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, Int64Array, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{DataType, Field, Float64Type, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, GenericStringArray, Int64Array, LargeStringArray, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{DataType, Field, Float64Type, Schema, SchemaRef}, record_batch::RecordBatch};
 use std::{collections::{BTreeMap}, sync::Arc};
 use arrow::error::Result as ArrowResult;
 use crate::{print_to_js, print_to_js_with_obj};
@@ -63,6 +63,31 @@ use crate::{print_to_js, print_to_js_with_obj};
         
     }
 
+    pub fn filter_with_number(column_num: usize, filter_float: f64, batch: &RecordBatch) -> RecordBatch {
+
+        let filter_array = batch
+            .column(column_num)
+            .as_any()
+            .downcast_ref::<Float64Array>()
+            .unwrap()
+            .iter()
+            .map(|value| Some(value == Some(filter_float)))
+            .collect::<BooleanArray>();
+    
+        let mut arrays: Vec<ArrayRef> = Vec::new();
+    
+        for idx in 0..batch.num_columns() {
+            let array = batch.column(idx).as_ref();
+    
+            let filtered = arrow::compute::filter(array, &filter_array).unwrap();
+    
+            arrays.push(filtered);
+        }
+    
+        create_record_batch(batch.schema(), arrays)
+        
+    }
+
     // 2
     // GROUPBY
     pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
@@ -104,42 +129,68 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize)  {
+    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize) -> RecordBatch  {
 
-        /* let unique_operator = find_unique_string(batch, column_for_operator);
+        let unique_bucket = find_unique_numbers(batch, column_for_bucket);
+        print_to_js_with_obj(&format!("{:?}", unique_bucket).into());
+
+        let unique_operator = find_unique_string(batch, column_for_operator);
+        print_to_js_with_obj(&format!("{:?}", unique_operator).into());
+
+        // Vector of unique numbers
+        let vec_bucket = unique_bucket
+        .column(0)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();  
 
         // Vector of unique strings
-        let vec = unique_batch
+        let vec_operator = unique_operator
         .column(0)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap();
-    
+      
         // For each *unique* string there will be one result, therefore vec.len()
-        let mut result_builder =  Float64Array::builder(vec.len());  
-    
-        for group in vec {
-            // Filter unique string as filter_str
-            let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
-    
-            let row_count = group_batch.num_rows() as f64;
-    
-             result_builder.append_value(row_count);
-        } 
+        let mut result_bucket =  Float64Array::builder(vec_operator.len() * vec_bucket.len());  
+        let mut result_vec_operator = Vec::new();
+        let mut result_builder =  Float64Array::builder(vec_operator.len() * vec_bucket.len());  
 
-        let builder = result_builder.finish();
+        for bucket in vec_bucket {
+            let bucket_num = bucket.unwrap();
+            let bucket_batch = filter_with_number(column_for_bucket, bucket_num, batch);
+            let bucket_size = bucket_batch.column(0).len();
+            for operator in vec_operator {
+                let operator_str = operator.unwrap();
+                let operator = filter_with(column_for_operator, operator_str, &bucket_batch);
+                let operator_size =  operator.column(0).len();
+
+                result_bucket.append_value(bucket_num);
+                result_vec_operator.push(operator_str);
+                result_builder.append_value((operator_size as f64 / bucket_size as f64));
+            }
+        }
+
+        print_to_js_with_obj(&format!("{:?}", "Further").into());
+
+
+        let builder_bucket = result_bucket.finish();
+        let operator_arr = StringArray::from(result_vec_operator);
+        let builder_result = result_builder.finish();
+        print_to_js_with_obj(&format!("{:?}", builder_result).into());
+
 
         let schema = batch.schema();
-        let column_to_group_over_name = schema.field(column_to_groupby_over).name();
-        // old_schema + new count field
-        let field = Field::new(column_to_group_over_name, DataType::Utf8, false);        
-        let result_field = Field::new("count", DataType::Float64, false);
+        let column_for_bucket_name = schema.field(column_for_bucket).name();
+        let column_for_operator_name = schema.field(column_for_operator).name();
 
-        let schema = Schema::new(vec![field, result_field]);
+        let field_bucket = Field::new(column_for_bucket_name, DataType::Float64, false);        
+        let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);        
+        let result_field = Field::new("relFreq", DataType::Float64, false);
 
-        let vec = unique_batch.column(0).to_owned();
+        let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
 
-        RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap() */
+        RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder_bucket), Arc::new(operator_arr), Arc::new(builder_result)]).unwrap()
 
     }
 
@@ -192,6 +243,39 @@ use crate::{print_to_js, print_to_js_with_obj};
         str_vec.dedup();
 
         let array = StringArray::from(str_vec);
+
+        let schema = batch.schema();
+
+        let field = schema.field(column_index_for_unqiue);
+
+        let new_schema = Schema::new(vec![field.to_owned()]);
+            
+        RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
+
+    }
+
+      // 4
+    // DISTINCT
+    pub fn find_unique_numbers(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
+
+        let vec = batch.column(column_index_for_unqiue)
+            .as_any()
+            .downcast_ref::<Float64Array>()
+            .unwrap();
+        
+        let mut str_vec = Vec::new();
+        
+        for item in vec {
+            if let Some(x) = item {
+                str_vec.push(x);
+            }
+        }
+
+        str_vec.sort_by_key(|k| (k * 100.0) as i64);
+
+        str_vec.dedup();
+
+        let array = Float64Array::from(str_vec);
 
         let schema = batch.schema();
 

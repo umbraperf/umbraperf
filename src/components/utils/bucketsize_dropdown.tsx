@@ -6,22 +6,22 @@ import styles from "../../style/dropdown.module.css";
 
 export default function BucketsizeDropdwn(props: any) {
 
-    const interpolations = ["linear", "linear-closed", "step", "step-before", "step-after", "basis", "basis-open", "basis-closed", "cardinal", "cardinal-open", "cardinal-closed", "bundle", "monotone"];
+    const bucketsizes = [0.1, 0.2, 0.5, 0.7, 1, 2.5, 5, 7.5, 10];
 
-    const handleOnItemClick = (elem: string) => {
-        props.changeInterpolation(elem);
+    const handleOnItemClick = (elem: number) => {
+        props.handleBucketsizeChange(elem);
     };
 
 
     return (
-        <div className={styles.interpolationDropdownSelectorContainer}>
-            <InputLabel className={styles.interpolationDropdownSelectorLabel} id="interpolation-selector-label">Choose Interpolation:</InputLabel>
-            <Select className={styles.interpolationDropdownSelector}
-                labelId="interpolation-selector-label"
-                id="interpolation-selector"
-                value={props.currentInterpolation}
+        <div className={styles.bucketsizeDropdownSelectorContainer}>
+            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} id="bucketsize-selector-label">Choose Bucket-Size:</InputLabel>
+            <Select className={styles.bucketsizeDropdownSelector}
+                labelId="bucketsize-selector-label"
+                id="bucketsize-selector"
+                value={props.currentBucketsize}
             >
-                {interpolations.map((elem, index) =>
+                {bucketsizes.map((elem, index) =>
                     (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)
                 )}
             </Select>

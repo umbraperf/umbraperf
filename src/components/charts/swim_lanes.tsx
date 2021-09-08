@@ -182,7 +182,7 @@ class SwimLanes extends React.Component<Props, State> {
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_EVENTS,
                     data: {},
-                }));
+                }), ""+this.state.bucketsize);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -269,9 +269,33 @@ class SwimLanes extends React.Component<Props, State> {
                             {result.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                         </div>
                     }
+                    <Vega className={`vegaStreamgraph`} spec={this.createVisualizationSpecStream()} />
+
                 </div>
             }
         </div>;
+    }
+
+    createVisualizationSpecStream() {
+        const spec: VisualizationSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 300, "height": 200,
+            "data": { "url": "data/unemployment-across-industries.json" },
+            "mark": "area",
+            "encoding": {
+                "x": {
+                    "timeUnit": "yearmonth", "field": "date",
+                    "axis": { "domain": false, "format": "%Y", "tickSize": 0 }
+                },
+                "y": {
+                    "aggregate": "sum", "field": "count",
+                    "axis": null,
+                    "stack": "center"
+                },
+                "color": { "field": "series", "scale": { "scheme": "category20b" } }
+            }
+        }
+        return spec;
     }
 
     createVisualizationData(chartId: number) {

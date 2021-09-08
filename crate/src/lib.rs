@@ -146,13 +146,13 @@ pub fn analyze_file(file_size: i32){
 
 
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(sql_query: &str) {
+pub fn request_chart_data(sql_query: &str, range_str: &str) {
 
     print_to_js_with_obj(&format!("{:?}", sql_query).into());
 
     let batch = get_record_batches().unwrap();
 
-    analyze_api::query(batch, sql_query);
+    analyze_api::query(batch, sql_query, range_str);
     
 }
 

@@ -118,13 +118,26 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
             if let Expr::Identifier(ident) = expr {
                 let column_num = get_column_num(ident.value.as_str(), &batch);
                 print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
-                return analyze::count_rows_over(&batch, column_num);
+                // if group by operator is count (TODO when is sum  )
+                let record_batch = analyze::count_rows_over(&batch, column_num);
+                return execute_group_by(record_batch, projections, group_by.split_first().unwrap().1.to_vec());
             } else {
                 return batch;
             }
         } else {
             return batch;
         }
+    }
+
+
+    pub fn execute_range(batch: RecordBatch, range_str: &str) {
+
+        // Eventuell noch zusätzlichen string mit {time: 0.2   }
+
+        //let 
+
+        //analyze::add_range_to_batch(&batch, range, column_for_range)
+
     }
 
     // for fast query exection:
@@ -136,7 +149,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     // 3) SELECT -- select is here first as it converts the vector of record batches also to one batch
     // 4) DISTINCT
     // 5) ORDERBY
-    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool) {
+    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool, range_str: &str) {
 
         // ****************************************************
         let convert = analyze::convert(batches);
@@ -151,6 +164,14 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
         print_to_js("After filter:");
 
         print_to_js_with_obj(&format!("{:?}", filter).into());
+
+        // RANGE
+
+        //let range = execute_range(filter, range_str);
+
+        print_to_js("After range:");
+
+        //print_to_js_with_obj(&format!("{:?}", range).into());
         
         // GROUPBY
         let group_by = execute_group_by(filter, &projections, group_by); // 2
@@ -189,7 +210,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     // 
     // select is required
     // from and where are optional
-    pub fn query(batches: Vec<RecordBatch>, sql_query: &str) {
+    pub fn query(batches: Vec<RecordBatch>, sql_query: &str, range_str: &str) {
 
         let dialect = GenericDialect {};
 
@@ -212,7 +233,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
                             let selection = select.selection;
                             let group_by = select.group_by;
                             let sort_by = select.sort_by;
-                            execute_query(batches.to_owned(), projection, selection, group_by, sort_by, is_distinct);
+                            execute_query(batches.to_owned(), projection, selection, group_by, sort_by, is_distinct, range_str);
                         }
                         _ => {
                             panic!("Not implemented!");

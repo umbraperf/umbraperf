@@ -132,8 +132,8 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
                     let column_num1 = get_column_num(ident1.value.as_str(), &batch);
                     let column_num2 = get_column_num(ident2.value.as_str(), &batch);
                     // if group by operator is count (TODO when is sum  )
-                    let record_batch = analyze::count_rows_over(&batch, column_num);
-                    return record_batch;
+                    //let record_batch = analyze::count_rows_over(&batch, column_num);
+                    return batch;
                 }
             }
             return batch;

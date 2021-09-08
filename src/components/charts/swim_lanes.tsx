@@ -163,12 +163,13 @@ class SwimLanes extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
-            /* this.props.appContext.controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+            window.alert("hier");
+            this.props.appContext.controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: this.props.currentEvent },
-                })); */
+                }));
         }
 
     }
@@ -176,13 +177,14 @@ class SwimLanes extends React.Component<Props, State> {
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
+            this.props.setCurrentEvent("");
             this.props.setCurrentChart(ChartType.SWIM_LANES);
             this.props.appContext.controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_EVENTS,
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_EVENTS,
                     data: {},
-                }), ""+this.state.bucketsize);
+                }), "" + this.state.bucketsize);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();

@@ -130,13 +130,18 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     }
 
 
-    pub fn execute_range(batch: RecordBatch, range_str: &str) {
+    pub fn execute_range(batch: RecordBatch, range_str: &str) -> RecordBatch {
 
-        // Eventuell noch zusätzlichen string mit {time: 0.2   }
-
-        //let 
-
-        //analyze::add_range_to_batch(&batch, range, column_for_range)
+        if range_str.len() > 0 {
+            let split: Vec<&str>  = range_str.split_terminator(":").collect();
+            let column = split[0].replace("{", "").replace(" ", "");
+            let column_as_usize = get_column_num(&column, &batch);
+            let range = split[1].replace("}", "").replace(" ", "");
+            let range_as_f64 = range.parse::<f64>().unwrap();
+            return analyze::add_range_to_batch(&batch, range_as_f64, column_as_usize)
+        } else {
+            return batch
+        }
 
     }
 
@@ -167,14 +172,14 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
         // RANGE
 
-        //let range = execute_range(filter, range_str);
+        let range = execute_range(filter, range_str);
 
         print_to_js("After range:");
 
-        //print_to_js_with_obj(&format!("{:?}", range).into());
+        print_to_js_with_obj(&format!("{:?}", range).into());
         
         // GROUPBY
-        let group_by = execute_group_by(filter, &projections, group_by); // 2
+        let group_by = execute_group_by(range, &projections, group_by); // 2
 
         print_to_js("After group by:");
 

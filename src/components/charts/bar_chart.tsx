@@ -41,7 +41,7 @@ interface IChartData {
 
 const startSize = {
     width: 500,
-    height: 500,
+    height: window.innerHeight>1000 ? 500 : window.innerHeight - 350,
 }
 
 class BarChart extends React.Component<Props, State> {
@@ -141,7 +141,7 @@ class BarChart extends React.Component<Props, State> {
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth > startSize.width ? startSize.width : newWidth,
-                //height: newHeight,
+                height: newHeight > startSize.height ? startSize.height : newHeight,
             }));
 
             child.style.display = 'block';

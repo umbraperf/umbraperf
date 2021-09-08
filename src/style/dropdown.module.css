@@ -35,4 +35,16 @@
 
 .interpolationDropdownSelectorContainer{
     composes: dropdownSelectorContainer;
+} 
+
+.bucketsizeDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.bucketsizeDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.bucketsizeDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
 }  

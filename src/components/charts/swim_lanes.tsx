@@ -168,7 +168,7 @@ class SwimLanes extends React.Component<Props, State> {
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: this.props.currentEvent },
-                }), `{range: ${this.state.bucketsize}}`);
+                }), `{time: ${this.state.bucketsize}}`);
         }
 
     }

@@ -35,6 +35,7 @@ interface State {
     width: number,
     height: number,
     interpolation: string;
+    bucketsize: number;
 }
 
 interface IChartData {
@@ -117,6 +118,7 @@ class SwimLanes extends React.Component<Props, State> {
             events: undefined,
             chartData: undefined,
             interpolation: "basis",
+            bucketsize: 0.2,
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
@@ -219,12 +221,24 @@ class SwimLanes extends React.Component<Props, State> {
         });
     }
 
+    handleBucketsizeChange(newBucketsize: number) {
+        this.setState({
+            ...this.state,
+            bucketsize: newBucketsize,
+        });
+    }
+
 
     public render() {
 
         const interpolationDropdownProps = {
             currentInterpolation: this.state.interpolation,
             changeInterpolation: this.handleInterpolationChange,
+        }
+
+        const bucketsizeDropdownProps = {
+            currentBucketsize: this.state.bucketsize,
+            changeBucketsize: this.handleBucketsizeChange,
         }
 
         if (!this.props.csvParsingFinished) {

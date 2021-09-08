@@ -49,7 +49,17 @@ const startSize = {
     height: 200,
 }
 
-const testBuckets = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const buckets = [1,1,1, 2, 2, 2];
+const ops = ["group", "join", "kernel", "group", "join", "kernel"];
+const freq = [0.1, 0.1, 0.8, 0.4, 0.5, 0];
+
+const result = [
+   [
+     {buckets: buckets, operators: ops, relFreq: freq}, 
+   ]
+];
+
+/* const testBuckets = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const testOperatorsGruop = [0, 0, 0.5, 0.4, 0.7, 0.4, 0.3, 0.1, 0, 0];
 const testOperatorsJoin = [0, 0.5, 0.1, 0.3, 0, 0, 0, 0.3, 0.5, 0.6];
 const testOperatorsTable = [1, 0.5, 0.2, 0, 0, 0.1, 0.4, 0.2, 0, 0.2];
@@ -70,7 +80,7 @@ const result = [[
     { x: testBuckets, y: testOperatorsGruop, "c": 0 },
     { x: testBuckets, y: testOperatorsJoin, "c": 1 },
     { x: testBuckets, y: testOperatorsTable, "c": 2 },
-]];
+]]; */
 
 const resultorig = [[
     { "x": 0, "y": 28, "c": 0 }, { "x": 0, "y": 55, "c": 1 },
@@ -13972,18 +13982,11 @@ class SwimLanes extends React.Component<Props, State> {
         const data = {
             "name": "table",
             "values": result[chartId],
-            "transform": [
-                {
-                    type: "flatten",
-                    fields: ["x", "y"]
-                },
-                {
-                    "type": "stack",
-                    "groupby": ["x"],
-                    "sort": { "field": "c" },
-                    "field": "y"
-                }
-            ]
+            transform: [
+               {"type": "flatten", "fields": ["buckets", "operators", "relFreq"]},
+               {"type": "collect", "sort": {"field": "operators"}},
+               {"type": "stack", "groupby": ["buckets"], "field" : "relFreq"}
+             ]
         };
 
         return data;
@@ -14011,7 +14014,7 @@ class SwimLanes extends React.Component<Props, State> {
                     range: "width",
                     domain: {
                         data: "table",
-                        field: "x"
+                        field: "buckets"
                     }
                 },
                 {
@@ -14033,7 +14036,7 @@ class SwimLanes extends React.Component<Props, State> {
                     },
                     domain: {
                         data: "table",
-                        field: "c"
+                        field: "operators"
                     }
                 }
             ],
@@ -14056,7 +14059,7 @@ class SwimLanes extends React.Component<Props, State> {
                         facet: {
                             name: "series",
                             data: "table",
-                            groupby: "c"
+                            groupby: "operators"
                         }
                     },
                     marks: [
@@ -14072,7 +14075,7 @@ class SwimLanes extends React.Component<Props, State> {
                                     },
                                     x: {
                                         scale: "x",
-                                        field: "x"
+                                        field: "buckets"
                                     },
                                     y: {
                                         scale: "y",
@@ -14084,10 +14087,10 @@ class SwimLanes extends React.Component<Props, State> {
                                     },
                                     fill: {
                                         scale: "color",
-                                        field: "c"
+                                        field: "operators"
                                     },
                                     tooltip: {
-                                        "field": "x",
+                                        "field": "buckets",
                                     },
                                 
                                 },

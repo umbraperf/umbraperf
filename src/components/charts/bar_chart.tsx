@@ -108,7 +108,6 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
-            this.props.setCurrentEvent("");
             this.props.setCurrentChart(ChartType.BAR_CHART);
             this.props.appContext.controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_EVENTS,

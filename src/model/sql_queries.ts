@@ -14,7 +14,7 @@ export enum SqlQueryType {
 export type QueryVariant =
     | SqlQuery<SqlQueryType.GET_EVENTS, {}>
     | SqlQuery<SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
-    | SqlQuery<SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, bucketSize: number }>
+    | SqlQuery<SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string }>
     | SqlQuery<SqlQueryType.other, {}>
     ;
 
@@ -26,7 +26,7 @@ export function createSqlQuery(query: QueryVariant) {
         case SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `select operator, count(operator)  from xy where ev_name = '${query.data.event}' group by operator`;
         case SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
-            return `dummy sql with ev_name = '${query.data.event}' and range = '${query.data.bucketSize}'`;
+            return `select range, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator`;
         case SqlQueryType.other:
             return 'error - bad request to backend';
     }

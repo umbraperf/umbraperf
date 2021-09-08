@@ -24,8 +24,6 @@ export default function EventsButtons(props: any) {
 
     const handleEventButtonClick = (event: string) => {
         setNewCurrentEvent(event);
-        // TODO: wrong request, make request with correct event in component did update
-        // context!.controller.calculateChartData(SqlQueries.other);
     }
 
     return (

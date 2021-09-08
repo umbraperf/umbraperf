@@ -140,7 +140,7 @@ worker.onmessage = (message) => {
     case WorkerRequestType.CALCULATE_CHART_DATA:
       /*       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
        */
-      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery);
+      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
       break;
 
     default:

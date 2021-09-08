@@ -1,6 +1,7 @@
 import { setCsvReadingFinished, storeResultFromRust } from './controller/web_file_controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
+import { ICalculateChartDataRequestData } from './worker';
 
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
@@ -29,10 +30,15 @@ export class WorkerAPI {
         });
     } */
 
-    public calculateChartData(sqlQuery: string){
+    public calculateChartData(metadata: string, sqlQuery: string){
+        const requestData: ICalculateChartDataRequestData = {
+            queryMetadata: metadata,
+            sqlQuery: sqlQuery,
+        }
+
         this.worker.postMessage({
             type: model.WorkerRequestType.CALCULATE_CHART_DATA,
-            data: sqlQuery,
+            data: requestData,
         });
     }
 

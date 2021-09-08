@@ -27,9 +27,14 @@ export type WorkerResponse<T, P> = {
   readonly data: P;
 };
 
+export interface ICalculateChartDataRequestData{
+  queryMetadata: string,
+  sqlQuery: string,
+}
+
 export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.REGISTER_FILE, File> |
-  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, string>
+  WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ICalculateChartDataRequestData>
   ;
 
 export type WorkerResponseVariant =
@@ -135,8 +140,7 @@ worker.onmessage = (message) => {
     case WorkerRequestType.CALCULATE_CHART_DATA:
       /*       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
        */
-      profiler_core.requestChartData(messageData as string);
-
+      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery);
       break;
 
     default:

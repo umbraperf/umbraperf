@@ -37,7 +37,9 @@ export class WebFileController {
             worker.calculateChartData(chartType, event, completeParams);
         } */
 
-    public calculateChartData(sqlQueryType: SqlQueryType, sqlQuery: string) {
+    public calculateChartData(sqlQueryType: SqlQueryType, sqlQuery: string, metadata?: string) {
+        const queryMetadata = metadata ? metadata : "";
+
         store.dispatch({
             type: StateMutationType.SET_CURRENTREQUEST,
             data: sqlQueryType,
@@ -52,7 +54,7 @@ export class WebFileController {
         });
         console.log(sqlQueryType);
         console.log(sqlQuery);
-        worker.calculateChartData(sqlQuery);
+        worker.calculateChartData(queryMetadata, sqlQuery);
     }
 }
 

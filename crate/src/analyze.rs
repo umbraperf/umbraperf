@@ -104,6 +104,45 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
+    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize)  {
+
+        /* let unique_operator = find_unique_string(batch, column_for_operator);
+
+        // Vector of unique strings
+        let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+    
+        // For each *unique* string there will be one result, therefore vec.len()
+        let mut result_builder =  Float64Array::builder(vec.len());  
+    
+        for group in vec {
+            // Filter unique string as filter_str
+            let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
+    
+            let row_count = group_batch.num_rows() as f64;
+    
+             result_builder.append_value(row_count);
+        } 
+
+        let builder = result_builder.finish();
+
+        let schema = batch.schema();
+        let column_to_group_over_name = schema.field(column_to_groupby_over).name();
+        // old_schema + new count field
+        let field = Field::new(column_to_group_over_name, DataType::Utf8, false);        
+        let result_field = Field::new("count", DataType::Float64, false);
+
+        let schema = Schema::new(vec![field, result_field]);
+
+        let vec = unique_batch.column(0).to_owned();
+
+        RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap() */
+
+    }
+
 
     // 3
     // SELECTION
@@ -209,6 +248,8 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     pub fn add_range_to_batch(batch: &RecordBatch, range: f64, column_for_range: usize) -> RecordBatch {
 
+        print_to_js_with_obj(&format!("{:?}", column_for_range).into());
+
         // Get the column for the range
         let range_column = batch.column(column_for_range)
         .as_any()
@@ -228,6 +269,8 @@ use crate::{print_to_js, print_to_js_with_obj};
         }
 
         let builder = range_builder.finish();
+
+        print_to_js_with_obj(&format!("{:?}", builder).into());
 
         // Creating new record batch with special fields
         let mut vec_field = Vec::new();
@@ -255,44 +298,3 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-
-    pub fn sum_rows_over(batch: &RecordBatch, column_to_groupby_over: usize, column_to_sum_over: usize) -> RecordBatch {
-
-        let unique_batch = find_unique_string(batch, column_to_groupby_over);
-
-        // Vector of unique strings
-        let vec = unique_batch
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-    
-        // For each unique string there will be one result, therefore vec.len()
-        let mut result_builder =  Float64Array::builder(vec.len());  
-    
-        for group in vec {
-            // Filter unique string as filter_str
-            let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
-    
-            let sum_column = group_batch.column(column_to_sum_over)
-            .as_any()
-            .downcast_ref::<Float64Array>();
-
-            let result = arrow::compute::sum(sum_column.unwrap());
-    
-             result_builder.append_value(result.unwrap());
-        } 
-
-        let builder = result_builder.finish();
-
-        // old_schema + new count field
-        let field = Field::new("operator", DataType::Utf8, false);        
-        let result_field = Field::new("count", DataType::Float64, false);
-
-        let schema = Schema::new(vec![field, result_field]);
-
-        let vec = unique_batch.column(0).to_owned();
-
-        RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap()
-
-    }

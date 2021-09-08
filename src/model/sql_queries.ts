@@ -8,7 +8,7 @@ export enum SqlQueryType {
     GET_EVENTS = "GET_EVENTS",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
     GET_REL_OP_DISTR_PER_BUCKET = "GET_REL_OP_DISTR_PER_BUCKET",
-    other = "other"
+    other = "other",
 }
 
 export type QueryVariant =
@@ -17,7 +17,6 @@ export type QueryVariant =
     | SqlQuery<SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, bucketSize: number }>
     | SqlQuery<SqlQueryType.other, {}>
     ;
-
 
 export function createSqlQuery(query: QueryVariant) {
 

@@ -11,6 +11,7 @@ import styles from './style/main-app.module.css';
 
 import FileUploader from './components/file_uploader';
 import Dummy from './components/dummy';
+import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
 import SwimLanes from './components/charts/swim_lanes';
 import TabPanel from './components/utils/tab_panel';
@@ -19,6 +20,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -70,6 +72,12 @@ export const routes = [
         sidebarName: 'Upload File',
         component: FileUploader,
         icon: () => { return (<BackupIcon />) },
+    },
+    {
+        path: '/dashboard',
+        sidebarName: 'Dashboard',
+        component: Dashboard,
+        icon: () => { return (<DashboardIcon />) },
     },
     {
         path: '/bar-chart',

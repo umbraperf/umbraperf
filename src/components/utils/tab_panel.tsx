@@ -17,9 +17,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
+        backgroundColor: "#e0e0e0",
         flexGrow: 1,
         width: '100%',
-        backgroundColor: theme.palette.background.paper,
+        //backgroundColor: theme.palette.background.default,
+        //backgroundColor: theme.palette.background.paper,
     },
     tabsDisabled: {
         color: 'white',

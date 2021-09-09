@@ -163,7 +163,7 @@ class SwimLanes extends React.Component<Props, State> {
             const relativeFrquencies = this.props.result!.resultTable.getColumn('relFreq').toArray();
 
             const chartDataElement: IChartData = {
-               buckets: buckets,
+               buckets: buckets.map((elem: number) => (Math.round(elem*100)/100)),
                operators: operators,
                relativeFrquencies: relativeFrquencies,
             }
@@ -14003,7 +14003,23 @@ class SwimLanes extends React.Component<Props, State> {
    }
 
    createVisualizationSpec(chartId: number) {
+      console.log(this.state.chartData[chartId].buckets);
+
       const visData = this.createVisualizationData(chartId);
+
+      const xTicks = () => {
+
+         const numberOfTicks = 50;
+         const bucketsArrayLength = this.state.chartData[chartId].buckets.length;
+         let ticks = [];
+
+         const delta = Math.floor(bucketsArrayLength / numberOfTicks);
+                               
+         for (let i = 0; i < bucketsArrayLength; i = i + delta) {
+            ticks.push(this.state.chartData[chartId].buckets[i]);
+         }
+         return ticks;
+      }
 
       const spec: VisualizationSpec = {
          $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -14054,8 +14070,10 @@ class SwimLanes extends React.Component<Props, State> {
             {
                orient: "bottom",
                scale: "x",
-               zindex: 1
-            },
+               zindex: 1,
+                labelOverlap: true,
+                values: xTicks()           
+             },
             {
                orient: "left",
                scale: "y",

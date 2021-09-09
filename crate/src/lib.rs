@@ -34,7 +34,7 @@ use serde::{Serialize, Deserialize};
 
 //STATE
 pub struct State {
-    pub record_batches: Option<Vec<RecordBatch>>
+    pub record_batches: Option<RecordBatch>
 }
 
 thread_local! {
@@ -63,11 +63,11 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-fn get_record_batches() ->  Option<Vec<RecordBatch>> {
+fn get_record_batches() ->  Option<RecordBatch> {
     with_state(|s| s.record_batches.clone())
 }
 
-fn set_record_batches(record_batches: Vec<RecordBatch>) {
+fn set_record_batches(record_batches: RecordBatch) {
     _with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
@@ -138,8 +138,10 @@ pub fn analyze_file(file_size: i32){
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into()); 
+
+    let record_batch = analyze::convert(batches);
     
-    set_record_batches(batches);
+    set_record_batches(record_batch);
 
     notify_js_finished_reading(0); 
 }

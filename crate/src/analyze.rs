@@ -1,5 +1,5 @@
 use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, GenericStringArray, Int64Array, LargeStringArray, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{DataType, Field, Float64Type, Schema, SchemaRef}, record_batch::RecordBatch};
-use std::{collections::{BTreeMap, HashMap, HashSet}, sync::Arc};
+use std::{collections::{HashSet}, sync::Arc};
 use arrow::error::Result as ArrowResult;
 use crate::{print_to_js, print_to_js_with_obj};
 
@@ -167,11 +167,9 @@ use crate::{print_to_js, print_to_js_with_obj};
 
                 result_bucket.append_value(bucket_num);
                 result_vec_operator.push(operator_str);
-                result_builder.append_value((operator_size as f64 / bucket_size as f64));
+                result_builder.append_value(operator_size as f64 / bucket_size as f64);
             }
         }
-
-        print_to_js_with_obj(&format!("{:?}", "Further").into());
 
 
         let builder_bucket = result_bucket.finish();
@@ -254,32 +252,33 @@ use crate::{print_to_js, print_to_js_with_obj};
     // DISTINCT
     pub fn find_unique_numbers(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
 
-        let vec = batch.column(column_index_for_unqiue)
-            .as_any()
-            .downcast_ref::<Float64Array>()
-            .unwrap();
-        
-        let mut str_vec = Vec::new();
-        
-        for item in vec {
-            if let Some(x) = item {
-                str_vec.push(x);
-            }
+    let vec = batch.column(column_index_for_unqiue)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+    
+    let mut str_vec = Vec::new();
+    
+    for item in vec {
+        if let Some(x) = item {
+            str_vec.push(x);
         }
+    }
 
-        str_vec.sort_by_key(|k| (k * 100.0) as i64);
+    str_vec.sort_by_key(|k| (k * 100.0) as i64);
 
-        str_vec.dedup();
+    str_vec.dedup();
 
-        let array = Float64Array::from(str_vec);
+    let array = Float64Array::from(str_vec);
 
-        let schema = batch.schema();
+    let schema = batch.schema();
 
-        let field = schema.field(column_index_for_unqiue);
+    let field = schema.field(column_index_for_unqiue);
 
-        let new_schema = Schema::new(vec![field.to_owned()]);
-            
-        RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
+    let new_schema = Schema::new(vec![field.to_owned()]);
+        
+    RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
+
 
     }
 

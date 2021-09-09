@@ -10,8 +10,8 @@
 
 .appBody{
     position: fixed;
-    top: 64px;
-    bottom: 71px;
+    top: 136px;
+    bottom: 0px;
     width: 100%;
     overflow-y: scroll;
 }
@@ -22,6 +22,6 @@
 
 .appNavigation{
     position: fixed;
-    bottom: 0;
+    top: 64px;
     width: 100%;
 }

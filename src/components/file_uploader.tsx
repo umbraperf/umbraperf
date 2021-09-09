@@ -85,7 +85,7 @@ class FileUploader extends React.Component<Props, State> {
             {this.state.allowRedirect && <Redirect to={"/bar-chart"} />}
 
             {(!this.props.csvParsingFinished && undefined !== this.props.file) && <div className={styles.fileUploaderLinearProgressContainer}>
-                <LinearProgress color="primary" />
+                <LinearProgress color="secondary" />
             </div>}
             
             <Dropzone

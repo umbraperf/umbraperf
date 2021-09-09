@@ -1,5 +1,5 @@
 use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, GenericStringArray, Int64Array, LargeStringArray, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{DataType, Field, Float64Type, Schema, SchemaRef}, record_batch::RecordBatch};
-use std::{collections::{BTreeMap}, sync::Arc};
+use std::{collections::{BTreeMap, HashMap, HashSet}, sync::Arc};
 use arrow::error::Result as ArrowResult;
 use crate::{print_to_js, print_to_js_with_obj};
 
@@ -225,24 +225,20 @@ use crate::{print_to_js, print_to_js_with_obj};
     // DISTINCT
     pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
 
+
         let vec = batch.column(column_index_for_unqiue)
             .as_any()
             .downcast_ref::<StringArray>()
             .unwrap();
-        
-        let mut str_vec = Vec::new();
-        
-        for item in vec {
-            if let Some(x) = item {
-                str_vec.push(x);
-            }
-        }
+                
+        let hash_set = vec.into_iter()
+        .map(|item| item.unwrap())
+        .collect::<HashSet<&str>>()
+        .into_iter()
+        .collect::<Vec<&str>>();
 
-        str_vec.sort();
 
-        str_vec.dedup();
-
-        let array = StringArray::from(str_vec);
+        let array = StringArray::from(hash_set);
 
         let schema = batch.schema();
 

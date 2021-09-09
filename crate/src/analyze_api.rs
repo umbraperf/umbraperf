@@ -169,17 +169,12 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     // 3) SELECT -- select is here first as it converts the vector of record batches also to one batch
     // 4) DISTINCT
     // 5) ORDERBY
-    pub fn execute_query(batches: Vec<RecordBatch>, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool, range_str: &str) {
+    pub fn execute_query(batches: RecordBatch, projections: Vec<SelectItem>, selection: Option<Expr>, group_by: Vec<Expr>, sort_by: Vec<Expr>, is_distinct: bool, range_str: &str) {
 
         // ****************************************************
-        let convert = analyze::convert(batches);
-
-        print_to_js("After converting:");
-
-        print_to_js_with_obj(&format!("{:?}", convert).into());
 
         // WHERE
-        let filter = execute_selections(selection, convert); // 1
+        let filter = execute_selections(selection, batches); // 1
 
         print_to_js("After filter:");
 
@@ -232,7 +227,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     // 
     // select is required
     // from and where are optional
-    pub fn query(batches: Vec<RecordBatch>, sql_query: &str, range_str: &str) {
+    pub fn query(batches: RecordBatch, sql_query: &str, range_str: &str) {
 
         let dialect = GenericDialect {};
 

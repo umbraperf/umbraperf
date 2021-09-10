@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
-import {requestEvents, storeEventsFromRust} from '../../controller/web_file_controller'
+import {requestEvents, storeEventsFromRust, createRequestForRust} from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -92,6 +92,7 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
+            //createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
             this.props.appContext.controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 SqlApi.createSqlQuery({

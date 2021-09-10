@@ -55,6 +55,7 @@ export class WebFileController {
         });
         console.log(sqlQueryType);
         console.log(sqlQuery);
+
         worker.calculateChartData(queryMetadata, sqlQuery);
     }
 }
@@ -82,7 +83,7 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 }
 
 //request events from rust for specific chart type
-export function requestEvents(controller: WebFileController){
+export function requestEvents(controller: WebFileController) {
     controller.calculateChartData(
         SqlApi.SqlQueryType.GET_EVENTS,
         SqlApi.createSqlQuery({
@@ -93,7 +94,7 @@ export function requestEvents(controller: WebFileController){
 }
 
 //extract events from result table, store them to app state, set current event
-export function storeEventsFromRust(){
+export function storeEventsFromRust() {
     const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
     const currentEvent = events[0];
     store.dispatch({
@@ -105,5 +106,29 @@ export function storeEventsFromRust(){
         data: currentEvent,
     });
 
+}
+
+export function createRequestForRust(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: string) {
+
+    switch (chartType) {
+
+        case ChartType.BAR_CHART:
+            controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                    data: { event: store.getState().currentEvent },
+                }));
+
+        case ChartType.SWIM_LANES:
+            controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                SqlApi.createSqlQuery({
+                   type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                   data: { event: store.getState().currentEvent },
+                }), `{time: ${metadata}}`);
+            
+
+    }
 
 }

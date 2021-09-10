@@ -86,7 +86,7 @@ class SwimLanes extends React.Component<Props, State> {
          }
 
          //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
-         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET) {
+         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE) {
             const buckets = this.props.result!.resultTable.getColumn('time').toArray();
             const operators = this.props.result!.resultTable.getColumn('operator').toArray();
             const relativeFrquencies = this.props.result!.resultTable.getColumn('relFreq').toArray();

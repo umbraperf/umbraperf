@@ -114,9 +114,9 @@ class SwimLanes extends React.Component<Props, State> {
             chartData: [],
          }));
          this.props.appContext.controller.calculateChartData(
-            SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+            SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
             SqlApi.createSqlQuery({
-               type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+               type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                data: { event: this.props.currentEvent },
             }), `{time: ${this.state.bucketsize}}`);
       }
@@ -14001,6 +14001,7 @@ class SwimLanes extends React.Component<Props, State> {
                scale: "x",
                zindex: 1,
                labelOverlap: true,
+               values: xTicks()
             },
             {
                orient: "left",

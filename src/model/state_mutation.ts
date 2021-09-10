@@ -2,6 +2,7 @@ import * as model from '../model';
 import { AppState } from './state';
 import { Result } from "./core_result";
 import { SqlQueryType } from './sql_queries';
+import { ChartDataVariant } from './chart_data_result';
 
 
 /// A mutation
@@ -24,6 +25,7 @@ export enum StateMutationType {
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
+    SET_CHARTDATA = 'SET_CHARTDATA',
     OTHER = 'OTHER',
 }
 
@@ -41,6 +43,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
+    | StateMutation<StateMutationType.SET_CHARTDATA, Array<ChartDataVariant>>
     ;
 
 // The action dispatch
@@ -104,6 +107,11 @@ export class AppStateMutation {
                     ...state,
                     chartIdCounter: mutation.data,
                 };
+            case StateMutationType.SET_CHARTDATA:
+                return {
+                    ...state,
+                    chartData: mutation.data,
+                };
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -117,6 +125,7 @@ export class AppStateMutation {
                     currentRequest: undefined,
                     events: undefined,
                     chartIdCounter: 0,
+                    chartData: [],
                 }
         }
     }

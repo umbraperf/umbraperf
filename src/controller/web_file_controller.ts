@@ -4,6 +4,7 @@ import store from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as SqlApi from '../model/sql_queries';
+import { LaptopWindowsSharp } from "@material-ui/icons";
 
 
 
@@ -113,21 +114,26 @@ export function createRequestForRust(controller: WebFileController, chartId: num
     switch (chartType) {
 
         case ChartType.BAR_CHART:
+
             controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     data: { event: store.getState().currentEvent },
                 }));
+            break;
 
         case ChartType.SWIM_LANES:
+
             controller.calculateChartData(
                 SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 SqlApi.createSqlQuery({
-                   type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                   data: { event: store.getState().currentEvent },
+                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                    data: { event: store.getState().currentEvent },
                 }), `{time: ${metadata}}`);
-            
+            break;
+
+
 
     }
 

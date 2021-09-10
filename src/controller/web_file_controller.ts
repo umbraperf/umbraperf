@@ -126,9 +126,11 @@ export function createRequestForRust(controller: WebFileController, chartId: num
         case ChartType.SWIM_LANES:
 
             controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                /*                 SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                 */
+                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: store.getState().currentEvent },
                 }), `{time: ${metadata}}`);
             break;

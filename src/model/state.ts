@@ -13,6 +13,7 @@ export interface AppState {
     currentEvent: string;
     currentRequest: SqlQueryType | undefined;
     events: Array<string> |undefined;
+    chartIdCounter: number;
 }
 
 export function createDefaultState(): AppState {
@@ -27,5 +28,6 @@ export function createDefaultState(): AppState {
         currentEvent: "",
         currentRequest: undefined,
         events: undefined,
+        chartIdCounter: 0,
     };
 }

@@ -23,6 +23,7 @@ export enum StateMutationType {
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
+    SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     OTHER = 'OTHER',
 }
 
@@ -39,6 +40,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
+    | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     ;
 
 // The action dispatch
@@ -97,6 +99,11 @@ export class AppStateMutation {
                     ...state,
                     events: mutation.data,
                 };
+            case StateMutationType.SET_CHARTIDCOUNTER:
+                return {
+                    ...state,
+                    chartIdCounter: mutation.data,
+                };
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -109,6 +116,7 @@ export class AppStateMutation {
                     currentEvent: "",
                     currentRequest: undefined,
                     events: undefined,
+                    chartIdCounter: 0,
                 }
         }
     }

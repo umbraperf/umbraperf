@@ -13996,7 +13996,6 @@ class SwimLanes extends React.Component<Props, State> {
                scale: "x",
                zindex: 1,
                labelOverlap: true,
-               values: xTicks()
             },
             {
                orient: "left",

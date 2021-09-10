@@ -132,18 +132,7 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     pub fn rel_freq_in_bucket_of_operators_new(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize, range: f64, column_for_time: usize) -> RecordBatch  {
 
-        let unique_bucket = find_unique_numbers(batch, column_for_bucket);
-        print_to_js_with_obj(&format!("{:?}", unique_bucket).into());
-
         let unique_operator = find_unique_string(batch, column_for_operator);
-        print_to_js_with_obj(&format!("{:?}", unique_operator).into());
-
-        // Vector of unique numbers
-        let vec_bucket = unique_bucket
-        .column(0)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap();  
 
         // Vector of unique strings
         let vec_operator = unique_operator
@@ -153,10 +142,9 @@ use crate::{print_to_js, print_to_js_with_obj};
         .unwrap();
       
         // For each *unique* string there will be one result, therefore vec.len()
-        let mut result_bucket =  Float64Array::builder(vec_operator.len() * vec_bucket.len());  
+        let mut result_bucket = Vec::new();
         let mut result_vec_operator = Vec::new();
-        let mut result_builder =  Float64Array::builder(vec_operator.len() * vec_bucket.len());  
-
+        let mut result_builder = Vec::new();
 
         let mut time_bucket = range;
         let mut column_index = 0;
@@ -171,7 +159,7 @@ use crate::{print_to_js, print_to_js_with_obj};
         .downcast_ref::<Float64Array>()
         .unwrap();  
 
-        
+
         let mut bucket_map = HashMap::new();
         for operator in vec_operator {
             bucket_map.insert(operator.unwrap(), 0.0);
@@ -183,10 +171,11 @@ use crate::{print_to_js, print_to_js_with_obj};
                 for operator in vec_operator {
                     if operator.unwrap() != "sum" {
                         let operator = operator.unwrap();
-                        result_bucket.append_value(time_bucket);
+                        result_bucket.push(time_bucket);
                         result_vec_operator.push(operator);
                         let frequenzy = bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap(); 
-                        result_builder.append_value(frequenzy);
+                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                        result_builder.push(frequenzy_rounded);
                         // reset bucket_map
                         bucket_map.insert(operator, 0.0);
                     }
@@ -201,14 +190,12 @@ use crate::{print_to_js, print_to_js_with_obj};
             let current_operator = operator_column.value(column_index as usize);
             bucket_map.insert(current_operator, bucket_map.get(current_operator).unwrap() + 1.0);
             bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
-            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
             column_index += 1;
         }
 
-        let builder_bucket = result_bucket.finish();
+        let builder_bucket = Float64Array::from(result_bucket);
         let operator_arr = StringArray::from(result_vec_operator);
-        let builder_result = result_builder.finish();
-        print_to_js_with_obj(&format!("{:?}", builder_result).into());
+        let builder_result = Float64Array::from(result_builder);
 
         // Record Batch 
         let schema = batch.schema();

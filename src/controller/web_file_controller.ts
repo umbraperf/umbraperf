@@ -3,7 +3,8 @@ import { createResultObject } from "../model/core_result";
 import store from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
-import { SqlQueryType } from "src/model/sql_queries";
+import * as SqlApi from '../model/sql_queries';
+
 
 
 export interface FileInfo {
@@ -37,7 +38,7 @@ export class WebFileController {
             worker.calculateChartData(chartType, event, completeParams);
         } */
 
-    public calculateChartData(sqlQueryType: SqlQueryType, sqlQuery: string, metadata?: string) {
+    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, metadata?: string) {
         const queryMetadata = metadata ? metadata : "";
 
         store.dispatch({
@@ -78,4 +79,31 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
         type: StateMutationType.SET_RESULT,
         data: resultObject,
     });
+}
+
+//request events from rust for specific chart type
+export function requestEvents(controller: WebFileController){
+    controller.calculateChartData(
+        SqlApi.SqlQueryType.GET_EVENTS,
+        SqlApi.createSqlQuery({
+            type: SqlApi.SqlQueryType.GET_EVENTS,
+            data: {},
+        }));
+
+}
+
+//extract events from result table, store them to app state, set current event
+export function storeEventsFromRust(){
+    const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
+    const currentEvent = events[0];
+    store.dispatch({
+        type: StateMutationType.SET_EVENTS,
+        data: events,
+    });
+    store.dispatch({
+        type: StateMutationType.SET_CURRENTEVENT,
+        data: currentEvent,
+    });
+
+
 }

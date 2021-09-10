@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
-
+import {requestEvents, storeEventsFromRust} from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -22,13 +22,13 @@ interface Props {
     currentChart: string;
     currentEvent: string;
     currentRequest: SqlApi.SqlQueryType | undefined;
+    events: Array<string> | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
     setCurrentEvent: (newCurrentEvent: string) => void;
 
 }
 
 interface State {
-    events: Array<any> | undefined,
     chartData: undefined | IChartData,
     width: number,
     height: number,
@@ -51,7 +51,6 @@ class BarChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            events: undefined,
             chartData: undefined,
             width: startSize.width,
             height: startSize.height,
@@ -67,17 +66,9 @@ class BarChart extends React.Component<Props, State> {
         //ensure changed app state and only proceed when result available
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
 
-            //if type of current request is GET_EVENTS, then store result from rust in component state event property 
+            //if type of current request is GET_EVENTS, then store result from rust in app state event property 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
-                const events = this.props.result!.resultTable.getColumn('ev_name').toArray();
-                const currentEvent = events[0];
-                this.setState((state, props) => ({
-                    ...state,
-                    events: events,
-                }));
-
-                //Set first event as current, triggers component did update and calculates chart data for first event as default
-                this.props.setCurrentEvent(currentEvent);
+                storeEventsFromRust();
             }
 
             //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
@@ -109,12 +100,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            this.props.appContext.controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_EVENTS,
-                SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_EVENTS,
-                    data: {},
-                }));
+            requestEvents(this.props.appContext.controller);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -158,17 +144,17 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        if (!this.state.events) {
+        if (!this.props.events) {
             return <div className={styles.spinnerArea} >
                 <CircularProgress />
             </div>
         }
 
         return <div>
-            {this.state.events &&
+            {this.props.events &&
                 <div className={styles.resultArea} >
                     <div className={styles.optionsArea} >
-                        <EventsButtons events={this.state.events}></EventsButtons>
+                        <EventsButtons events={this.props.events}></EventsButtons>
                     </div>
                     {(!this.state.chartData || !this.props.result || this.props.resultLoading)
                         ? <CircularProgress />
@@ -296,6 +282,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
     currentRequest: state.currentRequest,
+    events: state.events,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

@@ -13933,16 +13933,21 @@ class SwimLanes extends React.Component<Props, State> {
 
       const xTicks = () => {
 
-         const numberOfTicks = 50;
          const bucketsArrayLength = this.state.chartData[chartId].buckets.length;
-         let ticks = [];
+         const numberOfTicks = 40;
 
-         const delta = Math.floor(bucketsArrayLength / numberOfTicks);
+         if(bucketsArrayLength > numberOfTicks){
 
-         for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-            ticks.push(this.state.chartData[chartId].buckets[i]);
+            let ticks = [];
+   
+            const delta = Math.floor(bucketsArrayLength / numberOfTicks);
+   
+            for (let i = 0; i < bucketsArrayLength; i = i + delta) {
+               ticks.push(this.state.chartData[chartId].buckets[i]);
+            }
+            return ticks;
          }
-         return ticks;
+
       }
 
       const spec: VisualizationSpec = {

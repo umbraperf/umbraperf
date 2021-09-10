@@ -22,6 +22,7 @@ export enum StateMutationType {
     SET_CURRENTCHART = 'SET_CURRENTCHART',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
+    SET_EVENTS = 'SET_EVENTS',
     OTHER = 'OTHER',
 }
 
@@ -37,6 +38,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
+    | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     ;
 
 // The action dispatch
@@ -90,6 +92,11 @@ export class AppStateMutation {
                     ...state,
                     currentRequest: mutation.data,
                 };
+            case StateMutationType.SET_EVENTS:
+                return {
+                    ...state,
+                    events: mutation.data,
+                };
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -101,6 +108,7 @@ export class AppStateMutation {
                     currentChart: "",
                     currentEvent: "",
                     currentRequest: undefined,
+                    events: undefined,
                 }
         }
     }

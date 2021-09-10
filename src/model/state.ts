@@ -12,6 +12,7 @@ export interface AppState {
     currentChart: string;
     currentEvent: string;
     currentRequest: SqlQueryType | undefined;
+    events: Array<string> |undefined;
 }
 
 export function createDefaultState(): AppState {
@@ -25,5 +26,6 @@ export function createDefaultState(): AppState {
         currentChart: "",
         currentEvent: "",
         currentRequest: undefined,
+        events: undefined,
     };
 }

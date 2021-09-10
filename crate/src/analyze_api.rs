@@ -111,7 +111,7 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     }
 
     // GROUPBY
-    pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>) -> RecordBatch {
+    pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>,  range_str: &str) -> RecordBatch {
 
         if group_by.len() == 1 {
             let expr = &group_by[0];
@@ -134,7 +134,14 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
                     print_to_js_with_obj(&format!("{:?}", "IN GROUP BY").into());
 
-                    let batch = analyze::rel_freq_in_bucket_of_operators(&batch, column_num1, column_num2);
+                    let split: Vec<&str>  = range_str.split_terminator(":").collect();
+                    let column = split[0].replace("{", "").replace(" ", "");
+                    let column_as_usize = get_column_num(&column, &batch);
+                    let range = split[1].replace("}", "").replace(" ", "");
+                    let range_as_f64 = range.parse::<f64>().unwrap();
+
+                    // TODO COLUMN FOR BUCKET
+                    let batch = analyze::rel_freq_in_bucket_of_operators_new(&batch, 2 as usize, column_num2, range_as_f64, column_as_usize);
                     return batch;
                 }
             }
@@ -142,22 +149,6 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
         } else {
             return batch;
         }
-    }
-
-
-    pub fn execute_range(batch: RecordBatch, range_str: &str) -> RecordBatch {
-
-        if range_str.len() > 0 {
-            let split: Vec<&str>  = range_str.split_terminator(":").collect();
-            let column = split[0].replace("{", "").replace(" ", "");
-            let column_as_usize = get_column_num(&column, &batch);
-            let range = split[1].replace("}", "").replace(" ", "");
-            let range_as_f64 = range.parse::<f64>().unwrap();
-            return analyze::add_range_to_batch(&batch, range_as_f64, column_as_usize)
-        } else {
-            return batch
-        }
-
     }
 
     // for fast query exection:
@@ -180,18 +171,8 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
         print_to_js_with_obj(&format!("{:?}", filter).into());
 
-        // RANGE
-
-        print_to_js_with_obj(&format!("{:?}", range_str).into());
-
-        let range = execute_range(filter, range_str);
-
-        print_to_js("After range:");
-
-        print_to_js_with_obj(&format!("{:?}", range).into());
-        
         // GROUPBY
-        let group_by = execute_group_by(range, &projections, group_by); // 2
+        let group_by = execute_group_by(filter, &projections, group_by, range_str); // 2
 
         print_to_js("After group by:");
 

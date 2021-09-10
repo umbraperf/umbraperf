@@ -1,5 +1,5 @@
 use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, GenericStringArray, Int64Array, LargeStringArray, PrimitiveArray, StringArray}, compute::{sort, sort_to_indices, sum, take}, datatypes::{DataType, Field, Float64Type, Schema, SchemaRef}, record_batch::RecordBatch};
-use std::{collections::{HashSet}, sync::Arc};
+use std::{collections::{HashMap, HashSet}, sync::Arc};
 use arrow::error::Result as ArrowResult;
 use crate::{print_to_js, print_to_js_with_obj};
 
@@ -129,7 +129,8 @@ use crate::{print_to_js, print_to_js_with_obj};
 
     }
 
-    pub fn rel_freq_in_bucket_of_operators(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize) -> RecordBatch  {
+
+    pub fn rel_freq_in_bucket_of_operators_new(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize, range: f64, column_for_time: usize) -> RecordBatch  {
 
         let unique_bucket = find_unique_numbers(batch, column_for_bucket);
         print_to_js_with_obj(&format!("{:?}", unique_bucket).into());
@@ -156,28 +157,60 @@ use crate::{print_to_js, print_to_js_with_obj};
         let mut result_vec_operator = Vec::new();
         let mut result_builder =  Float64Array::builder(vec_operator.len() * vec_bucket.len());  
 
-        for bucket in vec_bucket {
-            let bucket_num = bucket.unwrap();
-            let bucket_batch = filter_with_number(column_for_bucket, bucket_num, batch);
-            let bucket_size = bucket_batch.column(0).len();
-            for operator in vec_operator {
-                let operator_str = operator.unwrap();
-                let operator = filter_with(column_for_operator, operator_str, &bucket_batch);
-                let operator_size =  operator.column(0).len();
 
-                result_bucket.append_value(bucket_num);
-                result_vec_operator.push(operator_str);
-                result_builder.append_value(operator_size as f64 / bucket_size as f64);
-            }
+        let mut time_bucket = range;
+        let mut column_index = 0;
+        let operator_column = batch
+        .column(column_for_operator)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+        let time_column = batch
+        .column(column_for_time)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();  
+
+        
+        let mut bucket_map = HashMap::new();
+        for operator in vec_operator {
+            bucket_map.insert(operator.unwrap(), 0.0);
         }
+        bucket_map.insert("sum", 0.0);
 
+        for time in time_column {
+            if time_bucket < time.unwrap() {
+                for operator in vec_operator {
+                    if operator.unwrap() != "sum" {
+                        let operator = operator.unwrap();
+                        result_bucket.append_value(time_bucket);
+                        result_vec_operator.push(operator);
+                        let frequenzy = bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap(); 
+                        result_builder.append_value(frequenzy);
+                        // reset bucket_map
+                        bucket_map.insert(operator, 0.0);
+                    }
+                }
+                // reset sum
+                bucket_map.insert("sum", 0.0);
+                while time_bucket < time.unwrap() {
+                    time_bucket += range;
+                }
+            }
+
+            let current_operator = operator_column.value(column_index as usize);
+            bucket_map.insert(current_operator, bucket_map.get(current_operator).unwrap() + 1.0);
+            bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
+            column_index += 1;
+        }
 
         let builder_bucket = result_bucket.finish();
         let operator_arr = StringArray::from(result_vec_operator);
         let builder_result = result_builder.finish();
         print_to_js_with_obj(&format!("{:?}", builder_result).into());
 
-
+        // Record Batch 
         let schema = batch.schema();
         let column_for_bucket_name = schema.field(column_for_bucket).name();
         let column_for_operator_name = schema.field(column_for_operator).name();
@@ -218,6 +251,7 @@ use crate::{print_to_js, print_to_js_with_obj};
         create_record_batch(Arc::new(new_schema), vec)
 
     }
+
 
     // 4
     // DISTINCT
@@ -281,99 +315,3 @@ use crate::{print_to_js, print_to_js_with_obj};
 
 
     }
-
- 
-    pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
-
-        // if data_type == DataType::Utf8 {
-        let options = arrow::compute::SortOptions{
-            descending: true,
-            nulls_first: false,
-        };
-
-        let indices = sort_to_indices(batch.column(column_index_to_sort), Some(options), None).unwrap();
-
-        RecordBatch::try_new(
-            batch.schema(),batch
-                .columns()
-                .iter()
-                .map(|column| take(column.as_ref(), &indices, None))
-                .collect::<ArrowResult<Vec<ArrayRef>>>().unwrap(),
-        ).unwrap()
-        
-    }
-
-
-    pub fn sum_over(batch: &RecordBatch, column_index_to_sum: usize) -> f64  {
-
-        let sum = arrow::compute::sum(batch.column(column_index_to_sum).as_any().downcast_ref::<PrimitiveArray<Float64Type>>().unwrap()).unwrap();
-        sum
-    }
-
-    pub fn find_unique_with_sort(batch: &RecordBatch, column_index_for_unqiue: usize) -> Vec<i64> {
-
-        let mut vec = sort(batch.column(column_index_for_unqiue), None).unwrap()
-            .as_any()
-            .downcast_ref::<Int64Array>()
-            .unwrap()
-            .values()
-            .to_vec();
-
-        vec.dedup();
-
-        vec
-
-    }
-
-    pub fn add_range_to_batch(batch: &RecordBatch, range: f64, column_for_range: usize) -> RecordBatch {
-
-        print_to_js_with_obj(&format!("{:?}", column_for_range).into());
-
-        // Get the column for the range
-        let range_column = batch.column(column_for_range)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap();
-
-        let mut range_builder =  Float64Array::builder(range_column.len());  
-
-        // Building a range column
-        let mut range_counter = range as f64;
-        for item in range_column {
-            let item = item.unwrap();
-            while item > range_counter {
-                range_counter += range;
-            } 
-            range_builder.append_value(range_counter);
-        }
-
-        let builder = range_builder.finish();
-
-        print_to_js_with_obj(&format!("{:?}", builder).into());
-
-        // Creating new record batch with special fields
-        let mut vec_field = Vec::new();
-        let new_field = Field::new("range", DataType::Float64,false);
-        let schema = batch.schema();
-        let batch_fields = schema.fields();
-        for field in batch_fields {
-            vec_field.push(field.to_owned());
-        }
-        vec_field.push(new_field);
-        
-        // Setting old columns and adding new column
-        let mut vec = Vec::new();
-        let batch_columns = batch.columns();
-        for column in batch_columns {
-            vec.push(column.to_owned());
-        }
-        vec.push(Arc::new(builder));
-
-        let schema = Arc::new(Schema::new(vec_field.to_owned()));
-
-        let batch = RecordBatch::try_new(schema, vec).unwrap();
-
-        batch
-
-    }
-

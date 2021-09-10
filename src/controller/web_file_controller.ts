@@ -34,13 +34,11 @@ export class WebFileController {
         worker.registerFile(file);
     }
 
-    /*     public calculateChartData(chartType: string, event: string, partialData?: any){
-            const completeParams: CalculateChartParams = {...emptyCalculateChartParams, ...partialData}
-            worker.calculateChartData(chartType, event, completeParams);
-        } */
 
-    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, metadata?: string) {
+    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, requestingChartId?: number, metadata?: string) {
         const queryMetadata = metadata ? metadata : "";
+        const queryRequestId = requestingChartId ? requestingChartId : -1;
+
 
         store.dispatch({
             type: StateMutationType.SET_CURRENTREQUEST,
@@ -57,7 +55,7 @@ export class WebFileController {
         console.log(sqlQueryType);
         console.log(sqlQuery);
 
-        worker.calculateChartData(queryMetadata, sqlQuery);
+        worker.calculateChartData(queryMetadata, sqlQuery, queryRequestId);
     }
 }
 
@@ -120,7 +118,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     data: { event: store.getState().currentEvent },
-                }));
+                }), chartId);
             break;
 
         case ChartType.SWIM_LANES:
@@ -132,7 +130,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: store.getState().currentEvent },
-                }), `{time: ${metadata}}`);
+                }), chartId, `{time: ${metadata}}`);
             break;
 
 

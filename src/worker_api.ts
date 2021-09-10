@@ -30,10 +30,11 @@ export class WorkerAPI {
         });
     } */
 
-    public calculateChartData(metadata: string, sqlQuery: string){
+    public calculateChartData(metadata: string, sqlQuery: string, requestId: number){
         const requestData: ICalculateChartDataRequestData = {
             queryMetadata: metadata,
             sqlQuery: sqlQuery,
+            requestId: requestId,
         }
 
         this.worker.postMessage({
@@ -56,8 +57,6 @@ worker.addEventListener('message', message => {
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:
-            //const arrowEventsTable = ArrowTable.Table.from(messageData);
-            //const events: Array<string> = arrowEventsTable.getColumn("event_name")?.toArray();
             setCsvReadingFinished(messageData as number);
             break;
 

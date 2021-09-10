@@ -65,8 +65,6 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        console.log(prevProps);
-        console.log(this.props);
 
         //ensure changed app state and only proceed when result available
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
@@ -92,13 +90,7 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
-            //createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
-            this.props.appContext.controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: this.props.currentEvent },
-                }));
+            createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
         }
 
     }

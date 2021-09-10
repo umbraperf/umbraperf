@@ -27,12 +27,15 @@ interface Props {
    currentEvent: string;
    currentRequest: SqlApi.SqlQueryType | undefined;
    events: Array<string> | undefined;
+   chartIdCounter: number;
    setCurrentChart: (newCurrentChart: string) => void;
    setCurrentEvent: (newCurrentEvent: string) => void;
+   setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
 
 interface State {
+   chartId: number,
    chartData: Array<IChartData>,
    width: number,
    height: number,
@@ -58,12 +61,14 @@ class SwimLanes extends React.Component<Props, State> {
    constructor(props: Props) {
       super(props);
       this.state = {
+         chartId: this.props.chartIdCounter,
          width: startSize.width,
          height: startSize.height,
          chartData: [],
          interpolation: "basis",
          bucketsize: 0.2,
       };
+      this.props.setChartIdCounter(this.state.chartId + 1);
 
       this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
       this.handleInterpolationChange = this.handleInterpolationChange.bind(this);
@@ -14071,6 +14076,7 @@ const mapStateToProps = (state: model.AppState) => ({
    currentEvent: state.currentEvent,
    currentRequest: state.currentRequest,
    events: state.events,
+   chartIdCounter: state.chartIdCounter,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -14081,6 +14087,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
    setCurrentEvent: (newCurrentEvent: string) => dispatch({
       type: model.StateMutationType.SET_CURRENTEVENT,
       data: newCurrentEvent,
+   }),
+   setChartIdCounter: (newChartIdCounter: number) => dispatch({
+      type: model.StateMutationType.SET_CHARTIDCOUNTER,
+      data: newChartIdCounter,
    }),
 });
 

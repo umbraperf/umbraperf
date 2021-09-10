@@ -92,7 +92,7 @@ class SwimLanes extends React.Component<Props, State> {
             const relativeFrquencies = this.props.result!.resultTable.getColumn('relFreq').toArray();
 
             const chartDataElement: IChartData = {
-               buckets: buckets.map((elem: number) => (Math.round(elem * 100) / 100)),
+               buckets: buckets,
                operators: operators,
                relativeFrquencies: relativeFrquencies,
             }

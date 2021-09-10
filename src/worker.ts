@@ -22,7 +22,7 @@ export type WorkerRequest<T, P> = {
 
 export type WorkerResponse<T, P> = {
   readonly messageId: number;
-  readonly requestId: number;
+  readonly requestId: number | undefined;
   readonly type: T;
   readonly data: P;
 };
@@ -30,6 +30,14 @@ export type WorkerResponse<T, P> = {
 export interface ICalculateChartDataRequestData{
   queryMetadata: string,
   sqlQuery: string,
+  requestId: number,
+}
+
+export interface IStoreResultResponseData{
+  messageId: number;
+  requestId: number|undefined;
+  type: WorkerResponseType;
+  data: any;
 }
 
 export type WorkerRequestVariant =
@@ -39,7 +47,7 @@ export type WorkerRequestVariant =
 
 export type WorkerResponseVariant =
   WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, any> |
-  WorkerResponse<WorkerResponseType.STORE_RESULT, any> |
+  WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
   WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
   ;
 
@@ -49,11 +57,6 @@ export interface IRequestWorker {
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
 }
 
-/* interface ChartEventRequest {
-  chartType: string;
-  event: string;
-  params: any;
-} */
 
 interface IGlobalFileDictionary {
   [key: number]: File;
@@ -61,6 +64,7 @@ interface IGlobalFileDictionary {
 
 let globalFileIdCounter = 0;
 let globalFileDictionary: IGlobalFileDictionary = {}
+let globalRequestId: number|undefined = undefined;
 
 const worker: IRequestWorker = self as any;
 
@@ -109,7 +113,7 @@ export function notifyJsQueryResult(result: any) {
   if (result) {
     worker.postMessage({
       messageId: 201,
-      requestId: 100,
+      requestId: globalRequestId,
       type: WorkerResponseType.STORE_RESULT,
       data: result,
     });
@@ -138,8 +142,7 @@ worker.onmessage = (message) => {
       break;
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
-      /*       profiler_core.requestChartData((messageData as ChartEventRequest).chartType, (messageData as ChartEventRequest).event, (messageData as ChartEventRequest).params );
-       */
+      globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
       break;
 

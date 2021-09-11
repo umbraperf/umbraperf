@@ -15,8 +15,8 @@ export enum RestQueryType {
 export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENTS, {}>
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, metadata: string}>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, metadata: string }>
     | RestQuery<RestQueryType.other, {}>
     ;
 
@@ -28,7 +28,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count/?ev_name="${query.data.event}"/count?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
-            return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?time:0.2`;
+            return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?time:${query.data.metadata}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `select bucket, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator, pipeline`;
         case RestQueryType.other:

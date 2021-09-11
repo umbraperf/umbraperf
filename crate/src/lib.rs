@@ -160,10 +160,9 @@ fn init_record_batches(
 pub fn analyze_file(file_size: i32) {
     let now = instant::Instant::now();
 
-    let semi_colon = 59;
     let batches = init_record_batches(
         file_size,
-        semi_colon,
+        59, // Code for semicolon
         true,
         vec![0 as usize, 5 as usize, 13 as usize, 20 as usize],
     );
@@ -178,20 +177,12 @@ pub fn analyze_file(file_size: i32) {
 }
 
 #[wasm_bindgen(js_name = "requestChartData")]
-pub fn request_chart_data(sql_query: &str, range_str: &str) {
-    print_to_js_with_obj(&format!("{:?}", sql_query).into());
-
-    let batch = get_record_batches().unwrap();
-
-    rest_api::eval_query(batch, sql_query);
+pub fn request_chart_data(rest_query: &str, range_str: &str) {
+    print_to_js_with_obj(&format!("{:?}", rest_query).into());
+    rest_api::eval_query(get_record_batches().unwrap(), rest_query);
 }
 
 // PRINTING
-fn print_to_js(s: &str) {
-    use web_sys::console;
-    console::log_1(&format!("{}", s).into());
-}
-
 fn print_to_js_with_obj(s: &JsValue) {
     use web_sys::console;
     console::log_1(s);

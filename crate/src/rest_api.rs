@@ -1,6 +1,6 @@
 use arrow::record_batch::RecordBatch;
 
-use crate::{analyze, record_batch_util::send_record_batch_to_js};
+use crate::{analyze, print_to_js_with_obj, record_batch_util::send_record_batch_to_js};
 
 // Find name in Record Batch
 fn find_name(name: &str, batch: &RecordBatch) -> usize {
@@ -23,10 +23,11 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
         } else {
                 let split = filter_vec[0].split_terminator("=").collect::<Vec<&str>>();
                 let column_str = split[0].replace("?", "");
-                let filter_str = split[1];
+                let filter_str = split[1].replace("\"", "");
+                print_to_js_with_obj(&format!("{:?}", filter_str).into());
                 filter_vec.remove(0);
                 return eval_filter(
-                        analyze::filter_with(find_name(column_str.as_str(), &record_batch), filter_str, &record_batch),
+                        analyze::filter_with(find_name(column_str.as_str(), &record_batch), filter_str.as_str(), &record_batch),
                         filter_vec,
                 );
         }
@@ -115,8 +116,12 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
         }
 
         let record_batch = eval_filter(record_batch, filter_vec);
+        print_to_js_with_obj(&format!("{:?}", record_batch).into());
         let record_batch = eval_operations(record_batch, op_vec);
+        print_to_js_with_obj(&format!("{:?}", record_batch).into());
         let record_batch = eval_selections(record_batch, select_vec);
+        print_to_js_with_obj(&format!("{:?}", record_batch).into());
+
 
         send_record_batch_to_js(&record_batch);
 }

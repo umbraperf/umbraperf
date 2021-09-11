@@ -1,10 +1,9 @@
 import { StateMutationType } from "../model/state_mutation";
 import { createResultObject } from "../model/core_result";
-import store from '../app';
+import {store, appContext} from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as SqlApi from '../model/sql_queries';
-import { LaptopWindowsSharp } from "@material-ui/icons";
 
 
 
@@ -35,7 +34,7 @@ export class WebFileController {
     }
 
 
-    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, requestingChartId?: number, metadata?: string) {
+    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
         const queryMetadata = metadata ? metadata : "";
         const queryRequestId = requestingChartId ? requestingChartId : -1;
 
@@ -55,7 +54,7 @@ export class WebFileController {
         console.log(sqlQueryType);
         console.log(sqlQuery);
 
-        worker.calculateChartData(queryMetadata, sqlQuery, queryRequestId);
+        worker.calculateChartData(queryMetadata, sqlQuery, queryRequestId, eventsRequest);
     }
 }
 
@@ -67,10 +66,10 @@ export function setCsvReadingFinished(requestId: number) {
     });
 }
 
-export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>) {
+export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
 
+    //store result of current request in redux store result variable 
     const resultObject = createResultObject(requestId, result);
-
     store.dispatch({
         type: StateMutationType.SET_RESULTLOADING,
         data: false,
@@ -79,6 +78,14 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
         type: StateMutationType.SET_RESULT,
         data: resultObject,
     });
+
+    //store events if result was answer to events request:
+    if(eventsRequest){
+        storeEventsFromRust();
+    }
+
+    //append new result to redux store chartDataArray and extract chart data for regarding chart type:
+
 }
 
 //request events from rust for specific chart type
@@ -88,12 +95,12 @@ export function requestEvents(controller: WebFileController) {
         SqlApi.createSqlQuery({
             type: SqlApi.SqlQueryType.GET_EVENTS,
             data: {},
-        }));
+        }), true);
 
 }
 
 //extract events from result table, store them to app state, set current event
-export function storeEventsFromRust() {
+ function storeEventsFromRust() {
     const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
     const currentEvent = events[0];
     store.dispatch({
@@ -118,7 +125,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     data: { event: store.getState().currentEvent },
-                }), chartId);
+                }), false, chartId);
             break;
 
         case ChartType.SWIM_LANES:
@@ -130,7 +137,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: store.getState().currentEvent },
-                }), chartId, `{time: ${metadata}}`);
+                }), false, chartId, `{time: ${metadata}}`);
             break;
 
 

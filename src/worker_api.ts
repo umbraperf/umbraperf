@@ -23,18 +23,12 @@ export class WorkerAPI {
 
     }
 
-/*     public calculateChartData(chartType: string, event: string, params: any){
-        this.worker.postMessage({
-            type: model.WorkerRequestType.CALCULATE_CHART_DATA,
-            data: {chartType: chartType, event: event, params: params},
-        });
-    } */
-
-    public calculateChartData(metadata: string, sqlQuery: string, requestId: number){
+    public calculateChartData(metadata: string, sqlQuery: string, requestId: number, eventsRequest: boolean){
         const requestData: ICalculateChartDataRequestData = {
             queryMetadata: metadata,
             sqlQuery: sqlQuery,
             requestId: requestId,
+            eventsRequest: eventsRequest,
         }
 
         this.worker.postMessage({
@@ -62,7 +56,7 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_RESULT:
             const arrowResultTable = ArrowTable.Table.from(messageData);
-            storeResultFromRust(message.data.requestId, arrowResultTable);
+            storeResultFromRust(message.data.requestId, arrowResultTable, message.data.eventsRequest);
             break;
 
         default:

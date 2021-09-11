@@ -23,39 +23,26 @@ fn find_name(name: &str, batch: &RecordBatch) -> usize {
 
 // SELECT
 pub fn exec_projections(batch: RecordBatch, projections: &Vec<SelectItem>) -> RecordBatch {
-    let mut vec = Vec::new();
+    let mut column_nums = Vec::new();
 
     for projection in projections {
-        match projection {
-            SelectItem::UnnamedExpr(expr) => {
-                match expr {
-                    Expr::Identifier(ident) => {
-                        let name = &ident.value;
-                        let column_num = find_name(name.as_str(), &batch);
-                        vec.push(column_num);
-                        print_to_js_with_obj(&format!("{:?}", name).into());
-                    }
-                    Expr::Function(func) => {
-                        let func_name = &func.name;
-                        let func = &func_name.0;
-                        let ident = &func[0];
-                        let str = &ident.value;
-                        // TODO
-                        vec.push(find_name(str, &batch));
-                    }
-                    _ => {
-                        // ignore
-                    }
-                }
+        if let SelectItem::UnnamedExpr(expr) = projection {
+            if let Expr::Identifier(ident) = expr {
+                let name = &ident.value;
+                column_nums.push(find_name(name.as_str(), &batch));
+                print_to_js_with_obj(&format!("{:?}", name).into());
             }
-            _ => {
-                //ignore
+            if let Expr::Function(func) = expr {
+                let func_name = &func.name;
+                let func = &func_name.0;
+                let ident = &func[0];
+                let str = &ident.value;
+                column_nums.push(find_name(str, &batch));
             }
         }
     }
 
-    let record_batch = analyze::get_columns(batch, vec);
-
+    let record_batch = analyze::get_columns(batch, column_nums);
     record_batch
 }
 
@@ -132,9 +119,7 @@ pub fn exec_group_by(
         if let Expr::Identifier(ident1) = expr1 {
             if let Expr::Identifier(ident2) = expr2 {
                 let column_num1 = find_name(ident1.value.as_str(), &batch);
-                let column_num2 = find_name(ident2.value.as_str(), &batch);
-
-                print_to_js_with_obj(&format!("{:?}", "IN GROUP BY").into());
+                let column_opeartor = find_name(ident2.value.as_str(), &batch);
 
                 let split: Vec<&str> = range_str.split_terminator(":").collect();
                 let column = split[0].replace("{", "").replace(" ", "");
@@ -146,7 +131,7 @@ pub fn exec_group_by(
                 let batch = analyze::rel_freq_in_bucket_of_operators_new(
                     &batch,
                     2 as usize,
-                    column_num2,
+                    column_opeartor,
                     range_as_f64,
                     column_as_usize,
                 );
@@ -164,11 +149,8 @@ pub fn exec_group_by(
             if let Expr::Identifier(ident2) = expr2 {
                 if let Expr::Identifier(ident3) = expr3 {
                     let column_num1 = find_name(ident1.value.as_str(), &batch);
-                    let column_num2 = find_name(ident2.value.as_str(), &batch);
-                    let column_num3 = find_name(ident3.value.as_str(), &batch);
-                    // let column_num3 = get_column_num(ident2.value.as_str(), &batch);
-
-                    print_to_js_with_obj(&format!("{:?}", "IN GROUP BY").into());
+                    let column_operator = find_name(ident2.value.as_str(), &batch);
+                    let column_pipeline = find_name(ident3.value.as_str(), &batch);
 
                     let split: Vec<&str> = range_str.split_terminator(":").collect();
                     let column = split[0].replace("{", "").replace(" ", "");
@@ -180,10 +162,10 @@ pub fn exec_group_by(
                     let batch = analyze::rel_freq_in_bucket_of_operators_with_pipelines(
                         &batch,
                         2 as usize,
-                        column_num2,
+                        column_operator,
                         range_as_f64,
                         column_as_usize,
-                        column_num3,
+                        column_pipeline,
                     );
                     return batch;
                 }

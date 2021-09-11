@@ -27,7 +27,7 @@ import { Shadows } from '@material-ui/core/styles/shadows';
 
 
 //Create Redux stroe
-const store = createProdStore();
+export const store = createProdStore();
 
 //Create WorkerAPI
 // const workerAPI = new WorkerAPI();
@@ -38,7 +38,7 @@ const appColor = {
     secondary: '#919191',
 }
 
-const appContext: IAppContext = {
+export const appContext: IAppContext = {
     // worker: workerAPI,
     controller: webFileController,
     primaryColor: appColor.primary,
@@ -174,4 +174,3 @@ function NoMatch() {
     );
 }
 
-export default store;

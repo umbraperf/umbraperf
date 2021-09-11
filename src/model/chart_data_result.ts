@@ -1,7 +1,11 @@
 import { ChartType } from '../controller/web_file_controller'
 
-export type ChartData<T, P> = {
+export interface ChartDataObject{
     readonly chartId: number;
+    readonly chartData: ChartDataVariant;
+}
+
+export type ChartData<T, P> = {
     readonly chartType: T;
     readonly data: P;
 };

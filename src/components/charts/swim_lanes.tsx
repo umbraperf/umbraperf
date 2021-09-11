@@ -8,13 +8,13 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType } from '../../controller/web_file_controller';
+import { ChartType, createRequestForRust } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
-import { requestEvents, storeEventsFromRust } from '../../controller/web_file_controller'
+import { requestEvents } from '../../controller/web_file_controller'
 
 
 
@@ -81,12 +81,12 @@ class SwimLanes extends React.Component<Props, State> {
       if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
 
          //if type of current request is GET_EVENTS, then store result from rust in app state event property 
-         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
+/*          if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
             storeEventsFromRust();
-         }
+         } */
 
          //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
-         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE) {
+         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET) {
             const buckets = this.props.result!.resultTable.getColumn('time').toArray();
             const operators = this.props.result!.resultTable.getColumn('operator').toArray();
             const relativeFrquencies = this.props.result!.resultTable.getColumn('relFreq').toArray();
@@ -113,12 +113,7 @@ class SwimLanes extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         this.props.appContext.controller.calculateChartData(
-            SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-            SqlApi.createSqlQuery({
-               type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-               data: { event: this.props.currentEvent },
-            }), `{time: ${this.state.bucketsize}}`);
+         createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, ""+this.state.bucketsize);
       }
 
    }

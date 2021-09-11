@@ -1,5 +1,5 @@
 import * as model from '../model';
-import store from '../app';
+import {store} from '../app';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'

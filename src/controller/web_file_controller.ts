@@ -24,6 +24,7 @@ const emptyCalculateChartParams: CalculateChartParams = {
 export enum ChartType {
     BAR_CHART = "bar_chart",
     SWIM_LANES = "swim_lanes",
+    SWIM_LANES_PIPELINES = "swim_lanes_pipelines",
 }
 
 const worker = new WorkerAPI();
@@ -68,6 +69,7 @@ export function setCsvReadingFinished(requestId: number) {
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
 
     //store result of current request in redux store result variable 
+    console.log(result);
     const resultObject: Result = createResultObject(requestId, result);
 
     store.dispatch({
@@ -143,6 +145,21 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                         relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
                     }
                 });
+            break;
+        case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
+            console.log();
+/*             chartDataElem = createChartDataObject(
+                requestId,
+                {
+                    chartType: ChartType.SWIM_LANES,
+                    data: {
+                        buckets: resultObject.resultTable.getColumn('time').toArray(),
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
+                    }
+                }); */
+            break;
+
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
@@ -179,6 +196,16 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 SqlApi.createSqlQuery({
                     type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+                    data: { event: store.getState().currentEvent },
+                }), false, chartId, `{time: ${metadata}}`);
+            break;
+
+        case ChartType.SWIM_LANES_PIPELINES:
+
+            controller.calculateChartData(
+                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                SqlApi.createSqlQuery({
+                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                     data: { event: store.getState().currentEvent },
                 }), false, chartId, `{time: ${metadata}}`);
             break;

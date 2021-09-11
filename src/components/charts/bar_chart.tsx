@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
-import {requestEvents, createRequestForRust} from '../../controller/web_file_controller'
+import { requestEvents, createRequestForRust } from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -39,7 +39,7 @@ interface State {
 
 const startSize = {
     width: 500,
-    height: window.innerHeight>1000 ? 500 : window.innerHeight - 350,
+    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 350,
 }
 
 class BarChart extends React.Component<Props, State> {
@@ -70,18 +70,17 @@ class BarChart extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            requestEvents(this.props.appContext.controller);
+
+            if (!this.props.events) {
+                requestEvents(this.props.appContext.controller);
+            } else {
+                this.props.setCurrentEvent(this.props.events[0]);
+            }
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
         }
-    }
-
-    componentWillUnmount() {
-        removeEventListener('resize', (event) => {
-            this.resizeListener();
-        });
     }
 
     resizeListener() {
@@ -121,13 +120,11 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             {this.props.events &&
-                <div className={styles.resultArea} >{
-                    console.log(this.props.chartData)
-                }
+                <div className={styles.resultArea} >
                     <div className={styles.optionsArea} >
                         <EventsButtons events={this.props.events}></EventsButtons>
                     </div>
-                    {(this.props.resultLoading)
+                    {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
                         ? <CircularProgress />
                         : <div className={"vegaContainer"} ref={this.chartWrapper}>
                             <Vega spec={this.createVisualizationSpec()} />

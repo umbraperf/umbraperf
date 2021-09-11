@@ -112,8 +112,12 @@ class SwimLanes extends React.Component<Props, State> {
    componentDidMount() {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(ChartType.SWIM_LANES);
-         requestEvents(this.props.appContext.controller);
 
+         if (!this.props.events) {
+            requestEvents(this.props.appContext.controller);
+         } else {
+            this.props.setCurrentEvent(this.props.events[0]);
+         }
          addEventListener('resize', (event) => {
             this.resizeListener();
          });
@@ -193,7 +197,7 @@ class SwimLanes extends React.Component<Props, State> {
                      <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                   </div>
                </div>
-               {(this.props.resultLoading)
+               {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
                   ? <CircularProgress />
                   : <div className={"vegaContainer"} ref={this.chartWrapper}>
                      {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}

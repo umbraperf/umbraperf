@@ -1,6 +1,6 @@
 import {  ChartDataKeyValue } from "./chart_data_result";
 import { Result } from "./core_result";
-import { SqlQueryType } from "./sql_queries";
+import { RestQueryType } from "./rest_queries";
 
 export interface AppState {
     /// The registered files
@@ -12,7 +12,7 @@ export interface AppState {
     file: undefined | File;
     currentChart: string;
     currentEvent: string;
-    currentRequest: SqlQueryType | undefined;
+    currentRequest: RestQueryType | undefined;
     events: Array<string> |undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;

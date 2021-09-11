@@ -1,7 +1,7 @@
 import * as model from '../model';
 import { AppState } from './state';
 import { Result } from "./core_result";
-import { SqlQueryType } from './sql_queries';
+import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
 
 
@@ -40,7 +40,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
-    | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
+    | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>

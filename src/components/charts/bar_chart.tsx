@@ -11,7 +11,7 @@ import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
-import * as SqlApi from '../../model/sql_queries';
+import * as RestApi from '../../model/rest_queries';
 import { requestEvents, createRequestForRust } from '../../controller/web_file_controller'
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
-    currentRequest: SqlApi.SqlQueryType | undefined;
+    currentRequest: RestApi.RestQueryType | undefined;
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,

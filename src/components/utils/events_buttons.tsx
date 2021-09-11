@@ -4,7 +4,7 @@ import { AppState } from '../../model/state';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button } from '@material-ui/core';
-import { SqlQueryType } from './../../model/sql_queries';
+import { RestQueryType } from '../../model/rest_queries';
 
 
 export default function EventsButtons(props: any) {

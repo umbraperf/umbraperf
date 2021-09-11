@@ -12,7 +12,7 @@ import { ChartType, createRequestForRust } from '../../controller/web_file_contr
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
-import * as SqlApi from '../../model/sql_queries';
+import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 import { requestEvents } from '../../controller/web_file_controller'
 
@@ -25,7 +25,7 @@ interface Props {
    csvParsingFinished: boolean;
    currentChart: string;
    currentEvent: string;
-   currentRequest: SqlApi.SqlQueryType | undefined;
+   currentRequest: RestApi.RestQueryType | undefined;
    events: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,

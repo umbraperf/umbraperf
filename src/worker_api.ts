@@ -23,10 +23,10 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(metadata: string, sqlQuery: string, requestId: number, eventsRequest: boolean){
+    public calculateChartData(metadata: string, restQuery: string, requestId: number, eventsRequest: boolean){
         const requestData: ICalculateChartDataRequestData = {
             queryMetadata: metadata,
-            sqlQuery: sqlQuery,
+            restQuery: restQuery,
             requestId: requestId,
             eventsRequest: eventsRequest,
         }

@@ -30,7 +30,7 @@ export type WorkerResponse<T, P> = {
 
 export interface ICalculateChartDataRequestData{
   queryMetadata: string,
-  sqlQuery: string,
+  restQuery: string,
   requestId: number,
   eventsRequest: boolean,
 }
@@ -149,7 +149,7 @@ worker.onmessage = (message) => {
     case WorkerRequestType.CALCULATE_CHART_DATA:
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalEventsRequest = (messageData as ICalculateChartDataRequestData).eventsRequest;
-      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
+      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
       break;
 
     default:

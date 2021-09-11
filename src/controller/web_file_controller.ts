@@ -4,7 +4,7 @@ import { createChartDataObject, ChartDataObject, ChartDataKeyValue } from "../mo
 import { store } from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
-import * as SqlApi from '../model/sql_queries';
+import * as RestApi from '../model/rest_queries';
 
 
 
@@ -36,14 +36,14 @@ export class WebFileController {
     }
 
 
-    public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
+    public calculateChartData(restQueryType: RestApi.RestQueryType, restQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
         const queryMetadata = metadata ? metadata : "";
 
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
             type: StateMutationType.SET_CURRENTREQUEST,
-            data: sqlQueryType,
+            data: restQueryType,
         });
         store.dispatch({
             type: StateMutationType.SET_RESULTLOADING,
@@ -54,7 +54,7 @@ export class WebFileController {
             data: undefined,
         });
 
-        worker.calculateChartData(queryMetadata, sqlQuery, queryRequestId, eventsRequest);
+        worker.calculateChartData(queryMetadata, restQuery, queryRequestId, eventsRequest);
     }
 }
 
@@ -92,9 +92,9 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 //request events from rust for specific chart type
 export function requestEvents(controller: WebFileController) {
     controller.calculateChartData(
-        SqlApi.SqlQueryType.GET_EVENTS,
-        SqlApi.createSqlQuery({
-            type: SqlApi.SqlQueryType.GET_EVENTS,
+        RestApi.RestQueryType.GET_EVENTS,
+        RestApi.createRestQuery({
+            type: RestApi.RestQueryType.GET_EVENTS,
             data: {},
         }), true);
 
@@ -122,7 +122,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
 
     switch (requestType) {
 
-        case SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+        case RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             chartDataElem = createChartDataObject(
                 requestId,
                 {
@@ -134,7 +134,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 });
             break;
 
-        case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+        case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             chartDataElem = createChartDataObject(
                 requestId,
                 {
@@ -146,7 +146,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                     }
                 });
             break;
-        case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
+        case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             console.log();
 /*             chartDataElem = createChartDataObject(
                 requestId,
@@ -181,9 +181,9 @@ export function createRequestForRust(controller: WebFileController, chartId: num
         case ChartType.BAR_CHART:
 
             controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                RestApi.createRestQuery({
+                    type: RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     data: { event: store.getState().currentEvent },
                 }), false, chartId);
             break;
@@ -193,9 +193,9 @@ export function createRequestForRust(controller: WebFileController, chartId: num
             controller.calculateChartData(
                 /*                 SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                  */
-                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+                RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+                RestApi.createRestQuery({
+                    type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: store.getState().currentEvent },
                 }), false, chartId, `{time: ${metadata}}`);
             break;
@@ -203,9 +203,9 @@ export function createRequestForRust(controller: WebFileController, chartId: num
         case ChartType.SWIM_LANES_PIPELINES:
 
             controller.calculateChartData(
-                SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                SqlApi.createSqlQuery({
-                    type: SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                RestApi.createRestQuery({
+                    type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                     data: { event: store.getState().currentEvent },
                 }), false, chartId, `{time: ${metadata}}`);
             break;

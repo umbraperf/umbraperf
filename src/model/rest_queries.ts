@@ -1,10 +1,10 @@
 
-export type SqlQuery<T, P> = {
+export type RestQuery<T, P> = {
     readonly type: T;
     readonly data: P;
 };
 
-export enum SqlQueryType {
+export enum RestQueryType {
     GET_EVENTS = "GET_EVENTS",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
     GET_REL_OP_DISTR_PER_BUCKET = "GET_REL_OP_DISTR_PER_BUCKET",
@@ -13,25 +13,25 @@ export enum SqlQueryType {
 }
 
 export type QueryVariant =
-    | SqlQuery<SqlQueryType.GET_EVENTS, {}>
-    | SqlQuery<SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
-    | SqlQuery<SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string }>
-    | SqlQuery<SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string }>
-    | SqlQuery<SqlQueryType.other, {}>
+    | RestQuery<RestQueryType.GET_EVENTS, {}>
+    | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string }>
+    | RestQuery<RestQueryType.other, {}>
     ;
 
-export function createSqlQuery(query: QueryVariant) {
+export function createRestQuery(query: QueryVariant) {
 
     switch (query.type) {
-        case SqlQueryType.GET_EVENTS:
+        case RestQueryType.GET_EVENTS:
             return 'select distinct ev_name from yx';
-        case SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+        case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `select operator, count(operator)  from xy where ev_name = '${query.data.event}' group by operator`;
-        case SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+        case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             return `select range, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator`;
-        case SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
+        case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `select range, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator, pipeline`;
-        case SqlQueryType.other:
+        case RestQueryType.other:
             return 'error - bad request to backend';
     }
 }

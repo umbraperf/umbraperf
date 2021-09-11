@@ -37,8 +37,9 @@ export class WebFileController {
 
 
     public calculateChartData(restQueryType: RestApi.RestQueryType, restQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
+        
+        //TODO: metadata currently never used, can be removed
         const queryMetadata = metadata ? metadata : "";
-
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({

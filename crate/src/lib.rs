@@ -22,7 +22,7 @@ mod record_batch_util;
 
 // Analyze
 mod analyze;
-mod analyze_api;
+mod rest_api;
 
 // Bindings
 mod bindings;
@@ -183,7 +183,7 @@ pub fn request_chart_data(sql_query: &str, range_str: &str) {
 
     let batch = get_record_batches().unwrap();
 
-    analyze_api::query(batch, sql_query, range_str);
+    rest_api::eval_query(batch, sql_query);
 }
 
 // PRINTING

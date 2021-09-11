@@ -1,12 +1,8 @@
-use crate::{print_to_js, print_to_js_with_obj};
-use arrow::error::Result as ArrowResult;
 use arrow::{
     array::{
-        Array, ArrayRef, BooleanArray, Float64Array, GenericStringArray, Int64Array,
-        LargeStringArray, PrimitiveArray, StringArray,
+        Array, ArrayRef, BooleanArray, Float64Array, StringArray,
     },
-    compute::{sort, sort_to_indices, sum, take},
-    datatypes::{DataType, Field, Float64Type, Schema, SchemaRef},
+    datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
 use std::{
@@ -134,12 +130,12 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap()
 }
 
-pub fn rel_freq_in_bucket_of_operators_new(
+pub fn rel_freq_in_bucket_of_operators(
     batch: &RecordBatch,
     column_for_bucket: usize,
     column_for_operator: usize,
-    range: f64,
     column_for_time: usize,
+    bucket_size: f64,
 ) -> RecordBatch {
     let unique_operator = find_unique_string(batch, column_for_operator);
 
@@ -155,7 +151,7 @@ pub fn rel_freq_in_bucket_of_operators_new(
     let mut result_vec_operator = Vec::new();
     let mut result_builder = Vec::new();
 
-    let mut time_bucket = range;
+    let mut time_bucket = bucket_size;
     let mut column_index = 0;
     let operator_column = batch
         .column(column_for_operator)
@@ -198,7 +194,7 @@ pub fn rel_freq_in_bucket_of_operators_new(
             // reset sum
             bucket_map.insert("sum", 0.0);
             while time_bucket < time.unwrap() {
-                time_bucket += range;
+                time_bucket += bucket_size;
             }
         }
         column_index += 1;
@@ -234,7 +230,7 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     batch: &RecordBatch,
     column_for_bucket: usize,
     column_for_operator: usize,
-    range: f64,
+    bucket_size: f64,
     column_for_time: usize,
     column_for_pipeline: usize,
 ) -> Vec<RecordBatch> {
@@ -250,12 +246,12 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
 
     for pipeline in pipeline_vec {
         let batch_with_pipeline_filter = filter_with(column_for_pipeline, pipeline.unwrap(), batch);
-        let output_batch = rel_freq_in_bucket_of_operators_new(
+        let output_batch = rel_freq_in_bucket_of_operators(
             &batch_with_pipeline_filter,
             column_for_bucket,
             column_for_operator,
-            range,
             column_for_time,
+            bucket_size,
         );
 
         vec.push(output_batch.to_owned());

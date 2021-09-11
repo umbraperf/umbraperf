@@ -200,8 +200,8 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                    data: { event: store.getState().currentEvent },
-                }), false, chartId, `{time: ${metadata}}`);
+                    data: { event: store.getState().currentEvent, metadata: metadata! },
+                }), false, chartId);
             break;
 
         case ChartType.SWIM_LANES_PIPELINES:
@@ -210,8 +210,8 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                    data: { event: store.getState().currentEvent },
-                }), false, chartId, `{time: ${metadata}}`);
+                    data: { event: store.getState().currentEvent, metadata: metadata! },
+                }), false, chartId);
             break;
 
 

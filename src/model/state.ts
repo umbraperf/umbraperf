@@ -1,4 +1,4 @@
-import { ChartData, ChartDataVariant } from "./chart_data_result";
+import {  ChartDataObject } from "./chart_data_result";
 import { Result } from "./core_result";
 import { SqlQueryType } from "./sql_queries";
 
@@ -15,7 +15,7 @@ export interface AppState {
     currentRequest: SqlQueryType | undefined;
     events: Array<string> |undefined;
     chartIdCounter: number;
-    chartData: Array<ChartDataVariant>;
+    chartData: ChartDataObject | undefined;
 }
 
 export function createDefaultState(): AppState {
@@ -31,6 +31,6 @@ export function createDefaultState(): AppState {
         currentRequest: undefined,
         events: undefined,
         chartIdCounter: 0,
-        chartData: [],
+        chartData: undefined,
     };
 }

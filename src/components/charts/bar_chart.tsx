@@ -69,11 +69,6 @@ class BarChart extends React.Component<Props, State> {
         //ensure changed app state and only proceed when result available
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
 
-            //if type of current request is GET_EVENTS, then store result from rust in app state event property 
-/*             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
-                storeEventsFromRust();
-            } */
-
             //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {
                 const operators = this.props.result!.resultTable.getColumn('operator').toArray();

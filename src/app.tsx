@@ -21,6 +21,7 @@ import BackupIcon from '@material-ui/icons/Backup';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -83,7 +84,7 @@ export const routes = [
         path: '/swim-lanes',
         sidebarName: 'Swim Lanes',
         component: SwimLanes,
-        icon: () => { return (<SortIcon />) },
+        icon: () => { return (<ViewHeadlineIcon />) },
     },
     {
         path: '/swim-lanes-pipelines',

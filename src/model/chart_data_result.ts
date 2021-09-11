@@ -27,12 +27,12 @@ export function createChartDataObject(chartId: number, chartData: ChartDataVaria
     };
 }
 
-interface IBarChartData {
+export interface IBarChartData {
     operators: Array<string>,
     frequency: Array<number>,
 }
 
-interface ISwimlanesData {
+export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
     relativeFrquencies: Array<number>,

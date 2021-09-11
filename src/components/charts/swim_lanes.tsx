@@ -28,6 +28,7 @@ interface Props {
    currentRequest: SqlApi.SqlQueryType | undefined;
    events: Array<string> | undefined;
    chartIdCounter: number;
+   chartData: model.ChartDataKeyValue,
    setCurrentChart: (newCurrentChart: string) => void;
    setCurrentEvent: (newCurrentEvent: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
@@ -78,33 +79,22 @@ class SwimLanes extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       //ensure changed app state and only proceed when result available
-      if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
+      if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
 
-         //if type of current request is GET_EVENTS, then store result from rust in app state event property 
-/*          if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
-            storeEventsFromRust();
-         } */
-
-         //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
-         if (this.props.currentRequest === SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET) {
-            const buckets = this.props.result!.resultTable.getColumn('time').toArray();
-            const operators = this.props.result!.resultTable.getColumn('operator').toArray();
-            const relativeFrquencies = this.props.result!.resultTable.getColumn('relFreq').toArray();
-
-            const chartDataElement: IChartData = {
-               buckets: buckets,
-               operators: operators,
-               relativeFrquencies: relativeFrquencies,
-            }
-
-            this.setState((state, props) => {
-               const newChartDataArray = state.chartData.concat(chartDataElement);
-               return {
-                  ...this.state,
-                  chartData: newChartDataArray,
-               }
-            });
+         const chartDataElement: IChartData = {
+            buckets: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).buckets,
+            operators: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).operators,
+            relativeFrquencies: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).relativeFrquencies,
          }
+
+         this.setState((state, props) => {
+            const newChartDataArray = state.chartData.concat(chartDataElement);
+            return {
+               ...this.state,
+               chartData: newChartDataArray,
+            }
+         });
+
       }
 
       //if current event changes, component did update is executed and queries new data for new event
@@ -113,7 +103,7 @@ class SwimLanes extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, ""+this.state.bucketsize);
+         createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, "" + this.state.bucketsize);
       }
 
    }
@@ -203,7 +193,7 @@ class SwimLanes extends React.Component<Props, State> {
                      <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                   </div>
                </div>
-               {(this.state.chartData.length === 0 || !this.props.result || this.props.resultLoading)
+               {(this.props.resultLoading)
                   ? <CircularProgress />
                   : <div className={"vegaContainer"} ref={this.chartWrapper}>
                      {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
@@ -13908,6 +13898,10 @@ class SwimLanes extends React.Component<Props, State> {
    }
 
    createVisualizationData(chartId: number) {
+      console.log(this.state.chartData);
+      console.log(chartId);
+
+
       const data = {
          "name": "table",
          "values": this.state.chartData[chartId],
@@ -13931,12 +13925,12 @@ class SwimLanes extends React.Component<Props, State> {
          const bucketsArrayLength = this.state.chartData[chartId].buckets.length;
          const numberOfTicks = 40;
 
-         if(bucketsArrayLength > numberOfTicks){
+         if (bucketsArrayLength > numberOfTicks) {
 
             let ticks = [];
-   
+
             const delta = Math.floor(bucketsArrayLength / numberOfTicks);
-   
+
             for (let i = 0; i < bucketsArrayLength; i = i + delta) {
                ticks.push(this.state.chartData[chartId].buckets[i]);
             }
@@ -14077,6 +14071,7 @@ const mapStateToProps = (state: model.AppState) => ({
    currentRequest: state.currentRequest,
    events: state.events,
    chartIdCounter: state.chartIdCounter,
+   chartData: state.chartData,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

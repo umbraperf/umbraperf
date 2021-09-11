@@ -1,5 +1,5 @@
 import { StateMutationType } from "../model/state_mutation";
-import { createResultObject } from "../model/core_result";
+import { createResultObject, Result } from "../model/core_result";
 import { createChartDataObject, ChartDataObject, ChartDataKeyValue } from "../model/chart_data_result";
 import { store } from '../app';
 import { WorkerAPI } from "../worker_api";
@@ -68,11 +68,8 @@ export function setCsvReadingFinished(requestId: number) {
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
 
     //store result of current request in redux store result variable 
-    const resultObject = createResultObject(requestId, result);
-    store.dispatch({
-        type: StateMutationType.SET_RESULTLOADING,
-        data: false,
-    });
+    const resultObject: Result = createResultObject(requestId, result);
+
     store.dispatch({
         type: StateMutationType.SET_RESULT,
         data: resultObject,
@@ -85,47 +82,9 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
     if (!eventsRequest) {
-
-        const requestType = store.getState().currentRequest;
-        let chartDataElem: ChartDataObject | undefined;
-        let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
-
-        switch (requestType) {
-
-            case SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
-                chartDataElem = createChartDataObject(
-                    requestId,
-                    {
-                        chartType: ChartType.BAR_CHART,
-                        data: {
-                            operators: resultObject.resultTable.getColumn('operator').toArray(),
-                            frequency: resultObject.resultTable.getColumn('count').toArray(),
-                        }
-                    });
-                break;
-
-            case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
-                chartDataElem = createChartDataObject(
-                    requestId,
-                    {
-                        chartType: ChartType.SWIM_LANES,
-                        data: {
-                            buckets: resultObject.resultTable.getColumn('time').toArray(),
-                            operators: resultObject.resultTable.getColumn('operator').toArray(),
-                            relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
-                        }
-                    });
-        }
-
-        ChartDataCollection[requestId] = chartDataElem!;
-        store.dispatch({
-            type: StateMutationType.SET_CHARTDATA,
-            data: ChartDataCollection,
-        });
-
+        storeChartDataFromRust(requestId, resultObject);
         console.log(store.getState().chartData);
     }
-
 }
 
 //request events from rust for specific chart type
@@ -150,6 +109,50 @@ function storeEventsFromRust() {
     store.dispatch({
         type: StateMutationType.SET_CURRENTEVENT,
         data: currentEvent,
+    });
+
+}
+
+function storeChartDataFromRust(requestId: number, resultObject: Result) {
+    const requestType = store.getState().currentRequest;
+    let chartDataElem: ChartDataObject | undefined;
+    let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
+
+    switch (requestType) {
+
+        case SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+            chartDataElem = createChartDataObject(
+                requestId,
+                {
+                    chartType: ChartType.BAR_CHART,
+                    data: {
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.resultTable.getColumn('count').toArray(),
+                    }
+                });
+            break;
+
+        case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+            chartDataElem = createChartDataObject(
+                requestId,
+                {
+                    chartType: ChartType.SWIM_LANES,
+                    data: {
+                        buckets: resultObject.resultTable.getColumn('time').toArray(),
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
+                    }
+                });
+    }
+
+    ChartDataCollection[requestId] = chartDataElem!;
+    store.dispatch({
+        type: StateMutationType.SET_CHARTDATA,
+        data: ChartDataCollection,
+    });
+    store.dispatch({
+        type: StateMutationType.SET_RESULTLOADING,
+        data: false,
     });
 
 }

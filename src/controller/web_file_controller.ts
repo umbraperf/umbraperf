@@ -117,7 +117,7 @@ function storeEventsFromRust() {
 
 function storeChartDataFromRust(requestId: number, resultObject: Result) {
     const requestType = store.getState().currentRequest;
-    let chartDataElem: ChartDataObject | undefined;
+    let chartDataElem: ChartDataObject | Array<ChartDataObject> | undefined;
     let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
 
     switch (requestType) {
@@ -148,7 +148,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
             break;
         case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             console.log();
-/*             chartDataElem = createChartDataObject(
+            const singleChartDataElem = createChartDataObject(
                 requestId,
                 {
                     chartType: ChartType.SWIM_LANES,
@@ -157,7 +157,11 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
                         relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
                     }
-                }); */
+                });
+                
+                let chartDataElemArray: Array<ChartDataObject> = ChartDataCollection[requestId] ? ChartDataCollection[requestId] as Array<ChartDataObject> : [];
+                chartDataElemArray.push(singleChartDataElem);
+                chartDataElem = chartDataElemArray;
             break;
 
     }

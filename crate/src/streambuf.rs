@@ -2,7 +2,7 @@ use js_sys::Uint8Array;
 use std::io::Result;
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::{bindings, print_to_js, print_to_js_with_obj};
+use crate::bindings;
 
 pub struct WebFileReader {
     offset: u64,

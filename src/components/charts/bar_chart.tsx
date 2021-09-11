@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as SqlApi from '../../model/sql_queries';
-import {requestEvents, storeEventsFromRust, createRequestForRust} from '../../controller/web_file_controller'
+import {requestEvents, createRequestForRust} from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -70,9 +70,9 @@ class BarChart extends React.Component<Props, State> {
         if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
 
             //if type of current request is GET_EVENTS, then store result from rust in app state event property 
-            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
+/*             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_EVENTS) {
                 storeEventsFromRust();
-            }
+            } */
 
             //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
             if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {

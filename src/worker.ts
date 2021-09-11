@@ -25,12 +25,14 @@ export type WorkerResponse<T, P> = {
   readonly requestId: number | undefined;
   readonly type: T;
   readonly data: P;
+  readonly eventsRequest: boolean;
 };
 
 export interface ICalculateChartDataRequestData{
   queryMetadata: string,
   sqlQuery: string,
   requestId: number,
+  eventsRequest: boolean,
 }
 
 export interface IStoreResultResponseData{
@@ -63,6 +65,7 @@ interface IGlobalFileDictionary {
 }
 
 let globalFileIdCounter = 0;
+let globalEventsRequest: boolean;
 let globalFileDictionary: IGlobalFileDictionary = {}
 let globalRequestId: number|undefined = undefined;
 
@@ -104,6 +107,7 @@ export function notifyJsFinishedReading(requestId: number) {
     requestId: 100,
     type: WorkerResponseType.CSV_READING_FINISHED,
     data: requestId,
+    eventsRequest: false,
   });
 
 }
@@ -116,6 +120,7 @@ export function notifyJsQueryResult(result: any) {
       requestId: globalRequestId,
       type: WorkerResponseType.STORE_RESULT,
       data: result,
+      eventsRequest: globalEventsRequest,
     });
   }
 
@@ -143,6 +148,7 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
+      globalEventsRequest = (messageData as ICalculateChartDataRequestData).eventsRequest;
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).sqlQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
       break;
 

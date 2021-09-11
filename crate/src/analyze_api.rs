@@ -111,7 +111,9 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
     }
 
     // GROUPBY
-    pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>,  range_str: &str) -> RecordBatch {
+    pub fn execute_group_by(batch: RecordBatch, projections: &Vec<SelectItem>, group_by: Vec<Expr>,  range_str: &str) -> Vec<RecordBatch> {
+
+        let mut record_batch_vec = Vec::new();
 
         if group_by.len() == 1 {
             let expr = &group_by[0];
@@ -120,9 +122,11 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
                 print_to_js_with_obj(&format!("{:?}", ident.value.as_str()).into());
                 // if group by operator is count (TODO when is sum  )
                 let record_batch = analyze::count_rows_over(&batch, column_num);
-                return record_batch;
+                record_batch_vec.push(record_batch);
+                return record_batch_vec;
             } else {
-                return batch;
+                record_batch_vec.push(batch);
+                return record_batch_vec;
             }
         } else if  group_by.len() == 2  {
             let expr1 = &group_by[0];
@@ -142,12 +146,44 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
                     // TODO COLUMN FOR BUCKET
                     let batch = analyze::rel_freq_in_bucket_of_operators_new(&batch, 2 as usize, column_num2, range_as_f64, column_as_usize);
-                    return batch;
+                    record_batch_vec.push(batch);
+                    return record_batch_vec;
                 }
             }
-            return batch;
-        } else {
-            return batch;
+            record_batch_vec.push(batch);
+            return record_batch_vec;
+        } else if  group_by.len() == 3  { 
+            let expr1 = &group_by[0];
+            let expr2 = &group_by[1];
+            let expr3 = &group_by[2];
+            if let Expr::Identifier(ident1) = expr1 {
+                if let Expr::Identifier(ident2) = expr2 {
+                        if let Expr::Identifier(ident3) = expr3 {
+                        let column_num1 = get_column_num(ident1.value.as_str(), &batch);
+                        let column_num2 = get_column_num(ident2.value.as_str(), &batch);
+                        let column_num3 = get_column_num(ident3.value.as_str(), &batch);
+                        // let column_num3 = get_column_num(ident2.value.as_str(), &batch);
+
+                        print_to_js_with_obj(&format!("{:?}", "IN GROUP BY").into());
+
+                        let split: Vec<&str>  = range_str.split_terminator(":").collect();
+                        let column = split[0].replace("{", "").replace(" ", "");
+                        let column_as_usize = get_column_num(&column, &batch);
+                        let range = split[1].replace("}", "").replace(" ", "");
+                        let range_as_f64 = range.parse::<f64>().unwrap();
+
+                        // TODO COLUMN FOR BUCKET
+                        let batch = analyze::rel_freq_in_bucket_of_operators_with_pipelines(&batch, 2 as usize, column_num2, range_as_f64, column_as_usize, column_num3);
+                        return batch;
+                    }
+                }
+            }
+            record_batch_vec.push(batch);
+            return record_batch_vec;
+        }
+        else {
+            record_batch_vec.push(batch);
+            return record_batch_vec;
         }
     }
 
@@ -178,8 +214,10 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
         print_to_js_with_obj(&format!("{:?}", group_by).into());
 
+        if group_by.len() == 1 {
+
         // SELECT
-        let select = execute_projections(group_by, &projections); // Vec<RecordBatch> -> RecordBatch // 3
+        let select = execute_projections(group_by[0].to_owned(), &projections); // Vec<RecordBatch> -> RecordBatch // 3
 
         print_to_js("After selection:");
 
@@ -196,7 +234,13 @@ use crate::{analyze, print_to_js, print_to_js_with_obj};
 
         let event_cursor = RecordBatchUtil::write_record_batch_to_cursor(&distinct);
 
-        notify_js_query_result(event_cursor.into_inner()); 
+        notify_js_query_result(event_cursor.into_inner()); } else {
+
+        let event_cursor = RecordBatchUtil::write_record_batches_to_cursor(group_by);
+
+        notify_js_query_result(event_cursor.into_inner())
+
+        }
 
     }
     

@@ -82,9 +82,9 @@ class SwimLanes extends React.Component<Props, State> {
       if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
 
          const chartDataElement: IChartData = {
-            buckets: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).buckets,
-            operators: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).operators,
-            relativeFrquencies: (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData).relativeFrquencies,
+            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
+            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
+            relativeFrquencies: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).relativeFrquencies,
          }
 
          this.setState((state, props) => {

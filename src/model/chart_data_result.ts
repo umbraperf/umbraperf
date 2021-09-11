@@ -1,7 +1,7 @@
 import { ChartType } from '../controller/web_file_controller'
 
 export interface ChartDataKeyValue{
-    [chartId:number ]: ChartDataObject;
+    [chartId:number ]: ChartDataObject | Array<ChartDataObject>;
 }
 
 export interface ChartDataObject {

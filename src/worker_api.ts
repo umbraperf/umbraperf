@@ -55,6 +55,7 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
+            console.log(messageData);
             const arrowResultTable = ArrowTable.Table.from(messageData);
             storeResultFromRust(message.data.requestId, arrowResultTable, message.data.eventsRequest);
             break;

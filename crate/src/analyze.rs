@@ -167,11 +167,14 @@ use crate::{print_to_js, print_to_js_with_obj};
         bucket_map.insert("sum", 0.0);
 
         for time in time_column {
+            let current_operator = operator_column.value(column_index as usize);
+            bucket_map.insert(current_operator, bucket_map.get(current_operator).unwrap() + 1.0);
+            bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
             if time_bucket < time.unwrap() {
                 for operator in vec_operator {
-                    if operator.unwrap() != "sum" {
+                    if operator.unwrap() != "sum" && bucket_map.get("sum").unwrap() != &0.0 {
                         let operator = operator.unwrap();
-                        result_bucket.push(time_bucket);
+                        result_bucket.push(f64::trunc(time_bucket * 100.0) / 100.0);
                         result_vec_operator.push(operator);
                         let frequenzy = bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap(); 
                         let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
@@ -186,10 +189,6 @@ use crate::{print_to_js, print_to_js_with_obj};
                     time_bucket += range;
                 }
             }
-
-            let current_operator = operator_column.value(column_index as usize);
-            bucket_map.insert(current_operator, bucket_map.get(current_operator).unwrap() + 1.0);
-            bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
             column_index += 1;
         }
 
@@ -209,6 +208,30 @@ use crate::{print_to_js, print_to_js_with_obj};
         let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
 
         RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder_bucket), Arc::new(operator_arr), Arc::new(builder_result)]).unwrap()
+
+    }
+
+    pub fn rel_freq_in_bucket_of_operators_with_pipelines(batch: &RecordBatch, column_for_bucket: usize, column_for_operator: usize, range: f64, column_for_time: usize, column_for_pipeline: usize) -> Vec<RecordBatch> {
+
+        let mut vec = Vec::new();
+
+        let unique_pipelines = find_unique_string(batch, column_for_pipeline);
+
+        let pipeline_vec = unique_pipelines
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+        for pipeline in pipeline_vec {
+            let batch_with_pipeline_filter = filter_with(column_for_pipeline, pipeline.unwrap(), batch);
+            let output_batch = rel_freq_in_bucket_of_operators_new(&batch_with_pipeline_filter, column_for_bucket, column_for_operator, range, column_for_time); 
+
+            vec.push(output_batch.to_owned());
+
+        }       
+
+       vec
 
     }
 

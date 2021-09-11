@@ -1,6 +1,7 @@
 import { StateMutationType } from "../model/state_mutation";
 import { createResultObject } from "../model/core_result";
-import {store, appContext} from '../app';
+import { createChartDataObject, ChartDataObject, ChartDataKeyValue } from "../model/chart_data_result";
+import { store } from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as SqlApi from '../model/sql_queries';
@@ -36,8 +37,8 @@ export class WebFileController {
 
     public calculateChartData(sqlQueryType: SqlApi.SqlQueryType, sqlQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
         const queryMetadata = metadata ? metadata : "";
-        const queryRequestId = requestingChartId ? requestingChartId : -1;
 
+        const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
             type: StateMutationType.SET_CURRENTREQUEST,
@@ -51,8 +52,6 @@ export class WebFileController {
             type: StateMutationType.SET_RESULT,
             data: undefined,
         });
-        console.log(sqlQueryType);
-        console.log(sqlQuery);
 
         worker.calculateChartData(queryMetadata, sqlQuery, queryRequestId, eventsRequest);
     }
@@ -80,11 +79,52 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
     });
 
     //store events if result was answer to events request:
-    if(eventsRequest){
+    if (eventsRequest) {
         storeEventsFromRust();
     }
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
+    if (!eventsRequest) {
+
+        const requestType = store.getState().currentRequest;
+        let chartDataElem: ChartDataObject | undefined;
+        let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
+
+        switch (requestType) {
+
+            case SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+                chartDataElem = createChartDataObject(
+                    requestId,
+                    {
+                        chartType: ChartType.BAR_CHART,
+                        data: {
+                            operators: resultObject.resultTable.getColumn('operator').toArray(),
+                            frequency: resultObject.resultTable.getColumn('count').toArray(),
+                        }
+                    });
+                break;
+
+            case SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+                chartDataElem = createChartDataObject(
+                    requestId,
+                    {
+                        chartType: ChartType.SWIM_LANES,
+                        data: {
+                            buckets: resultObject.resultTable.getColumn('time').toArray(),
+                            operators: resultObject.resultTable.getColumn('operator').toArray(),
+                            relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
+                        }
+                    });
+        }
+
+        ChartDataCollection[requestId] = chartDataElem!;
+        store.dispatch({
+            type: StateMutationType.SET_CHARTDATA,
+            data: ChartDataCollection,
+        });
+
+        console.log(store.getState().chartData);
+    }
 
 }
 
@@ -100,7 +140,7 @@ export function requestEvents(controller: WebFileController) {
 }
 
 //extract events from result table, store them to app state, set current event
- function storeEventsFromRust() {
+function storeEventsFromRust() {
     const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
     const currentEvent = events[0];
     store.dispatch({

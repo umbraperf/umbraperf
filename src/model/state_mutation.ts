@@ -2,7 +2,7 @@ import * as model from '../model';
 import { AppState } from './state';
 import { Result } from "./core_result";
 import { SqlQueryType } from './sql_queries';
-import { ChartDataObject } from './chart_data_result';
+import { ChartDataKeyValue } from './chart_data_result';
 
 
 /// A mutation
@@ -43,7 +43,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, SqlQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
-    | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataObject>
+    | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
     ;
 
 // The action dispatch
@@ -125,7 +125,7 @@ export class AppStateMutation {
                     currentRequest: undefined,
                     events: undefined,
                     chartIdCounter: 0,
-                    chartData: undefined,
+                    chartData: {},
                 }
         }
     }

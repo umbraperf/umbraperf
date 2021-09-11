@@ -140,9 +140,9 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 {
                     chartType: ChartType.SWIM_LANES,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('time').toArray(),
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
+                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
             break;
@@ -153,9 +153,9 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 {
                     chartType: ChartType.SWIM_LANES,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('time').toArray(),
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        relativeFrquencies: resultObject.resultTable.getColumn('relFreq').toArray(),
+                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
                 

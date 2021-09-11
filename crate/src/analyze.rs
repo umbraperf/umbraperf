@@ -132,7 +132,6 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
 pub fn rel_freq_in_bucket_of_operators(
     batch: &RecordBatch,
-    column_for_bucket: usize,
     column_for_operator: usize,
     column_for_time: usize,
     bucket_size: f64,
@@ -206,12 +205,11 @@ pub fn rel_freq_in_bucket_of_operators(
 
     // Record Batch
     let schema = batch.schema();
-    let column_for_bucket_name = schema.field(column_for_bucket).name();
     let column_for_operator_name = schema.field(column_for_operator).name();
 
-    let field_bucket = Field::new(column_for_bucket_name, DataType::Float64, false);
+    let field_bucket = Field::new("bucket", DataType::Float64, false);
     let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let result_field = Field::new("relFreq", DataType::Float64, false);
+    let result_field = Field::new("relfreq", DataType::Float64, false);
 
     let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
 
@@ -228,7 +226,6 @@ pub fn rel_freq_in_bucket_of_operators(
 
 pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     batch: &RecordBatch,
-    column_for_bucket: usize,
     column_for_operator: usize,
     bucket_size: f64,
     column_for_time: usize,
@@ -248,7 +245,6 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
         let batch_with_pipeline_filter = filter_with(column_for_pipeline, pipeline.unwrap(), batch);
         let output_batch = rel_freq_in_bucket_of_operators(
             &batch_with_pipeline_filter,
-            column_for_bucket,
             column_for_operator,
             column_for_time,
             bucket_size,

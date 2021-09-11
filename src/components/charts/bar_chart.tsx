@@ -24,6 +24,7 @@ interface Props {
     currentRequest: SqlApi.SqlQueryType | undefined;
     events: Array<string> | undefined;
     chartIdCounter: number;
+    chartData: model.ChartDataKeyValue,
     setCurrentChart: (newCurrentChart: string) => void;
     setCurrentEvent: (newCurrentEvent: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
@@ -32,14 +33,8 @@ interface Props {
 
 interface State {
     chartId: number,
-    chartData: undefined | IChartData,
     width: number,
     height: number,
-}
-
-interface IChartData {
-    operators: Array<string>,
-    frequency: Array<number>,
 }
 
 const startSize = {
@@ -55,7 +50,6 @@ class BarChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            chartData: undefined,
             width: startSize.width,
             height: startSize.height,
         };
@@ -65,23 +59,6 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-
-        //ensure changed app state and only proceed when result available
-        if (prevProps.result != this.props.result && undefined != this.props.result && !this.props.resultLoading && this.props.csvParsingFinished) {
-
-            //store resulting chart data from rust when type of query was get_operator_frequency_per_event, only if result not undefined / parsing finished / result not loading / new result 
-            if (this.props.currentRequest === SqlApi.SqlQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT) {
-                const operators = this.props.result!.resultTable.getColumn('operator').toArray();
-                const frequency = this.props.result!.resultTable.getColumn('count').toArray();
-                this.setState((state, props) => ({
-                    ...state,
-                    chartData: {
-                        operators: operators,
-                        frequency: frequency,
-                    },
-                }));
-            }
-        }
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
@@ -131,7 +108,6 @@ class BarChart extends React.Component<Props, State> {
 
 
     public render() {
-        console.log(this.state.chartData);
 
         if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
@@ -145,11 +121,13 @@ class BarChart extends React.Component<Props, State> {
 
         return <div>
             {this.props.events &&
-                <div className={styles.resultArea} >
+                <div className={styles.resultArea} >{
+                    console.log(this.props.chartData)
+                }
                     <div className={styles.optionsArea} >
                         <EventsButtons events={this.props.events}></EventsButtons>
                     </div>
-                    {(!this.state.chartData || !this.props.result || this.props.resultLoading)
+                    {(this.props.resultLoading)
                         ? <CircularProgress />
                         : <div className={"vegaContainer"} ref={this.chartWrapper}>
                             <Vega spec={this.createVisualizationSpec()} />
@@ -163,8 +141,10 @@ class BarChart extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const operatorsArray = this.state.chartData?.operators;
-        const valueArray = this.state.chartData?.frequency;
+        console.log(this.props.chartData);
+
+        const operatorsArray = (this.props.chartData[this.state.chartId].chartData.data as model.IBarChartData).operators;
+        const valueArray = (this.props.chartData[this.state.chartId].chartData.data as model.IBarChartData).frequency;
 
         const data = {
 
@@ -277,6 +257,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentRequest: state.currentRequest,
     events: state.events,
     chartIdCounter: state.chartIdCounter,
+    chartData: state.chartData,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

@@ -178,7 +178,6 @@ pub fn analyze_file(file_size: i32) {
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str, range_str: &str) {
-    print_to_js_with_obj(&format!("{:?}", rest_query).into());
     rest_api::eval_query(get_record_batches().unwrap(), rest_query);
 }
 

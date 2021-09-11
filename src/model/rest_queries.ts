@@ -24,9 +24,9 @@ export function createRestQuery(query: QueryVariant) {
 
     switch (query.type) {
         case RestQueryType.GET_EVENTS:
-            return 'select distinct ev_name from yx';
+            return 'ev_name/distinct?ev_name';
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
-            return `select operator, count(operator)  from xy where ev_name = '${query.data.event}' group by operator`;
+            return `operator/count/?ev_name="${query.data.event}"/count?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             return `select range, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:

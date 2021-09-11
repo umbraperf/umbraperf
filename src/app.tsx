@@ -10,10 +10,10 @@ import './globals.css';
 import styles from './style/main-app.module.css';
 
 import FileUploader from './components/file_uploader';
-import Dummy from './components/dummy';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
 import SwimLanes from './components/charts/swim_lanes';
+import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
@@ -62,12 +62,6 @@ const element = document.getElementById('root');
 
 export const routes = [
     {
-        path: '/',
-        sidebarName: 'Start',
-        component: Dummy,
-        icon: () => { return (<HelpIcon />) },
-    },
-    {
         path: '/upload',
         sidebarName: 'Upload File',
         component: FileUploader,
@@ -92,9 +86,15 @@ export const routes = [
         icon: () => { return (<SortIcon />) },
     },
     {
+        path: '/swim-lanes-pipelines',
+        sidebarName: 'Swim Lanes (Pipelines)',
+        component: SwimLanesPipelines,
+        icon: () => { return (<SortIcon />) },
+    },
+    {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: Dummy,
+        component: FileUploader,
         icon: () => { return (<HelpIcon />) },
     },
 

@@ -14,7 +14,6 @@ fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch
     return RecordBatch::try_new(schema, columns).unwrap();
 }
 
-// 0
 // Converts Vec<RecordBatch> to one whole RecordBatch
 pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     let number_columns = batches[0].num_columns() as i32;
@@ -39,8 +38,7 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     create_record_batch(batches[0].schema(), columns)
 }
 
-// 1
-// WHERE
+
 pub fn filter_with(column_num: usize, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
         .column(column_num)
@@ -91,8 +89,7 @@ pub fn filter_with_number(
     create_record_batch(batch.schema(), arrays)
 }
 
-// 2
-// GROUPBY
+
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
     let unique_batch = find_unique_string(batch, column_to_groupby_over);
 
@@ -227,9 +224,9 @@ pub fn rel_freq_in_bucket_of_operators(
 pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     batch: &RecordBatch,
     column_for_operator: usize,
-    bucket_size: f64,
     column_for_time: usize,
     column_for_pipeline: usize,
+    bucket_size: f64
 ) -> Vec<RecordBatch> {
     let mut vec = Vec::new();
 
@@ -256,8 +253,8 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     vec
 }
 
-// 3
-// SELECTION
+
+
 pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
 
@@ -279,8 +276,7 @@ pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch 
     create_record_batch(Arc::new(new_schema), vec)
 }
 
-// 4
-// DISTINCT
+
 pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
     let vec = batch
         .column(column_index_for_unqiue)
@@ -306,8 +302,8 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
     RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
 }
 
-// 4
-// DISTINCT
+
+
 pub fn find_unique_numbers(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
     let vec = batch
         .column(column_index_for_unqiue)

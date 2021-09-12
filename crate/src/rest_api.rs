@@ -75,6 +75,9 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                                         bucket_size,
                                 );
                         }
+                        "todo_pipelines" => {
+                                
+                        }
                         _ => {
                                 panic!("Not supported operator!");
                         }

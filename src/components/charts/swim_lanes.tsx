@@ -14058,7 +14058,13 @@ class SwimLanes extends React.Component<Props, State> {
                   }
                ]
             }
-         ]
+         ],
+         legends: [{
+            fill: "color",
+            title: "Operators",
+            orient: "right",
+         }
+         ],
       } as VisualizationSpec;
 
       return spec;

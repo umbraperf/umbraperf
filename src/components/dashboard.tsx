@@ -96,12 +96,13 @@ class Dashboard extends React.Component<Props, State> {
                     rowHeight={this.state.rowHeight}
 /*             onLayoutChange={onLayoutChange}
  */          >
-                    {this.state.items.map((key) => (
+                    {this.state.items.map((key, elem) => (
                         <div
                             key={key}
                             className={`widget ${styles.gridBox}`}
 /*                         data-grid={this.state.gridData}
  */                    >
+                            {this.createRemoveElement(elem)}
                             {/*                         <Widget
                             id={key}
 /*                   onRemoveItem={onRemoveItem}
@@ -135,6 +136,37 @@ class Dashboard extends React.Component<Props, State> {
             // Increment the counter to ensure key is always unique.
             newCounter: this.state.newCounter + 1
         });
+    }
+
+    onRemoveItem(){
+        //TODO 
+    }
+
+    createRemoveElement(el: any){
+
+          const i = el.add ? "+" : el.i;
+          
+          return (
+            <div key={i} data-grid={el}>
+{/*               {el.add ? (
+                <span
+                  className="add text"
+                  onClick={this.onAddItem}
+                  title="You can add an item by clicking here, too."
+                >
+                  Add +
+                </span>
+              ) : (
+                <span className="text">{i}</span>
+              )} */}
+              <span
+                className={styles.widgetRemove}
+                onClick={this.onRemoveItem.bind(this, i)}
+              >
+                x
+              </span>
+            </div>
+          );
     }
 
 }

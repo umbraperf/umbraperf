@@ -57,7 +57,9 @@ class Dashboard extends React.Component<any, State> {
 
     static defaultProps = {
         cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-        rowHeight: 100
+        rowHeight: 100,
+        margin: [30, 20],
+
     };
 
     constructor(props: any) {
@@ -158,10 +160,13 @@ class Dashboard extends React.Component<any, State> {
                         onClick={this.onAddItem}
                         title="Add a visualization. "
                     >
-                        ADD</span>
+                        ADD
+                    </span>
                     :
-                    <span className={`text ${styles.text}`}>{i}</span>}
-                {this.createRemoveElement(el)}
+                    <span className={`text ${styles.text}`}>
+                        {this.createRemoveElement(el)}
+                        {i}
+                    </span>}
             </div>
         );
 

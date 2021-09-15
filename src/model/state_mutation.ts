@@ -26,6 +26,7 @@ export enum StateMutationType {
     SET_EVENTS = 'SET_EVENTS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
+    SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
     OTHER = 'OTHER',
 }
 
@@ -44,6 +45,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
+    | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
     ;
 
 // The action dispatch
@@ -112,6 +114,11 @@ export class AppStateMutation {
                     ...state,
                     chartData: mutation.data,
                 };
+            case StateMutationType.SET_MULTIPLECHARTDATALENGTH:
+                return {
+                    ...state,
+                    multipleChartDataLength: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -126,6 +133,7 @@ export class AppStateMutation {
                     events: undefined,
                     chartIdCounter: 0,
                     chartData: {},
+                    multipleChartDataLength: -1,
                 }
         }
     }

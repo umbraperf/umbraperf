@@ -16,6 +16,7 @@ export interface AppState {
     events: Array<string> |undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
+    multipleChartDataLength: number;
 }
 
 export function createDefaultState(): AppState {
@@ -32,5 +33,6 @@ export function createDefaultState(): AppState {
         events: undefined,
         chartIdCounter: 0,
         chartData: {},
+        multipleChartDataLength: -1,
     };
 }

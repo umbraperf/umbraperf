@@ -30,6 +30,7 @@ interface Props {
    events: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
+   multipleChartDataLength: number;
    setCurrentChart: (newCurrentChart: string) => void;
    setCurrentEvent: (newCurrentEvent: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
@@ -79,17 +80,8 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
-      //ensure changed app state and only proceed when result available
-      if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
-
-         /*          const chartDataElement: IChartData = {
-                     buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-                     operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-                     relativeFrquencies: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).relativeFrquencies,
-                  }
-         
-                  */
-
+      // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
+      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength){
          this.setState((state, props) => {
             const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
             
@@ -396,6 +388,7 @@ const mapStateToProps = (state: model.AppState) => ({
    events: state.events,
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
+   multipleChartDataLength: state.multipleChartDataLength,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

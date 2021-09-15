@@ -59,6 +59,8 @@ class Dashboard extends React.Component<any, State> {
         cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
         rowHeight: 100,
         margin: [30, 20],
+        useCSSTransforms: true,
+        preventCollision: true,
 
     };
 

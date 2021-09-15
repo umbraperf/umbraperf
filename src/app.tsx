@@ -7,6 +7,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
 
 import './globals.css';
+import '../node_modules/react-grid-layout/css/styles.css';
+import '../node_modules/react-resizable/css/styles.css';
 import styles from './style/main-app.module.css';
 
 import FileUploader from './components/file_uploader';

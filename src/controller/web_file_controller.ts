@@ -148,7 +148,6 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 });
             break;
         case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
-            console.log();
             const singleChartDataElem = createChartDataObject(
                 requestId,
                 {
@@ -168,6 +167,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
+    console.log(ChartDataCollection[requestId]);
     store.dispatch({
         type: StateMutationType.SET_CHARTDATA,
         data: ChartDataCollection,

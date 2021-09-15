@@ -30,7 +30,8 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?time:${query.data.metadata}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
-            return `select bucket, operator, relFreq(operator) from xy where ev_name = '${query.data.event}' group by range, operator, pipeline`;
+            //TODO windowsize
+            return `range/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,operator:20`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

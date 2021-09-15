@@ -59,33 +59,38 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                 return analyze::count_rows_over(&record_batch, find_name(column, &record_batch))
             }
             "relfreq" => {
-                let split = op.split_terminator(":").collect::<Vec<&str>>();
-                let column = split[0];
+                let split_fields_bucket_size = column.split_terminator(":").collect::<Vec<&str>>();
+                let fields = split_fields_bucket_size[0];
                 // Special case, when pipelines are requested
-                if split[1].contains(",") {
-                    let comma_split = column.split_terminator(",").collect::<Vec<&str>>();
-                    let pipeline = comma_split[0];
-                    let operator = comma_split[1];
-                    let bucket_size = split[1].parse::<f64>().unwrap();
+                if fields.contains(",") {
+
+                    let field_vec = fields.split_terminator(",").collect::<Vec<&str>>();
+
+                    let pipeline = field_vec[0];
+                    let time = field_vec[1];
+                    let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
                     let vec_record_batches =
                         analyze::rel_freq_in_bucket_of_operators_with_pipelines(
                             &record_batch,
-                            find_name(operator, &record_batch),
-                            find_name("time", &record_batch),
+                            find_name("operator", &record_batch),
+                            find_name(time, &record_batch),
                             find_name(pipeline, &record_batch),
                             bucket_size,
                         );
+
+                        print_to_js_with_obj(&format!("{:?}", vec_record_batches).into());
+
                         for (i, item) in vec_record_batches.iter().enumerate() {
                                 if i + 1 == vec_record_batches.len() {
                                         return item.to_owned();
                                 } else {
-                                        send_record_batch_to_js(&record_batch); 
+                                        send_record_batch_to_js(item); 
                                 }
                             }
                         
                 } else {
-                    let bucket_size = split[1].parse::<f64>().unwrap();
+                    let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
                     return analyze::rel_freq_in_bucket_of_operators(
                         &record_batch,

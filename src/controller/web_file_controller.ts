@@ -68,8 +68,6 @@ export function setCsvReadingFinished(requestId: number) {
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
-    window.alert("hier");
-
 
     //store result of current request in redux store result variable 
     const resultObject: Result = createResultObject(requestId, result);

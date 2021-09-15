@@ -189,7 +189,6 @@ class Dashboard extends React.Component<any, State> {
                     onMouseDown={this.stopEventPropagation}
                     onTouchStart={this.stopEventPropagation}
                     onClick={this.onRemoveItem.bind(this, i)}
-
                 >
                     <HighlightOffIcon color={"secondary"} />
                 </span>

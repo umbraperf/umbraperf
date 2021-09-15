@@ -79,8 +79,6 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                             bucket_size,
                         );
 
-                        print_to_js_with_obj(&format!("{:?}", vec_record_batches).into());
-
                         for (i, item) in vec_record_batches.iter().enumerate() {
                                 if i + 1 == vec_record_batches.len() {
                                         return item.to_owned();
@@ -95,7 +93,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     return analyze::rel_freq_in_bucket_of_operators(
                         &record_batch,
                         find_name("operator", &record_batch),
-                        find_name("time", &record_batch),
+                        find_name(fields, &record_batch),
                         bucket_size,
                     );
                 }
@@ -117,8 +115,6 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
     for select in select_vec {
         selections.push(find_name(select, &record_batch));
     }
-
-    print_to_js_with_obj(&format!("{:?}", selections).into());
 
     return analyze::get_columns(record_batch, selections);
 }

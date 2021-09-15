@@ -1,7 +1,7 @@
 import { ChartType } from '../controller/web_file_controller'
 
 export interface ChartDataKeyValue{
-    [chartId:number ]: ChartDataObject | Array<ChartDataObject>;
+    [chartId:number ]: ChartDataObject;
 }
 
 export interface ChartDataObject {
@@ -18,6 +18,7 @@ export type ChartData<T, P> = {
 export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART, IBarChartData>
     | ChartData<ChartType.SWIM_LANES, ISwimlanesData>
+    | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {

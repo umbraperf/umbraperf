@@ -1,6 +1,6 @@
 import { StateMutationType } from "../model/state_mutation";
 import { createResultObject, Result } from "../model/core_result";
-import { createChartDataObject, ChartDataObject, ChartDataKeyValue } from "../model/chart_data_result";
+import { createChartDataObject, ChartDataObject, ChartDataKeyValue, ISwimlanesData } from "../model/chart_data_result";
 import { store } from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
@@ -37,7 +37,7 @@ export class WebFileController {
 
 
     public calculateChartData(restQueryType: RestApi.RestQueryType, restQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
-        
+
         //TODO: metadata currently never used, can be removed
         const queryMetadata = metadata ? metadata : "";
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
@@ -116,7 +116,7 @@ function storeEventsFromRust() {
 
 function storeChartDataFromRust(requestId: number, resultObject: Result) {
     const requestType = store.getState().currentRequest;
-    let chartDataElem: ChartDataObject | Array<ChartDataObject> | undefined;
+    let chartDataElem: ChartDataObject | undefined;
     let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
 
     switch (requestType) {
@@ -146,22 +146,23 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 });
             break;
         case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
-            const singleChartDataElem = createChartDataObject(
+
+            let dataArray: Array<ISwimlanesData> = (store.getState().chartData[requestId] as ChartDataObject) ? (store.getState().chartData[requestId] as ChartDataObject).chartData.data as ISwimlanesData[] : new Array<ISwimlanesData>();
+            const data: ISwimlanesData = {
+                buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                operators: resultObject.resultTable.getColumn('operator').toArray(),
+                relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
+            }
+            dataArray.push(data);
+
+            chartDataElem = createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.SWIM_LANES,
-                    data: {
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
-                    }
+                    chartType: ChartType.SWIM_LANES_PIPELINES,
+                    data: dataArray,
                 });
-                
-                let chartDataElemArray: Array<ChartDataObject> = ChartDataCollection[requestId] ? ChartDataCollection[requestId] as Array<ChartDataObject> : [];
-                chartDataElemArray.push(singleChartDataElem);
-                chartDataElem = chartDataElemArray;
-            break;
 
+            break;
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
@@ -174,6 +175,8 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
         type: StateMutationType.SET_RESULTLOADING,
         data: false,
     });
+    console.log(store.getState().chartData);
+
 
 }
 

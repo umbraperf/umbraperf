@@ -15,6 +15,7 @@ import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 import { requestEvents } from '../../controller/web_file_controller'
+import _ from "lodash";
 
 
 
@@ -79,22 +80,26 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       //ensure changed app state and only proceed when result available
-      if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+      if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading &&) {
 
-/*          const chartDataElement: IChartData = {
-            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-            relativeFrquencies: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).relativeFrquencies,
-         }
+         /*          const chartDataElement: IChartData = {
+                     buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
+                     operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
+                     relativeFrquencies: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).relativeFrquencies,
+                  }
+         
+                  */
 
          this.setState((state, props) => {
-            const newChartDataArray = state.chartData.concat(chartDataElement);
+            const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
+            
             return {
                ...this.state,
                chartData: newChartDataArray,
             }
-         }); */
 
+         });
+         console.log(this.state.chartData);
       }
 
       //if current event changes, component did update is executed and queries new data for new event

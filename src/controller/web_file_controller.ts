@@ -155,6 +155,15 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
             }
             dataArray.push(data);
 
+            let multipleChartDataLength = store.getState().multipleChartDataLength+1;
+            /* let multipleChartDataLength: MultipleChartDataLength = store.getState().multipleChartLength;
+            multipleChartDataLength[requestId] ?  multipleChartDataLength[requestId]+1 : 1; */
+
+            store.dispatch({
+                type: StateMutationType.SET_MULTIPLECHARTDATALENGTH,
+                data: multipleChartDataLength,
+            });
+
             chartDataElem = createChartDataObject(
                 requestId,
                 {

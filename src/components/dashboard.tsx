@@ -4,6 +4,7 @@ import _ from "lodash";
 import styles from '../style/dashboard.module.css';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import QueueIcon from '@material-ui/icons/Queue';
 
 
 
@@ -155,15 +156,18 @@ class Dashboard extends React.Component<any, State> {
                 className={`widget ${styles.gridBox}`}
             >
                 {el.add ?
-                    <span
-                        className={`add text ${styles.addText}`}
+                    <div
+                        className={`add text ${styles.addIconContainer}`}
                         onMouseDown={this.stopEventPropagation}
                         onTouchStart={this.stopEventPropagation}
                         onClick={this.onAddItem}
                         title="Add a visualization. "
                     >
-                        ADD
-                    </span>
+                        <QueueIcon className={styles.addIcon}
+                            color={"primary"}
+                            fontSize={"large"}
+                             />
+                    </div>
                     :
                     <span className={`text ${styles.text}`}>
                         {this.createRemoveElement(el)}
@@ -187,7 +191,7 @@ class Dashboard extends React.Component<any, State> {
                     onClick={this.onRemoveItem.bind(this, i)}
 
                 >
-                    <HighlightOffIcon></HighlightOffIcon>
+                    <HighlightOffIcon color={"secondary"} />
                 </span>
             </div>
         );

@@ -6,7 +6,12 @@
 
 .gridBox{
     border: solid;
-    border-color: blue;
+    border-width: 1px;
+    border-color: lightgray;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .widgetRemove{
@@ -16,4 +21,19 @@
     cursor: pointer;
     margin: 2px;
     padding: 1px;
+}   
+
+.addIconContainer{
+    cursor: pointer;
 }
+
+.addIcon{
+    transition: transform 1s;
+
+}
+
+.addIcon:hover{
+    transform: scale(1.25);
+
+}
+

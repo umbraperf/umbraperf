@@ -155,7 +155,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
             }
             dataArray.push(data);
 
-            let multipleChartDataLength = store.getState().multipleChartDataLength+1;
+            let multipleChartDataLength = store.getState().multipleChartDataLength + 1;
             /* let multipleChartDataLength: MultipleChartDataLength = store.getState().multipleChartLength;
             multipleChartDataLength[requestId] ?  multipleChartDataLength[requestId]+1 : 1; */
 
@@ -217,6 +217,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
 
         case ChartType.SWIM_LANES_PIPELINES:
 
+            resetChartDataInStore(chartId);
             controller.calculateChartData(
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 RestApi.createRestQuery({
@@ -225,8 +226,23 @@ export function createRequestForRust(controller: WebFileController, chartId: num
                 }), false, chartId);
             break;
 
-
-
     }
+
+}
+
+export function resetChartDataInStore(chartId: number) {
+
+    let chartData = store.getState().chartData;
+    delete chartData[chartId];
+    let newChartData: ChartDataKeyValue = { ...chartData }
+
+    store.dispatch({
+        type: StateMutationType.SET_CHARTDATA,
+        data: newChartData,
+    });
+    store.dispatch({
+        type: StateMutationType.SET_MULTIPLECHARTDATALENGTH,
+        data: -1,
+    });
 
 }

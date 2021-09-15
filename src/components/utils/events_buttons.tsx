@@ -11,8 +11,6 @@ export default function EventsButtons(props: any) {
 
     const events = props.events as Array<any>;
     const currentEvent = useSelector((state: AppState) => state.currentEvent);
-    console.log(currentEvent);
-    const context = useContext(ctx);
     const dispatch = useDispatch();
     const setNewCurrentEvent = useCallback(
         (newCurrentEvent) => dispatch({
@@ -26,6 +24,10 @@ export default function EventsButtons(props: any) {
         setNewCurrentEvent(event);
     }
 
+    const createEventShortString = (event: string) => {
+        return event.length > 20 ? (event.substr(0, 15) + "...") : event;
+    }
+
     return (
         <div className={"eventButtonsArea"}>
             {events!.map((event, index) => (
@@ -34,10 +36,10 @@ export default function EventsButtons(props: any) {
                     variant="contained"
                     color={currentEvent === event ? "primary" : "default"}
                     onClick={() => handleEventButtonClick(event)}
-                    style={{ width: 200, borderRadius: 100, margin: 10 }}
+                    style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
                     key={index}
                 >
-                    {event}
+                    {createEventShortString(event)}
                 </Button>
             ))}
         </div>

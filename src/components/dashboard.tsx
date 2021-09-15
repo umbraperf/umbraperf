@@ -138,17 +138,17 @@ class Dashboard extends React.Component<Props, State> {
         });
     }
 
-    onRemoveItem(){
+    onRemoveItem() {
         //TODO 
     }
 
-    createRemoveElement(el: any){
+    createRemoveElement(el: any) {
 
-          const i = el.add ? "+" : el.i;
-          
-          return (
+        const i = el.add ? "+" : el.i;
+
+        return (
             <div key={i} data-grid={el}>
-{/*               {el.add ? (
+                {/*               {el.add ? (
                 <span
                   className="add text"
                   onClick={this.onAddItem}
@@ -159,14 +159,14 @@ class Dashboard extends React.Component<Props, State> {
               ) : (
                 <span className="text">{i}</span>
               )} */}
-              <span
-                className={styles.widgetRemove}
-                onClick={this.onRemoveItem.bind(this, i)}
-              >
-                x
-              </span>
+                <span
+                    className={styles.widgetRemove}
+                    onClick={this.onRemoveItem.bind(this, i)}
+                >
+                    x
+                </span>
             </div>
-          );
+        );
     }
 
 }

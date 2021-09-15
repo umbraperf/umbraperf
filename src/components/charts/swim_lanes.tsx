@@ -37,7 +37,7 @@ interface Props {
 
 interface State {
    chartId: number,
-   chartData: Array<IChartData>,
+   chartData: IChartData | undefined,
    width: number,
    height: number,
    interpolation: string;
@@ -65,7 +65,7 @@ class SwimLanes extends React.Component<Props, State> {
          chartId: this.props.chartIdCounter,
          width: startSize.width,
          height: startSize.height,
-         chartData: [],
+         chartData: undefined,
          interpolation: "basis",
          bucketsize: 0.2,
       };
@@ -88,10 +88,9 @@ class SwimLanes extends React.Component<Props, State> {
          }
 
          this.setState((state, props) => {
-            const newChartDataArray = state.chartData.concat(chartDataElement);
             return {
                ...this.state,
-               chartData: newChartDataArray,
+               chartData: chartDataElement,
             }
          });
 
@@ -99,10 +98,6 @@ class SwimLanes extends React.Component<Props, State> {
 
       //if current event changes, component did update is executed and queries new data for new event
       if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize) {
-         this.setState((state, props) => ({
-            ...state,
-            chartData: [],
-         }));
          createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, "" + this.state.bucketsize);
       }
 
@@ -197,10 +192,10 @@ class SwimLanes extends React.Component<Props, State> {
                      <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                   </div>
                </div>
-               {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
+               {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.state.chartData)
                   ? <CircularProgress />
                   : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                     {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+                     <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
                   </div>
                }
             </div>
@@ -13901,14 +13896,12 @@ class SwimLanes extends React.Component<Props, State> {
       return spec;
    }
 
-   createVisualizationData(chartId: number) {
+   createVisualizationData() {
       console.log(this.state.chartData);
-      console.log(chartId);
-
 
       const data = {
          "name": "table",
-         "values": this.state.chartData[chartId],
+         "values": this.state.chartData,
          transform: [
             { "type": "flatten", "fields": ["buckets", "operators", "relativeFrquencies"] },
             { "type": "collect", "sort": { "field": "operators" } },
@@ -13919,14 +13912,12 @@ class SwimLanes extends React.Component<Props, State> {
       return data;
    }
 
-   createVisualizationSpec(chartId: number) {
-      console.log(this.state.chartData[chartId].buckets);
-
-      const visData = this.createVisualizationData(chartId);
+   createVisualizationSpec() {
+      const visData = this.createVisualizationData();
 
       const xTicks = () => {
 
-         const bucketsArrayLength = this.state.chartData[chartId].buckets.length;
+         const bucketsArrayLength = this.state.chartData!.buckets.length;
          const numberOfTicks = 40;
 
          if (bucketsArrayLength > numberOfTicks) {
@@ -13936,7 +13927,7 @@ class SwimLanes extends React.Component<Props, State> {
             const delta = Math.floor(bucketsArrayLength / numberOfTicks);
 
             for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-               ticks.push(this.state.chartData[chartId].buckets[i]);
+               ticks.push(this.state.chartData!.buckets[i]);
             }
             return ticks;
          }

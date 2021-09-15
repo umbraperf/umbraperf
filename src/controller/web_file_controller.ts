@@ -68,9 +68,10 @@ export function setCsvReadingFinished(requestId: number) {
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
+    window.alert("hier");
+
 
     //store result of current request in redux store result variable 
-    console.log(result);
     const resultObject: Result = createResultObject(requestId, result);
 
     store.dispatch({
@@ -86,7 +87,6 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
     if (!eventsRequest) {
         storeChartDataFromRust(requestId, resultObject);
-        console.log(store.getState().chartData);
     }
 }
 

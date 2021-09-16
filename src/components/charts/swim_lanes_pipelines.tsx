@@ -8,7 +8,7 @@ import { VisualizationSpec } from "react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, createRequestForRust } from '../../controller/web_file_controller';
+import { ChartType, requestChartData } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -100,7 +100,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, "" + this.state.bucketsize);
+         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, "" + this.state.bucketsize);
       }
 
    }

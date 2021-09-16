@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestEvents, createRequestForRust } from '../../controller/web_file_controller'
+import { requestEvents, requestChartData } from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -62,7 +62,7 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
-            createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
+            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
         }
 
     }

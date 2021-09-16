@@ -13,14 +13,6 @@ export interface FileInfo {
     file: File | undefined;
 }
 
-export interface CalculateChartParams {
-    bucketsize: number | undefined;
-}
-
-const emptyCalculateChartParams: CalculateChartParams = {
-    bucketsize: undefined,
-}
-
 export enum ChartType {
     BAR_CHART = "bar_chart",
     SWIM_LANES = "swim_lanes",
@@ -36,7 +28,7 @@ export class WebFileController {
     }
 
 
-    public calculateChartData(restQueryType: RestApi.RestQueryType, restQuery: string, eventsRequest: boolean, requestingChartId?: number, metadata?: string) {
+    public calculateChartData(restQueryType: RestApi.RestQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, metadata?: string) {
 
         //TODO: metadata currently never used, can be removed
         const queryMetadata = metadata ? metadata : "";
@@ -55,7 +47,7 @@ export class WebFileController {
             data: undefined,
         });
 
-        worker.calculateChartData(queryMetadata, restQuery, queryRequestId, eventsRequest);
+        worker.calculateChartData(queryMetadata, restQuery, queryRequestId, metaRequest, restQueryType);
     }
 }
 
@@ -67,7 +59,7 @@ export function setCsvReadingFinished(requestId: number) {
     });
 }
 
-export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, eventsRequest: boolean) {
+export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: RestApi.RestQueryType) {
 
     //store result of current request in redux store result variable 
     const resultObject: Result = createResultObject(requestId, result);
@@ -77,40 +69,36 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
         data: resultObject,
     });
 
-    //store events if result was answer to events request:
-    if (eventsRequest) {
-        storeEventsFromRust();
+    //store metadata if result was answer to meta request:
+    if (metaRequest) {
+        storeMetaDataFromRust(restQueryType);
     }
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
-    if (!eventsRequest) {
+    if (!metaRequest) {
         storeChartDataFromRust(requestId, resultObject);
     }
 }
 
-//request events from rust for specific chart type
-export function requestEvents(controller: WebFileController) {
-    controller.calculateChartData(
-        RestApi.RestQueryType.GET_EVENTS,
-        RestApi.createRestQuery({
-            type: RestApi.RestQueryType.GET_EVENTS,
-            data: {},
-        }), true);
-
-}
-
 //extract events from result table, store them to app state, set current event
-function storeEventsFromRust() {
-    const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
-    const currentEvent = events[0];
-    store.dispatch({
-        type: StateMutationType.SET_EVENTS,
-        data: events,
-    });
-    store.dispatch({
-        type: StateMutationType.SET_CURRENTEVENT,
-        data: currentEvent,
-    });
+function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
+
+    switch (restQueryType) {
+
+        case RestApi.RestQueryType.GET_EVENTS:
+            const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
+            const currentEvent = events[0];
+            store.dispatch({
+                type: StateMutationType.SET_EVENTS,
+                data: events,
+            });
+            store.dispatch({
+                type: StateMutationType.SET_CURRENTEVENT,
+                data: currentEvent,
+            });
+            break;
+
+    }
 
 }
 
@@ -186,10 +174,9 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
     });
     console.log(store.getState().chartData);
 
-
 }
 
-export function createRequestForRust(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: string) {
+export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: string) {
 
     switch (chartType) {
 
@@ -227,6 +214,30 @@ export function createRequestForRust(controller: WebFileController, chartId: num
             break;
 
     }
+
+}
+
+
+//request events from rust, metarequest
+export function requestEvents(controller: WebFileController) {
+    controller.calculateChartData(
+        RestApi.RestQueryType.GET_EVENTS,
+        RestApi.createRestQuery({
+            type: RestApi.RestQueryType.GET_EVENTS,
+            data: {},
+        }), true);
+
+}
+
+//request pipelines from rust, metarequest
+export function requestPipelines(controller: WebFileController) {
+    //TODO 
+
+}
+
+//request statistics such as number of pipelines, number of cycles, ... from rust, metarequest
+export function requestStatistics(controller: WebFileController) {
+    //TODO 
 
 }
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import createProdStore from './model/store_prod';
+import createDevStore from './model/store_dev';
 import { IAppContext, AppContextProvider } from './app_context';
 
 import { Provider as ReduxProvider } from 'react-redux';
@@ -30,7 +31,9 @@ import { Shadows } from '@material-ui/core/styles/shadows';
 
 
 //Create Redux stroe
-export const store = createProdStore();
+//TODO change to prod store
+//export const store = createProdStore();
+export const store = createDevStore();
 
 //Create WorkerAPI
 // const workerAPI = new WorkerAPI();

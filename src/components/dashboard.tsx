@@ -39,26 +39,24 @@ interface IItemElement {
     add?: boolean,
 }
 
-interface DefaultProps {
-    defaultProps: {
-        cols: {
-            lg: number,
-            md: number,
-            sm: number,
-            xs: number,
-            xxs: number,
-        },
-        rowHeight: number,
-        margin: number[],
-        useCSSTransforms: boolean,
-        preventCollision: boolean,
+type DefaultProps = {
+    cols: {
+        lg: number,
+        md: number,
+        sm: number,
+        xs: number,
+        xxs: number,
     },
+    rowHeight: number,
+    margin: [number, number],
+    useCSSTransforms: boolean,
+    preventCollision: boolean,
 };
 
-interface Props {
+type Props = {
     dashboardState: State,
     setDashboardState: (newDashboardState: State) => void;
-}
+} & Partial<DefaultProps>
 
 const originalItems: Array<IItemElement> = [0, 1, 2, 3, 4].map(function (i, key, list) {
     return {
@@ -77,7 +75,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 class Dashboard extends React.Component<Props, State> {
 
-    static defaultProps = {
+    static defaultProps: DefaultProps = {
         cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
         rowHeight: 100,
         margin: [30, 20],
@@ -106,8 +104,8 @@ class Dashboard extends React.Component<Props, State> {
 
     }
 
-    componentWillUnmount(): void{
-        
+    componentWillUnmount(): void {
+        this.props.setDashboardState(this.state);
     }
 
     stopEventPropagation = (event: any) => {
@@ -191,7 +189,7 @@ class Dashboard extends React.Component<Props, State> {
                         <QueueIcon className={styles.addIcon}
                             color={"primary"}
                             fontSize={"large"}
-                             />
+                        />
                     </div>
                     :
                     <span className={`text ${styles.text}`}>
@@ -225,15 +223,15 @@ class Dashboard extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     dashboardState: state.dashboardState,
- });
- 
- const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setDashboardState: (newDashboardState: State) => dispatch({
-       type: model.StateMutationType.SET_DASHBOARDSTATE,
-       data: newDashboardState,
+        type: model.StateMutationType.SET_DASHBOARDSTATE,
+        data: newDashboardState,
     }),
- });
+});
 
 
-export default (Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 

@@ -12,8 +12,10 @@ export interface AppState {
     file: undefined | File;
     currentChart: string;
     currentEvent: string;
+    currentPipeline: string;
     currentRequest: RestQueryType | undefined;
     events: Array<string> |undefined;
+    pipelines: Array<string> |undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
     multipleChartDataLength: number;
@@ -29,8 +31,10 @@ export function createDefaultState(): AppState {
         file: undefined,
         currentChart: "",
         currentEvent: "",
+        currentPipeline: "",
         currentRequest: undefined,
         events: undefined,
+        pipelines: undefined,
         chartIdCounter: 0,
         chartData: {},
         multipleChartDataLength: -1,

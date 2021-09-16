@@ -22,8 +22,10 @@ export enum StateMutationType {
     RESET_STATE = 'RESET_STATE',
     SET_CURRENTCHART = 'SET_CURRENTCHART',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
+    SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
+    SET_PIPELINES = 'SET_PIPELINES',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
     SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
@@ -41,8 +43,10 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
+    | StateMutation<StateMutationType.SET_CURRENTPIPELINE, string>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
+    | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
     | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
@@ -94,6 +98,11 @@ export class AppStateMutation {
                     ...state,
                     currentEvent: mutation.data,
                 };
+            case StateMutationType.SET_CURRENTPIPELINE:
+                return {
+                    ...state,
+                    currentPipeline: mutation.data,
+                };
             case StateMutationType.SET_CURRENTREQUEST:
                 return {
                     ...state,
@@ -103,6 +112,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     events: mutation.data,
+                };
+            case StateMutationType.SET_PIPELINES:
+                return {
+                    ...state,
+                    pipelines: mutation.data,
                 };
             case StateMutationType.SET_CHARTIDCOUNTER:
                 return {
@@ -129,8 +143,10 @@ export class AppStateMutation {
                     file: undefined,
                     currentChart: "",
                     currentEvent: "",
+                    currentPipeline: "",
                     currentRequest: undefined,
                     events: undefined,
+                    pipelines: undefined,
                     chartIdCounter: 0,
                     chartData: {},
                     multipleChartDataLength: -1,

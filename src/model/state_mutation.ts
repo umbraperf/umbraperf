@@ -3,6 +3,8 @@ import { AppState } from './state';
 import { Result } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
+import {State as IDashboardState} from "../components/dashboard"
+
 
 
 /// A mutation
@@ -29,6 +31,7 @@ export enum StateMutationType {
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
     SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
+    SET_DASHBOARDSTATE = 'SET_DASHBOARDSTATE',
     OTHER = 'OTHER',
 }
 
@@ -50,6 +53,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
     | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
+    | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
     ;
 
 // The action dispatch
@@ -133,6 +137,11 @@ export class AppStateMutation {
                     ...state,
                     multipleChartDataLength: mutation.data,
                 }
+            case StateMutationType.SET_DASHBOARDSTATE:
+                return {
+                    ...state,
+                    dashboardState: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -150,6 +159,7 @@ export class AppStateMutation {
                     chartIdCounter: 0,
                     chartData: {},
                     multipleChartDataLength: -1,
+                    dashboardState: undefined,
                 }
         }
     }

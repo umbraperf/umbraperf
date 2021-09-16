@@ -20,6 +20,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         backgroundColor: "#e0e0e0",
         flexGrow: 1,
         width: '100%',
+        height: '32px',
+        minHeight: '32px',
         //backgroundColor: theme.palette.background.default,
         //backgroundColor: theme.palette.background.paper,
     },
@@ -29,6 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         opacity: '0.4',
     },
     tabRoot: {
+        height: '32px',
+        minHeight: '32px',
         //minWidth: '200px',
     }
 }));
@@ -76,7 +80,7 @@ function ScrollableTabsButtonForce(props: any) {
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
-                                <Tab onClick={handleTabClick} classes={{ root: classes.tabRoot }} label={prop.sidebarName} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
+                                <Tab onClick={handleTabClick} classes={{ root: classes.tabRoot }} /* label={prop.sidebarName} */ value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );
                         }
                     })}

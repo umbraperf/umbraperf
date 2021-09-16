@@ -46,7 +46,7 @@ export const appContext: IAppContext = {
     controller: webFileController,
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
-    
+
 };
 
 const materialUiTheme = createTheme({
@@ -110,17 +110,22 @@ ReactDOM.render(
 
                 <BrowserRouter>
 
-                    {/*                 style: css module with additional static class (cloud also be a seccond module) */}
                     <div className={`app ${styles.app}`}>
 
                         <div className={styles.appHeader}>
-                            <AppBar position="static">
-                                <Toolbar>
-                                    <Typography variant="h6" className={styles.appHeaderTitle}>
+                            <AppBar position="static" >
+                                <Toolbar style={{minHeight: '32px'}}>
+                                    <Typography variant="subtitle2" className={styles.appHeaderTitle}>
                                         Umbra-Profiler
                                     </Typography>
                                 </Toolbar>
                             </AppBar>
+                        </div>
+
+                        <div className={`appNavigation ${styles.appNavigation}`}>
+
+                            <TabPanel/>
+
                         </div>
 
                         <div className={styles.appBody}>
@@ -147,11 +152,6 @@ ReactDOM.render(
                             </Switch>
                         </div>
 
-                        <div className={`appNavigation ${styles.appNavigation}`}>
-
-                            <TabPanel></TabPanel>
-
-                        </div>
                     </div>
 
                 </BrowserRouter>

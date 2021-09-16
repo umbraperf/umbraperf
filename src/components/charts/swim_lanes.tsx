@@ -13918,7 +13918,7 @@ class SwimLanes extends React.Component<Props, State> {
       const xTicks = () => {
 
          const bucketsArrayLength = this.state.chartData!.buckets.length;
-         const numberOfTicks = 40;
+         const numberOfTicks = 30;
 
          if (bucketsArrayLength > numberOfTicks) {
 
@@ -13962,10 +13962,7 @@ class SwimLanes extends React.Component<Props, State> {
                range: "height",
                nice: true,
                zero: true,
-               domain: {
-                  data: "table",
-                  field: "y1"
-               }
+               domain: [0, 1]
             },
             {
                name: "color",

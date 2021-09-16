@@ -1,6 +1,7 @@
 import {  ChartDataKeyValue } from "./chart_data_result";
 import { Result } from "./core_result";
 import { RestQueryType } from "./rest_queries";
+import {State as IDashboardState} from "../components/dashboard"
 
 export interface AppState {
     /// The registered files
@@ -17,6 +18,7 @@ export interface AppState {
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
     multipleChartDataLength: number;
+    dashboardState: IDashboardState | undefined;
 }
 
 export function createDefaultState(): AppState {
@@ -34,5 +36,6 @@ export function createDefaultState(): AppState {
         chartIdCounter: 0,
         chartData: {},
         multipleChartDataLength: -1,
+        dashboardState: undefined,
     };
 }

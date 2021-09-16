@@ -1,6 +1,8 @@
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';
+import * as RestApi from './model/rest_queries';
+
 
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
@@ -25,14 +27,16 @@ export type WorkerResponse<T, P> = {
   readonly requestId: number | undefined;
   readonly type: T;
   readonly data: P;
-  readonly eventsRequest: boolean;
+  readonly metaRequest: boolean;
+  readonly restQueryType: RestApi.RestQueryType | undefined;
 };
 
 export interface ICalculateChartDataRequestData{
   queryMetadata: string,
   restQuery: string,
   requestId: number,
-  eventsRequest: boolean,
+  metaRequest: boolean,
+  restQueryType: RestApi.RestQueryType,
 }
 
 export interface IStoreResultResponseData{
@@ -65,9 +69,10 @@ interface IGlobalFileDictionary {
 }
 
 let globalFileIdCounter = 0;
-let globalEventsRequest: boolean;
+let globalMetaRequest: boolean;
 let globalFileDictionary: IGlobalFileDictionary = {}
 let globalRequestId: number|undefined = undefined;
+let globalRestQueryType: RestApi.RestQueryType | undefined = undefined;
 
 const worker: IRequestWorker = self as any;
 
@@ -107,7 +112,8 @@ export function notifyJsFinishedReading(requestId: number) {
     requestId: 100,
     type: WorkerResponseType.CSV_READING_FINISHED,
     data: requestId,
-    eventsRequest: false,
+    metaRequest: false,
+    restQueryType: undefined,
   });
 
 }
@@ -120,7 +126,8 @@ export function notifyJsQueryResult(result: any) {
       requestId: globalRequestId,
       type: WorkerResponseType.STORE_RESULT,
       data: result,
-      eventsRequest: globalEventsRequest,
+      metaRequest: globalMetaRequest,
+      restQueryType: globalRestQueryType,
     });
   }
 
@@ -148,7 +155,8 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
-      globalEventsRequest = (messageData as ICalculateChartDataRequestData).eventsRequest;
+      globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
+      globalRestQueryType = (messageData as ICalculateChartDataRequestData).restQueryType;
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
       break;
 

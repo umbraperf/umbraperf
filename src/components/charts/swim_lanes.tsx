@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, createRequestForRust } from '../../controller/web_file_controller';
+import { ChartType, requestChartData } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -98,7 +98,7 @@ class SwimLanes extends React.Component<Props, State> {
 
       //if current event changes, component did update is executed and queries new data for new event
       if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize) {
-         createRequestForRust(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, "" + this.state.bucketsize);
+         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, "" + this.state.bucketsize);
       }
 
    }

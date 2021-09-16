@@ -5,6 +5,7 @@ import styles from '../style/dashboard.module.css';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import QueueIcon from '@material-ui/icons/Queue';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 
 
@@ -61,7 +62,7 @@ class Dashboard extends React.Component<any, State> {
         rowHeight: 100,
         margin: [30, 20],
         useCSSTransforms: true,
-        preventCollision: true,
+        preventCollision: false,
 
     };
 
@@ -92,7 +93,6 @@ class Dashboard extends React.Component<any, State> {
     render() {
         return (
             <div>
-                <button onClick={this.onAddItem}>Add Item</button>
                 <ResponsiveGridLayout
                     className={`layout ${styles.gridBoxesContainer}`}
                     onLayoutChange={this.onLayoutChange}
@@ -105,6 +105,14 @@ class Dashboard extends React.Component<any, State> {
                     }
 
                 </ResponsiveGridLayout>
+                <div className={styles.outerAddIconContainer}>
+                    <AddCircleOutlineIcon 
+                        className={styles.addIcon}
+                        color={"primary"}
+                        fontSize={"large"}
+                        onClick={this.onAddItem}
+                    />
+                </div>
 
             </div>
 
@@ -166,7 +174,7 @@ class Dashboard extends React.Component<any, State> {
                         <QueueIcon className={styles.addIcon}
                             color={"primary"}
                             fontSize={"large"}
-                             />
+                        />
                     </div>
                     :
                     <span className={`text ${styles.text}`}>

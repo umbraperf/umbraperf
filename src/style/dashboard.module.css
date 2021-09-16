@@ -1,6 +1,4 @@
 .gridBoxesContainer{
-    border: solid;
-    border-color: black;
 
 }
 
@@ -35,5 +33,12 @@
 .addIcon:hover{
     transform: scale(1.25);
 
+}
+
+.outerAddIconContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
 }
 

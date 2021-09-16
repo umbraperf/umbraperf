@@ -98,10 +98,23 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
             });
             break;
 
+            case RestApi.RestQueryType.GET_PIPELINES:
+                const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
+                const currentPipeline = pipelines[0];
+                store.dispatch({
+                    type: StateMutationType.SET_PIPELINES,
+                    data: pipelines,
+                });
+                store.dispatch({
+                    type: StateMutationType.SET_CURRENTPIPELINE,
+                    data: currentPipeline,
+                });
+                break;
     }
 
 }
 
+//store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: Result) {
     const requestType = store.getState().currentRequest;
     let chartDataElem: ChartDataObject | undefined;
@@ -226,13 +239,16 @@ export function requestEvents(controller: WebFileController) {
             type: RestApi.RestQueryType.GET_EVENTS,
             data: {},
         }), true);
-
 }
 
 //request pipelines from rust, metarequest
 export function requestPipelines(controller: WebFileController) {
-    //TODO 
-
+    controller.calculateChartData(
+        RestApi.RestQueryType.GET_PIPELINES,
+        RestApi.createRestQuery({
+            type: RestApi.RestQueryType.GET_EVENTS,
+            data: {},
+        }), true);
 }
 
 //request statistics such as number of pipelines, number of cycles, ... from rust, metarequest

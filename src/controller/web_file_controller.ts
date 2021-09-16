@@ -230,7 +230,7 @@ export function createRequestForRust(controller: WebFileController, chartId: num
 
 }
 
-export function resetChartDataInStore(chartId: number) {
+function resetChartDataInStore(chartId: number) {
 
     let chartData = store.getState().chartData;
     delete chartData[chartId];

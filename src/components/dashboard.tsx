@@ -6,16 +6,16 @@ import { WidthProvider, Responsive } from 'react-grid-layout';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import QueueIcon from '@material-ui/icons/Queue';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import { connect } from 'react-redux';
 
 
 
-interface State {
+export interface State {
     items: Array<IItemElement>,
     layout?: Array<ILayoutElement>;
     breakpoints?: { lg: number, md: number, sm: number, xs: number, xxs: number };
     cols?: { lg: number, md: number, sm: number, xs: number, xxs: number };
     newCounter: number;
-
 }
 
 interface ILayoutElement {
@@ -40,6 +40,25 @@ interface IItemElement {
     add?: boolean,
 }
 
+type DefaultProps = {
+    cols: {
+        lg: number,
+        md: number,
+        sm: number,
+        xs: number,
+        xxs: number,
+    },
+    rowHeight: number,
+    margin: [number, number],
+    useCSSTransforms: boolean,
+    preventCollision: boolean,
+};
+
+type Props = {
+    dashboardState: State,
+    setDashboardState: (newDashboardState: State) => void;
+} & Partial<DefaultProps>
+
 const originalItems: Array<IItemElement> = [0, 1, 2, 3, 4].map(function (i, key, list) {
     return {
         i: i.toString(),
@@ -55,9 +74,9 @@ const originalItems: Array<IItemElement> = [0, 1, 2, 3, 4].map(function (i, key,
 //a HOC WidthProvider can be used to automatically determine width upon initialization and window resize events:
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-class Dashboard extends React.Component<any, State> {
+class Dashboard extends React.Component<Props, State> {
 
-    static defaultProps = {
+    static defaultProps: DefaultProps = {
         cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
         rowHeight: 100,
         margin: [30, 20],
@@ -84,6 +103,10 @@ class Dashboard extends React.Component<any, State> {
 
     componentDidUpdate(prevProps: any): void {
 
+    }
+
+    componentWillUnmount(): void {
+        this.props.setDashboardState(this.state);
     }
 
     stopEventPropagation = (event: any) => {
@@ -206,6 +229,17 @@ class Dashboard extends React.Component<any, State> {
 
 }
 
+const mapStateToProps = (state: model.AppState) => ({
+    dashboardState: state.dashboardState,
+});
 
-export default Dashboard;
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setDashboardState: (newDashboardState: State) => dispatch({
+        type: model.StateMutationType.SET_DASHBOARDSTATE,
+        data: newDashboardState,
+    }),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 

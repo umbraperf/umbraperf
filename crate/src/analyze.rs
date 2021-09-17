@@ -131,6 +131,9 @@ pub fn rel_freq_in_bucket_of_operators(
     column_for_time: usize,
     bucket_size: f64,
 ) -> RecordBatch {
+
+    let batch = so
+
     let unique_operator = find_unique_string(batch, column_for_operator);
 
     // Vector of unique strings
@@ -169,11 +172,11 @@ pub fn rel_freq_in_bucket_of_operators(
     for time in time_column {
         print_to_js_with_obj(&format!("{:?}", "Bucket Map").into());
         print_to_js_with_obj(&format!("{:?}", bucket_map).into());
+        print_to_js_with_obj(&format!("{:?}", time_bucket).into());
+
         if time_bucket < time.unwrap() {
             for operator in vec_operator {
                 if bucket_map.get("sum").unwrap() > &0.0 {
-                    print_to_js_with_obj(&format!("{:?}", "HREUHERUEHRUEHFE").into());
-
                     let operator = operator.unwrap();
                     result_bucket.push(f64::trunc(time_bucket * 100.0) / 100.0);
                     result_vec_operator.push(operator);
@@ -187,15 +190,19 @@ pub fn rel_freq_in_bucket_of_operators(
             }
             // reset sum
             bucket_map.insert("sum", 0.0);
+            print_to_js_with_obj(&format!("{:?}", "After 0").into());
+            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
+
             while time_bucket < time.unwrap() {
                 time_bucket += bucket_size;
             }
         }
         let current_operator = operator_column.value(column_index as usize);
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+        let new_value = bucket_map.get(current_operator).unwrap() + 1.0;
         bucket_map.insert(
             current_operator,
-            bucket_map.get(current_operator).unwrap() + 1.0,
+            new_value,
         );
         column_index += 1;
     }
@@ -233,6 +240,9 @@ pub fn rel_freq_in_bucket_of_operators_helper(
     pipeline: &str,
 ) -> RecordBatch {
     let unique_operator = find_unique_string(batch, column_for_operator);
+
+    print_to_js_with_obj(&format!("{:?}", "PIPELINE").into());
+    print_to_js_with_obj(&format!("{:?}", pipeline).into());
 
     // Vector of unique strings
     let vec_operator = unique_operator
@@ -279,21 +289,9 @@ pub fn rel_freq_in_bucket_of_operators_helper(
     for time in time_column {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
-
-        print_to_js_with_obj(&format!("{:?}", "Pipelines:").into());
-        print_to_js_with_obj(&format!("{:?}", pipeline).into());
-        print_to_js_with_obj(&format!("{:?}", current_pipeline).into());
-
-        if pipeline == current_pipeline {
-            bucket_map.insert(
-                current_operator,
-                bucket_map.get(current_operator).unwrap() + 1.0,
-            );
-        }
-        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
-        if time_bucket < time.unwrap() {
+        while time_bucket < time.unwrap() {
             for operator in vec_operator {
-                if operator.unwrap() != "sum" && bucket_map.get("sum").unwrap() != &0.0 {
+                if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
                     result_bucket.push(f64::trunc(time_bucket * 100.0) / 100.0);
                     result_vec_operator.push(operator);
@@ -305,7 +303,7 @@ pub fn rel_freq_in_bucket_of_operators_helper(
                     bucket_map.insert(operator, 0.0);
                 }
             }
-            
+            print_to_js_with_obj(&format!("{:?}", time_bucket).into());
             print_to_js_with_obj(&format!("{:?}", "Bucket Map:").into());
             print_to_js_with_obj(&format!("{:?}", bucket_map).into());
             // reset sum
@@ -314,6 +312,14 @@ pub fn rel_freq_in_bucket_of_operators_helper(
                 time_bucket += bucket_size;
             }
         }
+
+        if pipeline == current_pipeline {
+            bucket_map.insert(
+                current_operator,
+                bucket_map.get(current_operator).unwrap() + 1.0,
+            );
+        }
+        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
         column_index += 1;
     }
 

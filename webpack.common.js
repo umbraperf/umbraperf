@@ -11,7 +11,6 @@ export function configure(params) {
         target: 'web',
         entry: {
             app: ['./src/app.tsx'],
-            //worker: ['./src/worker.ts'],
         },
         output: {
             path: params.buildDir,
@@ -20,6 +19,7 @@ export function configure(params) {
             assetModuleFilename: 'static/assets/[name].[contenthash].[ext]',
             webassemblyModuleFilename: 'static/wasm/[hash].wasm',
             clean: true,
+            publicPath: '/',
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm', '.mjs'],

@@ -14,7 +14,6 @@ import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
-import { requestEvents } from '../../controller/web_file_controller'
 import _ from "lodash";
 
 
@@ -32,7 +31,6 @@ interface Props {
    chartData: model.ChartDataKeyValue,
    multipleChartDataLength: number;
    setCurrentChart: (newCurrentChart: string) => void;
-   setCurrentEvent: (newCurrentEvent: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
@@ -110,12 +108,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(ChartType.SWIM_LANES_PIPELINES);
 
-         if (!this.props.events) {
-            requestEvents(this.props.appContext.controller);
-         } else {
-            this.props.setCurrentEvent(this.props.events[0]);
-         }
-
          addEventListener('resize', (event) => {
             this.resizeListener();
          });
@@ -179,30 +171,22 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          return <Redirect to={"/upload"} />
       }
 
-      if (!this.props.events) {
-         return <div className={styles.spinnerArea} >
-            <CircularProgress />
-         </div>
-      }
-
       return <div>
-         {this.props.events &&
             <div className={styles.resultArea} >
                <div className={styles.optionsArea} >
-                  <EventsButtons events={this.props.events}></EventsButtons>
+                  <EventsButtons />
                   <div className={styles.dropdownArea} >
                      <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
                      <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                   </div>
                </div>
-               {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
+               {(this.props.resultLoading || !this.state.chartData || !this.props.events)
                   ? <CircularProgress />
                   : <div className={"vegaContainer"} ref={this.chartWrapper}>
                      {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
                   </div>
                }
             </div>
-         }
       </div>;
    }
 
@@ -392,10 +376,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
    setCurrentChart: (newCurrentChart: string) => dispatch({
       type: model.StateMutationType.SET_CURRENTCHART,
       data: newCurrentChart,
-   }),
-   setCurrentEvent: (newCurrentEvent: string) => dispatch({
-      type: model.StateMutationType.SET_CURRENTEVENT,
-      data: newCurrentEvent,
    }),
    setChartIdCounter: (newChartIdCounter: number) => dispatch({
       type: model.StateMutationType.SET_CHARTIDCOUNTER,

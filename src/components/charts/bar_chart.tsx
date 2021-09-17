@@ -71,12 +71,6 @@ class BarChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
 
-            if (!this.props.events) {
-                requestEvents(this.props.appContext.controller);
-            } else {
-                this.props.setCurrentEvent(this.props.events[0]);
-            }
-
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -112,27 +106,19 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        if (!this.props.events) {
-            return <div className={styles.spinnerArea} >
-                <CircularProgress />
-            </div>
-        }
-
         return <div>
-            {this.props.events &&
-                <div className={styles.resultArea} >
-                    <div className={styles.optionsArea} >
-                        <EventsButtons events={this.props.events}></EventsButtons>
-                    </div>
-                    {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
-                        ? <CircularProgress />
-                        : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                            <Vega spec={this.createVisualizationSpec()} />
-                        </div>
-                    }
-
+            <div className={styles.resultArea} >
+                <div className={styles.optionsArea} >
+                    <EventsButtons />
                 </div>
-            }
+                {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.props.events)
+                    ? <CircularProgress />
+                    : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                        <Vega spec={this.createVisualizationSpec()} />
+                    </div>
+                }
+
+            </div>
         </div>;
     }
 

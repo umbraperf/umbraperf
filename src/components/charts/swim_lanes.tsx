@@ -108,11 +108,6 @@ class SwimLanes extends React.Component<Props, State> {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(ChartType.SWIM_LANES);
 
-         if (!this.props.events) {
-            requestEvents(this.props.appContext.controller);
-         } else {
-            this.props.setCurrentEvent(this.props.events[0]);
-         }
          addEventListener('resize', (event) => {
             this.resizeListener();
          });
@@ -176,30 +171,22 @@ class SwimLanes extends React.Component<Props, State> {
          return <Redirect to={"/upload"} />
       }
 
-      if (!this.props.events) {
-         return <div className={styles.spinnerArea} >
-            <CircularProgress />
-         </div>
-      }
-
       return <div>
-         {this.props.events &&
-            <div className={styles.resultArea} >
-               <div className={styles.optionsArea} >
-                  <EventsButtons events={this.props.events}></EventsButtons>
-                  <div className={styles.dropdownArea} >
-                     <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
-                     <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
-                  </div>
+         <div className={styles.resultArea} >
+            <div className={styles.optionsArea} >
+               <EventsButtons />
+               <div className={styles.dropdownArea} >
+                  <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
+                  <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                </div>
-               {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.state.chartData)
-                  ? <CircularProgress />
-                  : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                     <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
-                  </div>
-               }
             </div>
-         }
+            {(this.props.resultLoading || !this.state.chartData || !this.props.events)
+               ? <CircularProgress />
+               : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                  <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
+               </div>
+            }
+         </div>
          <Vega className={`vegaStreamgraph`} spec={this.createVisualizationSpecStream()} />
       </div>;
    }

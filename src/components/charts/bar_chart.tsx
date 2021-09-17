@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestEvents, requestChartData } from '../../controller/web_file_controller'
+import { requestChartData } from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -26,7 +26,6 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     setCurrentChart: (newCurrentChart: string) => void;
-    setCurrentEvent: (newCurrentEvent: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
@@ -247,10 +246,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentChart: (newCurrentChart: string) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
-    }),
-    setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
-        data: newCurrentEvent,
     }),
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,

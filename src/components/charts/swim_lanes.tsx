@@ -14,8 +14,6 @@ import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
-import { requestEvents } from '../../controller/web_file_controller'
-
 
 
 interface Props {
@@ -30,7 +28,6 @@ interface Props {
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
    setCurrentChart: (newCurrentChart: string) => void;
-   setCurrentEvent: (newCurrentEvent: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
@@ -14063,10 +14060,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
    setCurrentChart: (newCurrentChart: string) => dispatch({
       type: model.StateMutationType.SET_CURRENTCHART,
       data: newCurrentChart,
-   }),
-   setCurrentEvent: (newCurrentEvent: string) => dispatch({
-      type: model.StateMutationType.SET_CURRENTEVENT,
-      data: newCurrentEvent,
    }),
    setChartIdCounter: (newChartIdCounter: number) => dispatch({
       type: model.StateMutationType.SET_CHARTIDCOUNTER,

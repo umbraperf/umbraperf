@@ -46,7 +46,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
-    | StateMutation<StateMutationType.SET_CURRENTPIPELINE, string>
+    | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
@@ -152,7 +152,7 @@ export class AppStateMutation {
                     file: undefined,
                     currentChart: "",
                     currentEvent: "",
-                    currentPipeline: "",
+                    currentPipeline: undefined,
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,

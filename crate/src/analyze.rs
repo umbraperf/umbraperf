@@ -360,6 +360,31 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     vec
 }
 
+pub fn rel_freq_in_bucket_of_operators_with_pipeline(
+    batch: &RecordBatch,
+    column_for_operator: usize,
+    column_for_time: usize,
+    with_pipelines: Vec<&str>,
+    bucket_size: f64
+) -> Vec<RecordBatch> {
+    let mut vec = Vec::new();
+
+    for pipeline in with_pipelines {
+        // let batch_with_pipeline_filter = filter_with(column_for_pipeline, pipeline.unwrap(), batch);
+        let output_batch = rel_freq_in_bucket_of_operators_helper(
+            &batch,
+            column_for_operator,
+            column_for_time,
+            bucket_size,
+            pipeline
+        );
+
+        vec.push(output_batch.to_owned());
+    }
+
+    vec
+}
+
 
 
 pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {

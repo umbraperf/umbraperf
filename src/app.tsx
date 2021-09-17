@@ -15,6 +15,7 @@ import styles from './style/main-app.module.css';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
+import DonutChart from './components/charts/donut_chart';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import TabPanel from './components/utils/tab_panel';
@@ -86,6 +87,12 @@ export const routes = [
         path: '/bar-chart',
         sidebarName: 'Bar Chart',
         component: BarChart,
+        icon: () => { return (<AssessmentIcon />) },
+    },
+    {
+        path: '/donut-chart',
+        sidebarName: 'Donut Chart',
+        component: DonutChart,
         icon: () => { return (<AssessmentIcon />) },
     },
     {

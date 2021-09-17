@@ -95,15 +95,10 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
 
             case RestApi.RestQueryType.GET_PIPELINES:
                 const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
-                // const currentPipeline = pipelines[0];
                 store.dispatch({
                     type: StateMutationType.SET_PIPELINES,
                     data: pipelines,
                 });
-                // store.dispatch({
-                //     type: StateMutationType.SET_CURRENTPIPELINE,
-                //     data: currentPipeline,
-                // });
                 break;
     }
 
@@ -241,7 +236,7 @@ export function requestPipelines(controller: WebFileController) {
     controller.calculateChartData(
         RestApi.RestQueryType.GET_PIPELINES,
         RestApi.createRestQuery({
-            type: RestApi.RestQueryType.GET_EVENTS,
+            type: RestApi.RestQueryType.GET_PIPELINES,
             data: {},
         }), true);
 }

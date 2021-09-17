@@ -98,7 +98,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, "" + this.state.bucketsize);
+         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, {bucksetsize: "" + this.state.bucketsize});
       }
 
    }

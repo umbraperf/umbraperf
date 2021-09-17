@@ -18,6 +18,7 @@ export enum ChartType {
     DONUT_CHART = "donut_chart",
     SWIM_LANES = "swim_lanes",
     SWIM_LANES_PIPELINES = "swim_lanes_pipelines",
+    SWIM_LANES_MULTIPLE_PIPELINES = "swim_lanes_multiple_pipelines",
 }
 
 const worker = new WorkerAPI();
@@ -180,7 +181,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
 
 }
 
-export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: string) {
+export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: {bucksetsize?: string, pipeline?: string}) {
 
     switch (chartType) {
 
@@ -202,7 +203,7 @@ export function requestChartData(controller: WebFileController, chartId: number,
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                    data: { event: store.getState().currentEvent, metadata: metadata! },
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
                 }), false, chartId);
             break;
 
@@ -213,7 +214,7 @@ export function requestChartData(controller: WebFileController, chartId: number,
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                    data: { event: store.getState().currentEvent, metadata: metadata! },
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
                 }), false, chartId);
             break;
 

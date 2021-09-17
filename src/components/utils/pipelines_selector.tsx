@@ -4,6 +4,7 @@ import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button, Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
 import { requestPipelines } from '../../controller/web_file_controller';
+import styles from '../../style/utils.module.css';
 
 interface Props {
     pipelines: Array<string> | undefined;
@@ -46,13 +47,15 @@ function PipelinesSelector(props: Props) {
     }
 
     return (
-        <div className={"eventButtonsArea"}>
+        <div className={styles.pipelinesSelectorArea}>
             <FormGroup>
                 {pipelines && pipelines!.map((pipeline: string, index: number) => (
-                    <FormControlLabel
+                    <FormControlLabel 
+                        className={styles.pipelinesSelectorFormControlLabel}
                         key={index}
                         control={
                             <Checkbox
+                                color="primary"
                                 checked={isBoxChecked(pipeline)}
                                 onChange={(event) => checkBoxClicked(event, pipeline)}
                             />}

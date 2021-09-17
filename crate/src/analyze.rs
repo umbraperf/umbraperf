@@ -3,6 +3,8 @@ use std::{
     collections::{HashMap, HashSet},
     sync::Arc,
 };
+use arrow::error::Result as ArrowResult;
+
 
 use crate::print_to_js_with_obj;
 
@@ -89,7 +91,7 @@ pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBat
 
     // if data_type == DataType::Utf8 {
     let options = arrow::compute::SortOptions{
-        descending: true,
+        descending: false,
         nulls_first: false,
     };
 
@@ -149,6 +151,8 @@ pub fn rel_freq_in_bucket_of_operators(
     bucket_size: f64,
 ) -> RecordBatch {
 
+    let batch = &sort_batch(batch, 2);
+
     let unique_operator = find_unique_string(batch, column_for_operator);
 
     // Vector of unique strings
@@ -185,11 +189,8 @@ pub fn rel_freq_in_bucket_of_operators(
     bucket_map.insert("sum", 0.0);
 
     for time in time_column {
-        print_to_js_with_obj(&format!("{:?}", "Bucket Map").into());
-        print_to_js_with_obj(&format!("{:?}", bucket_map).into());
-        print_to_js_with_obj(&format!("{:?}", time_bucket).into());
 
-        if time_bucket < time.unwrap() {
+        while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
@@ -205,12 +206,10 @@ pub fn rel_freq_in_bucket_of_operators(
             }
             // reset sum
             bucket_map.insert("sum", 0.0);
-            print_to_js_with_obj(&format!("{:?}", "After 0").into());
-            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
 
-            while time_bucket < time.unwrap() {
+            //while time_bucket < time.unwrap() {
                 time_bucket += bucket_size;
-            }
+            //}
         }
         let current_operator = operator_column.value(column_index as usize);
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
@@ -254,10 +253,10 @@ pub fn rel_freq_in_bucket_of_operators_helper(
     bucket_size: f64,
     pipeline: &str,
 ) -> RecordBatch {
-    let unique_operator = find_unique_string(batch, column_for_operator);
 
-    print_to_js_with_obj(&format!("{:?}", "PIPELINE").into());
-    print_to_js_with_obj(&format!("{:?}", pipeline).into());
+    let batch = &sort_batch(batch, 2);
+
+    let unique_operator = find_unique_string(batch, column_for_operator);
 
     // Vector of unique strings
     let vec_operator = unique_operator
@@ -296,9 +295,6 @@ pub fn rel_freq_in_bucket_of_operators_helper(
         bucket_map.insert(operator.unwrap(), 0.0);
     }
 
-    print_to_js_with_obj(&format!("{:?}", "OPERATORS:").into());
-    print_to_js_with_obj(&format!("{:?}", bucket_map).into());
-
     bucket_map.insert("sum", 0.0);
 
     for time in time_column {
@@ -318,9 +314,7 @@ pub fn rel_freq_in_bucket_of_operators_helper(
                     bucket_map.insert(operator, 0.0);
                 }
             }
-            print_to_js_with_obj(&format!("{:?}", time_bucket).into());
-            print_to_js_with_obj(&format!("{:?}", "Bucket Map:").into());
-            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
+
             // reset sum
             bucket_map.insert("sum", 0.0);
             while time_bucket < time.unwrap() {

@@ -6,7 +6,7 @@ import styles from "../../style/utils.module.css";
 
 export default function BucketsizeDropdwn(props: any) {
 
-    const bucketsizes = [0.1, 0.2, 0.5, 0.7, 1, 2.5, 5, 7.5, 10];
+    const bucketsizes = [0.1, 0.2, 0.5, 0.7, 1, 2.5, 5, 7.5, 10, 50, 100];
 
     const handleOnItemClick = (elem: number) => {
         props.changeBucketsize(elem);

@@ -12,7 +12,6 @@ import { ChartType, requestChartData } from '../../controller/web_file_controlle
 import { CircularProgress } from '@material-ui/core';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestEvents } from '../../controller/web_file_controller'
 import _ from "lodash";
 
 
@@ -137,7 +136,7 @@ class DonutChart extends React.Component<Props, State> {
             {this.props.events &&
                 <div className={styles.resultArea} >
                     <div className={styles.optionsArea} >
-                        <EventsButtons events={this.props.events}></EventsButtons>
+                        <EventsButtons></EventsButtons>
                     </div>
                     <div className={"vegaContainer"} ref={this.chartWrapper}>
                             <Vega spec={this.createVisualizationSpec()} />

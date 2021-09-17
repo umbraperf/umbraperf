@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel, Select } from '@material-ui/core';
-import styles from "../../style/dropdown.module.css";
+import styles from "../../style/utils.module.css";
 
 
 export default function InterpolationDropdown(props: any) {

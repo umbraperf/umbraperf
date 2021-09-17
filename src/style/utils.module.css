@@ -47,4 +47,15 @@
 
 .bucketsizeDropdownSelectorContainer{
     composes: dropdownSelectorContainer;
-}  
+}
+
+
+.pipelinesSelectorArea{
+    display: block;
+    margin: 10px;
+}
+
+.pipelinesSelectorFormControlLabel{
+    margin-top: -5px;
+    margin-bottom: -5px;
+}

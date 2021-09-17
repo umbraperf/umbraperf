@@ -30,6 +30,9 @@ import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@mat
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
+//TODO remove
+import PipelinesSelector from './components/utils/pipelines_selector';
+
 
 //Create Redux stroe
 //TODO change to prod store
@@ -107,7 +110,7 @@ export const routes = [
     {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: FileUploader,
+        component: PipelinesSelector,
         icon: () => { return (<HelpIcon />) },
     },
 

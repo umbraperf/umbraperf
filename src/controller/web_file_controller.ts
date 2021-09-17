@@ -88,28 +88,23 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
 
         case RestApi.RestQueryType.GET_EVENTS:
             const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
-            const currentEvent = events[0];
             store.dispatch({
                 type: StateMutationType.SET_EVENTS,
                 data: events,
-            });
-            store.dispatch({
-                type: StateMutationType.SET_CURRENTEVENT,
-                data: currentEvent,
             });
             break;
 
             case RestApi.RestQueryType.GET_PIPELINES:
                 const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
-                const currentPipeline = pipelines[0];
+                // const currentPipeline = pipelines[0];
                 store.dispatch({
                     type: StateMutationType.SET_PIPELINES,
                     data: pipelines,
                 });
-                store.dispatch({
-                    type: StateMutationType.SET_CURRENTPIPELINE,
-                    data: currentPipeline,
-                });
+                // store.dispatch({
+                //     type: StateMutationType.SET_CURRENTPIPELINE,
+                //     data: currentPipeline,
+                // });
                 break;
     }
 

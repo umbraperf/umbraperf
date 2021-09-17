@@ -87,10 +87,17 @@ class Dashboard extends React.Component<Props, State> {
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            items: originalItems,
-            newCounter: 0
-        };
+
+        if(this.props.dashboardState){
+            this.state={
+                ...this.props.dashboardState,
+            }
+        }else{
+            this.state = {
+                items: originalItems,
+                newCounter: 0
+            };
+        }
 
         this.onAddItem = this.onAddItem.bind(this);
         this.onBreakpointChange = this.onBreakpointChange.bind(this);

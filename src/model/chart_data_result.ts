@@ -19,6 +19,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART, IBarChartData>
     | ChartData<ChartType.SWIM_LANES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
+    | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {

@@ -95,13 +95,13 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
             });
             break;
 
-            case RestApi.RestQueryType.GET_PIPELINES:
-                const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
-                store.dispatch({
-                    type: StateMutationType.SET_PIPELINES,
-                    data: pipelines,
-                });
-                break;
+        case RestApi.RestQueryType.GET_PIPELINES:
+            const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
+            store.dispatch({
+                type: StateMutationType.SET_PIPELINES,
+                data: pipelines,
+            });
+            break;
     }
 
 }
@@ -127,6 +127,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
             break;
 
         case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+
             chartDataElem = createChartDataObject(
                 requestId,
                 {
@@ -138,6 +139,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                     }
                 });
             break;
+
         case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
 
             let dataArray: Array<ISwimlanesData> = (store.getState().chartData[requestId] as ChartDataObject) ? (store.getState().chartData[requestId] as ChartDataObject).chartData.data as ISwimlanesData[] : new Array<ISwimlanesData>();
@@ -149,8 +151,6 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
             dataArray.push(data);
 
             let multipleChartDataLength = store.getState().multipleChartDataLength + 1;
-            /* let multipleChartDataLength: MultipleChartDataLength = store.getState().multipleChartLength;
-            multipleChartDataLength[requestId] ?  multipleChartDataLength[requestId]+1 : 1; */
 
             store.dispatch({
                 type: StateMutationType.SET_MULTIPLECHARTDATALENGTH,
@@ -165,6 +165,21 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 });
 
             break;
+
+        case RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
+
+            chartDataElem = createChartDataObject(
+                requestId,
+                {
+                    chartType: ChartType.SWIM_LANES_MULTIPLE_PIPELINES,
+                    data: {
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
+                    }
+                });
+            break;
+
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
@@ -181,7 +196,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
 
 }
 
-export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: {bucksetsize?: string, pipeline?: string}) {
+export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
 
     switch (chartType) {
 
@@ -198,8 +213,7 @@ export function requestChartData(controller: WebFileController, chartId: number,
         case ChartType.SWIM_LANES:
 
             controller.calculateChartData(
-                /*                 SqlApi.SqlQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                 */
+
                 RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
@@ -215,6 +229,16 @@ export function requestChartData(controller: WebFileController, chartId: number,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                     data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
+                }), false, chartId);
+            break;
+
+        case ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+
+            controller.calculateChartData(
+                RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                RestApi.createRestQuery({
+                    type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
                 }), false, chartId);
             break;
 

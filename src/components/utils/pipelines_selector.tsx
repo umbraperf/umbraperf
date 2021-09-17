@@ -1,27 +1,31 @@
-import React, { useCallback, useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '../../model/state';
+import React, { useContext, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button } from '@material-ui/core';
-import { RestQueryType } from '../../model/rest_queries';
+import { requestEvents } from '../../controller/web_file_controller';
 
+interface Props {
+    events: Array<string> | undefined;
+    currentEvent: string;
+    setCurrentEvent: (newCurrentEvent: string) => void;
+}
 
-export default function PipelinesSelector(props: any) {
+function PipelinesSelector(props: Props) {
 
-    const events = props.events as Array<any>;
-    const currentEvent = useSelector((state: AppState) => state.currentEvent);
-    const dispatch = useDispatch();
-    const setNewCurrentEvent = useCallback(
-        (newCurrentEvent) => dispatch({
-            type: model.StateMutationType.SET_CURRENTEVENT,
-            data: newCurrentEvent,
-        }),
-        [dispatch]
-    );
+    const context = useContext(ctx);
+    const events = props.events;
+    if (undefined === events) {
+        requestEvents(context!.controller);
+    }
+    useEffect(() => {
+        if(events && props.currentEvent===""){
+            props.setCurrentEvent(events[0]);
+        }
+    });
 
     const handleEventButtonClick = (event: string) => {
-        setNewCurrentEvent(event);
+        props.setCurrentEvent(event);
     }
 
     const createEventShortString = (event: string) => {
@@ -30,11 +34,11 @@ export default function PipelinesSelector(props: any) {
 
     return (
         <div className={"eventButtonsArea"}>
-            {events!.map((event, index) => (
+            {events && events!.map((event: string, index: number) => (
                 <Button
                     className={"eventButton"}
                     variant="contained"
-                    color={currentEvent === event ? "primary" : "default"}
+                    color={props.currentEvent === event ? "primary" : "default"}
                     onClick={() => handleEventButtonClick(event)}
                     style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
                     key={index}
@@ -45,3 +49,17 @@ export default function PipelinesSelector(props: any) {
         </div>
     );
 }
+
+const mapStateToProps = (state: model.AppState) => ({
+    events: state.events,
+    currentEvent: state.currentEvent,
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
+    }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PipelinesSelector)

@@ -95,7 +95,7 @@ class SwimLanes extends React.Component<Props, State> {
 
       //if current event changes, component did update is executed and queries new data for new event
       if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize) {
-         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, "" + this.state.bucketsize);
+         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, {bucksetsize: "" + this.state.bucketsize});
       }
 
    }

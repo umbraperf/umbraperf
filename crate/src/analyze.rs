@@ -1,8 +1,4 @@
-use arrow::{
-    array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray},
-    datatypes::{DataType, Field, Schema, SchemaRef},
-    record_batch::RecordBatch,
-};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 use std::{
     collections::{HashMap, HashSet},
     sync::Arc,
@@ -86,6 +82,27 @@ pub fn filter_with_number(
     }
 
     create_record_batch(batch.schema(), arrays)
+}
+
+ 
+pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
+
+    // if data_type == DataType::Utf8 {
+    let options = arrow::compute::SortOptions{
+        descending: true,
+        nulls_first: false,
+    };
+
+    let indices = sort_to_indices(batch.column(column_index_to_sort), Some(options), None).unwrap();
+
+    RecordBatch::try_new(
+        batch.schema(),batch
+            .columns()
+            .iter()
+            .map(|column| take(column.as_ref(), &indices, None))
+            .collect::<ArrowResult<Vec<ArrayRef>>>().unwrap(),
+    ).unwrap()
+    
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {

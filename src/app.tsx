@@ -18,6 +18,7 @@ import BarChart from './components/charts/bar_chart';
 import DonutChart from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
+import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
 import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
@@ -98,7 +99,7 @@ export const routes = [
     {
         path: '/swim-lanes-multiple-pipelines',
         sidebarName: 'Swim Lanes (Multiple Pipelines)',
-        component: null,
+        component: SwimLanesMultiplePipelines,
         icon: () => { return (<MultilineChartIcon />) },
     },
     {

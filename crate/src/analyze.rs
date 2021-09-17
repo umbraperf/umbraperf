@@ -132,8 +132,6 @@ pub fn rel_freq_in_bucket_of_operators(
     bucket_size: f64,
 ) -> RecordBatch {
 
-    let batch = so
-
     let unique_operator = find_unique_string(batch, column_for_operator);
 
     // Vector of unique strings

@@ -1,7 +1,5 @@
 use arrow::{
-    array::{
-        Array, ArrayRef, BooleanArray, Float64Array, StringArray,
-    },
+    array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
@@ -9,6 +7,8 @@ use std::{
     collections::{HashMap, HashSet},
     sync::Arc,
 };
+
+use crate::print_to_js_with_obj;
 
 fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
@@ -37,7 +37,6 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
 
     create_record_batch(batches[0].schema(), columns)
 }
-
 
 pub fn filter_with(column_num: usize, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
@@ -88,7 +87,6 @@ pub fn filter_with_number(
 
     create_record_batch(batch.schema(), arrays)
 }
-
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
     let unique_batch = find_unique_string(batch, column_to_groupby_over);
@@ -161,21 +159,21 @@ pub fn rel_freq_in_bucket_of_operators(
         .unwrap();
 
     let mut bucket_map = HashMap::new();
+
+    // init map
     for operator in vec_operator {
         bucket_map.insert(operator.unwrap(), 0.0);
     }
     bucket_map.insert("sum", 0.0);
 
     for time in time_column {
-        let current_operator = operator_column.value(column_index as usize);
-        bucket_map.insert(
-            current_operator,
-            bucket_map.get(current_operator).unwrap() + 1.0,
-        );
-        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+        print_to_js_with_obj(&format!("{:?}", "Bucket Map").into());
+        print_to_js_with_obj(&format!("{:?}", bucket_map).into());
         if time_bucket < time.unwrap() {
             for operator in vec_operator {
-                if operator.unwrap() != "sum" && bucket_map.get("sum").unwrap() != &0.0 {
+                if bucket_map.get("sum").unwrap() > &0.0 {
+                    print_to_js_with_obj(&format!("{:?}", "HREUHERUEHRUEHFE").into());
+
                     let operator = operator.unwrap();
                     result_bucket.push(f64::trunc(time_bucket * 100.0) / 100.0);
                     result_vec_operator.push(operator);
@@ -193,6 +191,12 @@ pub fn rel_freq_in_bucket_of_operators(
                 time_bucket += bucket_size;
             }
         }
+        let current_operator = operator_column.value(column_index as usize);
+        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+        bucket_map.insert(
+            current_operator,
+            bucket_map.get(current_operator).unwrap() + 1.0,
+        );
         column_index += 1;
     }
 
@@ -221,13 +225,12 @@ pub fn rel_freq_in_bucket_of_operators(
     .unwrap()
 }
 
-
 pub fn rel_freq_in_bucket_of_operators_helper(
     batch: &RecordBatch,
     column_for_operator: usize,
     column_for_time: usize,
     bucket_size: f64,
-    pipeline: &str
+    pipeline: &str,
 ) -> RecordBatch {
     let unique_operator = find_unique_string(batch, column_for_operator);
 
@@ -245,6 +248,7 @@ pub fn rel_freq_in_bucket_of_operators_helper(
 
     let mut time_bucket = bucket_size;
     let mut column_index = 0;
+
     let operator_column = batch
         .column(column_for_operator)
         .as_any()
@@ -266,18 +270,26 @@ pub fn rel_freq_in_bucket_of_operators_helper(
     for operator in vec_operator {
         bucket_map.insert(operator.unwrap(), 0.0);
     }
+
+    print_to_js_with_obj(&format!("{:?}", "OPERATORS:").into());
+    print_to_js_with_obj(&format!("{:?}", bucket_map).into());
+
     bucket_map.insert("sum", 0.0);
 
     for time in time_column {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
 
+        print_to_js_with_obj(&format!("{:?}", "Pipelines:").into());
+        print_to_js_with_obj(&format!("{:?}", pipeline).into());
+        print_to_js_with_obj(&format!("{:?}", current_pipeline).into());
+
         if pipeline == current_pipeline {
-        bucket_map.insert(
-            current_operator,
-            bucket_map.get(current_operator).unwrap() + 1.0,
-        );
-    }
+            bucket_map.insert(
+                current_operator,
+                bucket_map.get(current_operator).unwrap() + 1.0,
+            );
+        }
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
         if time_bucket < time.unwrap() {
             for operator in vec_operator {
@@ -293,6 +305,9 @@ pub fn rel_freq_in_bucket_of_operators_helper(
                     bucket_map.insert(operator, 0.0);
                 }
             }
+            
+            print_to_js_with_obj(&format!("{:?}", "Bucket Map:").into());
+            print_to_js_with_obj(&format!("{:?}", bucket_map).into());
             // reset sum
             bucket_map.insert("sum", 0.0);
             while time_bucket < time.unwrap() {
@@ -332,7 +347,7 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
     column_for_operator: usize,
     column_for_time: usize,
     column_for_pipeline: usize,
-    bucket_size: f64
+    bucket_size: f64,
 ) -> Vec<RecordBatch> {
     let mut vec = Vec::new();
 
@@ -351,7 +366,7 @@ pub fn rel_freq_in_bucket_of_operators_with_pipelines(
             column_for_operator,
             column_for_time,
             bucket_size,
-            pipeline.unwrap()
+            pipeline.unwrap(),
         );
 
         vec.push(output_batch.to_owned());
@@ -365,7 +380,7 @@ pub fn rel_freq_in_bucket_of_operators_with_pipeline(
     column_for_operator: usize,
     column_for_time: usize,
     with_pipelines: Vec<&str>,
-    bucket_size: f64
+    bucket_size: f64,
 ) -> Vec<RecordBatch> {
     let mut vec = Vec::new();
 
@@ -376,7 +391,7 @@ pub fn rel_freq_in_bucket_of_operators_with_pipeline(
             column_for_operator,
             column_for_time,
             bucket_size,
-            pipeline
+            pipeline,
         );
 
         vec.push(output_batch.to_owned());
@@ -384,8 +399,6 @@ pub fn rel_freq_in_bucket_of_operators_with_pipeline(
 
     vec
 }
-
-
 
 pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
@@ -407,7 +420,6 @@ pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch 
 
     create_record_batch(Arc::new(new_schema), vec)
 }
-
 
 pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
     let vec = batch
@@ -433,8 +445,6 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
 
     RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
 }
-
-
 
 pub fn find_unique_numbers(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
     let vec = batch

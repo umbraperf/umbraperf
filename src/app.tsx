@@ -15,7 +15,7 @@ import styles from './style/main-app.module.css';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
-import DonutChart from './components/charts/donut_chart';
+import DonutChart from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import TabPanel from './components/utils/tab_panel';
@@ -29,9 +29,6 @@ import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
-
-//TODO remove
-import PipelinesSelector from './components/utils/pipelines_selector';
 
 
 //Create Redux stroe
@@ -49,7 +46,6 @@ const appColor = {
 }
 
 export const appContext: IAppContext = {
-    // worker: workerAPI,
     controller: webFileController,
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
@@ -90,12 +86,6 @@ export const routes = [
         icon: () => { return (<AssessmentIcon />) },
     },
     {
-        path: '/donut-chart',
-        sidebarName: 'Donut Chart',
-        component: DonutChart,
-        icon: () => { return (<AssessmentIcon />) },
-    },
-    {
         path: '/swim-lanes',
         sidebarName: 'Swim Lanes',
         component: SwimLanes,
@@ -110,7 +100,7 @@ export const routes = [
     {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: PipelinesSelector,
+        component: DonutChart,
         icon: () => { return (<HelpIcon />) },
     },
 

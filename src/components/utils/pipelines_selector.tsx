@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
-import { Button, Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
+import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
 import { requestPipelines } from '../../controller/web_file_controller';
 import styles from '../../style/utils.module.css';
 
@@ -26,7 +26,7 @@ function PipelinesSelector(props: Props) {
     });
 
     const createPipelineShortString = (pipeline: string) => {
-        return pipeline.length > 30 ? (pipeline.substr(0, 27) + "...") : pipeline;
+        return pipeline.length > 50 ? (pipeline.substr(0, 47) + "...") : pipeline;
     }
 
     const isBoxChecked = (pipeline: string) => {

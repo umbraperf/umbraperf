@@ -1,17 +1,17 @@
-import * as model from '../../model';
+import * as model from '../model';
 import React from 'react';
-import { IAppContext, withAppContext } from '../../app_context';
+import { IAppContext, withAppContext } from '../app_context';
 import { Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "react-vega/src";
-import styles from '../../style/charts.module.css';
+import styles from '../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { connect } from 'react-redux';
-import { ChartType, requestChartData } from '../../controller/web_file_controller';
+import { ChartType, requestChartData } from '../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
-import EventsButtons from '../utils/events_buttons';
-import * as RestApi from '../../model/rest_queries';
+import PipelinesSelector from './utils/pipelines_selector';
+import * as RestApi from '../model/rest_queries';
 import _ from "lodash";
 
 
@@ -29,7 +29,6 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     multipleChartDataLength: number;
     setCurrentChart: (newCurrentChart: string) => void;
-    setCurrentEvent: (newCurrentEvent: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
@@ -81,11 +80,11 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.DONUT_CHART);
 
-           /*  if (!this.props.events) {
-                requestEvents(this.props.appContext.controller);
-            } else {
-                this.props.setCurrentEvent(this.props.events[0]);
-            } */
+            /*  if (!this.props.events) {
+                 requestEvents(this.props.appContext.controller);
+             } else {
+                 this.props.setCurrentEvent(this.props.events[0]);
+             } */
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -133,23 +132,17 @@ class DonutChart extends React.Component<Props, State> {
         }
 
         return <div>
-            {this.props.events &&
-                <div className={styles.resultArea} >
-                    <div className={styles.optionsArea} >
-                        <EventsButtons></EventsButtons>
-                    </div>
-                    <div className={"vegaContainer"} ref={this.chartWrapper}>
-                            <Vega spec={this.createVisualizationSpec()} />
-                        </div>
-                   {/*  {(this.props.resultLoading || !this.props.chartData[this.state.chartId])
-                        ? <CircularProgress />
-                        : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                            <Vega spec={this.createVisualizationSpec()} />
-                        </div>
-                    } */}
+            <div className={styles.resultArea} >
 
+                <div className={"vegaContainer"} ref={this.chartWrapper}>
+                    <Vega spec={this.createVisualizationSpec()} />
                 </div>
-            }
+                <div className={styles.optionsArea} >
+                    <PipelinesSelector/>
+                </div>
+
+            </div>
+
         </div>;
     }
 
@@ -162,33 +155,33 @@ class DonutChart extends React.Component<Props, State> {
             height: 200,
             autosize: "none",
 
-            
-  signals: [
-    {
-      name: "startAngle", value: 0,
-      bind: {input: "range", min: 0, max: 6.29, step: 0.01}
-    },
-    {
-      name: "endAngle", value: 6.29,
-      bind: {input: "range", min: 0, max: 6.29, step: 0.01}
-    },
-    {
-      name: "padAngle", value: 0,
-      bind: {input: "range", min: 0, max: 0.1}
-    },
-    {
-      name: "innerRadius", value: 60,
-      bind: {input: "range", min: 0, max: 90, step: 1}
-    },
-    {
-      name: "cornerRadius", value: 0,
-      bind: {input: "range", min: 0, max: 10, step: 0.5}
-    },
-    {
-      name: "sort", value: false,
-      bind: {input: "checkbox"}
-    }
-  ],
+
+            signals: [
+                {
+                    name: "startAngle", value: 0,
+                    bind: { input: "range", min: 0, max: 6.29, step: 0.01 }
+                },
+                {
+                    name: "endAngle", value: 6.29,
+                    bind: { input: "range", min: 0, max: 6.29, step: 0.01 }
+                },
+                {
+                    name: "padAngle", value: 0,
+                    bind: { input: "range", min: 0, max: 0.1 }
+                },
+                {
+                    name: "innerRadius", value: 60,
+                    bind: { input: "range", min: 0, max: 90, step: 1 }
+                },
+                {
+                    name: "cornerRadius", value: 0,
+                    bind: { input: "range", min: 0, max: 10, step: 0.5 }
+                },
+                {
+                    name: "sort", value: false,
+                    bind: { input: "checkbox" }
+                }
+            ],
 
             data: [
                 {
@@ -265,10 +258,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentChart: (newCurrentChart: string) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
-    }),
-    setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
-        data: newCurrentEvent,
     }),
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,

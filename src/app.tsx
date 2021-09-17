@@ -26,6 +26,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -36,8 +37,6 @@ import { Shadows } from '@material-ui/core/styles/shadows';
 //export const store = createProdStore();
 export const store = createDevStore();
 
-//Create WorkerAPI
-// const workerAPI = new WorkerAPI();
 const webFileController = new WebFileController();
 
 const appColor = {
@@ -49,7 +48,6 @@ export const appContext: IAppContext = {
     controller: webFileController,
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
-
 };
 
 const materialUiTheme = createTheme({
@@ -96,6 +94,12 @@ export const routes = [
         sidebarName: 'Swim Lanes (Pipelines)',
         component: SwimLanesPipelines,
         icon: () => { return (<SortIcon />) },
+    },
+    {
+        path: '/swim-lanes-multiple-pipelines',
+        sidebarName: 'Swim Lanes (Multiple Pipelines)',
+        component: null,
+        icon: () => { return (<MultilineChartIcon />) },
     },
     {
         path: '/dummy',

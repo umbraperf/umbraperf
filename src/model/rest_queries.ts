@@ -20,7 +20,7 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, {event: string }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string }>
     | RestQuery<RestQueryType.other, {}>
     ;
 
@@ -38,7 +38,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return  ``;
+            return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

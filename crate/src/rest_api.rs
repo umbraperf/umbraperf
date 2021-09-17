@@ -65,7 +65,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
             "relfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
                 let fields = split_fields_bucket_size[0];
-                // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:0.2!...
+                // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:0.2!join_join_tablescan_lineitem 129928658138264
                 if params.contains("!") {
                     let split = params.split_terminator("!").collect::<Vec<&str>>();
                     let split_fields_bucket_size =

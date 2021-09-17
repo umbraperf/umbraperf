@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import React, { useContext, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button } from '@material-ui/core';

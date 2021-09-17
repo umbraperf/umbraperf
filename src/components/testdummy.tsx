@@ -1,54 +1,27 @@
 import * as model from '../model';
 import React from 'react';
-import { IAppContext, withAppContext } from '../app_context';
 import { Vega } from 'react-vega';
-import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "react-vega/src";
 import styles from '../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { connect } from 'react-redux';
-import { ChartType, requestChartData } from '../controller/web_file_controller';
-import { CircularProgress } from '@material-ui/core';
+import { ChartType } from '../controller/web_file_controller';
 import PipelinesSelector from './utils/pipelines_selector';
-import * as RestApi from '../model/rest_queries';
-import _ from "lodash";
 
 
 
 interface Props {
-    appContext: IAppContext;
-    resultLoading: boolean;
-    result: Result | undefined;
+
     csvParsingFinished: boolean;
-    currentChart: string;
-    currentEvent: string;
-    currentRequest: RestApi.RestQueryType | undefined;
-    events: Array<string> | undefined;
-    chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
-    multipleChartDataLength: number;
     setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
 
 }
 
 interface State {
-    chartId: number,
-    width: number,
-    height: number
+
 }
 
-interface IChartData {
-    buckets: Array<number>,
-    operators: Array<string>,
-    relativeFrquencies: Array<number>,
-}
-
-const startSize = {
-    width: 750,
-    height: 200,
-}
 
 class DonutChart extends React.Component<Props, State> {
 
@@ -57,21 +30,13 @@ class DonutChart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            chartId: this.props.chartIdCounter,
-            width: startSize.width,
-            height: startSize.height,
+
         };
-        this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
-
-        //if current event changes, component did update is executed and queries new data for new event
-        if (this.props.currentEvent != prevProps.currentEvent) {
-            // requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.DONUT_CHART);
-        }
 
     }
 
@@ -80,41 +45,6 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.DONUT_CHART);
 
-            /*  if (!this.props.events) {
-                 requestEvents(this.props.appContext.controller);
-             } else {
-                 this.props.setCurrentEvent(this.props.events[0]);
-             } */
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    componentWillUnmount() {
-        removeEventListener('resize', (event) => {
-            this.resizeListener();
-        });
-    }
-
-    resizeListener() {
-        if (!this.chartWrapper) return;
-
-        const child = this.chartWrapper.current;
-        if (child) {
-            const newWidth = child.clientWidth;
-            const newHeight = child.clientHeight;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth > startSize.width ? startSize.width : newWidth,
-                height: newHeight > startSize.height ? startSize.height : newHeight,
-            }));
-
-            child.style.display = 'block';
         }
     }
 
@@ -125,12 +55,6 @@ class DonutChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        if (!this.props.events) {
-            return <div className={styles.spinnerArea} >
-                <CircularProgress />
-            </div>
-        }
-
         return <div>
             <div className={styles.resultArea} >
 
@@ -138,7 +62,7 @@ class DonutChart extends React.Component<Props, State> {
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
                 <div className={styles.optionsArea} >
-                    <PipelinesSelector/>
+                    <PipelinesSelector />
                 </div>
 
             </div>
@@ -242,15 +166,8 @@ class DonutChart extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    resultLoading: state.resultLoading,
-    result: state.result,
+
     csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
-    currentEvent: state.currentEvent,
-    currentRequest: state.currentRequest,
-    events: state.events,
-    chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
 });
 
 
@@ -259,14 +176,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    }),
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(DonutChart));
+export default connect(mapStateToProps, mapDispatchToProps)(DonutChart);
 
 
 

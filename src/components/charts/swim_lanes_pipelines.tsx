@@ -51,8 +51,8 @@ interface IChartData {
 }
 
 const startSize = {
-   width: 750,
-   height: 200,
+   width: 400,
+   height: 100,
 }
 
 class SwimLanesPipelines extends React.Component<Props, State> {

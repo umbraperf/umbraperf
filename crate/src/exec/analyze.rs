@@ -1,6 +1,6 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{ArrayRef, BooleanArray, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{HashSet},
     sync::Arc,
 };
 use arrow::error::Result as ArrowResult;

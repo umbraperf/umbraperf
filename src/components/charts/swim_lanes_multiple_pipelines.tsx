@@ -2,7 +2,7 @@ import * as model from '../../model';
 import React from 'react';
 import { connect } from 'react-redux';
 import { IAppContext, withAppContext } from '../../app_context';
-import { Vega } from 'react-vega';
+import { SignalListener, SignalListeners, Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
@@ -183,11 +183,22 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 {(this.props.resultLoading || !this.state.chartData || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
+                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
                     </div>
                 }
             </div>
         </div>;
+    }
+
+    createVegaSignalListeners(){
+        const signalListeners: SignalListeners = {
+            hover: this.handleVegaHover,
+        }
+        return signalListeners;
+    }
+
+    handleVegaHover(...args: any[]){
+        console.log(args);
     }
 
     createVisualizationData() {
@@ -239,6 +250,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             data: [
                 visData
             ],
+
+            signals: [
+                {
+                  name: "hover",
+                  description: "A date value that updates in response to mousemove.",
+                  on: [{"events": "area:mouseover", "update": "{}"}]
+                }
+              ],
 
             scales: [
                 {

@@ -15,10 +15,11 @@ import styles from './style/main-app.module.css';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
-import DonutChart from './components/testdummy';
+import DonutChartTest from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
+import DonutChart from './components/charts/donut_chart';
 import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
@@ -28,6 +29,7 @@ import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
+import PieChartIcon from '@material-ui/icons/PieChart';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -103,9 +105,15 @@ export const routes = [
         icon: () => { return (<MultilineChartIcon />) },
     },
     {
+        path: '/donut-chart',
+        sidebarName: 'Donut Chart',
+        component: DonutChart,
+        icon: () => { return (<PieChartIcon />) },
+    },
+    {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: DonutChart,
+        component: DonutChartTest,
         icon: () => { return (<HelpIcon />) },
     },
 

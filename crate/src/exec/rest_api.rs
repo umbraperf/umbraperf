@@ -2,7 +2,9 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{analyze, print_to_js_with_obj, record_batch_util::send_record_batch_to_js};
+use crate::{analyze, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
+
+use super::{count, rel_freq};
 
 // Find name in Record Batch
 fn find_name(name: &str, batch: &RecordBatch) -> usize {
@@ -60,7 +62,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
             }
             // operator/count/?ev_name="No Operator"/count?operator
             "count" => {
-                return analyze::count_rows_over(&record_batch, find_name(params, &record_batch))
+                return count::count_rows_over(&record_batch, find_name(params, &record_batch))
             }
             "relfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
@@ -82,7 +84,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
 
 
-                    let vec_record_batches = analyze::rel_freq_in_bucket_of_operators_with_pipeline(
+                    let vec_record_batches = rel_freq::rel_freq_in_bucket_of_operators_with_pipeline(
                         &record_batch,
                         find_name("operator", &record_batch),
                         find_name(time, &record_batch),
@@ -114,7 +116,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
                     let vec_record_batches =
-                        analyze::rel_freq_in_bucket_of_operators_with_pipelines(
+                        rel_freq::rel_freq_in_bucket_of_operators_with_pipelines(
                             &record_batch,
                             find_name("operator", &record_batch),
                             find_name(time, &record_batch),
@@ -133,7 +135,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                 } else {
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
-                    return analyze::rel_freq_in_bucket_of_operators(
+                    return rel_freq::rel_freq_in_bucket_of_operators(
                         &record_batch,
                         find_name("operator", &record_batch),
                         find_name(fields, &record_batch),

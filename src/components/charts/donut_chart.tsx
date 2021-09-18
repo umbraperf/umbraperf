@@ -9,7 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { ChartType } from '../../controller/web_file_controller';
+import { ChartType, requestPipelines } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import { requestChartData } from '../../controller/web_file_controller'
@@ -25,8 +25,11 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
+    currentPipeline: Array<string> | undefined;
+    pipelines: Array<string> | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
+    setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
 
 }
 
@@ -37,7 +40,7 @@ interface State {
 }
 
 const startSize = {
-    width: 200,
+    width: 400,
     height: window.innerHeight > 1000 ? 500 : window.innerHeight - 350,
 }
 
@@ -55,6 +58,7 @@ class DonutChart extends React.Component<Props, State> {
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleCklickPipeline = this.handleCklickPipeline.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -68,7 +72,11 @@ class DonutChart extends React.Component<Props, State> {
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(ChartType.BAR_CHART);
+            this.props.setCurrentChart(ChartType.DONUT_CHART);
+
+            if(!this.props.pipelines){
+                requestPipelines(this.props.appContext.controller);
+            }
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -129,7 +137,14 @@ class DonutChart extends React.Component<Props, State> {
     }
 
     handleCklickPipeline(...args: any[]){
-        console.log(args);
+        const selectedPipeline = args[1].pipeline;
+         if(undefined !== this.props.currentPipeline){
+            if(this.props.currentPipeline?.includes(selectedPipeline)){
+                this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+            }else{
+                this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+            }
+        } 
     }
 
     createVisualizationData() {
@@ -219,7 +234,13 @@ class DonutChart extends React.Component<Props, State> {
                         }
                     }
                 }
-            ]
+            ],
+            legends: [{
+                fill: "color",
+                title: "Pipelines",
+                orient: "right",
+            }
+            ],
         } as VisualizationSpec;
 
         return spec;
@@ -237,6 +258,8 @@ const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
+    currentPipeline: state.currentPipeline,
+    pipelines: state.pipelines,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -247,6 +270,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
+    }),
+    setCurrentPipeline: (newCurrentPipeline: Array<string>) => dispatch({
+        type: model.StateMutationType.SET_CURRENTPIPELINE,
+        data: newCurrentPipeline,
     }),
 });
 

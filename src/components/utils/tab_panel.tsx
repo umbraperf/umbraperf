@@ -40,18 +40,6 @@ function ScrollableTabsButtonForce(props: any) {
     const classes = useStyles();
 
     const csvParsingFinished = useSelector((state: AppState) => state.csvParsingFinished);
-    const dispatch = useDispatch();
-    const setNewResult = useCallback(
-        (newResult) => dispatch({
-            type: model.StateMutationType.SET_RESULT,
-            data: newResult,
-        }),
-        [dispatch]
-    );
-
-    const handleTabClick = () => {
-        setNewResult(undefined);
-    }
 
     return (
         <div className={classes.root}>
@@ -69,7 +57,7 @@ function ScrollableTabsButtonForce(props: any) {
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
-                                <Tab onClick={handleTabClick} classes={{ root: classes.tabRoot }} /* label={prop.sidebarName} */ value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
+                                <Tab classes={{ root: classes.tabRoot }} /* label={prop.sidebarName} */ value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );
                         }
                     })}

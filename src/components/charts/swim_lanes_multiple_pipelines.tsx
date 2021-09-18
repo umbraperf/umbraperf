@@ -95,8 +95,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         }
 
-        //if current event, bucketsize or pipelines change, component did update is executed and queries new data for new event
-        if (this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
+        //if current event, chart, bucketsize or pipelines change, component did update is executed and queries new data for new event
+        if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length) {
             requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.state.bucketsize, pipeline: this.props.currentPipeline?.join()});
         }
 

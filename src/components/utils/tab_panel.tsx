@@ -41,13 +41,6 @@ function ScrollableTabsButtonForce(props: any) {
 
     const csvParsingFinished = useSelector((state: AppState) => state.csvParsingFinished);
     const dispatch = useDispatch();
-    const setNewCurrentEvent = useCallback(
-        (newCurrentEvent) => dispatch({
-            type: model.StateMutationType.SET_CURRENTEVENT,
-            data: newCurrentEvent,
-        }),
-        [dispatch]
-    );
     const setNewResult = useCallback(
         (newResult) => dispatch({
             type: model.StateMutationType.SET_RESULT,
@@ -57,7 +50,6 @@ function ScrollableTabsButtonForce(props: any) {
     );
 
     const handleTabClick = () => {
-        setNewCurrentEvent("");
         setNewResult(undefined);
     }
 

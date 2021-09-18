@@ -60,7 +60,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event changes, component did update is executed and queries new data for new event
-        if (this.props.currentEvent != prevProps.currentEvent) {
+        if (this.props.currentEvent != prevProps.currentEvent || this.props.currentChart != prevProps.currentChart) {
             requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
         }
 
@@ -110,6 +110,7 @@ class BarChart extends React.Component<Props, State> {
                 <div className={styles.optionsArea} >
                     <EventsButtons />
                 </div>
+                {console.log(this.props.chartData[this.state.chartId])}
                 {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>

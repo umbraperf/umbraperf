@@ -93,8 +93,8 @@ class SwimLanes extends React.Component<Props, State> {
 
       }
 
-      //if current event changes, component did update is executed and queries new data for new event
-      if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize) {
+      //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event
+      if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart) {
          requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, {bucksetsize: "" + this.state.bucketsize});
       }
 
@@ -178,7 +178,7 @@ class SwimLanes extends React.Component<Props, State> {
                </div>
             </div>
             {(this.props.resultLoading || !this.state.chartData || !this.props.events)
-               ? <CircularProgress />
+               ? <CircularProgress  /> 
                : <div className={"vegaContainer"} ref={this.chartWrapper}>
                   <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
                </div>

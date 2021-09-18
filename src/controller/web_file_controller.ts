@@ -93,6 +93,10 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
                 type: StateMutationType.SET_EVENTS,
                 data: events,
             });
+            store.dispatch({
+                type: StateMutationType.SET_CURRENTEVENT,
+                data: events[0],
+            });
             break;
 
         case RestApi.RestQueryType.GET_PIPELINES:

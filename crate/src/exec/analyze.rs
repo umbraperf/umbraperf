@@ -5,7 +5,6 @@ use std::{
 };
 use arrow::error::Result as ArrowResult;
 
-
 use crate::print_to_js_with_obj;
 
 fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
@@ -58,34 +57,6 @@ pub fn filter_with(column_num: usize, filter_str: &str, batch: &RecordBatch) -> 
 
     create_record_batch(batch.schema(), arrays)
 }
-
-pub fn filter_with_number(
-    column_num: usize,
-    filter_float: f64,
-    batch: &RecordBatch,
-) -> RecordBatch {
-    let filter_array = batch
-        .column(column_num)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap()
-        .iter()
-        .map(|value| Some(value == Some(filter_float)))
-        .collect::<BooleanArray>();
-
-    let mut arrays: Vec<ArrayRef> = Vec::new();
-
-    for idx in 0..batch.num_columns() {
-        let array = batch.column(idx).as_ref();
-
-        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
-
-        arrays.push(filtered);
-    }
-
-    create_record_batch(batch.schema(), arrays)
-}
-
  
 pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
 
@@ -400,7 +371,8 @@ pub fn rel_freq_in_bucket_of_operators_with_pipeline(
     let mut vec = Vec::new();
 
     for pipeline in with_pipelines {
-        // let batch_with_pipeline_filter = filter_with(column_for_pipeline, pipeline.unwrap(), batch);
+        print_to_js_with_obj(&format!("{:?}", pipeline).into());
+
         let output_batch = rel_freq_in_bucket_of_operators_helper(
             &batch,
             column_for_operator,
@@ -411,6 +383,11 @@ pub fn rel_freq_in_bucket_of_operators_with_pipeline(
 
         vec.push(output_batch.to_owned());
     }
+
+    print_to_js_with_obj(&format!("{:?}", "VEC").into());
+
+    print_to_js_with_obj(&format!("{:?}", vec).into());
+
 
     vec
 }

@@ -157,7 +157,7 @@ worker.onmessage = (message) => {
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
       globalRestQueryType = (messageData as ICalculateChartDataRequestData).restQueryType;
-      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery, (messageData as ICalculateChartDataRequestData).queryMetadata);
+      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery);
       break;
 
     default:

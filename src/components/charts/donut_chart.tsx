@@ -128,27 +128,27 @@ class DonutChart extends React.Component<Props, State> {
         const pipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).pipeline;
         const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).count;
 
-
-        console.log(pipelinesArray);
-        console.log(countArray);
+        let dataArray: { pipeline: string; value: number; }[] = [];
+        pipelinesArray.forEach((elem, index) => {
+           const dataObject = {pipeline: elem, value: countArray[index]};
+           dataArray.push(dataObject);
+        });
 
         const data = {
-            "name": "table",
-            "values": [
-                { "pipeline": "Biology", "value": 4 },
-                { "pipeline": "Chemistry", "value": 8 },
-                { "pipeline": "Computer Science", "value": 2 },
-                { "pipeline": "Programming", "value": 2 },
-                { "pipeline": "Sociology", "value": 8 }
-            ],
-            "transform": [
-                { "type": "formula", "expr": "datum.pipeline + ': ' + datum.value", "as": "tooltip" },
+            name: "table",
+            values: dataArray,
+            transform: [
                 {
-                    "type": "pie",
-                    "field": "value",
-                    "startAngle": 0,
-                    "endAngle": 6.29,
-                    "sort": true
+                    type: "formula",
+                    expr: "datum.pipeline + ': ' + datum.value",
+                    as: "tooltip"
+                },
+                {
+                    type: "pie",
+                    field: "value",
+                    startAngle: 0,
+                    endAngle: 6.29,
+                    sort: true
                 }
             ]
         }

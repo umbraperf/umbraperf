@@ -20,6 +20,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.SWIM_LANES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
+    | ChartData<ChartType.DONUT_CHART, IDonutChartData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
@@ -38,4 +39,9 @@ export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
     relativeFrquencies: Array<number>,
+}
+
+export interface IDonutChartData {
+    pipeline: Array<string>,
+    count: Array<number>,
 }

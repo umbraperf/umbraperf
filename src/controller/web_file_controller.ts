@@ -180,6 +180,19 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
                 });
             break;
 
+        case RestApi.RestQueryType.GET_PIPELINE_COUNT:
+
+            chartDataElem = createChartDataObject(
+                requestId,
+                {
+                    chartType: ChartType.DONUT_CHART,
+                    data: {
+                        pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
+                        count: resultObject.resultTable.getColumn('count').toArray(),
+                    }
+                });
+            break;
+
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
@@ -239,6 +252,16 @@ export function requestChartData(controller: WebFileController, chartId: number,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                     data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
+                }), false, chartId);
+            break;
+
+        case ChartType.DONUT_CHART:
+
+            controller.calculateChartData(
+                RestApi.RestQueryType.GET_PIPELINE_COUNT,
+                RestApi.createRestQuery({
+                    type: RestApi.RestQueryType.GET_PIPELINE_COUNT,
+                    data: { event: store.getState().currentEvent },
                 }), false, chartId);
             break;
 

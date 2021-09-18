@@ -11,6 +11,7 @@ export enum RestQueryType {
     GET_REL_OP_DISTR_PER_BUCKET = "GET_REL_OP_DISTR_PER_BUCKET",
     GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE = "GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE",
     GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES = "GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES",
+    GET_PIPELINE_COUNT = "GET_PIPELINE_COUNT",
     other = "other",
 }
 
@@ -21,6 +22,7 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string }>
+    | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string} >
     | RestQuery<RestQueryType.other, {}>
     ;
 
@@ -39,6 +41,8 @@ export function createRestQuery(query: QueryVariant) {
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
+        case RestQueryType.GET_PIPELINE_COUNT:
+            return `pipeline/count/?ev_name="${query.data.event}"/count?pipeline`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

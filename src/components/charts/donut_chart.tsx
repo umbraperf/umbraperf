@@ -37,7 +37,7 @@ interface State {
 }
 
 const startSize = {
-    width: 500,
+    width: 200,
     height: window.innerHeight > 1000 ? 500 : window.innerHeight - 350,
 }
 
@@ -61,7 +61,7 @@ class DonutChart extends React.Component<Props, State> {
 
         //if current event changes, component did update is executed and queries new data for new event
         if (this.props.currentEvent != prevProps.currentEvent) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
+            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.DONUT_CHART);
         }
 
     }
@@ -125,26 +125,30 @@ class DonutChart extends React.Component<Props, State> {
 
         console.log(this.props.chartData);
 
-        const operatorsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).operators;
-        const valueArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).frequency;
+        const pipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).pipeline;
+        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).count;
+
+
+        console.log(pipelinesArray);
+        console.log(countArray);
 
         const data = {
-            name: "table",
-            values: [
-                { id: 1, field: 4 },
-                { id: 2, field: 6 },
-                { id: 3, field: 10 },
-                { id: 4, field: 3 },
-                { id: 5, field: 7 },
-                { id: 6, field: 8 }
+            "name": "table",
+            "values": [
+                { "pipeline": "Biology", "value": 4 },
+                { "pipeline": "Chemistry", "value": 8 },
+                { "pipeline": "Computer Science", "value": 2 },
+                { "pipeline": "Programming", "value": 2 },
+                { "pipeline": "Sociology", "value": 8 }
             ],
-            transform: [
+            "transform": [
+                { "type": "formula", "expr": "datum.pipeline + ': ' + datum.value", "as": "tooltip" },
                 {
-                    type: "pie",
-                    field: "field",
-                    startAngle: { signal: "startAngle" },
-                    endAngle: { signal: "endAngle" },
-                    sort: { signal: "sort" }
+                    "type": "pie",
+                    "field": "value",
+                    "startAngle": 0,
+                    "endAngle": 6.29,
+                    "sort": true
                 }
             ]
         }
@@ -170,22 +174,28 @@ class DonutChart extends React.Component<Props, State> {
 
             scales: [
                 {
-                    name: "color",
-                    type: "ordinal",
-                    domain: { data: "table", field: "id" },
-                    range: { scheme: "category20" }
+                    "name": "color",
+                    "type": "ordinal",
+                    "domain": { "data": "table", "field": "pipeline" },
+                    "range": { "scheme": "category20c" }
                 }
             ],
 
             marks: [
                 {
-                    type: "arc",
-                    from: { data: "table" },
-                    encode: {
-                        enter: {
-                            fill: { scale: "color", field: "id" },
-                            x: { signal: "width / 2" },
-                            y: { signal: "height / 2" }
+                    "type": "arc",
+                    "from": { "data": "table" },
+                    "encode": {
+                        "enter": {
+                            "fill": { "scale": "color", "field": "pipeline" },
+                            "x": { "signal": "width / 2" },
+                            "y": { "signal": "height / 2" },
+                            "startAngle": { "field": "startAngle" },
+                            "endAngle": { "field": "endAngle" },
+                            "innerRadius": { "value": 60 },
+                            "outerRadius": { "signal": "width / 2" },
+                            "cornerRadius": { "value": 0 },
+                            "tooltip": { "field": "tooltip" }
                         }
                     }
                 }

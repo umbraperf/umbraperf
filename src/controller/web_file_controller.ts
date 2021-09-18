@@ -101,6 +101,10 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
                 type: StateMutationType.SET_PIPELINES,
                 data: pipelines,
             });
+            store.dispatch({
+                type: StateMutationType.SET_CURRENTPIPELINE,
+                data: pipelines,
+            });
             break;
     }
 

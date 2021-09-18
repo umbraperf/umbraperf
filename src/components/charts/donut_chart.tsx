@@ -2,7 +2,7 @@ import * as model from '../../model';
 import React from 'react';
 import { connect } from 'react-redux';
 import { IAppContext, withAppContext } from '../../app_context';
-import { Vega } from 'react-vega';
+import { SignalListeners, Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "react-vega/src";
 import styles from '../../style/charts.module.css';
@@ -113,12 +113,23 @@ class DonutChart extends React.Component<Props, State> {
                 {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                        <Vega spec={this.createVisualizationSpec()} />
+                        <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                     </div>
                 }
 
             </div>
         </div>;
+    }
+
+    createVegaSignalListeners(){
+        const signalListeners: SignalListeners = {
+            clickPipeline: this.handleCklickPipeline,
+        }
+        return signalListeners;
+    }
+
+    handleCklickPipeline(...args: any[]){
+        console.log(args);
     }
 
     createVisualizationData() {
@@ -171,6 +182,15 @@ class DonutChart extends React.Component<Props, State> {
             data: [
                 visData
             ],
+
+            signals: [
+                {
+                  name: "clickPipeline",
+                  on: [
+                    {events: "arc:click", update: "datum"}
+                  ]
+                }
+              ],
 
             scales: [
                 {

@@ -19,11 +19,6 @@ function PipelinesSelector(props: Props) {
     if (undefined === pipelines) {
         requestPipelines(context!.controller);
     }
-    useEffect(() => {
-        if (pipelines && undefined === props.currentPipeline) {
-            props.setCurrentPipeline(new Array<string>().concat(pipelines));
-        }
-    });
 
     const createPipelineShortString = (pipeline: string) => {
         return pipeline.length > 50 ? (pipeline.substr(0, 47) + "...") : pipeline;

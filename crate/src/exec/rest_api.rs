@@ -84,27 +84,13 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
 
 
-                    let vec_record_batches = rel_freq::rel_freq_in_bucket_of_operators_with_pipeline(
+                    return rel_freq::rel_freq_in_bucket_of_operators_with_pipeline(
                         &record_batch,
                         find_name("operator", &record_batch),
                         find_name(time, &record_batch),
                         pipeline_vec,
                         bucket_size,
                     );
-
-                    print_to_js_with_obj(&format!("{:?}", "vec_record_batches").into());
-
-                    print_to_js_with_obj(&format!("{:?}", vec_record_batches).into());
-
-
-                    for (i, item) in vec_record_batches.iter().enumerate() {
-                        print_to_js_with_obj(&format!("{:?}", "SEND TO JS").into());
-                        if i + 1 == vec_record_batches.len() {
-                            return item.to_owned();
-                        } else {
-                            send_record_batch_to_js(item);
-                        }
-                    }
 
                 }
                 // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:20

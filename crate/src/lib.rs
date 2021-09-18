@@ -14,24 +14,32 @@ use arrow::{
 };
 
 // Stream Buff
-mod streambuf;
-use streambuf::WebFileReader;
-
-// Record Batch
-mod record_batch_util;
+mod web_file {
+    pub mod streambuf;
+}
+use web_file::streambuf::WebFileReader;
 
 // Analyze
-mod analyze;
-mod rest_api;
+mod exec {
+    pub mod analyze;
+    pub mod rest_api;
+}
+use exec::analyze;
+use exec::rest_api;
 
-// Bindings
-mod bindings;
-use crate::{
-    bindings::notify_js_finished_reading,
-};
+mod utils {
+    pub mod bindings;
+    pub mod record_batch_util;
+}
+
+use utils::bindings;
+use utils::record_batch_util;
+
 
 extern crate serde;
 use serde::{Deserialize, Serialize};
+
+use crate::utils::bindings::notify_js_finished_reading;
 
 //STATE
 pub struct State {

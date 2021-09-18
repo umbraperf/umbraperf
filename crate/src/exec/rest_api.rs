@@ -79,6 +79,8 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
                     let pipeline_vec = split[1].split_terminator(",").collect::<Vec<&str>>();
+                    print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
+
 
                     let vec_record_batches = analyze::rel_freq_in_bucket_of_operators_with_pipeline(
                         &record_batch,
@@ -88,7 +90,13 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                         bucket_size,
                     );
 
+                    print_to_js_with_obj(&format!("{:?}", "vec_record_batches").into());
+
+                    print_to_js_with_obj(&format!("{:?}", vec_record_batches).into());
+
+
                     for (i, item) in vec_record_batches.iter().enumerate() {
+                        print_to_js_with_obj(&format!("{:?}", "SEND TO JS").into());
                         if i + 1 == vec_record_batches.len() {
                             return item.to_owned();
                         } else {

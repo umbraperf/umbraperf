@@ -78,7 +78,7 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
     if (!metaRequest) {
-        storeChartDataFromRust(requestId, resultObject);
+        storeChartDataFromRust(requestId, resultObject, restQueryType);
     }
 }
 
@@ -115,8 +115,7 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
 }
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
-function storeChartDataFromRust(requestId: number, resultObject: Result) {
-    const requestType = store.getState().currentRequest;
+function storeChartDataFromRust(requestId: number, resultObject: Result, requestType: RestApi.RestQueryType) {
     let chartDataElem: ChartDataObject | undefined;
     let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
 
@@ -204,7 +203,6 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
-    console.log(ChartDataCollection[requestId]);
     store.dispatch({
         type: StateMutationType.SET_CHARTDATA,
         data: ChartDataCollection,
@@ -213,7 +211,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result) {
         type: StateMutationType.SET_RESULTLOADING,
         data: false,
     });
-    console.log(store.getState().chartData);
+    console.log(store.getState().chartData[requestId].chartData);
 
 }
 

@@ -76,7 +76,7 @@ class SwimLanes extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       //ensure changed app state and only proceed when result available
-      if ((!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading)) {
+      if ((!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading && this.props.chartData[this.state.chartId])) {
 
          let chartDataElement: IChartData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,

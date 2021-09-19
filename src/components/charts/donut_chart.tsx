@@ -178,7 +178,7 @@ class DonutChart extends React.Component<Props, State> {
         },
         {
             name: "selected",
-            values: {pipelinesUsed: this.props.currentPipeline },
+            values: { pipelinesUsed: this.props.currentPipeline },
             transform: [{ type: "flatten", fields: ["pipelinesUsed"] }]
         }
         ]
@@ -205,6 +205,12 @@ class DonutChart extends React.Component<Props, State> {
                     name: "clickPipeline",
                     on: [
                         { events: "arc:click", update: "datum" }
+                    ]
+                },
+                {
+                    name: "hover",
+                    on: [
+                        { "events": "mouseover", "update": "datum" }
                     ]
                 }
             ],
@@ -238,7 +244,22 @@ class DonutChart extends React.Component<Props, State> {
                             "opacity": [
                                 { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 },
                                 { "value": 0.1 }
-                            ]
+                            ],
+                            "startAngle": { "field": "startAngle" },
+                            "endAngle": { "field": "endAngle" },
+                            "padAngle": {
+                                "signal": "if(hover && hover.pipeline == datum.pipeline, 0.015, 0.015)"
+                            },
+                            "innerRadius": {
+                                "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 0.45, if(width >= height, height, width) / 2 * 0.5)"
+                            },
+                            "outerRadius": {
+                                "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 1.05 * 0.8, if(width >= height, height, width) / 2 * 0.8)"
+                            },
+                            "stroke": { "signal": "scale('color', datum.pipeline)" },
+                            "fillOpacity": {
+                                "signal": "if(hover && hover.pipeline == datum.pipeline, 0.8, 0.8)"
+                            }
                         }
                     }
                 }

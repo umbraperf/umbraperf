@@ -2,7 +2,7 @@ import * as model from '../../model';
 import React from 'react';
 import { connect } from 'react-redux';
 import { IAppContext, withAppContext } from '../../app_context';
-import { SignalListener, SignalListeners, Vega } from 'react-vega';
+import { SignalListeners, Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
@@ -15,6 +15,7 @@ import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 import PipelinesSelector from '../utils/pipelines_selector';
+import DonutChart from './donut_chart';
 
 
 interface Props {
@@ -78,7 +79,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         //ensure changed app state and only proceed when result available
-        if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading) {
+        if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading && this.props.chartData[this.state.chartId]) {
 
             const chartDataElement: IChartData = {
                 buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
@@ -186,6 +187,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                     </div>
                 }
+
+                <DonutChart />
+
             </div>
         </div>;
     }
@@ -198,7 +202,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     handleVegaHover(...args: any[]) {
-        console.log(args);
+        //TODO remove
     }
 
     createVisualizationData() {

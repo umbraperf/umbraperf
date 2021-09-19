@@ -95,9 +95,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         }
 
-        //if current event, chart, bucketsize or pipelines change, component did update is executed and queries new data for new event
-        if (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.state.bucketsize, pipeline: this.props.currentPipeline?.join()});
+        //if current event, chart, bucketsize or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
+        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
+            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.state.bucketsize, pipeline: this.props.currentPipeline?.join() });
         }
 
     }
@@ -183,21 +183,21 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 {(this.props.resultLoading || !this.state.chartData || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
+                        <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                     </div>
                 }
             </div>
         </div>;
     }
 
-    createVegaSignalListeners(){
+    createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
             hover: this.handleVegaHover,
         }
         return signalListeners;
     }
 
-    handleVegaHover(...args: any[]){
+    handleVegaHover(...args: any[]) {
         console.log(args);
     }
 
@@ -253,11 +253,11 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
             signals: [
                 {
-                  name: "hover",
-                  description: "A date value that updates in response to mousemove.",
-                  on: [{"events": "area:mouseover", "update": "{}"}]
+                    name: "hover",
+                    description: "A date value that updates in response to mousemove.",
+                    on: [{ "events": "area:mouseover", "update": "{}" }]
                 }
-              ],
+            ],
 
             scales: [
                 {

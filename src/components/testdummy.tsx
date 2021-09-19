@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { ChartType } from '../controller/web_file_controller';
 import PipelinesSelector from './utils/pipelines_selector';
 import DonutChart from '../components/charts/donut_chart';
+import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 
 
 
@@ -57,9 +58,11 @@ class Dummy extends React.Component<Props, State> {
 
                 <div className={styles.optionsArea} >
                     <PipelinesSelector />
+
                 </div>
                 <div>
-
+                    <DonutChart />
+                    <SwimLanesMultiplePipelines />
                 </div>
 
             </div>

@@ -79,7 +79,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
-      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength){
+      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength  && this.props.chartData[this.state.chartId]){
          this.setState((state, props) => {
             const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
             

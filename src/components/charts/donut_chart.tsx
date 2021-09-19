@@ -63,8 +63,8 @@ class DonutChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-      //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-      if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentChart != prevProps.currentChart)) {
+        //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
+        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentChart != prevProps.currentChart)) {
             requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.DONUT_CHART);
         }
 
@@ -74,7 +74,7 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.DONUT_CHART);
 
-            if(!this.props.pipelines){
+            if (!this.props.pipelines) {
                 requestPipelines(this.props.appContext.controller);
             }
 
@@ -129,38 +129,36 @@ class DonutChart extends React.Component<Props, State> {
         </div>;
     }
 
-    createVegaSignalListeners(){
+    createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
             clickPipeline: this.handleCklickPipeline,
         }
         return signalListeners;
     }
 
-    handleCklickPipeline(...args: any[]){
+    handleCklickPipeline(...args: any[]) {
         const selectedPipeline = args[1].pipeline;
-         if(undefined !== this.props.currentPipeline){
-            if(this.props.currentPipeline?.includes(selectedPipeline)){
+        if (undefined !== this.props.currentPipeline) {
+            if (this.props.currentPipeline?.includes(selectedPipeline)) {
                 this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-            }else{
+            } else {
                 this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
             }
-        } 
+        }
     }
 
     createVisualizationData() {
-
-        console.log(this.props.chartData);
 
         const pipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).pipeline;
         const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).count;
 
         let dataArray: { pipeline: string; value: number; }[] = [];
         pipelinesArray.forEach((elem, index) => {
-           const dataObject = {pipeline: elem, value: countArray[index]};
-           dataArray.push(dataObject);
+            const dataObject = { pipeline: elem, value: countArray[index] };
+            dataArray.push(dataObject);
         });
 
-        const data = {
+        const data = [{
             name: "table",
             values: dataArray,
             transform: [
@@ -177,7 +175,13 @@ class DonutChart extends React.Component<Props, State> {
                     sort: true
                 }
             ]
+        },
+        {
+            name: "selected",
+            values: {pipelinesUsed: this.props.currentPipeline },
+            transform: [{ type: "flatten", fields: ["pipelinesUsed"] }]
         }
+        ]
 
 
         return data;
@@ -194,18 +198,16 @@ class DonutChart extends React.Component<Props, State> {
             resize: true,
             autosize: 'fit',
 
-            data: [
-                visData
-            ],
+            data: visData,
 
             signals: [
                 {
-                  name: "clickPipeline",
-                  on: [
-                    {events: "arc:click", update: "datum"}
-                  ]
+                    name: "clickPipeline",
+                    on: [
+                        { events: "arc:click", update: "datum" }
+                    ]
                 }
-              ],
+            ],
 
             scales: [
                 {
@@ -231,6 +233,12 @@ class DonutChart extends React.Component<Props, State> {
                             "outerRadius": { "signal": "width / 2" },
                             "cornerRadius": { "value": 0 },
                             "tooltip": { "field": "tooltip" }
+                        },
+                        "update": {
+                            "opacity": [
+                                { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 },
+                                { "value": 0.1 }
+                            ]
                         }
                     }
                 }

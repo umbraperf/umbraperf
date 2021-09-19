@@ -122,6 +122,7 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
     switch (requestType) {
 
         case RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+            
             chartDataElem = createChartDataObject(
                 requestId,
                 {

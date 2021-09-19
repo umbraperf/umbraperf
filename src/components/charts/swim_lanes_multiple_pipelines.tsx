@@ -15,7 +15,6 @@ import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 import PipelinesSelector from '../utils/pipelines_selector';
-import DonutChart from './donut_chart';
 
 
 interface Props {
@@ -187,9 +186,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                     </div>
                 }
-
-                <DonutChart />
-
             </div>
         </div>;
     }

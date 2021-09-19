@@ -15,7 +15,7 @@ import styles from './style/main-app.module.css';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
-import DonutChartTest from './components/testdummy';
+import Dummy from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
@@ -113,7 +113,7 @@ export const routes = [
     {
         path: '/dummy',
         sidebarName: 'Dummy',
-        component: DonutChartTest,
+        component: Dummy,
         icon: () => { return (<HelpIcon />) },
     },
 

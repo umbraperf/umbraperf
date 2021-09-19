@@ -74,8 +74,6 @@ fn set_record_batches(record_batches: RecordBatch) {
     _with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
-
-
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
     let now = instant::Instant::now();
@@ -84,7 +82,7 @@ pub fn analyze_file(file_size: i32) {
         file_size,
         59, // Code for semicolon
         true,
-        vec![0 as usize, 5 as usize, 13 as usize, 20 as usize],
+        vec![0, 5, 13, 20],
     );
 
     let elapsed = now.elapsed();

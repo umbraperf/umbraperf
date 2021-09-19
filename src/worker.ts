@@ -87,8 +87,8 @@ let registeredFile: IRegisteredFile = {
 
 export function readFileChunk(offset: number, chunkSize: number) {
 
-  if (globalFileDictionary[0]) {
-    const file = globalFileDictionary[0];
+  if (globalFileDictionary[globalFileIdCounter]) {
+    const file = globalFileDictionary[globalFileIdCounter];
     const remainingFileSize = file.size - offset;
 
     let chunk = undefined;

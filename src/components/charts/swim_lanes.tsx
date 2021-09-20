@@ -18,7 +18,7 @@ import BucketsizeDropdwn from '../utils/bucketsize_dropdown';
 
 interface Props {
    appContext: IAppContext;
-   resultLoading: boolean;
+   resultLoading: model.ResultLoading;
    result: Result | undefined;
    csvParsingFinished: boolean;
    currentChart: string;
@@ -76,7 +76,7 @@ class SwimLanes extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       //ensure changed app state and only proceed when result available
-      if ((!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading && this.props.chartData[this.state.chartId])) {
+      if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
          let chartDataElement: IChartData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
@@ -176,7 +176,7 @@ class SwimLanes extends React.Component<Props, State> {
                   <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                </div>
             </div>
-            {(this.props.resultLoading || !this.state.chartData || !this.props.events)
+            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                ? <CircularProgress />
                : <div className={"vegaContainer"} ref={this.chartWrapper}>
                   <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />

@@ -1,12 +1,13 @@
 import {  ChartDataKeyValue } from "./chart_data_result";
-import { Result } from "./core_result";
+import { Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
 import {State as IDashboardState} from "../components/dashboard"
 
 export interface AppState {
     /// The registered files
     fileName: string | undefined;
-    resultLoading: boolean;
+    fileLoading: boolean;
+    resultLoading: ResultLoading;
     result: Result | undefined;
     chunksNumber: number;
     csvParsingFinished: boolean;
@@ -26,7 +27,8 @@ export interface AppState {
 export function createDefaultState(): AppState {
     return {
         fileName: undefined,
-        resultLoading: false,
+        fileLoading: false,
+        resultLoading: {},
         result: undefined,
         chunksNumber: 0,
         csvParsingFinished: false,

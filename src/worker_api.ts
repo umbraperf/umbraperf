@@ -54,7 +54,7 @@ worker.addEventListener('message', message => {
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:
-            setCsvReadingFinished(messageData as number);
+            setCsvReadingFinished();
             break;
 
         case model.WorkerResponseType.STORE_RESULT:

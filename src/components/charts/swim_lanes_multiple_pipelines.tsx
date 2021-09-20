@@ -19,7 +19,7 @@ import PipelinesSelector from '../utils/pipelines_selector';
 
 interface Props {
     appContext: IAppContext;
-    resultLoading: boolean;
+    resultLoading: model.ResultLoading;
     result: Result | undefined;
     csvParsingFinished: boolean;
     currentChart: string;
@@ -78,7 +78,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         //ensure changed app state and only proceed when result available
-        if (!this.props.resultLoading && prevProps.resultLoading != this.props.resultLoading && this.props.chartData[this.state.chartId]) {
+        if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
             const chartDataElement: IChartData = {
                 buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
@@ -180,7 +180,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     </div>
                     <PipelinesSelector />
                 </div>
-                {(this.props.resultLoading || !this.state.chartData || !this.props.events)
+                {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>
                         <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />

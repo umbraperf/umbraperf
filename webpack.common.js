@@ -10,7 +10,7 @@ export function configure(params) {
     return {
         target: 'web',
         entry: {
-            app: ['./src/app.tsx'],
+            app: ['./src/index.tsx'],
         },
         output: {
             path: params.buildDir,

@@ -120,70 +120,6 @@ export const routes = [
 
 ];
 
-ReactDOM.render(
-    <AppContextProvider value={appContext}>
-        <ReduxProvider store={store}>
-            <MuiThemeProvider theme={materialUiTheme}>
-
-                <BrowserRouter>
-
-                    <div className={`app ${styles.app}`}>
-
-                        <div className={styles.appHeader}>
-                            <AppBar position="static" >
-                                <Toolbar style={{minHeight: '32px'}}>
-                                    <Typography variant="subtitle2" className={styles.appHeaderTitle}>
-                                        Umbra-Profiler
-                                    </Typography>
-                                </Toolbar>
-                            </AppBar>
-                        </div>
-
-                        <div className={`appNavigation ${styles.appNavigation}`}>
-
-                            <TabPanel/>
-
-                        </div>
-
-                        <div className={styles.appBody}>
-                            <Switch>
-
-                                <Route exact path="/" key="/">
-                                    <Redirect to="/upload" />
-                                </Route>
-
-                                <Route exact path="/upload" key="/upload">
-                                    <FileUploader />
-                                </Route>
-
-                                <Route exact path="/dashboard" key="/dashboard">
-                                    <Dashboard />
-                                </Route>
-
-                                {routes.map((route: any) => {
-                                    return <Route exact path={route.path} key={route.path}>
-                                        <VisualizationContainer component={route.component} visualizationName={route.path}/>
-                                    </Route>
-                                })}
-
-                                <Route path="*">
-                                    <NoMatch />
-                                </Route>
-
-                            </Switch>
-                        </div>
-
-                    </div>
-
-                </BrowserRouter>
-            </MuiThemeProvider>
-
-        </ReduxProvider>
-    </AppContextProvider>
-    ,
-    element,
-);
-
 function NoMatch() {
     let location = useLocation();
 
@@ -197,4 +133,70 @@ function NoMatch() {
         </div>
     );
 }
+
+
+export default function App() {
+    return (
+        <AppContextProvider value={appContext}>
+            <ReduxProvider store={store}>
+                <MuiThemeProvider theme={materialUiTheme}>
+
+                    <BrowserRouter>
+
+                        <div className={`app ${styles.app}`}>
+
+                            <div className={styles.appHeader}>
+                                <AppBar position="static" >
+                                    <Toolbar style={{ minHeight: '32px' }}>
+                                        <Typography variant="subtitle2" className={styles.appHeaderTitle}>
+                                            Umbra-Profiler
+                                        </Typography>
+                                    </Toolbar>
+                                </AppBar>
+                            </div>
+
+                            <div className={`appNavigation ${styles.appNavigation}`}>
+
+                                <TabPanel />
+
+                            </div>
+
+                            <div className={styles.appBody}>
+                                <Switch>
+
+                                    <Route exact path="/" key="/">
+                                        <Redirect to="/upload" />
+                                    </Route>
+
+                                    <Route exact path="/upload" key="/upload">
+                                        <FileUploader />
+                                    </Route>
+
+                                    <Route exact path="/dashboard" key="/dashboard">
+                                        <Dashboard />
+                                    </Route>
+
+                                    {routes.map((route: any) => {
+                                        return <Route exact path={route.path} key={route.path}>
+                                            <VisualizationContainer component={route.component} visualizationName={route.path} />
+                                        </Route>
+                                    })}
+
+                                    <Route path="*">
+                                        <NoMatch />
+                                    </Route>
+
+                                </Switch>
+                            </div>
+
+                        </div>
+
+                    </BrowserRouter>
+                </MuiThemeProvider>
+
+            </ReduxProvider>
+        </AppContextProvider>
+    );
+}
+
 

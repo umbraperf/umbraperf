@@ -1,13 +1,11 @@
 import * as model from '../model';
 import React from 'react';
-import { Vega } from 'react-vega';
-import { VisualizationSpec } from "react-vega/src";
 import styles from '../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import { connect } from 'react-redux';
 import { ChartType } from '../controller/web_file_controller';
-import PipelinesSelector from './utils/pipelines_selector';
+import InterpolationDropdown from './utils/interpolation_dropdown';
+import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 
@@ -15,10 +13,8 @@ import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple
 
 
 interface Props {
-
     csvParsingFinished: boolean;
     setCurrentChart: (newCurrentChart: string) => void;
-
 }
 
 interface State {
@@ -37,15 +33,6 @@ class Dummy extends React.Component<Props, State> {
 
     }
 
-    componentDidUpdate(prevProps: Props): void {
-
-    }
-
-
-    componentDidMount() {
-
-    }
-
 
     public render() {
 
@@ -54,15 +41,16 @@ class Dummy extends React.Component<Props, State> {
         }
 
         return <div>
-            <div className={styles.resultArea} >
 
-                <div>
-                    <DonutChart />
-                    <SwimLanesMultiplePipelines />
-
-                </div>
-
+            <div className={styles.dropdownArea} >
+                <InterpolationDropdown />
+                <BucketsizeDropdwn />
             </div>
+            <div>
+                <DonutChart />
+                <SwimLanesMultiplePipelines />
+            </div>
+
 
         </div>;
     }

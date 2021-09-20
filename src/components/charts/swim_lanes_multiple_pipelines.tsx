@@ -29,6 +29,8 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | undefined,
+    currentInterpolation: String,
+    currentBucketSize: number,
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -39,8 +41,6 @@ interface State {
     chartData: IChartData | undefined,
     width: number,
     height: number,
-    interpolation: string;
-    bucketsize: number;
 }
 
 interface IChartData {
@@ -65,14 +65,10 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             width: startSize.width,
             height: startSize.height,
             chartData: undefined,
-            interpolation: "basis",
-            bucketsize: 0.2,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
-        this.handleInterpolationChange = this.handleInterpolationChange.bind(this);
-        this.handleBucketsizeChange = this.handleBucketsizeChange.bind(this);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
@@ -96,8 +92,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
 
         //if current event, chart, bucketsize or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.state.bucketsize, pipeline: this.props.currentPipeline?.join() });
+        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
+            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize, pipeline: this.props.currentPipeline?.join() });
         }
 
     }
@@ -139,32 +135,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
     }
 
-    handleInterpolationChange(newInterpolation: string) {
-        this.setState({
-            ...this.state,
-            interpolation: newInterpolation,
-        });
-    }
-
-    handleBucketsizeChange(newBucketsize: number) {
-        this.setState({
-            ...this.state,
-            bucketsize: newBucketsize,
-        });
-    }
-
 
     public render() {
-
-        const interpolationDropdownProps = {
-            currentInterpolation: this.state.interpolation,
-            changeInterpolation: this.handleInterpolationChange,
-        }
-
-        const bucketsizeDropdownProps = {
-            currentBucketsize: this.state.bucketsize,
-            changeBucketsize: this.handleBucketsizeChange,
-        }
 
         if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
@@ -175,8 +147,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 <div className={styles.optionsArea} >
                     <EventsButtons />
                     <div className={styles.dropdownArea} >
-                        <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
-                        <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
+                        <InterpolationDropdown />
+                        <BucketsizeDropdwn />
                     </div>
                     <PipelinesSelector />
                 </div>
@@ -322,7 +294,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                             encode: {
                                 enter: {
                                     interpolate: {
-                                        value: this.state.interpolation,
+                                        value: this.props.currentInterpolation as string,
                                     },
                                     x: {
                                         scale: "x",
@@ -384,6 +356,8 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentInterpolation: state.currentInterpolation,
+    currentBucketSize: state.currentBucketSize,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

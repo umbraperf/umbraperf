@@ -144,14 +144,12 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
 
       return <div>
-         <div className={styles.resultArea} >
-            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
-               ? <CircularProgress />
-               : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                  {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
-               </div>
-            }
-         </div>
+         {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+            ? <CircularProgress />
+            : <div className={"vegaContainer"} ref={this.chartWrapper}>
+               {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+            </div>
+         }
       </div>;
    }
 

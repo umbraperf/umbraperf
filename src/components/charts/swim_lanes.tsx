@@ -140,14 +140,12 @@ class SwimLanes extends React.Component<Props, State> {
       }
 
       return <div>
-         <div className={styles.resultArea} >
-            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
-               ? <CircularProgress />
-               : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                  <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
-               </div>
-            }
-         </div>
+         {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+            ? <CircularProgress />
+            : <div className={"vegaContainer"} ref={this.chartWrapper}>
+               <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
+            </div>
+         }
          <Vega className={`vegaStreamgraph`} spec={this.createVisualizationSpecStream()} />
       </div>;
    }

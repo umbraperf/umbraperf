@@ -56,13 +56,10 @@ class Dummy extends React.Component<Props, State> {
         return <div>
             <div className={styles.resultArea} >
 
-                <div className={styles.optionsArea} >
-                    <PipelinesSelector />
-
-                </div>
                 <div>
                     <DonutChart />
                     <SwimLanesMultiplePipelines />
+
                 </div>
 
             </div>

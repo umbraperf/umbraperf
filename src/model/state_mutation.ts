@@ -1,9 +1,9 @@
 import * as model from '../model';
 import { AppState } from './state';
-import { Result } from "./core_result";
+import { Result, ResultLoading } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
-import {State as IDashboardState} from "../components/dashboard"
+import { State as IDashboardState } from "../components/dashboard"
 
 
 
@@ -16,6 +16,7 @@ export type StateMutation<T, P> = {
 /// A mutation type
 export enum StateMutationType {
     SET_FILENAME = 'SET_FILENAME',
+    SET_FILELOADING = 'SET_FILELOADING',
     SET_RESULTLOADING = 'SET_RESULTLOADING',
     SET_RESULT = 'SET_RESULT',
     SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
@@ -38,7 +39,8 @@ export enum StateMutationType {
 /// An state mutation variant
 export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
-    | StateMutation<StateMutationType.SET_RESULTLOADING, boolean>
+    | StateMutation<StateMutationType.SET_FILELOADING, boolean>
+    | StateMutation<StateMutationType.SET_RESULTLOADING, {key: number, value: boolean}>
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
@@ -67,10 +69,15 @@ export class AppStateMutation {
                     ...state,
                     fileName: mutation.data,
                 };
-            case StateMutationType.SET_RESULTLOADING:
+            case StateMutationType.SET_FILELOADING:
                 return {
                     ...state,
-                    resultLoading: mutation.data,
+                    fileLoading: mutation.data,
+                };
+            case StateMutationType.SET_RESULTLOADING:
+            return {
+                    ...state,
+                    resultLoading: {...state.resultLoading,  [mutation.data.key]: mutation.data.value},
                 };
             case StateMutationType.SET_RESULT:
                 return {
@@ -145,7 +152,8 @@ export class AppStateMutation {
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
-                    resultLoading: false,
+                    fileLoading: false,
+                    resultLoading: {},
                     result: undefined,
                     chunksNumber: 0,
                     csvParsingFinished: false,

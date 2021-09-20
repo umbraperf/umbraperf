@@ -5,6 +5,10 @@ export interface Result {
     resultTable: ArrowTable.Table<any>;
 }
 
+export interface ResultLoading {
+    [chartId:number ]: boolean;
+}
+
 export function createResultObject(request: number, resultTable: ArrowTable.Table<any>): Result {
     return {
         request: request,

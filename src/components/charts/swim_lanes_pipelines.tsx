@@ -20,7 +20,7 @@ import _ from "lodash";
 
 interface Props {
    appContext: IAppContext;
-   resultLoading: boolean;
+   resultLoading: model.ResultLoading;
    result: Result | undefined;
    csvParsingFinished: boolean;
    currentChart: string;
@@ -79,7 +79,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
-      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength  && this.props.chartData[this.state.chartId]){
+      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength){
          this.setState((state, props) => {
             const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
             
@@ -180,7 +180,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                      <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
                   </div>
                </div>
-               {(this.props.resultLoading || !this.state.chartData || !this.props.events)
+               {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                   ? <CircularProgress />
                   : <div className={"vegaContainer"} ref={this.chartWrapper}>
                      {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}

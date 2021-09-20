@@ -40,10 +40,14 @@ export class WebFileController {
             type: StateMutationType.SET_CURRENTREQUEST,
             data: restQueryType,
         });
+
+/*         let resultLoadingObject = store.getState().resultLoading;
+        requestingChartId ? resultLoadingObject[requestingChartId] = true :  resultLoadingObject[-1] = true; */
         store.dispatch({
             type: StateMutationType.SET_RESULTLOADING,
-            data: true,
+            data: {key: requestingChartId ? requestingChartId : -1, value: true},
         });
+
         store.dispatch({
             type: StateMutationType.SET_RESULT,
             data: undefined,
@@ -53,7 +57,7 @@ export class WebFileController {
     }
 }
 
-export function setCsvReadingFinished(requestId: number) {
+export function setCsvReadingFinished() {
 
     store.dispatch({
         type: StateMutationType.SET_CSVPARSINGFINISHED,
@@ -111,6 +115,13 @@ function storeMetaDataFromRust(restQueryType: RestApi.RestQueryType) {
             });
             break;
     }
+
+/*     let resultLoadingObject = store.getState().resultLoading;
+    resultLoadingObject[-1] = false; */
+    store.dispatch({
+        type: StateMutationType.SET_RESULTLOADING,
+        data: {key: -1, value: false},
+    });
 
 }
 
@@ -208,9 +219,12 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
         type: StateMutationType.SET_CHARTDATA,
         data: ChartDataCollection,
     });
+
+/*     let resultLoadingObject = store.getState().resultLoading;
+    resultLoadingObject[requestId] = false; */
     store.dispatch({
         type: StateMutationType.SET_RESULTLOADING,
-        data: false,
+        data: {key: requestId, value: false},
     });
     console.log(store.getState().chartData[requestId].chartData);
 

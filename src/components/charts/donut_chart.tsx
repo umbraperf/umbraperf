@@ -16,7 +16,7 @@ import { requestChartData } from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
-    resultLoading: boolean;
+    resultLoading: model.ResultLoading;
     result: Result | undefined;
     csvParsingFinished: boolean;
     currentChart: string;
@@ -118,7 +118,7 @@ class DonutChart extends React.Component<Props, State> {
                 <div className={styles.optionsArea} >
                     <EventsButtons />
                 </div>
-                {(this.props.resultLoading || !this.props.chartData[this.state.chartId] || !this.props.events)
+                {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                     ? <CircularProgress />
                     : <div className={"vegaContainer"} ref={this.chartWrapper}>
                         <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />

@@ -30,7 +30,7 @@ export function createRestQuery(query: QueryVariant) {
 
     switch (query.type) {
         case RestQueryType.GET_EVENTS:
-            return 'ev_name/distinct?ev_name';
+            return 'ev_name/distinct?ev_name/sort?ev_name';
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:

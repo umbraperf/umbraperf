@@ -1,15 +1,23 @@
+import * as model from '../../model/';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel, Select } from '@material-ui/core';
 import styles from "../../style/utils.module.css";
+import { connect } from 'react-redux';
 
 
-export default function InterpolationDropdown(props: any) {
+interface Props{
+    currentInterpolation: String;
+    setCurrentInterpolation: (newCurrentInterpolation: String) => void;
+}
+
+
+function InterpolationDropdown(props: Props) {
 
     const interpolations = ["linear", "linear-closed", "step", "step-before", "step-after", "basis", "basis-open", "basis-closed", "cardinal", "cardinal-open", "cardinal-closed", "bundle", "monotone"];
 
     const handleOnItemClick = (elem: string) => {
-        props.changeInterpolation(elem);
+        props.setCurrentInterpolation(elem);
     };
 
 
@@ -29,3 +37,16 @@ export default function InterpolationDropdown(props: any) {
         </div>
     );
 }
+
+const mapStateToProps = (state: model.AppState) => ({
+    currentInterpolation: state.currentInterpolation,
+ });
+ 
+ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentInterpolation: (newCurrentInterpolation: String) => dispatch({
+       type: model.StateMutationType.SET_CURRENTINTERPOLATION,
+       data: newCurrentInterpolation,
+    }),
+ });
+
+export default connect(mapStateToProps, mapDispatchToProps)(InterpolationDropdown);

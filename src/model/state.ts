@@ -22,6 +22,8 @@ export interface AppState {
     chartData: ChartDataKeyValue;
     multipleChartDataLength: number;
     dashboardState: IDashboardState | undefined;
+    currentInterpolation: String;
+    currentBucketSize: number;
 }
 
 export function createDefaultState(): AppState {
@@ -43,5 +45,7 @@ export function createDefaultState(): AppState {
         chartData: {},
         multipleChartDataLength: -1,
         dashboardState: undefined,
+        currentInterpolation: "basis",
+        currentBucketSize: 1,
     };
 }

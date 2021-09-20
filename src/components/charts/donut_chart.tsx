@@ -40,8 +40,8 @@ interface State {
 }
 
 const startSize = {
-    width: 400,
-    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 350,
+    width: 450,
+    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 500,
 }
 
 class DonutChart extends React.Component<Props, State> {

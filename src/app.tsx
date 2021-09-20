@@ -25,12 +25,12 @@ import DonutChart from './components/charts/donut_chart';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
-import AssessmentIcon from '@material-ui/icons/Assessment';
+import BarChartIcon from '@material-ui/icons/BarChart';
 import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
-import PieChartIcon from '@material-ui/icons/PieChart';
+import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { WebFileController } from './controller/web_file_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -85,7 +85,7 @@ export const routes = [
         path: '/bar-chart',
         sidebarName: 'Bar Chart',
         component: BarChart,
-        icon: () => { return (<AssessmentIcon />) },
+        icon: () => { return (<BarChartIcon />) },
     },
     {
         path: '/swim-lanes',
@@ -109,7 +109,7 @@ export const routes = [
         path: '/donut-chart',
         sidebarName: 'Donut Chart',
         component: DonutChart,
-        icon: () => { return (<PieChartIcon />) },
+        icon: () => { return (<DonutLargeIcon />) },
     },
     {
         path: '/dummy',

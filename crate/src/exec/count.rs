@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::exec::analyze::{self, filter_with, find_unique_string};
+use crate::exec::analyze::{filter_with, find_unique_string};
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
 
@@ -31,7 +31,6 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
     let schema = batch.schema();
     let column_to_group_over_name = schema.field(column_to_groupby_over).name();
-    // old_schema + new count field
     let field = Field::new(column_to_group_over_name, DataType::Utf8, false);
     let result_field = Field::new("count", DataType::Float64, false);
 
@@ -40,5 +39,5 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     let vec = unique_batch.column(0).to_owned();
 
     let batch = RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap();
-    return analyze::sort_batch(&batch, 0);
+    return batch;
 }

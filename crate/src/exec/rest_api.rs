@@ -46,7 +46,7 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
 // -- distinct
 // -- count
 // -- relfreq
-fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
+fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
     for op in op_vec {
         let split = op.split_terminator("?").collect::<Vec<&str>>();
         let operator = split[0];
@@ -55,14 +55,14 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
         match operator {
             // ev_name/distinct?ev_name
             "distinct" => {
-                return analyze::find_unique_string(
+                record_batch = analyze::find_unique_string(
                     &record_batch,
                     find_name(params, &record_batch),
                 );
             }
             // operator/count/?ev_name="No Operator"/count?operator
             "count" => {
-                return count::count_rows_over(&record_batch, find_name(params, &record_batch))
+                record_batch = count::count_rows_over(&record_batch, find_name(params, &record_batch))
             }
             "relfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
@@ -85,7 +85,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                     print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
 
 
-                    return rel_freq::rel_freq_with_pipelines(
+                    record_batch = rel_freq::rel_freq_with_pipelines(
                         &record_batch,
                         find_name("operator", &record_batch),
                         find_name(time, &record_batch),
@@ -114,7 +114,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
 
                     for (i, item) in vec_record_batches.iter().enumerate() {
                         if i + 1 == vec_record_batches.len() {
-                            return item.to_owned();
+                            record_batch = item.to_owned();
                         } else {
                             send_record_batch_to_js(item);
                         }
@@ -124,7 +124,7 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                 } else {
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
-                    return rel_freq::rel_freq_with_pipelines(
+                    record_batch = rel_freq::rel_freq_with_pipelines(
                         &record_batch,
                         find_name("operator", &record_batch),
                         find_name(fields, &record_batch),
@@ -132,6 +132,10 @@ fn eval_operations(record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch 
                         Vec::new()
                     );
                 }
+            }
+            // .../sort?<operator>
+            "sort" => {
+                    record_batch = analyze::sort_batch(&record_batch, find_name(params, &record_batch));
             }
             _ => {
                 panic!("Not supported operator!");

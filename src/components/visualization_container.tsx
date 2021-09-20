@@ -57,8 +57,8 @@ class VisualizationContainer extends React.Component<Props, State> {
                     <EventsButtons />
                     {this.needsSwimLanesOptions() &&
                         <div className={styles.dropdownArea} >
-{/*                             <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
-                            <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn> */}
+                            <InterpolationDropdown />
+                            <BucketsizeDropdwn />
                         </div>
                     }
                 </div>

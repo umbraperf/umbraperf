@@ -30,6 +30,8 @@ interface Props {
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
    multipleChartDataLength: number;
+   currentInterpolation: String,
+   currentBucketSize: number,
    setCurrentChart: (newCurrentChart: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -40,8 +42,6 @@ interface State {
    chartData: Array<IChartData>,
    width: number,
    height: number,
-   interpolation: string;
-   bucketsize: number;
 }
 
 interface IChartData {
@@ -66,23 +66,19 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          width: startSize.width,
          height: startSize.height,
          chartData: [],
-         interpolation: "basis",
-         bucketsize: 0.2,
       };
       this.props.setChartIdCounter(this.state.chartId + 1);
 
       this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
-      this.handleInterpolationChange = this.handleInterpolationChange.bind(this);
-      this.handleBucketsizeChange = this.handleBucketsizeChange.bind(this);
    }
 
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
-      if(this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength){
+      if (this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength) {
          this.setState((state, props) => {
             const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
-            
+
             return {
                ...this.state,
                chartData: newChartDataArray,
@@ -93,12 +89,12 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
-      if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.state.bucketsize != prevState.bucketsize || this.props.currentChart != prevProps.currentChart)) {
+      if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.currentChart != prevProps.currentChart)) {
          this.setState((state, props) => ({
             ...state,
             chartData: [],
          }));
-         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, {bucksetsize: "" + this.state.bucketsize});
+         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
    }
@@ -140,53 +136,29 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
    }
 
-   handleInterpolationChange(newInterpolation: string) {
-      this.setState({
-         ...this.state,
-         interpolation: newInterpolation,
-      });
-   }
-
-   handleBucketsizeChange(newBucketsize: number) {
-      this.setState({
-         ...this.state,
-         bucketsize: newBucketsize,
-      });
-   }
-
 
    public render() {
-
-      const interpolationDropdownProps = {
-         currentInterpolation: this.state.interpolation,
-         changeInterpolation: this.handleInterpolationChange,
-      }
-
-      const bucketsizeDropdownProps = {
-         currentBucketsize: this.state.bucketsize,
-         changeBucketsize: this.handleBucketsizeChange,
-      }
 
       if (!this.props.csvParsingFinished) {
          return <Redirect to={"/upload"} />
       }
 
       return <div>
-            <div className={styles.resultArea} >
-               <div className={styles.optionsArea} >
-                  <EventsButtons />
-                  <div className={styles.dropdownArea} >
-                     <InterpolationDropdown {...interpolationDropdownProps}></InterpolationDropdown>
-                     <BucketsizeDropdwn {...bucketsizeDropdownProps}></BucketsizeDropdwn>
-                  </div>
+         <div className={styles.resultArea} >
+            <div className={styles.optionsArea} >
+               <EventsButtons />
+               <div className={styles.dropdownArea} >
+                  <InterpolationDropdown />
+                  <BucketsizeDropdwn />
                </div>
-               {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
-                  ? <CircularProgress />
-                  : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                     {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
-                  </div>
-               }
             </div>
+            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+               ? <CircularProgress />
+               : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                  {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+               </div>
+            }
+         </div>
       </div>;
    }
 
@@ -308,7 +280,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                      encode: {
                         enter: {
                            interpolate: {
-                              value: this.state.interpolation,
+                              value: this.props.currentInterpolation as string,
                            },
                            x: {
                               scale: "x",
@@ -370,6 +342,8 @@ const mapStateToProps = (state: model.AppState) => ({
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
    multipleChartDataLength: state.multipleChartDataLength,
+   currentInterpolation: state.currentInterpolation,
+   currentBucketSize: state.currentBucketSize,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

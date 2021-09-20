@@ -66,8 +66,6 @@ const materialUiTheme = createTheme({
     }
 })
 
-const element = document.getElementById('root');
-
 export const routes = [
     {
         path: '/upload',

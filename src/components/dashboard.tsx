@@ -57,6 +57,7 @@ type DefaultProps = {
 type Props = {
     dashboardState: State,
     setDashboardState: (newDashboardState: State) => void;
+    setCurrentChart: (newCurrentChart: string) => void;
 } & Partial<DefaultProps>
 
 const originalItems: Array<IItemElement> = [0, 1, 2, 3, 4].map(function (i, key, list) {
@@ -106,6 +107,7 @@ class Dashboard extends React.Component<Props, State> {
 
 
     componentDidMount(): void {
+        this.props.setCurrentChart("");
     }
 
     componentDidUpdate(prevProps: any): void {
@@ -244,6 +246,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setDashboardState: (newDashboardState: State) => dispatch({
         type: model.StateMutationType.SET_DASHBOARDSTATE,
         data: newDashboardState,
+    }),
+    setCurrentChart: (newCurrentChart: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTCHART,
+        data: newCurrentChart,
     }),
 });
 

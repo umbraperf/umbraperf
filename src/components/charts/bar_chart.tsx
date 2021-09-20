@@ -38,7 +38,7 @@ interface State {
 
 const startSize = {
     width: 500,
-    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 350,
+    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 300,
 }
 
 class BarChart extends React.Component<Props, State> {
@@ -148,7 +148,7 @@ class BarChart extends React.Component<Props, State> {
             title: {
                 text: "Absolute Occurence of Operators per Event",
                 align: "center",
-                dy: -20
+                dy: -15
             },
 
             data: [
@@ -188,7 +188,8 @@ class BarChart extends React.Component<Props, State> {
                 {
                     orient: 'left',
                     scale: 'yscale',
-                    title: "Absolute Frequency"
+                    title: "Absolute Frequency",
+                    labelOverlap: false,
                 },
             ],
 

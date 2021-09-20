@@ -33,6 +33,8 @@ export enum StateMutationType {
     SET_CHARTDATA = 'SET_CHARTDATA',
     SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
     SET_DASHBOARDSTATE = 'SET_DASHBOARDSTATE',
+    SET_CURRENTINTERPOLATION = 'SET_CURRENTINTERPOLATION',
+    SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
     OTHER = 'OTHER',
 }
 
@@ -40,7 +42,7 @@ export enum StateMutationType {
 export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_FILELOADING, boolean>
-    | StateMutation<StateMutationType.SET_RESULTLOADING, {key: number, value: boolean}>
+    | StateMutation<StateMutationType.SET_RESULTLOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
@@ -56,6 +58,8 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
     | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
     | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
+    | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
+    | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
     ;
 
 // The action dispatch
@@ -75,9 +79,9 @@ export class AppStateMutation {
                     fileLoading: mutation.data,
                 };
             case StateMutationType.SET_RESULTLOADING:
-            return {
+                return {
                     ...state,
-                    resultLoading: {...state.resultLoading,  [mutation.data.key]: mutation.data.value},
+                    resultLoading: { ...state.resultLoading, [mutation.data.key]: mutation.data.value },
                 };
             case StateMutationType.SET_RESULT:
                 return {
@@ -149,6 +153,16 @@ export class AppStateMutation {
                     ...state,
                     dashboardState: mutation.data,
                 }
+            case StateMutationType.SET_CURRENTINTERPOLATION:
+                return {
+                    ...state,
+                    currentInterpolation: mutation.data,
+                }
+            case StateMutationType.SET_CURRENTBUCKETSIZE:
+                return {
+                    ...state,
+                    currentBucketSize: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -168,6 +182,8 @@ export class AppStateMutation {
                     chartData: {},
                     multipleChartDataLength: -1,
                     dashboardState: undefined,
+                    currentInterpolation: "basis",
+                    currentBucketSize: 1,
                 }
         }
     }

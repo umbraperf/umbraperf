@@ -12,6 +12,8 @@ import '../node_modules/react-grid-layout/css/styles.css';
 import '../node_modules/react-resizable/css/styles.css';
 import styles from './style/main-app.module.css';
 
+import VisualizationContainer from './components/visualization_container';
+import TabPanel from './components/utils/tab_panel';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard'
 import BarChart from './components/charts/bar_chart';
@@ -20,7 +22,6 @@ import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
 import DonutChart from './components/charts/donut_chart';
-import TabPanel from './components/utils/tab_panel';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
@@ -155,9 +156,13 @@ ReactDOM.render(
                                     <FileUploader />
                                 </Route>
 
+                                <Route exact path="/dashboard" key="/dashboard">
+                                    <Dashboard />
+                                </Route>
+
                                 {routes.map((route: any) => {
                                     return <Route exact path={route.path} key={route.path}>
-                                        <route.component />
+                                        <VisualizationContainer component={route.component} visualizationName={route.path}/>
                                     </Route>
                                 })}
 

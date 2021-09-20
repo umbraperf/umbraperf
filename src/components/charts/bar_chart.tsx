@@ -147,7 +147,8 @@ class BarChart extends React.Component<Props, State> {
             autosize: 'fit',
             title: {
                 text: "Absolute Occurence of Operators per Event",
-                align: "center"
+                align: "center",
+                dy: -20
             },
 
             data: [
@@ -204,10 +205,10 @@ class BarChart extends React.Component<Props, State> {
                             y2: { scale: 'yscale', value: 0 },
                         },
                         update: {
-                            fill: { value: this.props.appContext.secondaryColor },
+                            fill: { value: this.props.appContext.primaryColor },
                         },
                         hover: {
-                            fill: { value: this.props.appContext.primaryColor },
+                            fill: { value: this.props.appContext.secondaryColor },
                         },
                     },
                 },

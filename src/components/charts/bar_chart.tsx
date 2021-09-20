@@ -145,20 +145,13 @@ class BarChart extends React.Component<Props, State> {
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
+            title: {
+                text: "Absolute Occurence of Operators per Event",
+                align: "center"
+            },
 
             data: [
                 visData,
-            ],
-
-            signals: [
-                {
-                    name: 'tooltip',
-                    value: {},
-                    on: [
-                        { events: 'rect:mouseover', update: 'datum' },
-                        { events: 'rect:mouseout', update: '{}' },
-                    ],
-                },
             ],
 
             scales: [
@@ -177,12 +170,30 @@ class BarChart extends React.Component<Props, State> {
             ],
 
             axes: [
-                { orient: 'bottom', scale: 'xscale' },
-                { orient: 'left', scale: 'yscale' },
+                {
+                    orient: 'bottom',
+                    scale: 'xscale',
+                    labelOverlap: false,
+                    title: "Operators",
+                    encode: {
+                        labels: {
+                            update: {
+                                angle: { value: -70 },
+                                align: { value: "right" }
+                            }
+                        }
+                    }
+                },
+                {
+                    orient: 'left',
+                    scale: 'yscale',
+                    title: "Absolute Frequency"
+                },
             ],
 
             marks: [
                 {
+                    name: 'bars',
                     type: 'rect',
                     from: { data: 'table' },
                     encode: {
@@ -201,20 +212,21 @@ class BarChart extends React.Component<Props, State> {
                     },
                 },
                 {
-                    type: 'text',
+                    type: "text",
+                    from: { data: "bars" },
                     encode: {
                         enter: {
-                            align: { value: 'center' },
-                            baseline: { value: 'bottom' },
-                            fill: { value: '#333' },
-                        },
-                        update: {
-                            x: { scale: 'xscale', signal: 'tooltip.operators', band: 0.5 },
-                            y: { scale: 'yscale', signal: 'tooltip.values', offset: -2 },
-                            text: { signal: 'tooltip.values' },
-                            fillOpacity: [{ test: 'datum === tooltip', value: 0 }, { value: 1 }],
-                        },
-                    },
+                            x: { field: "x", offset: {field: "width", mult: 0.5}},
+                            y: { field: "y", offset: -7 },
+                            fill: [
+                                { test: "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white" },
+                                { value: "black" }
+                            ],
+                            align: { value: "center" },
+                            baseline: { value: "middle" },
+                            text: { field: "datum.values" }
+                        }
+                    }
                 },
             ],
         } as VisualizationSpec;

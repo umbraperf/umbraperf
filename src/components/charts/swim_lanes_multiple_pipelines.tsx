@@ -143,15 +143,13 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
 
         return <div>
-            <div className={styles.resultArea} >
-                {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
-                    ? <CircularProgress />
-                    : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                        <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-                        <PipelinesSelector />
-                    </div>
-                }
-            </div>
+            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+                ? <CircularProgress />
+                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+                    <PipelinesSelector />
+                </div>
+            }
         </div>;
     }
 

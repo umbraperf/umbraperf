@@ -114,15 +114,12 @@ class DonutChart extends React.Component<Props, State> {
         }
 
         return <div>
-            <div className={styles.resultArea} >
-                {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
-                    ? <CircularProgress />
-                    : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                        <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-                    </div>
-                }
-
-            </div>
+            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+                ? <CircularProgress />
+                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+                </div>
+            }
         </div>;
     }
 

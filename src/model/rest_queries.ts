@@ -32,9 +32,9 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENTS:
             return 'ev_name/distinct?ev_name';
         case RestQueryType.GET_PIPELINES:
-            return 'pipeline/distinct?pipeline';
+            return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
-            return `operator/count/?ev_name="${query.data.event}"/count?operator`;
+            return `operator/count/?ev_name="${query.data.event}"/count?operator/sort?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?time:${query.data.time}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
@@ -43,7 +43,7 @@ export function createRestQuery(query: QueryVariant) {
             console.log(`bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`);
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
         case RestQueryType.GET_PIPELINE_COUNT:
-            return `pipeline/count/?ev_name="${query.data.event}"/count?pipeline`;
+            return `pipeline/count/?ev_name="${query.data.event}"/count?pipeline/sort?pipeline`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

@@ -52,6 +52,7 @@ pub fn rel_freq_for_each_pipelines(
     let mut vec = Vec::new();
 
     let unique_pipelines = find_unique_string(batch, column_for_pipeline);
+    let unique_pipelines = sort_batch(&unique_pipelines, 0);
 
     let pipeline_vec = unique_pipelines
         .column(0)
@@ -86,6 +87,7 @@ pub fn rel_freq_with_pipelines(
     let batch = &sort_batch(batch, 2);
 
     let unique_operator = find_unique_string(batch, column_for_operator);
+    //let unique_operator = sort_batch(&unique_operator, column_for_operator);
 
     // Vector of unique strings
     let vec_operator = unique_operator

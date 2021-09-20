@@ -5,7 +5,7 @@ use std::{
 };
 use arrow::error::Result as ArrowResult;
 
-use crate::utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch};
+use crate::{exec::analyze, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch}};
 
 pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
@@ -94,5 +94,6 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
 
     let new_schema = Schema::new(vec![field.to_owned()]);
 
-    RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap()
+    let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
+    return batch;
 }

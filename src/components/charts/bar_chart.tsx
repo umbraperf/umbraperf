@@ -176,6 +176,7 @@ class BarChart extends React.Component<Props, State> {
                     scale: 'xscale',
                     labelOverlap: false,
                     title: "Operators",
+                    titlePadding: model.chartConfiguration.axisPadding,
                     encode: {
                         labels: {
                             update: {
@@ -187,6 +188,7 @@ class BarChart extends React.Component<Props, State> {
                 },
                 {
                     orient: 'left',
+                    titlePadding: model.chartConfiguration.axisPadding,
                     scale: 'yscale',
                     title: "Absolute Frequency",
                     labelOverlap: false,

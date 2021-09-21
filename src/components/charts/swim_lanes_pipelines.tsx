@@ -8,7 +8,7 @@ import { VisualizationSpec } from "react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, requestChartData } from '../../controller/web_file_controller';
+import { ChartType, requestChartData, requestPipelines } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -32,6 +32,7 @@ interface Props {
    multipleChartDataLength: number;
    currentInterpolation: String,
    currentBucketSize: number,
+   currentPipeline: Array<string> | undefined,
    setCurrentChart: (newCurrentChart: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -52,7 +53,7 @@ interface IChartData {
 
 const startSize = {
    width: 400,
-   height: 100,
+   height: 150,
 }
 
 class SwimLanesPipelines extends React.Component<Props, State> {
@@ -103,6 +104,8 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidMount() {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(ChartType.SWIM_LANES_PIPELINES);
+         requestPipelines(this.props.appContext.controller);
+         
 
          addEventListener('resize', (event) => {
             this.resizeListener();
@@ -144,7 +147,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
 
       return <div>
-         {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+         {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events || !this.props.currentPipeline)
             ? <CircularProgress />
             : <div className={"vegaContainer"} ref={this.chartWrapper}>
                {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
@@ -204,6 +207,12 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          resize: true,
          autosize: 'fit',
 
+         title: {
+            text: this.props.currentPipeline![chartId],
+            align: model.chartConfiguration.titleAlign,
+            dy: model.chartConfiguration.titlePadding,
+        },
+
          data: [
             visData
          ],
@@ -244,12 +253,17 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                scale: "x",
                zindex: 1,
                labelOverlap: true,
-               values: xTicks()
+               values: xTicks(),
+               title: "Time (ms)",
+               titlePadding: model.chartConfiguration.axisPadding,
             },
             {
                orient: "left",
                scale: "y",
-               zindex: 1
+               zindex: 1,
+               tickCount: 5,
+               title: "Relative Frequency",
+               titlePadding: model.chartConfiguration.axisPadding,
             }
          ],
          marks: [
@@ -335,6 +349,7 @@ const mapStateToProps = (state: model.AppState) => ({
    multipleChartDataLength: state.multipleChartDataLength,
    currentInterpolation: state.currentInterpolation,
    currentBucketSize: state.currentBucketSize,
+   currentPipeline: state.currentPipeline,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

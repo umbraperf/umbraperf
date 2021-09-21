@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, requestChartData } from '../../controller/web_file_controller';
+import { ChartType, requestChartData, requestPipelines } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -92,7 +92,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
 
         //if current event, chart, bucketsize or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.currentChart != prevProps.currentChart || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
+        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.chartIdCounter != prevProps.chartIdCounter || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
             requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_MULTIPLE_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize, pipeline: this.props.currentPipeline?.join() });
         }
 
@@ -102,6 +102,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
+            requestPipelines(this.props.appContext.controller);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();

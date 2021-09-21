@@ -254,7 +254,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                zindex: 1,
                labelOverlap: true,
                values: xTicks(),
-               title: "Time (ms)",
+               title: model.chartConfiguration.areaChartXTitle,
                titlePadding: model.chartConfiguration.axisPadding,
             },
             {
@@ -262,7 +262,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                scale: "y",
                zindex: 1,
                tickCount: 5,
-               title: "Relative Frequency",
+               title: model.chartConfiguration.areaChartYTitle,
                titlePadding: model.chartConfiguration.axisPadding,
             }
          ],

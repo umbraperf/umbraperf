@@ -189,12 +189,16 @@ class DonutChart extends React.Component<Props, State> {
             width: this.state.width,
             height: this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
+            resize: false,
             autosize: 'fit',
 
             data: visData,
 
             signals: [
+                {
+                    name:"radius",
+                    update:"width / 3.1"
+                },
                 {
                     name: "clickPipeline",
                     on: [
@@ -215,11 +219,19 @@ class DonutChart extends React.Component<Props, State> {
                     "type": "ordinal",
                     "domain": { "data": "table", "field": "pipeline" },
                     "range": { "scheme": "category20c" }
-                }
+                },
+                {
+                    "name": "r",
+                    "type": "sqrt",
+                    "domain": {"data": "table", "field": "value"},
+                    "zero": true,
+                    "range": [100, 100]
+                  }
             ],
 
             marks: [
-                {
+                {   
+                    "name": "arc",
                     "type": "arc",
                     "from": { "data": "table" },
                     "encode": {
@@ -256,6 +268,26 @@ class DonutChart extends React.Component<Props, State> {
                             }
                         }
                     }
+                },
+                {
+                  "type": "text",
+                  "from": {"data": "table"},
+                  "encode": {
+                    "update": {
+                      "x": {"field": {"group": "width"}, "mult": 0.5},
+                      "y": {"field": {"group": "height"}, "mult": 0.5},
+                      "radius": {"signal": "radius"},
+                      "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
+                      "fill": {"value": "#000"},
+                      "align": {"value": "center"},
+                      "baseline": {"value": "middle"},
+                      "text": {"signal":  "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))"},
+                      "fillOpacity":  [
+                          {"test":  "radius < 40", "value": 0},
+                          {"value" : 1}
+                      ]
+                    }
+                  }
                 }
             ],
             legends: [{

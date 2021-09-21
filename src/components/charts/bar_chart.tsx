@@ -147,8 +147,8 @@ class BarChart extends React.Component<Props, State> {
             autosize: 'fit',
             title: {
                 text: "Absolute Occurence of Operators per Event",
-                align: "center",
-                dy: -15
+                align: model.chartConfiguration.titleAlign,
+                dy: model.chartConfiguration.titlePadding,
             },
 
             data: [

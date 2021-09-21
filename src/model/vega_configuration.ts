@@ -1,17 +1,15 @@
 
-interface ChartConfiguration{
+export interface ChartConfiguration{
     titlePadding: number;
     titleAlign: string;
 
 }
 
-let chartConfiguration: ChartConfiguration = {
+export let chartConfiguration: ChartConfiguration = {
 
     //Title:
     titlePadding: 15,
     titleAlign: 'center',
-    
+
 
 }
-
-export default chartConfiguration;

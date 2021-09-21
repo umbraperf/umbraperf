@@ -60,7 +60,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentChart != prevProps.currentChart)) {
+        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
             requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
         }
 

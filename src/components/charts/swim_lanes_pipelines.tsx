@@ -7,7 +7,7 @@ import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { requestChartData, requestPipelines } from '../../controller/request_controller';
+import * as Controller from '../../controller/request_controller'
 import { CircularProgress } from '@material-ui/core';
 import * as RestApi from '../../model/rest_queries';
 import _ from "lodash";
@@ -91,7 +91,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize });
+         Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
    }
@@ -102,7 +102,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          this.props.setCurrentChart(model.ChartType.SWIM_LANES_PIPELINES);
 
          if (!this.props.currentPipeline) {
-            requestPipelines(this.props.appContext.controller);
+            Controller.requestPipelines(this.props.appContext.controller);
          }
 
          addEventListener('resize', (event) => {

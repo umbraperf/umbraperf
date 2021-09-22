@@ -1,8 +1,8 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
+import * as Context from '../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { IAppContext, withAppContext } from '../../app_context';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
@@ -13,7 +13,7 @@ import _ from "lodash";
 
 
 interface Props {
-   appContext: IAppContext;
+   appContext: Context.IAppContext;
    resultLoading: model.ResultLoading;
    result: model.Result | undefined;
    csvParsingFinished: boolean;
@@ -360,7 +360,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(SwimLanesPipelines));
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanesPipelines));
 
 
 

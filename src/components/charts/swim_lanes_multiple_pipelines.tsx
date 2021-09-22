@@ -1,8 +1,8 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
+import * as Context from '../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { IAppContext, withAppContext } from '../../app_context';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
@@ -12,7 +12,7 @@ import PipelinesSelector from '../utils/pipelines_selector';
 
 
 interface Props {
-    appContext: IAppContext;
+    appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
     result: model.Result | undefined;
     csvParsingFinished: boolean;
@@ -369,4 +369,4 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(SwimLanesMultiplePipelines));
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanesMultiplePipelines));

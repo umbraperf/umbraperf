@@ -1,4 +1,4 @@
-import * as controller from './controller/response_controller';
+import * as Controller from './controller/response_controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 import { ICalculateChartDataRequestData } from './worker';
@@ -54,16 +54,17 @@ worker.addEventListener('message', message => {
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:
-            controller.setCsvReadingFinished();
+            Controller.setCsvReadingFinished();
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
             const arrowResultTable = ArrowTable.Table.from(messageData);
-            controller.storeResultFromRust(message.data.requestId, arrowResultTable, message.data.metaRequest, message.data.restQueryType);
+            Controller.storeResultFromRust(message.data.requestId, arrowResultTable, message.data.metaRequest, message.data.restQueryType);
             break;
 
         default:
+            console.log("Unknown message type from worker.");
 
     }
 });

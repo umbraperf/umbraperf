@@ -7,7 +7,7 @@ import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { requestChartData } from '../../controller/request_controller';
+import * as Controller from '../../controller/request_controller'
 import { CircularProgress } from '@material-ui/core';
 import * as RestApi from '../../model/rest_queries';
 
@@ -86,7 +86,7 @@ class SwimLanes extends React.Component<Props, State> {
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
       if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-         requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
+         Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
    }

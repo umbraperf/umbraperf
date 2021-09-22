@@ -8,9 +8,8 @@ import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { requestPipelines } from '../../controller/request_controller';
 import * as RestApi from '../../model/rest_queries';
-import { requestChartData } from '../../controller/request_controller'
+import * as Controller from '../../controller/request_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -63,7 +62,7 @@ class DonutChart extends React.Component<Props, State> {
 
         //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
         }
 
     }
@@ -73,7 +72,7 @@ class DonutChart extends React.Component<Props, State> {
             this.props.setCurrentChart(model.ChartType.DONUT_CHART);
 
             if (!this.props.currentPipeline) {
-                requestPipelines(this.props.appContext.controller);
+                Controller.requestPipelines(this.props.appContext.controller);
             }
 
             addEventListener('resize', (event) => {

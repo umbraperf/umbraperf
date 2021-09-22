@@ -24,6 +24,8 @@ interface Props {
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
+    onDashboard?: boolean;
+
 }
 
 interface State {
@@ -45,8 +47,8 @@ class BarChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: startSize.width,
-            height: startSize.height,
+            width: this.props.onDashboard ? 300 : startSize.width,
+            height: this.props.onDashboard ? 400 : startSize.height,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 

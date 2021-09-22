@@ -21,6 +21,14 @@ interface State {
 
 }
 
+const dummyStyle = {
+    display: "flex",
+    flexWrap: "wrap" as const,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+}
+
 
 class Dummy extends React.Component<Props, State> {
 
@@ -46,10 +54,10 @@ class Dummy extends React.Component<Props, State> {
                 <InterpolationDropdown />
                 <BucketsizeDropdwn />
             </div>
-            <div>
+            <div style={dummyStyle}>
                 <DonutChart />
                 <SwimLanesMultiplePipelines />
-                <BarChart />
+                <BarChart onDashboard={true}/>
             </div>
 
 

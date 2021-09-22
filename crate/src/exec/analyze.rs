@@ -29,14 +29,14 @@ pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch 
 }
 
 
-pub fn filter_with(column_num: usize, filter_str: &str, batch: &RecordBatch) -> RecordBatch {
+pub fn filter_with(column_num: usize, filter_str: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
         .column(column_num)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap()
         .iter()
-        .map(|value| Some(value == Some(filter_str)))
+        .map(|value| Some(filter_str.contains(&value.unwrap())))
         .collect::<BooleanArray>();
 
     let mut arrays: Vec<ArrayRef> = Vec::new();

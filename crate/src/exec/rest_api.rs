@@ -28,12 +28,14 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
     } else {
         let split = filter_vec[0].split_terminator("=").collect::<Vec<&str>>();
         let column_str = split[0].replace("?", "");
+        // Can be multiple by column separated
         let filter_str = split[1].replace("\"", "");
+        let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
         filter_vec.remove(0);
         return eval_filter(
             analyze::filter_with(
                 find_name(column_str.as_str(), &record_batch),
-                filter_str.as_str(),
+                filter_strs,
                 &record_batch,
             ),
             filter_vec,

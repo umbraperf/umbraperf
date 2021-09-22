@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { ctx } from '../../app_context';
 import * as model from '../../model';
+import * as Controller from '../../controller/request_controller';
+import * as Context from '../../app_context';
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
 import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
-import { requestPipelines } from '../../controller/request_controller';
 import styles from '../../style/utils.module.css';
 
 interface Props {
@@ -14,10 +14,10 @@ interface Props {
 
 function PipelinesSelector(props: Props) {
 
-    const context = useContext(ctx);
+    const context = useContext(Context.ctx);
     const pipelines = props.pipelines;
     if (undefined === pipelines) {
-        requestPipelines(context!.controller);
+        Controller.requestPipelines(context!.controller);
     }
 
     const createPipelineShortString = (pipeline: string) => {

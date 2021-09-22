@@ -1,4 +1,4 @@
-import { createRestQuery, RestQueryType, ChartType, createResultObject, Result, createChartDataObject, ChartDataObject, ChartDataKeyValue, ISwimlanesData, StateMutationType } from "../model";
+import * as model from "../model";
 import { store } from '../app';
 import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
@@ -13,26 +13,26 @@ export class WebFileController {
     }
 
 
-    public calculateChartData(restQueryType: RestQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, metadata?: string) {
+    public calculateChartData(restQueryType: model.RestQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, metadata?: string) {
 
         //TODO: metadata currently never used, can be removed
         const queryMetadata = metadata ? metadata : "";
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
-            type: StateMutationType.SET_CURRENTREQUEST,
+            type: model.StateMutationType.SET_CURRENTREQUEST,
             data: restQueryType,
         });
 
 /*         let resultLoadingObject = store.getState().resultLoading;
         requestingChartId ? resultLoadingObject[requestingChartId] = true :  resultLoadingObject[-1] = true; */
         store.dispatch({
-            type: StateMutationType.SET_RESULTLOADING,
+            type: model.StateMutationType.SET_RESULTLOADING,
             data: {key: requestingChartId ? requestingChartId : -1, value: true},
         });
 
         store.dispatch({
-            type: StateMutationType.SET_RESULT,
+            type: model.StateMutationType.SET_RESULT,
             data: undefined,
         });
 
@@ -43,18 +43,18 @@ export class WebFileController {
 export function setCsvReadingFinished() {
 
     store.dispatch({
-        type: StateMutationType.SET_CSVPARSINGFINISHED,
+        type: model.StateMutationType.SET_CSVPARSINGFINISHED,
         data: true,
     });
 }
 
-export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: RestQueryType) {
+export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {
 
     //store result of current request in redux store result variable 
-    const resultObject: Result = createResultObject(requestId, result);
+    const resultObject: model.Result = model.createResultObject(requestId, result);
 
     store.dispatch({
-        type: StateMutationType.SET_RESULT,
+        type: model.StateMutationType.SET_RESULT,
         data: resultObject,
     });
 
@@ -70,30 +70,30 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 }
 
 //extract events from result table, store them to app state, set current event
-function storeMetaDataFromRust(restQueryType: RestQueryType) {
+function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 
     switch (restQueryType) {
 
-        case RestQueryType.GET_EVENTS:
+        case model.RestQueryType.GET_EVENTS:
             const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
             store.dispatch({
-                type: StateMutationType.SET_EVENTS,
+                type: model.StateMutationType.SET_EVENTS,
                 data: events,
             });
             store.dispatch({
-                type: StateMutationType.SET_CURRENTEVENT,
+                type: model.StateMutationType.SET_CURRENTEVENT,
                 data: events[0],
             });
             break;
 
-        case RestQueryType.GET_PIPELINES:
+        case model.RestQueryType.GET_PIPELINES:
             const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
             store.dispatch({
-                type: StateMutationType.SET_PIPELINES,
+                type: model.StateMutationType.SET_PIPELINES,
                 data: pipelines,
             });
             store.dispatch({
-                type: StateMutationType.SET_CURRENTPIPELINE,
+                type: model.StateMutationType.SET_CURRENTPIPELINE,
                 data: pipelines,
             });
             break;
@@ -102,25 +102,25 @@ function storeMetaDataFromRust(restQueryType: RestQueryType) {
 /*     let resultLoadingObject = store.getState().resultLoading;
     resultLoadingObject[-1] = false; */
     store.dispatch({
-        type: StateMutationType.SET_RESULTLOADING,
+        type: model.StateMutationType.SET_RESULTLOADING,
         data: {key: -1, value: false},
     });
 
 }
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
-function storeChartDataFromRust(requestId: number, resultObject: Result, requestType: RestQueryType) {
-    let chartDataElem: ChartDataObject | undefined;
-    let ChartDataCollection: ChartDataKeyValue = store.getState().chartData;
+function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
+    let chartDataElem: model.ChartDataObject | undefined;
+    let ChartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
 
     switch (requestType) {
 
-        case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+        case model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             
-            chartDataElem = createChartDataObject(
+            chartDataElem = model.createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.BAR_CHART,
+                    chartType: model.ChartType.BAR_CHART,
                     data: {
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
                         frequency: resultObject.resultTable.getColumn('count').toArray(),
@@ -128,12 +128,12 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
                 });
             break;
 
-        case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
+        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
 
-            chartDataElem = createChartDataObject(
+            chartDataElem = model.createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.SWIM_LANES,
+                    chartType: model.ChartType.SWIM_LANES,
                     data: {
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
@@ -142,10 +142,10 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
                 });
             break;
 
-        case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
+        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
 
-            let dataArray: Array<ISwimlanesData> = (store.getState().chartData[requestId] as ChartDataObject) ? (store.getState().chartData[requestId] as ChartDataObject).chartData.data as ISwimlanesData[] : new Array<ISwimlanesData>();
-            const data: ISwimlanesData = {
+            let dataArray: Array<model.ISwimlanesData> = (store.getState().chartData[requestId] as model.ChartDataObject) ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.ISwimlanesData[] : new Array<model.ISwimlanesData>();
+            const data: model.ISwimlanesData = {
                 buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                 operators: resultObject.resultTable.getColumn('operator').toArray(),
                 relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
@@ -155,25 +155,25 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
             let multipleChartDataLength = store.getState().multipleChartDataLength + 1;
 
             store.dispatch({
-                type: StateMutationType.SET_MULTIPLECHARTDATALENGTH,
+                type: model.StateMutationType.SET_MULTIPLECHARTDATALENGTH,
                 data: multipleChartDataLength,
             });
 
-            chartDataElem = createChartDataObject(
+            chartDataElem = model.createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.SWIM_LANES_PIPELINES,
+                    chartType: model.ChartType.SWIM_LANES_PIPELINES,
                     data: dataArray,
                 });
 
             break;
 
-        case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
+        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
 
-            chartDataElem = createChartDataObject(
+            chartDataElem = model.createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.SWIM_LANES_MULTIPLE_PIPELINES,
+                    chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES,
                     data: {
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
@@ -182,12 +182,12 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
                 });
             break;
 
-        case RestQueryType.GET_PIPELINE_COUNT:
+        case model.RestQueryType.GET_PIPELINE_COUNT:
 
-            chartDataElem = createChartDataObject(
+            chartDataElem = model.createChartDataObject(
                 requestId,
                 {
-                    chartType: ChartType.DONUT_CHART,
+                    chartType: model.ChartType.DONUT_CHART,
                     data: {
                         pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
                         count: resultObject.resultTable.getColumn('count').toArray(),
@@ -199,72 +199,72 @@ function storeChartDataFromRust(requestId: number, resultObject: Result, request
 
     ChartDataCollection[requestId] = chartDataElem!;
     store.dispatch({
-        type: StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHARTDATA,
         data: ChartDataCollection,
     });
 
 /*     let resultLoadingObject = store.getState().resultLoading;
     resultLoadingObject[requestId] = false; */
     store.dispatch({
-        type: StateMutationType.SET_RESULTLOADING,
+        type: model.StateMutationType.SET_RESULTLOADING,
         data: {key: requestId, value: false},
     });
     console.log(store.getState().chartData[requestId].chartData);
 
 }
 
-export function requestChartData(controller: WebFileController, chartId: number, chartType: ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
+export function requestChartData(controller: WebFileController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
 
     switch (chartType) {
 
-        case ChartType.BAR_CHART:
+        case model.ChartType.BAR_CHART:
 
             controller.calculateChartData(
-                RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                createRestQuery({
-                    type: RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                     data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline! },
                 }), false, chartId);
             break;
 
-        case ChartType.SWIM_LANES:
+        case model.ChartType.SWIM_LANES:
 
             controller.calculateChartData(
 
-                RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                createRestQuery({
-                    type: RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                     data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
                 }), false, chartId);
             break;
 
-        case ChartType.SWIM_LANES_PIPELINES:
+        case model.ChartType.SWIM_LANES_PIPELINES:
 
             resetChartDataInStore(chartId);
             controller.calculateChartData(
-                RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                createRestQuery({
-                    type: RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                     data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
                 }), false, chartId);
             break;
 
-        case ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+        case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
 
             controller.calculateChartData(
-                RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                createRestQuery({
-                    type: RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                     data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
                 }), false, chartId);
             break;
 
-        case ChartType.DONUT_CHART:
+        case model.ChartType.DONUT_CHART:
 
             controller.calculateChartData(
-                RestQueryType.GET_PIPELINE_COUNT,
-                createRestQuery({
-                    type: RestQueryType.GET_PIPELINE_COUNT,
+                model.RestQueryType.GET_PIPELINE_COUNT,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_PIPELINE_COUNT,
                     data: { event: store.getState().currentEvent },
                 }), false, chartId);
             break;
@@ -277,9 +277,9 @@ export function requestChartData(controller: WebFileController, chartId: number,
 //request events from rust, metarequest
 export function requestEvents(controller: WebFileController) {
     controller.calculateChartData(
-        RestQueryType.GET_EVENTS,
-        createRestQuery({
-            type: RestQueryType.GET_EVENTS,
+        model.RestQueryType.GET_EVENTS,
+        model.createRestQuery({
+            type: model.RestQueryType.GET_EVENTS,
             data: {},
         }), true);
 }
@@ -287,9 +287,9 @@ export function requestEvents(controller: WebFileController) {
 //request pipelines from rust, metarequest
 export function requestPipelines(controller: WebFileController) {
     controller.calculateChartData(
-        RestQueryType.GET_PIPELINES,
-        createRestQuery({
-            type: RestQueryType.GET_PIPELINES,
+        model.RestQueryType.GET_PIPELINES,
+        model.createRestQuery({
+            type: model.RestQueryType.GET_PIPELINES,
             data: {},
         }), true);
 }
@@ -304,14 +304,14 @@ export function resetChartDataInStore(chartId: number) {
 
     let chartData = store.getState().chartData;
     delete chartData[chartId];
-    let newChartData: ChartDataKeyValue = { ...chartData }
+    let newChartData: model.ChartDataKeyValue = { ...chartData }
 
     store.dispatch({
-        type: StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHARTDATA,
         data: newChartData,
     });
     store.dispatch({
-        type: StateMutationType.SET_MULTIPLECHARTDATALENGTH,
+        type: model.StateMutationType.SET_MULTIPLECHARTDATALENGTH,
         data: -1,
     });
 

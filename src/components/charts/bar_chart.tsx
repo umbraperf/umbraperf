@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ChartType } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestChartData } from '../../controller/web_file_controller'
+import { requestChartData, requestPipelines } from '../../controller/web_file_controller'
 
 interface Props {
     appContext: IAppContext;
@@ -25,6 +25,7 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
+    currentPipeline: Array<string> | undefined,
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -59,9 +60,9 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART);
+        //if current event, chart or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
+        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
+            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.BAR_CHART, { pipeline: this.props.currentPipeline?.join() });
         }
 
     }
@@ -69,6 +70,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
+            requestPipelines(this.props.appContext.controller);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -220,7 +222,7 @@ class BarChart extends React.Component<Props, State> {
                     from: { data: "bars" },
                     encode: {
                         enter: {
-                            x: { field: "x", offset: {field: "width", mult: 0.5}},
+                            x: { field: "x", offset: { field: "width", mult: 0.5 } },
                             y: { field: "y", offset: -7 },
                             fill: [
                                 { test: "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white" },
@@ -250,6 +252,7 @@ const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
+    currentPipeline: state.currentPipeline,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

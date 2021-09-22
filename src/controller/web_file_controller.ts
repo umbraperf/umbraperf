@@ -4,14 +4,6 @@ import { WorkerAPI } from "../worker_api";
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 
 
-
-export interface FileInfo {
-    fileName: string;
-    file: File | undefined;
-}
-
-
-
 const worker = new WorkerAPI();
 
 export class WebFileController {

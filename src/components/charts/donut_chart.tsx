@@ -187,12 +187,19 @@ class DonutChart extends React.Component<Props, State> {
             resize: false,
             autosize: 'fit',
 
+            title: {
+                text: "Shares of Pipelines",
+                align: model.chartConfiguration.titleAlign,
+                dy: model.chartConfiguration.titlePadding,
+                subtitle: "Toggle pipelines by selecting them in donut:",
+            },
+
             data: visData,
 
             signals: [
                 {
-                    name:"radius",
-                    update:"width / 3.1"
+                    name: "radius",
+                    update: "width / 3.1"
                 },
                 {
                     name: "clickPipeline",
@@ -218,14 +225,14 @@ class DonutChart extends React.Component<Props, State> {
                 {
                     "name": "r",
                     "type": "sqrt",
-                    "domain": {"data": "table", "field": "value"},
+                    "domain": { "data": "table", "field": "value" },
                     "zero": true,
                     "range": [100, 100]
-                  }
+                }
             ],
 
             marks: [
-                {   
+                {
                     "name": "arc",
                     "type": "arc",
                     "from": { "data": "table" },
@@ -265,24 +272,24 @@ class DonutChart extends React.Component<Props, State> {
                     }
                 },
                 {
-                  "type": "text",
-                  "from": {"data": "table"},
-                  "encode": {
-                    "update": {
-                      "x": {"field": {"group": "width"}, "mult": 0.5},
-                      "y": {"field": {"group": "height"}, "mult": 0.5},
-                      "radius": {"signal": "radius"},
-                      "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
-                      "fill": {"value": "#000"},
-                      "align": {"value": "center"},
-                      "baseline": {"value": "middle"},
-                      "text": {"signal":  "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))"},
-                      "fillOpacity":  [
-                          {"test":  "radius < 40", "value": 0},
-                          {"value" : 1}
-                      ]
+                    "type": "text",
+                    "from": { "data": "table" },
+                    "encode": {
+                        "update": {
+                            "x": { "field": { "group": "width" }, "mult": 0.5 },
+                            "y": { "field": { "group": "height" }, "mult": 0.5 },
+                            "radius": { "signal": "radius" },
+                            "theta": { "signal": "(datum.startAngle + datum.endAngle)/2" },
+                            "fill": { "value": "#000" },
+                            "align": { "value": "center" },
+                            "baseline": { "value": "middle" },
+                            "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
+                            "fillOpacity": [
+                                { "test": "radius < 40", "value": 0 },
+                                { "value": 1 }
+                            ]
+                        }
                     }
-                  }
                 }
             ],
             legends: [{

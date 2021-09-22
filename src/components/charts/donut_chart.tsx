@@ -9,7 +9,7 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { ChartType, requestPipelines } from '../../controller/web_file_controller';
+import { requestPipelines } from '../../controller/web_file_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import { requestChartData } from '../../controller/web_file_controller'
@@ -65,14 +65,14 @@ class DonutChart extends React.Component<Props, State> {
 
         //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-            requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.DONUT_CHART);
+            requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
         }
 
     }
 
     componentDidMount() {
         if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(ChartType.DONUT_CHART);
+            this.props.setCurrentChart(model.ChartType.DONUT_CHART);
 
             if (!this.props.currentPipeline) {
                 requestPipelines(this.props.appContext.controller);

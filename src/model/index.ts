@@ -12,6 +12,8 @@ export * from './chart_data_result';
 export * from './core_result';
 export * from './rest_queries';
 export * from './vega_configuration';
+export * from './chart_types';
+export * from './rest_queries';
 
 // XXX Conditional
 import storeDev from './store_dev';

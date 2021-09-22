@@ -8,7 +8,7 @@ import { VisualizationSpec } from "react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, requestChartData, requestPipelines } from '../../controller/web_file_controller';
+import { requestChartData, requestPipelines } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -95,7 +95,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             ...state,
             chartData: [],
          }));
-         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize });
+         requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
    }
@@ -103,7 +103,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
    componentDidMount() {
       if (this.props.csvParsingFinished) {
-         this.props.setCurrentChart(ChartType.SWIM_LANES_PIPELINES);
+         this.props.setCurrentChart(model.ChartType.SWIM_LANES_PIPELINES);
 
          if (!this.props.currentPipeline) {
             requestPipelines(this.props.appContext.controller);

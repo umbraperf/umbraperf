@@ -1,4 +1,4 @@
-import { ChartType } from '../controller/web_file_controller'
+import { ChartType } from '../model';
 
 export interface ChartDataKeyValue{
     [chartId:number ]: ChartDataObject;

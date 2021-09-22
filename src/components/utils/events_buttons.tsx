@@ -1,9 +1,9 @@
+import * as model from '../../model';
+import * as Controller from '../../controller/request_controller';
+import * as Context from '../../app_context';
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { ctx } from '../../app_context';
-import * as model from '../../model';
 import { Button } from '@material-ui/core';
-import { requestEvents } from '../../controller/request_controller';
 
 interface Props {
     events: Array<string> | undefined;
@@ -13,10 +13,10 @@ interface Props {
 
 function EventsButtons(props: Props) {
 
-    const context = useContext(ctx);
+    const context = useContext(Context.ctx);
     const events = props.events;
     if (undefined === events) {
-        requestEvents(context!.controller);
+        Controller.requestEvents(context!.controller);
     }
     useEffect(() => {
         if(events && props.currentEvent===""){

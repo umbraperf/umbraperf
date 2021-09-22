@@ -102,8 +102,10 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
-            requestPipelines(this.props.appContext.controller);
-
+            
+            if (!this.props.currentPipeline) {
+                requestPipelines(this.props.appContext.controller);
+            }
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });

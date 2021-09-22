@@ -104,8 +104,10 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidMount() {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(ChartType.SWIM_LANES_PIPELINES);
-         requestPipelines(this.props.appContext.controller);
-         
+
+         if (!this.props.currentPipeline) {
+            requestPipelines(this.props.appContext.controller);
+         }
 
          addEventListener('resize', (event) => {
             this.resizeListener();
@@ -211,7 +213,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             text: this.props.currentPipeline![chartId],
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
-        },
+         },
 
          data: [
             visData

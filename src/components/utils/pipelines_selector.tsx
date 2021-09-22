@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
-import { requestPipelines } from '../../controller/web_file_controller';
+import { requestPipelines } from '../../controller/request_controller';
 import styles from '../../style/utils.module.css';
 
 interface Props {

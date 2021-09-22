@@ -9,10 +9,10 @@ import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { requestPipelines } from '../../controller/web_file_controller';
+import { requestPipelines } from '../../controller/request_controller';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestChartData } from '../../controller/web_file_controller'
+import { requestChartData } from '../../controller/request_controller'
 
 interface Props {
     appContext: IAppContext;

@@ -74,7 +74,7 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.DONUT_CHART);
 
-            if (!this.props.pipelines) {
+            if (!this.props.currentPipeline) {
                 requestPipelines(this.props.appContext.controller);
             }
 

@@ -70,8 +70,10 @@ class BarChart extends React.Component<Props, State> {
     componentDidMount() {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(ChartType.BAR_CHART);
-            requestPipelines(this.props.appContext.controller);
-
+            
+            if (!this.props.currentPipeline) {
+                requestPipelines(this.props.appContext.controller);
+            }
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });

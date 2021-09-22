@@ -1,4 +1,4 @@
-import { setCsvReadingFinished, storeResultFromRust } from './controller/web_file_controller';
+import * as controller from './controller/response_controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 import { ICalculateChartDataRequestData } from './worker';
@@ -54,13 +54,13 @@ worker.addEventListener('message', message => {
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:
-            setCsvReadingFinished();
+            controller.setCsvReadingFinished();
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
             console.log(messageData);
             const arrowResultTable = ArrowTable.Table.from(messageData);
-            storeResultFromRust(message.data.requestId, arrowResultTable, message.data.metaRequest, message.data.restQueryType);
+            controller.storeResultFromRust(message.data.requestId, arrowResultTable, message.data.metaRequest, message.data.restQueryType);
             break;
 
         default:

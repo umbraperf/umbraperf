@@ -240,7 +240,7 @@ export function requestChartData(controller: WebFileController, chartId: number,
                 RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 RestApi.createRestQuery({
                     type: RestApi.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent },
+                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline! },
                 }), false, chartId);
             break;
 

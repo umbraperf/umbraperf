@@ -18,7 +18,7 @@ export enum RestQueryType {
 export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENTS, {}>
     | RestQuery<RestQueryType.GET_PIPELINES, {}>
-    | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string }>
+    | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: string}>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string }>
@@ -34,6 +34,8 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+            // TODO Pipelines in rest queries for bar charts: 
+            console.log(`operator/count/?ev_name="${query.data.event}"/?pipeline="${query.data.pipelines}"/count?operator/sort?operator`);
             return `operator/count/?ev_name="${query.data.event}"/count?operator/sort?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?time:${query.data.time}`;

@@ -3,7 +3,6 @@ import React from 'react';
 import styles from '../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ChartType } from '../controller/web_file_controller';
 import InterpolationDropdown from './utils/interpolation_dropdown';
 import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';

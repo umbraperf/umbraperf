@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { ChartType, requestChartData } from '../../controller/web_file_controller';
+import { requestChartData } from '../../controller/web_file_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';
@@ -90,7 +90,7 @@ class SwimLanes extends React.Component<Props, State> {
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
       if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-         requestChartData(this.props.appContext.controller, this.state.chartId, ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
+         requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
    }
@@ -98,7 +98,7 @@ class SwimLanes extends React.Component<Props, State> {
 
    componentDidMount() {
       if (this.props.csvParsingFinished) {
-         this.props.setCurrentChart(ChartType.SWIM_LANES);
+         this.props.setCurrentChart(model.ChartType.SWIM_LANES);
 
          addEventListener('resize', (event) => {
             this.resizeListener();

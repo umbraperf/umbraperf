@@ -20,7 +20,9 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
     for group in vec {
         // Filter unique string as filter_str
-        let group_batch = filter_with(column_to_groupby_over, group.unwrap(), batch);
+        let mut filter_str = Vec::new();
+        filter_str.push(group.unwrap());
+        let group_batch = filter_with(column_to_groupby_over, filter_str, batch);
 
         let row_count = group_batch.num_rows() as f64;
 

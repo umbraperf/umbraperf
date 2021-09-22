@@ -5,11 +5,9 @@ import { IAppContext, withAppContext } from '../../app_context';
 import { Vega } from 'react-vega';
 import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
-import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
 import { requestChartData, requestPipelines } from '../../controller/request_controller'
 

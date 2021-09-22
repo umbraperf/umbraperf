@@ -8,7 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import styles from '../../style/charts.module.css';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { requestChartData, requestPipelines } from '../../controller/web_file_controller';
+import { requestChartData, requestPipelines } from '../../controller/request_controller';
 import { CircularProgress } from '@material-ui/core';
 import InterpolationDropdown from '../utils/interpolation_dropdown';
 import EventsButtons from '../utils/events_buttons';

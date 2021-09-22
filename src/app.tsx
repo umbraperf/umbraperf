@@ -32,7 +32,7 @@ import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
-import { WebFileController } from './controller/web_file_controller';
+import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
 
@@ -41,7 +41,7 @@ import { Shadows } from '@material-ui/core/styles/shadows';
 //export const store = createProdStore();
 export const store = createDevStore();
 
-const webFileController = new WebFileController();
+const webFileController = new RequestController();
 
 const appColor = {
     primary: '#198fb0',

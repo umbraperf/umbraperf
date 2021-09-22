@@ -11,7 +11,7 @@ import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import EventsButtons from '../utils/events_buttons';
 import * as RestApi from '../../model/rest_queries';
-import { requestChartData, requestPipelines } from '../../controller/web_file_controller'
+import { requestChartData, requestPipelines } from '../../controller/request_controller'
 
 interface Props {
     appContext: IAppContext;

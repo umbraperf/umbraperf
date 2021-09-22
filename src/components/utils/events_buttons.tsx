@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ctx } from '../../app_context';
 import * as model from '../../model';
 import { Button } from '@material-ui/core';
-import { requestEvents } from '../../controller/web_file_controller';
+import { requestEvents } from '../../controller/request_controller';
 
 interface Props {
     events: Array<string> | undefined;

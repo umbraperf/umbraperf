@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { WebFileController } from './controller/web_file_controller';
+import { RequestController } from './controller/request_controller';
 
 export interface IAppContext {
-    controller: WebFileController,
+    controller: RequestController,
     primaryColor: string,
     secondaryColor: string,
 }

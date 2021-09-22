@@ -5,7 +5,7 @@ import { WorkerAPI } from "../worker_api";
 
 const worker = new WorkerAPI();
 
-export class WebFileController {
+export class RequestController {
 
     public registerFileAtWorker(file: File) {
         worker.registerFile(file);
@@ -38,7 +38,7 @@ export class WebFileController {
 }
 
 //request events from rust, metarequest
-export function requestEvents(controller: WebFileController) {
+export function requestEvents(controller: RequestController) {
     controller.calculateChartData(
         model.RestQueryType.GET_EVENTS,
         model.createRestQuery({
@@ -48,7 +48,7 @@ export function requestEvents(controller: WebFileController) {
 }
 
 //request pipelines from rust, metarequest
-export function requestPipelines(controller: WebFileController) {
+export function requestPipelines(controller: RequestController) {
     controller.calculateChartData(
         model.RestQueryType.GET_PIPELINES,
         model.createRestQuery({
@@ -58,13 +58,13 @@ export function requestPipelines(controller: WebFileController) {
 }
 
 //request statistics such as number of pipelines, number of cycles, ... from rust, metarequest
-export function requestStatistics(controller: WebFileController) {
+export function requestStatistics(controller: RequestController) {
     //TODO 
 
 }
 
 //request data for chart visualizations
-export function requestChartData(controller: WebFileController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
+export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
 
     switch (chartType) {
 

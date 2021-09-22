@@ -4,12 +4,11 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import { AppState } from '../../model/state';
 import * as model from '../../model';
 
 import { withRouter, Link } from 'react-router-dom';
 import { routes } from '../../app';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -39,7 +38,7 @@ function ScrollableTabsButtonForce(props: any) {
 
     const classes = useStyles();
 
-    const csvParsingFinished = useSelector((state: AppState) => state.csvParsingFinished);
+    const csvParsingFinished = useSelector((state: model.AppState) => state.csvParsingFinished);
 
     return (
         <div className={classes.root}>

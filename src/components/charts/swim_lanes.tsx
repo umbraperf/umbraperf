@@ -1,8 +1,8 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
+import * as Context from '../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { IAppContext, withAppContext } from '../../app_context';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { CircularProgress } from '@material-ui/core';
 
 
 interface Props {
-   appContext: IAppContext;
+   appContext: Context.IAppContext;
    resultLoading: model.ResultLoading;
    result: model.Result | undefined;
    csvParsingFinished: boolean;
@@ -343,4 +343,4 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(SwimLanes));
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanes));

@@ -7,6 +7,7 @@ import InterpolationDropdown from './utils/interpolation_dropdown';
 import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
+import BarChart from '../components/charts/bar_chart';
 
 
 
@@ -48,6 +49,7 @@ class Dummy extends React.Component<Props, State> {
             <div>
                 <DonutChart />
                 <SwimLanesMultiplePipelines />
+                <BarChart />
             </div>
 
 

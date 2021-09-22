@@ -1,15 +1,13 @@
 import * as model from '../../model';
+import * as Controller from '../../controller/request_controller';
 import React from 'react';
 import { connect } from 'react-redux';
 import { IAppContext, withAppContext } from '../../app_context';
 import { Vega } from 'react-vega';
-import { Result } from 'src/model/core_result';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import * as Controller from '../../controller/request_controller'
 import { CircularProgress } from '@material-ui/core';
-import * as RestApi from '../../model/rest_queries';
 import _ from "lodash";
 
 
@@ -17,11 +15,11 @@ import _ from "lodash";
 interface Props {
    appContext: IAppContext;
    resultLoading: model.ResultLoading;
-   result: Result | undefined;
+   result: model.Result | undefined;
    csvParsingFinished: boolean;
    currentChart: string;
    currentEvent: string;
-   currentRequest: RestApi.RestQueryType | undefined;
+   currentRequest: model.RestQueryType | undefined;
    events: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,

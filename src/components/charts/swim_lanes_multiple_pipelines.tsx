@@ -183,7 +183,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         const xTicks = () => {
 
             const bucketsArrayLength = this.state.chartData!.buckets.length;
-            const numberOfTicks = 30;
+            const numberOfTicks = 20;
 
             if (bucketsArrayLength > numberOfTicks) {
 

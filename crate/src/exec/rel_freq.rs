@@ -135,7 +135,7 @@ pub fn rel_freq_with_pipelines(
             for operator in vec_operator {
                 if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
-                    result_bucket.push(f64::trunc(time_bucket * 100.0) / 100.0);
+                    result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
                     result_vec_operator.push(operator);
                     let frequenzy =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();

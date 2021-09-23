@@ -25,7 +25,7 @@ export class RequestController {
 
         store.dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,
-            data: {key: requestingChartId ? requestingChartId : -1, value: true},
+            data: { key: requestingChartId ? requestingChartId : -1, value: true },
         });
 
         store.dispatch({
@@ -117,6 +117,16 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_PIPELINE_COUNT,
                     data: { event: store.getState().currentEvent },
+                }), false, chartId);
+            break;
+
+        case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
+
+            controller.calculateChartData(
+                model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
+                    data: { event: store.getState().currentEvent},
                 }), false, chartId);
             break;
 

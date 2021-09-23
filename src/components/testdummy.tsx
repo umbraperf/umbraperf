@@ -8,6 +8,9 @@ import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';
+import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
+import { Grid } from '@material-ui/core';
+
 
 
 
@@ -25,7 +28,7 @@ const dummyStyle = {
     display: "flex",
     flexWrap: "wrap" as const,
     justifyContent: "center",
-    alignItems: "center",
+    //alignItems: "center",
     marginTop: 30,
 }
 
@@ -49,7 +52,6 @@ class Dummy extends React.Component<Props, State> {
         }
 
         return <div>
-
             <div className={styles.dropdownArea} >
                 <InterpolationDropdown />
                 <BucketsizeDropdwn />
@@ -57,7 +59,38 @@ class Dummy extends React.Component<Props, State> {
             <div style={dummyStyle}>
                 <DonutChart />
                 <SwimLanesMultiplePipelines />
-                <BarChart onDashboard={true}/>
+                <BarChart onDashboard={true} />
+            </div>
+
+            <div >
+                <Grid container spacing={2}>
+                    <Grid item xs>
+                        <div className={styles.dropdownArea} >
+                            <InterpolationDropdown />
+                            <BucketsizeDropdwn />
+                        </div>
+                    </Grid>
+
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={7}>
+                        <BarChartActivityHistogram />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs>
+                        <div style={{ background: "black" }}> 1</div>
+                    </Grid>
+                    <Grid item xs>
+                        <div style={{ background: "black" }}> 2 </div>
+                    </Grid>
+                    <Grid item xs>
+                        <div style={{ background: "black" }}> 3 </div>
+                    </Grid>
+                    <Grid item xs>
+                        <div style={{ background: "black" }}> 4 </div>
+                    </Grid>
+                </Grid>
             </div>
 
 

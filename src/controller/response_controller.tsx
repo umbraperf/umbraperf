@@ -64,7 +64,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULTLOADING,
-        data: {key: -1, value: false},
+        data: { key: -1, value: false },
     });
 
 }
@@ -77,7 +77,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
     switch (requestType) {
 
         case model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
-            
+
             chartDataElem = model.createChartDataObject(
                 requestId,
                 {
@@ -156,6 +156,20 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 });
             break;
 
+        case model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
+                    data: {
+                        // TODO rename colums to timebucket and occurrences
+                        timeBucket: resultObject.resultTable.getColumn('operator').toArray(),
+                        occurrences: resultObject.resultTable.getColumn('count').toArray(),
+                    }
+                });
+            break;
+
     }
 
     ChartDataCollection[requestId] = chartDataElem!;
@@ -166,7 +180,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULTLOADING,
-        data: {key: requestId, value: false},
+        data: { key: requestId, value: false },
     });
     console.log(store.getState().chartData[requestId].chartData);
 

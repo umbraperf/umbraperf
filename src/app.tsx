@@ -145,8 +145,8 @@ export default function App() {
 
                             <div className={styles.appHeader}>
                                 <AppBar position="static" >
-                                    <Toolbar style={{ minHeight: '32px' }}>
-                                        <Typography variant="subtitle2" className={styles.appHeaderTitle}>
+                                    <Toolbar style={{ minHeight: '38px' }}>
+                                        <Typography variant="h6" className={styles.appHeaderTitle}>
                                             Umbra-Profiler
                                         </Typography>
                                     </Toolbar>

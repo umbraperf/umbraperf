@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         backgroundColor: "#e0e0e0",
         flexGrow: 1,
         width: '100%',
-        height: '32px',
-        minHeight: '32px',
+        height: '38px',
+        minHeight: '38px',
         //backgroundColor: theme.palette.background.default,
         //backgroundColor: theme.palette.background.paper,
     },
@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         opacity: '0.4',
     },
     tabRoot: {
-        height: '32px',
-        minHeight: '32px',
+        height: '38px',
+        minHeight: '38px',
         //minWidth: '200px',
     }
 }));

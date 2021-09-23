@@ -52,15 +52,6 @@ class Dummy extends React.Component<Props, State> {
         }
 
         return <div>
-            <div className={styles.dropdownArea} >
-                <InterpolationDropdown />
-                <BucketsizeDropdwn />
-            </div>
-            <div style={dummyStyle}>
-                <DonutChart />
-                <SwimLanesMultiplePipelines />
-                <BarChart onDashboard={true} />
-            </div>
 
             <div >
                 <Grid container spacing={2}>
@@ -73,7 +64,7 @@ class Dummy extends React.Component<Props, State> {
 
                 </Grid>
                 <Grid container spacing={2}>
-                    <Grid item xs={7}>
+                    <Grid item xs>
                         <BarChartActivityHistogram />
                     </Grid>
                 </Grid>
@@ -92,6 +83,14 @@ class Dummy extends React.Component<Props, State> {
                     </Grid>
                 </Grid>
             </div>
+
+            <div style={dummyStyle}>
+                <DonutChart />
+                <SwimLanesMultiplePipelines />
+                <BarChart onDashboard={true} />
+            </div>
+
+
 
 
         </div>;

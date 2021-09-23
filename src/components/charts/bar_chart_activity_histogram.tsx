@@ -31,10 +31,6 @@ interface State {
     height: number,
 }
 
-const startSize = {
-    width: 1500,
-    height: 300,
-}
 
 class BarChartActivityHistogram extends React.Component<Props, State> {
 
@@ -46,8 +42,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: startSize.width,
-            height: startSize.height,
+            width: 0,
+            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -65,12 +61,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        window.alert(this.elementWrapper.current?.offsetWidth);
-
         this.setState((state, props) => ({
             ...state,
             width: this.elementWrapper.current!.offsetWidth,
-            height: 200,
+            height: 300,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -94,8 +88,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
             this.setState((state, props) => ({
                 ...state,
-                width: newWidth > startSize.width ? startSize.width : newWidth,
-                height: newHeight > startSize.height ? startSize.height : newHeight,
+                width: newWidth,
+                height: newHeight > 300 ? this.state.height : child.clientHeight,
             }));
 
             child.style.display = 'block';

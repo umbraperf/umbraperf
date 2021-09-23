@@ -8,9 +8,15 @@
     width: 100%;
 }
 
+.appNavigation{
+    position: fixed;
+    top: 38px;
+    width: 100%;
+}
+
 .appBody{
     position: fixed;
-    top: 64px;
+    top: 76px;
     bottom: 0px;
     width: 100%;
     overflow-y: auto;
@@ -20,8 +26,3 @@
     flex-grow: 1,
 }
 
-.appNavigation{
-    position: fixed;
-    top: 32px;
-    width: 100%;
-}

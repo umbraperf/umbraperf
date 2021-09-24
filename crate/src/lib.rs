@@ -22,6 +22,7 @@ mod exec {
     pub mod analyze;
     pub mod rest_api;
     pub mod rel_freq;
+    pub mod abs_freq;
     pub mod count;
 }
 use exec::analyze;

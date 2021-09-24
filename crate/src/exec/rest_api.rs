@@ -2,34 +2,37 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{analyze, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
+use crate::{
+    analyze, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj,
+};
 
-use super::{count, rel_freq};
+use super::{abs_freq, count, rel_freq};
 
 // Find name in Record Batch
+// Panic if error else usize of column
 fn find_name(name: &str, batch: &RecordBatch) -> usize {
     let schema = batch.schema();
     let fields = schema.fields();
-
     for (i, field) in fields.iter().enumerate() {
         if field.name() == name {
             return i;
         }
     }
-    return 999999;
+    panic!("Name of column not found in record batch");
 }
 
 // FILTER:
 // /?operator="No operator" -- for String
-// /?time=2                 -- for number
+// /?time=2                 -- for number // TODO
 fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBatch {
     if filter_vec.len() == 0 {
         return record_batch;
     } else {
         let split = filter_vec[0].split_terminator("=").collect::<Vec<&str>>();
         let column_str = split[0].replace("?", "");
-        // Can be multiple by column separated
+        // "" needs to removed
         let filter_str = split[1].replace("\"", "");
+        // Can be multiple by comma separated
         let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
         filter_vec.remove(0);
         return eval_filter(
@@ -57,14 +60,23 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
         match operator {
             // ev_name/distinct?ev_name
             "distinct" => {
-                record_batch = analyze::find_unique_string(
-                    &record_batch,
-                    find_name(params, &record_batch),
-                );
+                record_batch =
+                    analyze::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
             // operator/count/?ev_name="No Operator"/count?operator
             "count" => {
-                record_batch = count::count_rows_over(&record_batch, find_name(params, &record_batch))
+                record_batch =
+                    count::count_rows_over(&record_batch, find_name(params, &record_batch))
+            }
+            // bucket/operator/absfreq/.../absfreq?pipeline,time:0.2
+            "absfreq" => {
+                let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
+                let fields = split_fields_bucket_size[0];
+                let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+                record_batch = abs_freq::abs_freq_with_pipelines(&record_batch,
+                    find_name("operator", &record_batch),
+                    find_name(fields, &record_batch),
+                    bucket_size);
             }
             "relfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
@@ -86,7 +98,6 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                     let pipeline_vec = split[1].split_terminator(",").collect::<Vec<&str>>();
                     print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
 
-
                     record_batch = rel_freq::rel_freq_with_pipelines(
                         &record_batch,
                         find_name("operator", &record_batch),
@@ -94,9 +105,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         bucket_size,
                         pipeline_vec,
                     );
-
                 }
-                // REQUEST FOR MULTIPLE PIPELINES    
+                // REQUEST FOR MULTIPLE PIPELINES
                 // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:20
                 else if fields.contains(",") {
                     let field_vec = fields.split_terminator(",").collect::<Vec<&str>>();
@@ -105,14 +115,13 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                     let time = field_vec[1];
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
-                    let vec_record_batches =
-                        rel_freq::rel_freq_for_each_pipelines(
-                            &record_batch,
-                            find_name("operator", &record_batch),
-                            find_name(time, &record_batch),
-                            find_name("pipeline", &record_batch),
-                            bucket_size
-                        );
+                    let vec_record_batches = rel_freq::rel_freq_for_each_pipelines(
+                        &record_batch,
+                        find_name("operator", &record_batch),
+                        find_name(time, &record_batch),
+                        find_name("pipeline", &record_batch),
+                        bucket_size,
+                    );
 
                     for (i, item) in vec_record_batches.iter().enumerate() {
                         if i + 1 == vec_record_batches.len() {
@@ -131,13 +140,13 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         find_name("operator", &record_batch),
                         find_name(fields, &record_batch),
                         bucket_size,
-                        Vec::new()
+                        Vec::new(),
                     );
                 }
             }
             // .../sort?<operator>
             "sort" => {
-                    record_batch = analyze::sort_batch(&record_batch, find_name(params, &record_batch));
+                record_batch = analyze::sort_batch(&record_batch, find_name(params, &record_batch));
             }
             _ => {
                 panic!("Not supported operator!");

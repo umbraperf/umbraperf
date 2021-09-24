@@ -34,21 +34,17 @@ interface State {
     height: number,
 }
 
-const startSize = {
-    width: 450,
-    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 500,
-}
-
 class DonutChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
+    elementWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: startSize.width,
-            height: startSize.height,
+            width: 0,
+            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -66,6 +62,13 @@ class DonutChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+
+        this.setState((state, props) => ({
+            ...state,
+            width: this.elementWrapper.current!.offsetWidth,
+            height: 300,
+        }));
+
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.DONUT_CHART);
 
@@ -91,8 +94,8 @@ class DonutChart extends React.Component<Props, State> {
 
             this.setState((state, props) => ({
                 ...state,
-                width: newWidth > startSize.width ? startSize.width : newWidth,
-                height: newHeight > startSize.height ? startSize.height : newHeight,
+                width: newWidth,
+                height: newHeight > 300 ? this.state.height : child.clientHeight,
             }));
 
             child.style.display = 'block';
@@ -108,7 +111,7 @@ class DonutChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div>
+        return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>

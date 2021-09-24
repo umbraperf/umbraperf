@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::exec::analyze::{filter_with, find_unique_string};
+use crate::exec::basic::analyze::{filter_with, find_unique_string};
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
 

@@ -5,7 +5,7 @@ use std::{
 };
 use arrow::error::Result as ArrowResult;
 
-use crate::{exec::analyze, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch}};
+use crate::{utils::{record_batch_util::create_record_batch}};
 
 pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();

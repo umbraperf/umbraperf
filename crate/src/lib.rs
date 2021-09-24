@@ -19,13 +19,16 @@ mod web_file {
 
 // Analyze
 mod exec {
-    pub mod analyze;
+    pub mod freq {
+        pub mod rel_freq;
+        pub mod abs_freq;
+    }
+    pub mod basic {
+        pub mod analyze;
+        pub mod count;
+    }
     pub mod rest_api;
-    pub mod rel_freq;
-    pub mod abs_freq;
-    pub mod count;
 }
-use exec::analyze;
 use exec::rest_api;
 
 // Utils

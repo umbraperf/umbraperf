@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::exec::analyze::{find_unique_string, sort_batch};
+use crate::exec::basic::analyze::{find_unique_string, sort_batch};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,

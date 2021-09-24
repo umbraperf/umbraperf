@@ -69,25 +69,27 @@ class Dummy extends React.Component<Props, State> {
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                    <Grid item xs>
-                        <div style={{ background: "black" }}> 1</div>
+                    <Grid item xs={3}>
+                        <DonutChart />
                     </Grid>
-                    <Grid item xs>
+                    <Grid item xs={9}>
                         <div style={{ background: "black" }}> 2 </div>
                     </Grid>
-                    <Grid item xs>
-                        <div style={{ background: "black" }}> 3 </div>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={3}>
+                        <BarChart onDashboard={true} /> 
                     </Grid>
-                    <Grid item xs>
-                        <div style={{ background: "black" }}> 4 </div>
+                    <Grid item xs={9}>
+                        <div style={{ background: "black" }}> 2 </div>
                     </Grid>
                 </Grid>
             </div>
 
             <div style={dummyStyle}>
-                <DonutChart />
+
                 <SwimLanesMultiplePipelines />
-                <BarChart onDashboard={true} />
+
             </div>
 
 

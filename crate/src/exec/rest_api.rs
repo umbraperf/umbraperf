@@ -2,11 +2,10 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{
-    analyze, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj,
-};
+use crate::{exec::freq::rel_freq, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
 
-use super::{abs_freq, count, rel_freq};
+use super::{basic::{analyze, count}, freq::abs_freq};
+
 
 // Find name in Record Batch
 // Panic if error else usize of column
@@ -18,7 +17,7 @@ fn find_name(name: &str, batch: &RecordBatch) -> usize {
             return i;
         }
     }
-    panic!("Name of column not found in record batch");
+    panic!("Name of column not found in record batch!");
 }
 
 // FILTER:

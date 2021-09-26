@@ -194,6 +194,28 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         }
 
+        const yScale = () => {
+            if (this.props.absoluteValues) {
+                return {
+                    name: "y",
+                    type: "linear",
+                    range: "height",
+                    nice: true,
+                    zero: true,
+                    domain: { data: "table", field: "y1" }
+                };
+            } else {
+                return {
+                    name: "y",
+                    type: "linear",
+                    range: "height",
+                    nice: true,
+                    zero: true,
+                    domain: [0, 1]
+                };
+            }
+        }
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width,
@@ -223,14 +245,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                         field: "buckets"
                     }
                 },
-                {
-                    name: "y",
-                    type: "linear",
-                    range: "height",
-                    nice: true,
-                    zero: true,
-                    domain: [0, 1]
-                },
+                yScale(),
                 {
                     name: "color",
                     type: "ordinal",

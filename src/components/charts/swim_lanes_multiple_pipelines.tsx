@@ -28,6 +28,8 @@ interface Props {
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
+    absoluteValues?: boolean;
+
 }
 
 interface State {
@@ -40,7 +42,7 @@ interface State {
 interface IChartData {
     buckets: Array<number>,
     operators: Array<string>,
-    relativeFrquencies: Array<number>,
+    frequency: Array<number>,
 }
 
 const startSize = {
@@ -73,7 +75,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             const chartDataElement: IChartData = {
                 buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
                 operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-                relativeFrquencies: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).relativeFrquencies,
+                frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
             }
 
             this.setState((state, props) => {
@@ -143,21 +145,10 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
                 </div>
             }
         </div>;
-    }
-
-    createVegaSignalListeners() {
-        const signalListeners: SignalListeners = {
-            hover: this.handleVegaHover,
-        }
-        return signalListeners;
-    }
-
-    handleVegaHover(...args: any[]) {
-        //TODO remove
     }
 
     createVisualizationData() {
@@ -167,9 +158,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             "name": "table",
             "values": this.state.chartData,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "relativeFrquencies"] },
+                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "relativeFrquencies" }
+                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
             ]
         };
 
@@ -216,13 +207,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 visData
             ],
 
-            signals: [
-                {
-                    name: "hover",
-                    description: "A date value that updates in response to mousemove.",
-                    on: [{ "events": "area:mouseover", "update": "{}" }]
-                }
-            ],
 
             scales: [
                 {

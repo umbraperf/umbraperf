@@ -4,6 +4,7 @@ export interface ChartConfiguration{
     titleAlign: string;
     axisPadding: number;
     areaChartYTitle: string;
+    areaChartYTitleAbsolute: string;
     areaChartXTitle: string;
 
 }
@@ -17,6 +18,7 @@ export let chartConfiguration: ChartConfiguration = {
     //Axis:
     axisPadding: 5,
     areaChartYTitle: 'Relative Frequency',
+    areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',
 
 

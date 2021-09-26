@@ -82,15 +82,13 @@ class Dummy extends React.Component<Props, State> {
                         <BarChart onDashboard={true} />
                     </Grid>
                     <Grid item xs={9}>
-                        <div style={{ background: "black" }}> 2 </div>
+                        <SwimLanesMultiplePipelines absoluteValues={true} />
                     </Grid>
                 </Grid>
             </div>
 
             <div style={dummyStyle}>
                 <PipelinesSelector />
-
-
 
             </div>
 

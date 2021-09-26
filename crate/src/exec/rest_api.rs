@@ -67,7 +67,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 record_batch =
                     count::count_rows_over(&record_batch, find_name(params, &record_batch))
             }
-            // bucket/operator/absfreq/.../absfreq?pipeline,time:0.2
+            // bucket/operator/absfreq/.../absfreq?time:0.2
             "absfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
                 let fields = split_fields_bucket_size[0];

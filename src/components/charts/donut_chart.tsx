@@ -31,7 +31,6 @@ interface Props {
 interface State {
     chartId: number,
     width: number,
-    height: number,
 }
 
 class DonutChart extends React.Component<Props, State> {
@@ -44,7 +43,6 @@ class DonutChart extends React.Component<Props, State> {
         this.state = {
             chartId: this.props.chartIdCounter,
             width: 0,
-            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -66,7 +64,6 @@ class DonutChart extends React.Component<Props, State> {
         this.setState((state, props) => ({
             ...state,
             width: this.elementWrapper.current!.offsetWidth,
-            height: 300,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -83,19 +80,17 @@ class DonutChart extends React.Component<Props, State> {
     }
 
     resizeListener() {
-        if (!this.chartWrapper) return;
+        if (!this.elementWrapper) return;
 
-        const child = this.chartWrapper.current;
+        const child = this.elementWrapper.current;
         if (child) {
-            const newWidth = child.clientWidth;
-            const newHeight = child.clientHeight;
+            const newWidth = child.offsetWidth;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth,
-                height: newHeight > 300 ? this.state.height : child.clientHeight,
             }));
 
             child.style.display = 'block';
@@ -185,10 +180,10 @@ class DonutChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width,
-            height: this.state.height,
+            height: this.state.width/2,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: false,
-            autosize: 'fit',
+            autosize: 'fit-x',
 
             title: {
                 text: "Shares of Pipelines",
@@ -305,6 +300,8 @@ class DonutChart extends React.Component<Props, State> {
 
         return spec;
     }
+
+
 
 }
 

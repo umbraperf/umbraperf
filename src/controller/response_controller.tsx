@@ -178,8 +178,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
                     data: {
                         // TODO rename colums to timebucket and occurrences
-                        timeBucket: resultObject.resultTable.getColumn('operator').toArray(),
-                        occurrences: resultObject.resultTable.getColumn('count').toArray(),
+                        timeBucket: resultObject.resultTable.getColumn('bucket').toArray(),
+                        occurrences: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
             break;

@@ -73,12 +73,17 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
                 let fields = split_fields_bucket_size[0];
                 let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+                print_to_js_with_obj(&format!("{:?}", "TEST0").into());
+                print_to_js_with_obj(&format!("{:?}", fields).into());
+
                 if fields.contains(",") {
+                print_to_js_with_obj(&format!("{:?}", "HERERERE").into());
                 record_batch = abs_freq::abs_freq_of_event(&record_batch,
-                    find_name("operator", &record_batch),
+                    find_name("ev_name", &record_batch),
                     find_name("time", &record_batch),
                     bucket_size
                 );
+                print_to_js_with_obj(&format!("{:?}", "Record Batch done").into());
                 } else {
                 record_batch = abs_freq::abs_freq_with_pipelines(&record_batch,
                     find_name("operator", &record_batch),
@@ -187,6 +192,7 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
 // COLUMN:
 // /operator
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
+    print_to_js_with_obj(&format!("{:?}", restful_string).into());
     let split = restful_string.split_terminator("/");
 
     let mut filter_vec = Vec::new();

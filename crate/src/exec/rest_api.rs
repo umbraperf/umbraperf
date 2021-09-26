@@ -68,14 +68,23 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                     count::count_rows_over(&record_batch, find_name(params, &record_batch))
             }
             // bucket/operator/absfreq/.../absfreq?time:0.2
+            // absfreq?event,time:0.2
             "absfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
                 let fields = split_fields_bucket_size[0];
                 let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+                if fields.contains(",") {
+                record_batch = abs_freq::abs_freq_of_event(&record_batch,
+                    find_name("operator", &record_batch),
+                    find_name("time", &record_batch),
+                    bucket_size
+                );
+                } else {
                 record_batch = abs_freq::abs_freq_with_pipelines(&record_batch,
                     find_name("operator", &record_batch),
                     find_name(fields, &record_batch),
                     bucket_size);
+                }
             }
             "relfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();

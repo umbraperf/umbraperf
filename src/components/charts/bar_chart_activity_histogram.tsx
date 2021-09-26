@@ -63,7 +63,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         this.setState((state, props) => ({
             ...state,
-            width: this.elementWrapper.current!.offsetWidth,
+            // remove 38 from chart size as it is 38px bigger because of summary button
+            width: this.elementWrapper.current!.offsetWidth - 38,
             height: 300,
         }));
 
@@ -146,7 +147,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             resize: true,
             autosize: 'fit',
             title: {
-                text: "Absolute Activity per EVENT over Time of Query Execution",
+                text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
             },
@@ -186,13 +187,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         }
                     }
                 },
-                {
-                    orient: 'left',
-                    titlePadding: model.chartConfiguration.axisPadding,
-                    scale: 'yscale',
-                    title: "Event Occurrences",
-                    labelOverlap: false,
-                },
+                /*                 {
+                                    orient: 'left',
+                                    titlePadding: model.chartConfiguration.axisPadding,
+                                    scale: 'yscale',
+                                    title: "Event Occurrences",
+                                    labelOverlap: false,
+                                }, */
             ],
 
             marks: [
@@ -208,10 +209,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             y2: { scale: 'yscale', value: 0 },
                         },
                         update: {
-                            fill: { value: this.props.appContext.primaryColor },
+                            fill: { value: this.props.appContext.secondaryColor },
                         },
                         hover: {
-                            fill: { value: this.props.appContext.secondaryColor },
+                            fill: { value: this.props.appContext.primaryColor },
                         },
                     },
                 },

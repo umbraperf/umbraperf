@@ -98,7 +98,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: {
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
+                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
             break;
@@ -109,7 +109,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             const data: model.ISwimlanesData = {
                 buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                 operators: resultObject.resultTable.getColumn('operator').toArray(),
-                relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
+                frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
             }
             dataArray.push(data);
 
@@ -138,7 +138,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: {
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        relativeFrquencies: resultObject.resultTable.getColumn('relfreq').toArray(),
+                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
+                    }
+                });
+            break;
+
+        case model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE,
+                    data: {
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
             break;

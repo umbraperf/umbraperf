@@ -110,6 +110,16 @@ export function requestChartData(controller: RequestController, chartId: number,
                 }), false, chartId);
             break;
 
+        case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
+
+            controller.calculateChartData(
+                model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
+                }), false, chartId);
+            break;
+
         case model.ChartType.DONUT_CHART:
 
             controller.calculateChartData(
@@ -126,7 +136,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent},
+                    data: { event: store.getState().currentEvent },
                 }), false, chartId);
             break;
 

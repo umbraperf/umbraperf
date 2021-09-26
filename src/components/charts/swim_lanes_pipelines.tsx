@@ -42,7 +42,7 @@ interface State {
 interface IChartData {
    buckets: Array<number>,
    operators: Array<string>,
-   relativeFrquencies: Array<number>,
+   frequency: Array<number>,
 }
 
 const startSize = {
@@ -162,9 +162,9 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          "name": "table",
          "values": this.state.chartData[chartId],
          transform: [
-            { "type": "flatten", "fields": ["buckets", "operators", "relativeFrquencies"] },
+            { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
             { "type": "collect", "sort": { "field": "operators" } },
-            { "type": "stack", "groupby": ["buckets"], "field": "relativeFrquencies" }
+            { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
          ]
       };
 

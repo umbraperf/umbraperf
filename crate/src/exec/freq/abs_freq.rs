@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::exec::basic::analyze::{find_unique_string, sort_batch};
+use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, utils::print_to_cons::print_to_js_with_obj};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -47,6 +47,8 @@ pub fn abs_freq_of_event(
     bucket_size: f64,
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
+
+    print_to_js_with_obj(&format!("{:?}", "IN METHOD").into());
 
     let unique_event = find_unique_string(batch, column_for_event);
 

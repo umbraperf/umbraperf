@@ -144,7 +144,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-                    <PipelinesSelector />
                 </div>
             }
         </div>;

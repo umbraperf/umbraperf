@@ -47,7 +47,7 @@ class BarChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: this.props.onDashboard ? 300 : startSize.width,
+            width: this.props.onDashboard ? 250 : startSize.width,
             height: this.props.onDashboard ? 400 : startSize.height,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);

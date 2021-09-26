@@ -9,6 +9,7 @@ import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';
 import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
+import PipelinesSelector from '../components/utils/pipelines_selector';
 import { Grid } from '@material-ui/core';
 
 
@@ -73,12 +74,12 @@ class Dummy extends React.Component<Props, State> {
                         <DonutChart />
                     </Grid>
                     <Grid item xs={9}>
-                        <div style={{ background: "black" }}> 2 </div>
+                        <SwimLanesMultiplePipelines />
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={3}>
-                        <BarChart onDashboard={true} /> 
+                        <BarChart onDashboard={true} />
                     </Grid>
                     <Grid item xs={9}>
                         <div style={{ background: "black" }}> 2 </div>
@@ -87,8 +88,9 @@ class Dummy extends React.Component<Props, State> {
             </div>
 
             <div style={dummyStyle}>
+                <PipelinesSelector />
 
-                <SwimLanesMultiplePipelines />
+
 
             </div>
 

@@ -52,7 +52,7 @@ export function createRestQuery(query: QueryVariant) {
             return `pipeline/count/?ev_name="${query.data.event}"/count?pipeline/sort?pipeline`;
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             //TODO correct query: event occ per time 
-            return `operator/count/?ev_name="${query.data.event}"/count?operator/sort?operator`;
+            return `bucket/ev_name/absfreq/?ev_name="${query.data.event}"/absfreq?ev_name,time:${1};`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

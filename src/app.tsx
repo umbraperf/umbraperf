@@ -174,6 +174,10 @@ export default function App() {
                                         <Dashboard />
                                     </Route>
 
+                                    <Route exact path="/dummy" key="/dummy">
+                                        <Dummy />
+                                    </Route>
+
                                     {routes.map((route: any) => {
                                         return <Route exact path={route.path} key={route.path}>
                                             <VisualizationContainer component={route.component} visualizationName={route.path} />

@@ -23,7 +23,7 @@ function InterpolationDropdown(props: Props) {
 
     return (
         <div className={styles.interpolationDropdownSelectorContainer}>
-            <InputLabel className={styles.interpolationDropdownSelectorLabel} id="interpolation-selector-label">Choose Interpolation:</InputLabel>
+            <InputLabel className={styles.interpolationDropdownSelectorLabel} id="interpolation-selector-label">Interpolation:</InputLabel>
             <Select className={styles.interpolationDropdownSelector}
                 labelId="interpolation-selector-label"
                 id="interpolation-selector"

@@ -1,8 +1,9 @@
 import * as model from '../model';
 import React from 'react';
-import styles from '../style/charts.module.css';
+import styles from '../style/dummy.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import EventsButtons from './utils/events_buttons';
 import InterpolationDropdown from './utils/interpolation_dropdown';
 import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';
@@ -18,19 +19,10 @@ import { Grid } from '@material-ui/core';
 
 interface Props {
     csvParsingFinished: boolean;
-    setCurrentChart: (newCurrentChart: string) => void;
 }
 
 interface State {
 
-}
-
-const dummyStyle = {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    justifyContent: "center",
-    //alignItems: "center",
-    marginTop: 30,
 }
 
 
@@ -55,16 +47,25 @@ class Dummy extends React.Component<Props, State> {
         return <div>
 
             <div >
-                <Grid container spacing={2}>
-                    <Grid item xs>
-                        <div className={styles.dropdownArea} >
+                <Grid container spacing={0} >
+                    <Grid item xs={7} >
+                        <div className={styles.dummyGridCell}>
+                            <EventsButtons />
+                        </div>
+
+                    </Grid>
+                    <Grid item xs={5} >
+                        <div className={styles.dummyGridCell} >
                             <InterpolationDropdown />
                             <BucketsizeDropdwn />
                         </div>
+
                     </Grid>
 
                 </Grid>
-                <Grid container spacing={2}>
+            </div>
+
+            <Grid container spacing={2}>
                     <Grid item xs>
                         <BarChartActivityHistogram />
                     </Grid>
@@ -85,12 +86,7 @@ class Dummy extends React.Component<Props, State> {
                         <SwimLanesMultiplePipelines absoluteValues={true} />
                     </Grid>
                 </Grid>
-            </div>
 
-            <div style={dummyStyle}>
-                <PipelinesSelector />
-
-            </div>
 
 
 

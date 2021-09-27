@@ -8,6 +8,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import { values } from 'lodash';
 
 interface Props {
     appContext: Context.IAppContext;
@@ -28,7 +29,6 @@ interface Props {
 interface State {
     chartId: number,
     width: number,
-    height: number,
 }
 
 
@@ -43,7 +43,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         this.state = {
             chartId: this.props.chartIdCounter,
             width: 0,
-            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -65,7 +64,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             ...state,
             // remove 38 from chart size as it is 38px bigger because of summary button
             width: this.elementWrapper.current!.offsetWidth - 38,
-            height: 300,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -82,15 +80,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const child = this.chartWrapper.current;
         if (child) {
-            const newWidth = child.clientWidth;
-            const newHeight = child.clientHeight;
+            const newWidth = child.offsetWidth;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth,
-                height: newHeight > 300 ? this.state.height : child.clientHeight,
             }));
 
             child.style.display = 'block';
@@ -133,11 +129,17 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         };
 
 
-        return data;
+        return { data: data, bucketsArray: timeBucketsArray };
     }
 
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
+
+        const xTicks = () => {
+            if (visData.bucketsArray.length > 100) {
+                return Array.from(visData.bucketsArray.filter(bucket => bucket%10 === 0));
+            } 
+        }
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
@@ -153,19 +155,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             },
 
             data: [
-                visData,
+                visData.data,
             ],
-
-            signals: [
-                {
-                  name: "BarHover",
-                  value: {},
-                  on: [
-                    {events: "rect:mouseover", update: "datum"},
-                    {events: "rect:mouseout",  update: "{}"}
-                  ]
-                }
-              ],
 
             scales: [
                 {
@@ -192,11 +183,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     encode: {
                         labels: {
                             update: {
-                                angle: { value: -70 },
+                                angle: { value: -80 },
                                 align: { value: "right" }
                             }
                         }
-                    }
+                    },
+                    values: xTicks(),
+                    labelFontSize: 8
                 },
             ],
 
@@ -223,29 +216,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             fill: { value: this.props.appContext.primaryColor },
                         },
                     },
-                },
-                {
-                    type: "text",
-                    encode: {
-                        enter: {
-                            fill: [
-                                { test: "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white" },
-                                { value: "black" }
-                            ],
-                            align: { value: "center" },
-                            baseline: { value: "middle" },
-                        },
-                        "update": {
-                            "x": {"scale": "xscale", "signal": "BarHover.timeBuckets", "band": 0.5},
-                            "y": {"scale": "yscale", "signal": "BarHover.occurrences", "offset": -5},
-                            "text": {"signal": "BarHover.occurrences"},
-                            "fillOpacity": [
-                              {"test": "datum === BarHover", "value": 0},
-                              {"value": 1}
-                            ]
-                          }
-                    }
-                },
+                }
             ],
         } as VisualizationSpec;
 

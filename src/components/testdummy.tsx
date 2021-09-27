@@ -86,7 +86,7 @@ class Dummy extends React.Component<Props, State> {
 
             </div>
 
-            {/* 
+            
                 <Grid container spacing={2}>
                     <Grid item xs={3}>
                         <DonutChart />
@@ -102,7 +102,7 @@ class Dummy extends React.Component<Props, State> {
                     <Grid item xs={9}>
                         <SwimLanesMultiplePipelines absoluteValues={true} />
                     </Grid>
-                </Grid> */}
+                </Grid> 
 
 
 

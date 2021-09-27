@@ -36,7 +36,6 @@ interface State {
     chartId: number,
     chartData: IChartData | undefined,
     width: number,
-    height: number,
 }
 
 interface IChartData {
@@ -45,21 +44,17 @@ interface IChartData {
     frequency: Array<number>,
 }
 
-const startSize = {
-    width: 950,
-    height: 200,
-}
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
+    elementWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: startSize.width,
-            height: startSize.height,
+            width: 0,
             chartData: undefined,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
@@ -100,6 +95,11 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
 
     componentDidMount() {
+        this.setState((state, props) => ({
+            ...state,
+            width: this.elementWrapper.current!.offsetWidth,
+        }));
+
         if (this.props.csvParsingFinished) {
 
             this.props.absoluteValues ? this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE) : this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
@@ -120,19 +120,17 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     resizeListener() {
-        if (!this.chartWrapper) return;
+        if (!this.elementWrapper) return;
 
-        const child = this.chartWrapper.current;
+        const child = this.elementWrapper.current;
         if (child) {
-            const newWidth = child.clientWidth;
-            const newHeight = child.clientHeight;
+            const newWidth = child.offsetWidth;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
-                width: newWidth > startSize.width ? startSize.width : newWidth,
-                //height: newHeight,
+                width: newWidth,
             }));
 
             child.style.display = 'block';
@@ -146,7 +144,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div>
+        return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
@@ -218,8 +216,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width,
-            height: this.state.height,
+            width: this.state.width - 60,
+            height: this.state.width / 6,
             padding: { left: 10, right: 10, top: 20, bottom: 20 },
             resize: true,
             autosize: 'fit',

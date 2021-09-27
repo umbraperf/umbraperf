@@ -61,15 +61,32 @@ class Dummy extends React.Component<Props, State> {
                         </div>
 
                     </Grid>
-
                 </Grid>
-            </div>
 
-            <Grid container spacing={2}>
-                    <Grid item xs>
-                        <BarChartActivityHistogram />
+                <Grid container spacing={0}>
+                    <Grid item xs={12}>
+                        <div className={styles.dummyGridCellChartContainer}>
+                            <BarChartActivityHistogram />
+                        </div>
                     </Grid>
                 </Grid>
+
+                <Grid container spacing={0}>
+                    <Grid item xs={3}>
+                        <div className={styles.dummyGridCellChartContainer}>
+                            <DonutChart />
+                        </div>
+                    </Grid>
+                    <Grid item xs={9}>
+                        <div className={styles.dummyGridCellChartContainer}>
+                            <SwimLanesMultiplePipelines />
+                        </div>
+                    </Grid>
+                </Grid>
+
+            </div>
+
+            {/* 
                 <Grid container spacing={2}>
                     <Grid item xs={3}>
                         <DonutChart />
@@ -85,7 +102,7 @@ class Dummy extends React.Component<Props, State> {
                     <Grid item xs={9}>
                         <SwimLanesMultiplePipelines absoluteValues={true} />
                     </Grid>
-                </Grid>
+                </Grid> */}
 
 
 

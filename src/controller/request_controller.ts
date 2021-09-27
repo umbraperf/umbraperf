@@ -136,7 +136,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent },
+                    data: { event: store.getState().currentEvent, time: "10" },
                 }), false, chartId);
             break;
 

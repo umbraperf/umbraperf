@@ -142,7 +142,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width,
-            height: this.state.height,
+            height: 150,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -155,6 +155,17 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             data: [
                 visData,
             ],
+
+            signals: [
+                {
+                  name: "BarHover",
+                  value: {},
+                  on: [
+                    {events: "rect:mouseover", update: "datum"},
+                    {events: "rect:mouseout",  update: "{}"}
+                  ]
+                }
+              ],
 
             scales: [
                 {
@@ -187,13 +198,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         }
                     }
                 },
-                /*                 {
-                                    orient: 'left',
-                                    titlePadding: model.chartConfiguration.axisPadding,
-                                    scale: 'yscale',
-                                    title: "Event Occurrences",
-                                    labelOverlap: false,
-                                }, */
             ],
 
             marks: [
@@ -207,6 +211,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             width: { scale: 'xscale', band: 1, offset: -1 },
                             y: { scale: 'yscale', field: 'occurrences' },
                             y2: { scale: 'yscale', value: 0 },
+                            tooltip:
+                            {
+                                signal: "{'Time': datum.timeBuckets, 'Occurences': datum.occurrences}"
+                            }
                         },
                         update: {
                             fill: { value: this.props.appContext.secondaryColor },
@@ -218,19 +226,24 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 },
                 {
                     type: "text",
-                    from: { data: "bars" },
                     encode: {
                         enter: {
-                            x: { field: "x", offset: { field: "width", mult: 0.5 } },
-                            y: { field: "y", offset: -7 },
                             fill: [
                                 { test: "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white" },
                                 { value: "black" }
                             ],
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { field: "datum.occurrences" }
-                        }
+                        },
+                        "update": {
+                            "x": {"scale": "xscale", "signal": "BarHover.timeBuckets", "band": 0.5},
+                            "y": {"scale": "yscale", "signal": "BarHover.occurrences", "offset": -5},
+                            "text": {"signal": "BarHover.occurrences"},
+                            "fillOpacity": [
+                              {"test": "datum === BarHover", "value": 0},
+                              {"value": 1}
+                            ]
+                          }
                     }
                 },
             ],

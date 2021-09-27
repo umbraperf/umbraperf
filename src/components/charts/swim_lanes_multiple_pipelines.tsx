@@ -46,7 +46,7 @@ interface IChartData {
 }
 
 const startSize = {
-    width: 750,
+    width: 950,
     height: 200,
 }
 

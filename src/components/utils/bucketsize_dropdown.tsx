@@ -22,7 +22,7 @@ function BucketsizeDropdwn(props: Props) {
 
     return (
         <div className={styles.bucketsizeDropdownSelectorContainer}>
-            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} id="bucketsize-selector-label">Choose Bucket-Size:</InputLabel>
+            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} id="bucketsize-selector-label">Bucket-Size:</InputLabel>
             <Select className={styles.bucketsizeDropdownSelector}
                 labelId="bucketsize-selector-label"
                 id="bucketsize-selector"

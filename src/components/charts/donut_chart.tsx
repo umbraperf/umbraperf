@@ -183,7 +183,7 @@ class DonutChart extends React.Component<Props, State> {
             height: this.state.width/2,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: false,
-            autosize: 'fit-x',
+            autosize: 'fit',
 
             title: {
                 text: "Shares of Pipelines",

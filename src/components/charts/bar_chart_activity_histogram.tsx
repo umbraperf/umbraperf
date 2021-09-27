@@ -63,7 +63,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         this.setState((state, props) => ({
             ...state,
             // remove 38 from chart size as it is 38px bigger because of summary button
-            width: this.elementWrapper.current!.offsetWidth - 38,
+            width: this.elementWrapper.current!.offsetWidth,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -143,8 +143,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width,
-            height: 150,
+            width: this.state.width-50,
+            height: 120,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

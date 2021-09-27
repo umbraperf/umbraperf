@@ -90,7 +90,6 @@ pub fn analyze_file(file_size: i32) {
     );
 
     let elapsed = now.elapsed();
-    print_to_cons::print_to_js_with_obj(&format!("{:?}", elapsed).into());
 
     let record_batch = record_batch_util::convert(batches);
     set_record_batches(record_batch);

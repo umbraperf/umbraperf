@@ -2,7 +2,7 @@ use std::{io::Cursor, sync::Arc};
 
 use arrow::{array::ArrayRef, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 
-use crate::{bindings::notify_js_query_result, utils::print_to_cons, web_file::streambuf::WebFileReader};
+use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
 
 
 // Helper function for more readable code
@@ -76,8 +76,6 @@ pub fn init_record_batches(
 ) -> Vec<RecordBatch> {
     let schema = init_schema();
 
-    print_to_cons::print_to_js_with_obj(&format!("{:?}", file_size).into());
-
     let mut reader = Reader::new(
         WebFileReader::new_from_file(file_size),
         Arc::new(schema),
@@ -90,11 +88,8 @@ pub fn init_record_batches(
 
     let mut vec = Vec::new();
 
-    print_to_cons::print_to_js_with_obj(&format!("{:?}", reader).into());
-
 
     while let Some(item) = reader.next() {
-        print_to_cons::print_to_js_with_obj(&format!("{:?}", item).into());
         let batch = item.unwrap();
         vec.push(batch);
     }

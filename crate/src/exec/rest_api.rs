@@ -2,10 +2,15 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{exec::freq::rel_freq, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
+use crate::{
+    exec::freq::rel_freq, record_batch_util::send_record_batch_to_js,
+    utils::print_to_cons::print_to_js_with_obj,
+};
 
-use super::{basic::{analyze, count}, freq::abs_freq};
-
+use super::{
+    basic::{analyze, count},
+    freq::abs_freq,
+};
 
 // Find name in Record Batch
 // Panic if error else usize of column
@@ -72,23 +77,33 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
             "absfreq" => {
                 let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
                 let fields = split_fields_bucket_size[0];
-                let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
-                print_to_js_with_obj(&format!("{:?}", "TEST0").into());
-                print_to_js_with_obj(&format!("{:?}", fields).into());
 
-                if fields.contains(",") {
-                print_to_js_with_obj(&format!("{:?}", "HERERERE").into());
-                record_batch = abs_freq::abs_freq_of_event(&record_batch,
-                    find_name("ev_name", &record_batch),
-                    find_name("time", &record_batch),
-                    bucket_size
-                );
-                print_to_js_with_obj(&format!("{:?}", "Record Batch done").into());
+                if !fields.contains("pipeline") {
+                    let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+
+                    record_batch = abs_freq::abs_freq_of_event(
+                        &record_batch,
+                        find_name("ev_name", &record_batch),
+                        find_name("time", &record_batch),
+                        bucket_size,
+                    );
                 } else {
-                record_batch = abs_freq::abs_freq_with_pipelines(&record_batch,
-                    find_name("operator", &record_batch),
-                    find_name(fields, &record_batch),
-                    bucket_size);
+
+                    let split = params.split_terminator("!").collect::<Vec<&str>>();
+                    let split_fields_bucket_size =
+                        split[0].split_terminator(":").collect::<Vec<&str>>();
+
+                    let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+
+                    let pipeline_vec = split[1].split_terminator(",").collect::<Vec<&str>>();
+                    record_batch = abs_freq::abs_freq_of_pipelines(
+                        &record_batch,
+                        find_name("operator", &record_batch),
+                        find_name("time", &record_batch),
+                        bucket_size,
+                        pipeline_vec
+                    );
+
                 }
             }
             "relfreq" => {
@@ -109,7 +124,6 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
                     let pipeline_vec = split[1].split_terminator(",").collect::<Vec<&str>>();
-                    print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
 
                     record_batch = rel_freq::rel_freq_with_pipelines(
                         &record_batch,
@@ -210,10 +224,7 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     }
 
     let record_batch = eval_filter(record_batch, filter_vec);
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
     let record_batch = eval_operations(record_batch, op_vec);
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
     let record_batch = eval_selections(record_batch, select_vec);
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
     send_record_batch_to_js(&record_batch);
 }

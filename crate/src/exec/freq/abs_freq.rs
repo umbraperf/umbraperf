@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, utils::print_to_cons::print_to_js_with_obj};
+use crate::{exec::basic::analyze::{find_unique_string, sort_batch}};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -119,12 +119,12 @@ pub fn abs_freq_of_event(
     )
 }
 
-pub fn abs_freq_with_pipelines(
+pub fn abs_freq_of_pipelines(
     batch: &RecordBatch,
     column_for_operator: usize,
     column_for_time: usize,
     bucket_size: f64,
-    //pipelines: Vec<&str>,
+    pipelines: Vec<&str>,
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
 
@@ -191,13 +191,14 @@ pub fn abs_freq_with_pipelines(
             }
         }
 
-        //if pipelines.contains(&current_pipeline) || pipelines.len() == 0 {
+        if pipelines.contains(&current_pipeline) || pipelines.len() == 0 {
         bucket_map.insert(
             current_operator,
             bucket_map.get(current_operator).unwrap() + 1.0,
         );
-        //}
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+
+        }
         column_index += 1;
     }
 

@@ -48,8 +48,6 @@ pub fn abs_freq_of_event(
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
 
-    print_to_js_with_obj(&format!("{:?}", "IN METHOD").into());
-
     let unique_event = find_unique_string(batch, column_for_event);
 
     // Vector of unique strings
@@ -88,7 +86,6 @@ pub fn abs_freq_of_event(
         let current_event = event_column.value(column_index as usize);
         while time_bucket < time.unwrap() {
             for event in vec_event {
-                if bucket_map.get("sum").unwrap() > &0.0 {
                     let event = event.unwrap();
                     result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
                     result_vec_event.push(event);
@@ -96,14 +93,11 @@ pub fn abs_freq_of_event(
                     result_builder.push(frequenzy.to_owned());
                     // reset bucket_map
                     bucket_map.insert(event, 0.0);
-                }
             }
 
             // reset sum
             bucket_map.insert("sum", 0.0);
-            while time_bucket < time.unwrap() {
-                time_bucket += bucket_size;
-            }
+            time_bucket += bucket_size;
         }
 
         //if pipelines.contains(&current_pipeline) || pipelines.len() == 0 {

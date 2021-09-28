@@ -35,6 +35,7 @@ export enum StateMutationType {
     SET_DASHBOARDSTATE = 'SET_DASHBOARDSTATE',
     SET_CURRENTINTERPOLATION = 'SET_CURRENTINTERPOLATION',
     SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
+    SET_CURRENTTIMEBUCKETSELECTIONTUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
     OTHER = 'OTHER',
 }
 
@@ -60,6 +61,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
     | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
+    | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
     ;
 
 // The action dispatch
@@ -163,6 +165,11 @@ export class AppStateMutation {
                     ...state,
                     currentBucketSize: mutation.data,
                 }
+            case StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE:
+                return {
+                    ...state,
+                    currentTimeBucketSelectionTuple: [...mutation.data],
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -184,6 +191,7 @@ export class AppStateMutation {
                     dashboardState: undefined,
                     currentInterpolation: "basis",
                     currentBucketSize: 1,
+                    currentTimeBucketSelectionTuple: [-1,-1],
                 }
         }
     }

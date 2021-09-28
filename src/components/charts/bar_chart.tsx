@@ -60,7 +60,7 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event, chart or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
         if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline?.join() });
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline });
         }
 
     }

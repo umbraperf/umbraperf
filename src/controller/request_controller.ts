@@ -64,7 +64,7 @@ export function requestStatistics(controller: RequestController) {
 }
 
 //request data for chart visualizations
-export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: string }) {
+export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: Array<string> }) {
 
     switch (chartType) {
 
@@ -74,7 +74,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline! },
+                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline!.join() },
                 }), false, chartId);
             break;
 
@@ -106,7 +106,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline!.join() },
                 }), false, chartId);
             break;
 
@@ -116,7 +116,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline! },
+                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline!.join() },
                 }), false, chartId);
             break;
 

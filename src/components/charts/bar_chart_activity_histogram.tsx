@@ -134,13 +134,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const xTicks = () => {
             if (visData.bucketsArray.length > 100) {
-                return Array.from(visData.bucketsArray.filter(bucket => bucket%10 === 0));
-            } 
+                return Array.from(visData.bucketsArray.filter(bucket => bucket % 10 === 0));
+            }
         }
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width-50,
+            width: this.state.width - 50,
             height: 120,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
@@ -155,66 +155,84 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 visData.data,
             ],
 
-            scales: [
-                {
-                    name: 'xscale',
-                    type: 'band',
-                    domain: { data: 'table', field: 'timeBuckets' },
-                    range: 'width',
-                },
-                {
-                    name: 'yscale',
-                    domain: { data: 'table', field: 'occurrences' },
-                    nice: true,
-                    range: 'height',
-                },
-            ],
-
-            axes: [
-                {
-                    orient: 'bottom',
-                    scale: 'xscale',
-                    labelOverlap: false,
-                    title: "Execution Time",
-                    titlePadding: model.chartConfiguration.axisPadding,
-                    encode: {
-                        labels: {
-                            update: {
-                                angle: { value: -80 },
-                                align: { value: "right" }
-                            }
-                        }
-                    },
-                    values: xTicks(),
-                    labelFontSize: 8
-                },
-            ],
-
             marks: [
                 {
-                    name: 'bars',
-                    type: 'rect',
-                    from: { data: 'table' },
+                    type: "group",
+
+                    name: "overview",
+
                     encode: {
-                        enter: {
-                            x: { scale: 'xscale', field: 'timeBuckets', offset: 1 },
-                            width: { scale: 'xscale', band: 1, offset: -1 },
-                            y: { scale: 'yscale', field: 'occurrences' },
-                            y2: { scale: 'yscale', value: 0 },
-                            tooltip:
-                            {
-                                signal: "{'Time': datum.timeBuckets, 'Occurences': datum.occurrences}"
-                            }
-                        },
-                        update: {
-                            fill: { value: this.props.appContext.secondaryColor },
-                        },
-                        hover: {
-                            fill: { value: this.props.appContext.primaryColor },
-                        },
+                        "enter": {
+                            "height": { "signal": "height" },
+                            "width": { "signal": "width" },
+                            "fill": { "value": "transparent" }
+                        }
                     },
+
+                    scales: [
+                        {
+                            name: 'xscale',
+                            type: 'band',
+                            domain: { data: 'table', field: 'timeBuckets' },
+                            range: 'width',
+                        },
+                        {
+                            name: 'yscale',
+                            domain: { data: 'table', field: 'occurrences' },
+                            nice: true,
+                            range: 'height',
+                        },
+                    ],
+
+                    axes: [
+                        {
+                            orient: 'bottom',
+                            scale: 'xscale',
+                            labelOverlap: false,
+                            title: "Execution Time",
+                            titlePadding: model.chartConfiguration.axisPadding,
+                            encode: {
+                                labels: {
+                                    update: {
+                                        angle: { value: -80 },
+                                        align: { value: "right" }
+                                    }
+                                }
+                            },
+                            values: xTicks(),
+                            labelFontSize: 8
+                        },
+                    ],
+
+                    marks: [
+                        {
+                            name: 'bars',
+                            type: 'rect',
+                            from: { data: 'table' },
+                            encode: {
+                                enter: {
+                                    x: { scale: 'xscale', field: 'timeBuckets', offset: 1 },
+                                    width: { scale: 'xscale', band: 1, offset: -1 },
+                                    y: { scale: 'yscale', field: 'occurrences' },
+                                    y2: { scale: 'yscale', value: 0 },
+                                    tooltip:
+                                    {
+                                        signal: "{'Time': datum.timeBuckets, 'Occurences': datum.occurrences}"
+                                    }
+                                },
+                                update: {
+                                    fill: { value: this.props.appContext.secondaryColor },
+                                },
+                                hover: {
+                                    fill: { value: this.props.appContext.primaryColor },
+                                },
+                            },
+                        }
+                    ],
+
                 }
-            ],
+            ]
+
         } as VisualizationSpec;
 
         return spec;

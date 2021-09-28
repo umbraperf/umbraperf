@@ -64,7 +64,7 @@ export function requestStatistics(controller: RequestController) {
 }
 
 //request data for chart visualizations
-export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: Array<string> }) {
+export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: Array<string>, timeBucketFrame?: [number, number] }) {
 
     switch (chartType) {
 

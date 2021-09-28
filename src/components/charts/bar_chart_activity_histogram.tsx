@@ -312,7 +312,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     fill: { value: "firebrick" }
                                 },
                                 update: {
-                                    x: { signal: "brush[0]" }
+                                    x: { signal: "brush[0]" },
+                                    fillOpacity: [
+                                        { test: "detailDomain", value: 1 },
+                                        { value: 0 }
+                                    ]
                                 }
                             }
                         },
@@ -327,7 +331,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     fill: { value: "firebrick" }
                                 },
                                 update: {
-                                    x: { signal: "brush[1]" }
+                                    x: { signal: "brush[1]" },
+                                    fillOpacity: [
+                                        { test: "detailDomain", value: 1 },
+                                        { value: 0 }
+                                    ]
                                 }
                             }
                         }

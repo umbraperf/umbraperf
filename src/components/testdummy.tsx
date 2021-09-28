@@ -10,7 +10,6 @@ import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';
 import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
-import PipelinesSelector from '../components/utils/pipelines_selector';
 import { Grid } from '@material-ui/core';
 
 
@@ -31,9 +30,6 @@ class Dummy extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-
-        };
 
     }
 
@@ -48,13 +44,13 @@ class Dummy extends React.Component<Props, State> {
 
             <div >
                 <Grid container spacing={0} >
-                    <Grid item xs={7} >
+                    <Grid item xs={12} lg={7} >
                         <div className={styles.dummyGridCell}>
                             <EventsButtons />
                         </div>
 
                     </Grid>
-                    <Grid item xs={5} >
+                    <Grid item xs={12} lg={5} >
                         <div className={styles.dummyGridCell} >
                             <InterpolationDropdown />
                             <BucketsizeDropdwn />
@@ -64,29 +60,29 @@ class Dummy extends React.Component<Props, State> {
                 </Grid>
 
                 <Grid container spacing={0}>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} lg={12}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChartActivityHistogram />
                         </div>
                     </Grid>
 
-                    <Grid item xs={3}>
+                    <Grid item xs={12} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <DonutChart />
                         </div>
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} lg={9}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines />
                         </div>
                     </Grid>
 
-                    <Grid item xs={3}>
+                    <Grid item xs={12} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChart onDashboard={true} />
                         </div>
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} lg={9}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines absoluteValues={true} />
                         </div>

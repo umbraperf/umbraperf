@@ -79,7 +79,7 @@ class BarChart extends React.Component<Props, State> {
                 Controller.requestPipelines(this.props.appContext.controller);
             }
             addEventListener('resize', (event) => {
-                this.resizeListener();
+                //this.resizeListener();
             });
         }
     }

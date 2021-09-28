@@ -42,6 +42,7 @@ const startSize = {
 class BarChart extends React.Component<Props, State> {
 
     chartWrapper = createRef<HTMLDivElement>();
+    elementWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
         super(props);
@@ -65,6 +66,12 @@ class BarChart extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+
+        this.props.onDashboard && this.setState((state, props) => ({
+            ...state,
+            width: this.elementWrapper.current!.offsetWidth,
+        }));
+
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.BAR_CHART);
             
@@ -78,19 +85,17 @@ class BarChart extends React.Component<Props, State> {
     }
 
     resizeListener() {
-        if (!this.chartWrapper) return;
+        if (!this.elementWrapper) return;
 
-        const child = this.chartWrapper.current;
+        const child = this.elementWrapper.current;
         if (child) {
-            const newWidth = child.clientWidth;
-            const newHeight = child.clientHeight;
+            const newWidth = child.offsetWidth;
 
             child.style.display = 'none';
 
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth > startSize.width ? startSize.width : newWidth,
-                height: newHeight > startSize.height ? startSize.height : newHeight,
             }));
 
             child.style.display = 'block';
@@ -106,7 +111,7 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div>
+        return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
@@ -142,7 +147,7 @@ class BarChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width,
-            height: this.state.height,
+            height: this.props.onDashboard ? this.state.width/1 : this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

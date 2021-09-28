@@ -105,7 +105,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
-                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                : <div className={"vegaContainer"} ref={this.chartWrapper} >
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
@@ -119,8 +119,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         return signalListeners;
     }
 
-    handleDetailDomainSelection(...args: any[]){
-        if(args[1]){
+    handleDetailDomainSelection(...args: any[]) {
+        if (args[1]) {
             const selectedFrame = args[1];
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
             console.log(bucketsFromTo);
@@ -326,7 +326,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     y: { value: 0 },
                                     height: { signal: "height" },
                                     width: { value: 2 },
-                                    fill: { value: "firebrick" }
+                                    fill: { value: this.props.appContext.primaryColor }
                                 },
                                 update: {
                                     x: { signal: "brush[0]" },
@@ -345,7 +345,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     y: { value: 0 },
                                     height: { signal: "height" },
                                     width: { value: 2 },
-                                    fill: { value: "firebrick" }
+                                    fill: { value: this.props.appContext.primaryColor }
                                 },
                                 update: {
                                     x: { signal: "brush[1]" },

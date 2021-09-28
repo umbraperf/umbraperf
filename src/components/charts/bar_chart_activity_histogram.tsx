@@ -62,7 +62,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         this.setState((state, props) => ({
             ...state,
-            // remove 38 from chart size as it is 38px bigger because of summary button
             width: this.elementWrapper.current!.offsetWidth,
         }));
 

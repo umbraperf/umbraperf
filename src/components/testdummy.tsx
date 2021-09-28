@@ -84,28 +84,20 @@ class Dummy extends React.Component<Props, State> {
                     </Grid>
                 </Grid>
 
-            </div>
-
-            
-                <Grid container spacing={2}>
+                <Grid container spacing={0}>
                     <Grid item xs={3}>
-                        <DonutChart />
+                        <div className={styles.dummyGridCellChartContainer}>
+                            <BarChart onDashboard={true} />
+                        </div>
                     </Grid>
                     <Grid item xs={9}>
-                        <SwimLanesMultiplePipelines />
+                        <div className={styles.dummyGridCellChartContainer}>
+                            <SwimLanesMultiplePipelines absoluteValues={true} />
+                        </div>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2}>
-                    <Grid item xs={3}>
-                        <BarChart onDashboard={true} />
-                    </Grid>
-                    <Grid item xs={9}>
-                        <SwimLanesMultiplePipelines absoluteValues={true} />
-                    </Grid>
-                </Grid> 
 
-
-
+            </div>
 
 
         </div>;

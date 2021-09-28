@@ -87,7 +87,7 @@ class Dummy extends React.Component<Props, State> {
                             <SwimLanesMultiplePipelines absoluteValues={true} />
                         </div>
                     </Grid>
-                    
+
                 </Grid>
 
             </div>

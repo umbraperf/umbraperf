@@ -74,7 +74,7 @@ class DonutChart extends React.Component<Props, State> {
             }
 
             addEventListener('resize', (event) => {
-                this.resizeListener();
+                //this.resizeListener();
             });
         }
     }

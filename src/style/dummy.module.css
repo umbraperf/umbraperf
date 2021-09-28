@@ -21,3 +21,10 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+
+@media (max-width: 900px) {
+    .dummyGridCellChartContainer{
+        composes: dummyGridCellChartContainer;
+        min-width: 320px;
+    }    
+  }

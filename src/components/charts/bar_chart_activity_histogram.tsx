@@ -175,6 +175,57 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         }
                     },
 
+                    signals: [
+                        {
+                            name: "brush", 
+                            value: 0,
+                            on: [
+                                {
+                                    events: "@overview:mousedown",
+                                    update: "[x(), x()]"
+                                },
+                                {
+                                    events: "[@overview:mousedown, window:mouseup] > window:mousemove!",
+                                    update: "[brush[0], clamp(x(), 0, width)]"
+                                },
+                                {
+                                    events: { signal: "delta" },
+                                    update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+                                }
+                            ]
+                        },
+                        {
+                            name: "anchor", 
+                            value: null,
+                            on: [{ events: "@brush:mousedown", update: "slice(brush)" }]
+                        },
+                        {
+                            name: "xdown", 
+                            value: 0,
+                            on: [{ events: "@brush:mousedown", update: "x()" }]
+                        },
+                        {
+                            name: "delta", 
+                            value: 0,
+                            on: [
+                                {
+                                    events: "[@brush:mousedown, window:mouseup] > window:mousemove!",
+                                    update: "x() - xdown"
+                                }
+                            ]
+                        },
+                        {
+                            name: "detailDomain",
+                            push: "outer",
+                            on: [
+                                {
+                                    events: { "signal": "brush" },
+                                    update: "span(brush) ? invert('xscale', brush) : null"
+                                }
+                            ]
+                        }
+                    ],
+
                     scales: [
                         {
                             name: 'xscale',

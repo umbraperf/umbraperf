@@ -120,7 +120,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     handleDetailDomainSelection(...args: any[]){
-        console.log(args);
+        if(args[1]){
+            const selectedFrame = args[1];
+            const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
+            console.log(bucketsFromTo);
+        }
         //TODO values selected from args[1] in redux store, add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
     }
 

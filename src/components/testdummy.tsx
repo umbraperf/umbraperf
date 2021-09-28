@@ -43,7 +43,7 @@ class Dummy extends React.Component<Props, State> {
         return <div>
 
             <div >
-                <Grid container spacing={0} >
+                <Grid container spacing={0} className={styles.dummyGridOptionsContainer} >
                     <Grid item xs={12} lg={7} >
                         <div className={styles.dummyGridCell}>
                             <EventsButtons />
@@ -60,29 +60,29 @@ class Dummy extends React.Component<Props, State> {
                 </Grid>
 
                 <Grid container spacing={0}>
-                    <Grid item xs={12} lg={12}>
+                    <Grid item md={12} lg={12}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChartActivityHistogram />
                         </div>
                     </Grid>
 
-                    <Grid item xs={12} lg={3}>
+                    <Grid item sm={12} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <DonutChart />
                         </div>
                     </Grid>
-                    <Grid item xs={12} lg={9}>
+                    <Grid item sm={12} lg={9}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines />
                         </div>
                     </Grid>
 
-                    <Grid item xs={12} lg={3}>
+                    <Grid item sm={12} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChart onDashboard={true} />
                         </div>
                     </Grid>
-                    <Grid item xs={12} lg={9}>
+                    <Grid item sm={12} lg={9}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines absoluteValues={true} />
                         </div>

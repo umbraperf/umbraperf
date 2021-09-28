@@ -66,7 +66,7 @@ class Dummy extends React.Component<Props, State> {
                         </div>
                     </Grid>
 
-                    <Grid item sm={12} lg={3}>
+                    <Grid item xs={5} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <DonutChart />
                         </div>
@@ -77,7 +77,7 @@ class Dummy extends React.Component<Props, State> {
                         </div>
                     </Grid>
 
-                    <Grid item sm={12} lg={3}>
+                    <Grid item xs={5} lg={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChart onDashboard={true} />
                         </div>

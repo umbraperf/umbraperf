@@ -186,7 +186,8 @@ class BarChart extends React.Component<Props, State> {
                     encode: {
                         labels: {
                             update: {
-                                angle: { value: -70 },
+                                text: {signal: "truncate(datum.value, 9)"},
+                                angle: { value: -45 },
                                 align: { value: "right" }
                             }
                         }

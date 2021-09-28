@@ -155,6 +155,12 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 visData.data,
             ],
 
+            signals: [
+                {
+                    name: "detailDomain"
+                }
+            ],
+
             marks: [
                 {
                     type: "group",

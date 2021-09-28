@@ -80,7 +80,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             }
 
          });
-         console.log(this.state.chartData);
       }
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
@@ -154,9 +153,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
 
    createVisualizationData(chartId: number) {
-      console.log(this.state.chartData);
-      console.log(chartId);
-
 
       const data = {
          "name": "table",
@@ -172,7 +168,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    }
 
    createVisualizationSpec(chartId: number) {
-      console.log(this.state.chartData[chartId].buckets);
 
       const visData = this.createVisualizationData(chartId);
 

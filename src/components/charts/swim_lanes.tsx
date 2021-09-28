@@ -144,7 +144,6 @@ class SwimLanes extends React.Component<Props, State> {
    }
 
    createVisualizationData() {
-      console.log(this.state.chartData);
 
       const data = {
          "name": "table",

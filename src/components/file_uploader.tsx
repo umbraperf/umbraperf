@@ -36,7 +36,6 @@ class FileUploader extends React.Component<Props, State> {
     }
 
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
-        //console.log(dropEvent);
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             const file = acceptedFiles[0];
             this.props.setFileLoading(true);

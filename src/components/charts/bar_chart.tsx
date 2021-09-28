@@ -123,8 +123,6 @@ class BarChart extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        console.log(this.props.chartData);
-
         const operatorsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).operators;
         const valueArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).frequency;
 

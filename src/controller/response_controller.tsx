@@ -196,7 +196,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         type: model.StateMutationType.SET_RESULTLOADING,
         data: { key: requestId, value: false },
     });
-    console.log(store.getState().chartData[requestId].chartData);
 
 }
 

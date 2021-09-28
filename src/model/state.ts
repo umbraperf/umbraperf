@@ -24,6 +24,7 @@ export interface AppState {
     dashboardState: IDashboardState | undefined;
     currentInterpolation: String;
     currentBucketSize: number;
+    currentTimeBucketSelectionTuple: [number, number];
 }
 
 export function createDefaultState(): AppState {
@@ -47,5 +48,6 @@ export function createDefaultState(): AppState {
         dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,
+        currentTimeBucketSelectionTuple: [-1, -1],
     };
 }

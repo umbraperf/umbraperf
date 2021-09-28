@@ -3,7 +3,7 @@ import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Vega } from 'react-vega';
+import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
@@ -47,6 +47,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -105,10 +106,22 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
-                    <Vega spec={this.createVisualizationSpec()} />
+                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
         </div>;
+    }
+
+    createVegaSignalListeners() {
+        const signalListeners: SignalListeners = {
+            detailDomain: this.handleDetailDomainSelection,
+        }
+        return signalListeners;
+    }
+
+    handleDetailDomainSelection(...args: any[]){
+        console.log(args);
+        //TODO values selected from args[1] in redux store, add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
     }
 
     createVisualizationData() {

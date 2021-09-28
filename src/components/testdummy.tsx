@@ -69,9 +69,7 @@ class Dummy extends React.Component<Props, State> {
                             <BarChartActivityHistogram />
                         </div>
                     </Grid>
-                </Grid>
 
-                <Grid container spacing={0}>
                     <Grid item xs={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <DonutChart />
@@ -82,9 +80,7 @@ class Dummy extends React.Component<Props, State> {
                             <SwimLanesMultiplePipelines />
                         </div>
                     </Grid>
-                </Grid>
 
-                <Grid container spacing={0}>
                     <Grid item xs={3}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChart onDashboard={true} />
@@ -95,6 +91,7 @@ class Dummy extends React.Component<Props, State> {
                             <SwimLanesMultiplePipelines absoluteValues={true} />
                         </div>
                     </Grid>
+                    
                 </Grid>
 
             </div>

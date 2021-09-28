@@ -177,7 +177,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
                     signals: [
                         {
-                            name: "brush", 
+                            name: "brush",
                             value: 0,
                             on: [
                                 {
@@ -195,17 +195,17 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             ]
                         },
                         {
-                            name: "anchor", 
+                            name: "anchor",
                             value: null,
                             on: [{ events: "@brush:mousedown", update: "slice(brush)" }]
                         },
                         {
-                            name: "xdown", 
+                            name: "xdown",
                             value: 0,
                             on: [{ events: "@brush:mousedown", update: "x()" }]
                         },
                         {
-                            name: "delta", 
+                            name: "delta",
                             value: 0,
                             on: [
                                 {
@@ -219,7 +219,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: { "signal": "brush" },
+                                    events: { signal: "brush" },
                                     update: "span(brush) ? invert('xscale', brush) : null"
                                 }
                             ]
@@ -284,6 +284,52 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     fill: { value: this.props.appContext.primaryColor },
                                 },
                             },
+                        },
+                        {
+                            type: "rect",
+                            name: "brush",
+                            encode: {
+                                enter: {
+                                    y: { "value": 0 },
+                                    height: { "signal": "height" },
+                                    fill: { "value": "#333" },
+                                    fillOpacity: { "value": 0.3 }
+                                },
+                                update: {
+                                    x: { "signal": "brush[0]" },
+                                    x2: { "signal": "brush[1]" }
+                                }
+                            }
+                        },
+                        {
+                            type: "rect",
+                            interactive: false,
+                            encode: {
+                                enter: {
+                                    y: { value: 0 },
+                                    height: { signal: "height" },
+                                    width: { value: 2 },
+                                    fill: { value: "firebrick" }
+                                },
+                                update: {
+                                    x: { signal: "brush[0]" }
+                                }
+                            }
+                        },
+                        {
+                            type: "rect",
+                            interactive: false,
+                            encode: {
+                                enter: {
+                                    y: { value: 0 },
+                                    height: { signal: "height" },
+                                    width: { value: 2 },
+                                    fill: { value: "firebrick" }
+                                },
+                                update: {
+                                    x: { signal: "brush[1]" }
+                                }
+                            }
                         }
                     ],
 

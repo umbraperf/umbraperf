@@ -128,6 +128,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             setTimeout(() => {
                 this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
             }, 1000);
+            console.log(this.props.currentTimeBucketSelectionTuple)
         }
         //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
     }

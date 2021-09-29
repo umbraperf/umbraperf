@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}};
+use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, get_record_batches};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -128,7 +128,7 @@ pub fn abs_freq_of_pipelines(
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
 
-    let unique_operator = find_unique_string(batch, column_for_operator);
+    let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
 
     // Vector of unique strings
     let vec_operator = unique_operator

@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::exec::basic::analyze::{filter_with, find_unique_string};
+use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches};
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
 
-    let unique_batch = find_unique_string(&batch, column_to_groupby_over);
+    let unique_batch = find_unique_string(&get_record_batches().unwrap(), column_to_groupby_over);
 
     // Vector of unique strings
     let vec = unique_batch

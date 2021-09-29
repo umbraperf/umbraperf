@@ -1,4 +1,5 @@
-use arrow::{array::{ArrayRef, BooleanArray, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use log::Record;
 use std::{
     collections::{HashSet},
     sync::Arc,
@@ -26,6 +27,29 @@ pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch 
     let new_schema = Schema::new(fields);
 
     create_record_batch(Arc::new(new_schema), vec)
+}
+
+pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch: &RecordBatch) -> RecordBatch {
+    let filter_array = batch
+        .column(column_num)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap()
+        .iter()
+        .map(|value| Some(value.unwrap() >= filter_from && value.unwrap() <= filter_to))
+        .collect::<BooleanArray>();
+
+    let mut arrays: Vec<ArrayRef> = Vec::new();
+
+    for idx in 0..batch.num_columns() {
+        let array = batch.column(idx).as_ref();
+
+        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
+
+        arrays.push(filtered);
+    }
+
+    create_record_batch(batch.schema(), arrays)
 }
 
 

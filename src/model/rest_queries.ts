@@ -23,8 +23,8 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string }>
-    | RestQuery<RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string }>
     | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, time: string }>
     | RestQuery<RestQueryType.other, {}>
@@ -44,9 +44,10 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/relfreq/?ev_name="${query.data.event}"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
+            console.log(`bucket/operator/relfreq/?ev_name="${query.data.event}"/?time="${query.data.timeBucketFrame[0]}.0to${10000}.0"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`);
+            return `bucket/operator/relfreq/?ev_name="${query.data.event}"/?time="${query.data.timeBucketFrame[0]}.0to${10000}.0"/relfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
         case RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/absfreq/?ev_name="${query.data.event}"/absfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
+            return `bucket/operator/absfreq/?ev_name="${query.data.event}"/?time="${query.data.timeBucketFrame[0]}.0to${10000}.0"/absfreq?pipeline,time:${query.data.time}!${query.data.pipelines}`;
         case RestQueryType.GET_PIPELINE_COUNT:
             return `pipeline/count/?ev_name="${query.data.event}"/count?pipeline/sort?pipeline`;
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:

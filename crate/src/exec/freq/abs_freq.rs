@@ -177,7 +177,7 @@ pub fn abs_freq_of_pipelines(
                     let operator = operator.unwrap();
                     result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
                     result_vec_operator.push(operator);
-                    let frequenzy = bucket_map.get("sum").unwrap();
+                    let frequenzy = bucket_map.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);

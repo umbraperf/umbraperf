@@ -48,6 +48,6 @@ export function createDefaultState(): AppState {
         dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,
-        currentTimeBucketSelectionTuple: [-1, -1],
+        currentTimeBucketSelectionTuple: [0, Number.POSITIVE_INFINITY],
     };
 }

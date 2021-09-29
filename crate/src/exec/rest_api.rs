@@ -34,19 +34,36 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
     } else {
         let split = filter_vec[0].split_terminator("=").collect::<Vec<&str>>();
         let column_str = split[0].replace("?", "");
-        // "" needs to removed
         let filter_str = split[1].replace("\"", "");
-        // Can be multiple by comma separated
-        let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
-        filter_vec.remove(0);
-        return eval_filter(
-            analyze::filter_with(
-                find_name(column_str.as_str(), &record_batch),
-                filter_strs,
-                &record_batch,
-            ),
-            filter_vec,
-        );
+
+        if split.contains(&"to") {
+            let filter_strs = filter_str.split_terminator("to").collect::<Vec<&str>>();
+            let from = filter_strs[0].parse::<f64>().unwrap();
+            let to = filter_strs[1].parse::<f64>().unwrap();
+
+            return eval_filter(
+                analyze::filter_between(
+                    find_name(column_str.as_str(), &record_batch),
+                    from,
+                    to,
+                    &record_batch,
+                ),
+                filter_vec,
+            );
+        } else {
+            // "" needs to removed
+            // Can be multiple by comma separated
+            let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
+            filter_vec.remove(0);
+            return eval_filter(
+                analyze::filter_with(
+                    find_name(column_str.as_str(), &record_batch),
+                    filter_strs,
+                    &record_batch,
+                ),
+                filter_vec,
+            );
+        }
     }
 }
 
@@ -88,7 +105,6 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         bucket_size,
                     );
                 } else {
-
                     let split = params.split_terminator("!").collect::<Vec<&str>>();
                     let split_fields_bucket_size =
                         split[0].split_terminator(":").collect::<Vec<&str>>();
@@ -101,9 +117,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         find_name("operator", &record_batch),
                         find_name("time", &record_batch),
                         bucket_size,
-                        pipeline_vec
+                        pipeline_vec,
                     );
-
                 }
             }
             "relfreq" => {

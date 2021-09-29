@@ -21,6 +21,7 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | undefined,
+    currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -58,9 +59,15 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, chart or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent && this.props.currentPipeline && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter || this.props.currentPipeline?.length !== prevProps.currentPipeline?.length)) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline });
+        //if current event, chart, timeframe or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
+        if (this.props.currentEvent &&
+            this.props.currentPipeline &&
+            (this.props.currentEvent !== prevProps.currentEvent ||
+                this.props.chartIdCounter !== prevProps.chartIdCounter ||
+                this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
+                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
+
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline, timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
         }
 
     }
@@ -74,7 +81,7 @@ class BarChart extends React.Component<Props, State> {
 
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.BAR_CHART);
-            
+
             if (!this.props.currentPipeline) {
                 Controller.requestPipelines(this.props.appContext.controller);
             }
@@ -145,7 +152,7 @@ class BarChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width,
-            height: this.props.onDashboard ? this.state.width/1.5 : this.state.height,
+            height: this.props.onDashboard ? this.state.width / 1.5 : this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -184,7 +191,7 @@ class BarChart extends React.Component<Props, State> {
                     encode: {
                         labels: {
                             update: {
-                                text: {signal: "truncate(datum.value, 9)"},
+                                text: { signal: "truncate(datum.value, 9)" },
                                 angle: { value: -45 },
                                 align: { value: "right" }
                             }
@@ -256,6 +263,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

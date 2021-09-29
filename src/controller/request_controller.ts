@@ -74,7 +74,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline!.join() },
+                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline!.join(), timeBucketFrame: metadata!.timeBucketFrame! },
                 }), false, chartId);
             break;
 
@@ -126,7 +126,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_PIPELINE_COUNT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_PIPELINE_COUNT,
-                    data: { event: store.getState().currentEvent },
+                    data: { event: store.getState().currentEvent, timeBucketFrame: metadata!.timeBucketFrame! },
                 }), false, chartId);
             break;
 

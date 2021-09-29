@@ -22,6 +22,7 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | undefined;
     pipelines: Array<string> | undefined;
+    currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
@@ -52,9 +53,13 @@ class DonutChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
+        //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
+        if (this.props.currentEvent && 
+            (this.props.currentEvent !== prevProps.currentEvent || 
+                this.props.chartIdCounter !== prevProps.chartIdCounter ||
+                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
+
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART, {timeBucketFrame: this.props.currentTimeBucketSelectionTuple});
         }
 
     }
@@ -317,6 +322,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     pipelines: state.pipelines,
+    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

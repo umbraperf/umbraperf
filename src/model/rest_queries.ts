@@ -20,12 +20,12 @@ export enum RestQueryType {
 export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENTS, {}>
     | RestQuery<RestQueryType.GET_PIPELINES, {}>
-    | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: string }>
+    | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: string, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: string, pipelines: string, timeBucketFrame: [number, number] }>
-    | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string }>
+    | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, time: string }>
     | RestQuery<RestQueryType.other, {}>
     ;

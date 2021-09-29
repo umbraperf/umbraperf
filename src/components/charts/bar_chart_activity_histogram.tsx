@@ -108,7 +108,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
-                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
+                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
         </div>;
@@ -116,19 +116,20 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-            detailDomain: this.handleDetailDomainSelection,
+            detailDomainRelease: this.handleDetailDomainSelection,
         }
         return signalListeners;
     }
 
     handleDetailDomainSelection(...args: any[]) {
-        if (args[1]) {
+        console.log(args);
+        if (null === args[1]) {
+            this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
+        }
+        else if (args[1]) {
             const selectedFrame = args[1];
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
-            setTimeout(() => {
-                this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
-            }, 1000);
-            console.log(this.props.currentTimeBucketSelectionTuple)
+            this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
         }
         //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store. Controller has already field in params for request chart data!
     }
@@ -179,7 +180,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
             signals: [
                 {
-                    name: "detailDomain"
+                    name: "detailDomainRelease"
                 }
             ],
 
@@ -238,11 +239,20 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         },
                         {
                             name: "detailDomain",
-                            push: "outer",
                             on: [
                                 {
                                     events: { signal: "brush" },
                                     update: "span(brush) ? invert('xscale', brush) : null"
+                                }
+                            ]
+                        },
+                        {
+                            name: "detailDomainRelease",
+                            push: "outer",
+                            on: [
+                                {
+                                    events: [{type: "mouseup", marktype: "group"}, {type: "mouseup", marktype: "rect"}],
+                                    update: "detailDomain"
                                 }
                             ]
                         }

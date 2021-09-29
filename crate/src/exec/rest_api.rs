@@ -33,10 +33,19 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
         let column_str = split[0].replace("?", "");
         let filter_str = split[1].replace("\"", "");
 
-        if split.contains(&"to") {
+        if filter_str.contains(&"to") {
+
+            print_to_js_with_obj(&format!("{:?}", "2").into());
+
             let filter_strs = filter_str.split_terminator("to").collect::<Vec<&str>>();
             let from = filter_strs[0].parse::<f64>().unwrap();
             let to = filter_strs[1].parse::<f64>().unwrap();
+
+            print_to_js_with_obj(&format!("{:?}", "3").into());
+
+
+            filter_vec.remove(0);
+
 
             return eval_filter(
                 analyze::filter_between(

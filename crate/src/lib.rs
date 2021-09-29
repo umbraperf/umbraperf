@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::*;
 
 // Aux
 extern crate console_error_panic_hook;
+use std::collections::HashMap;
 use std::{cell::RefCell};
 
 // Arrow
@@ -40,18 +41,19 @@ mod utils {
 
 use utils::bindings;
 use utils::record_batch_util;
-use utils::print_to_cons;
 use crate::utils::bindings::notify_js_finished_reading;
 
 
 //STATE
 pub struct State {
     pub record_batches: Option<RecordBatch>,
+    pub queries: HashMap<String, RecordBatch>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
-        record_batches: None
+        record_batches: None,
+        queries: HashMap::new()
     });
 }
 
@@ -72,6 +74,14 @@ where
 
 fn get_record_batches() -> Option<RecordBatch> {
     with_state(|s| s.record_batches.clone())
+}
+
+fn get_query() -> HashMap<String, RecordBatch> {
+    with_state(|s| s.queries.clone())
+}
+
+fn insert_query(restful_string: &str, record_batch: RecordBatch) {
+    _with_state_mut(|s| s.queries.insert(restful_string.to_string(), record_batch));
 }
 
 fn set_record_batches(record_batches: RecordBatch) {

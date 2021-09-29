@@ -2,10 +2,7 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{
-    exec::freq::rel_freq, record_batch_util::send_record_batch_to_js,
-    utils::print_to_cons::print_to_js_with_obj,
-};
+use crate::{exec::freq::rel_freq, get_query, insert_query, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
 
 use super::{
     basic::{analyze, count},
@@ -211,6 +208,14 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
     return analyze::get_columns(record_batch, selections);
 }
 
+pub fn query_already_calculated(restful_string: &str) -> bool {
+    if let Some(x) = get_query().get(restful_string) {
+        send_record_batch_to_js(&x);
+        return true;
+    }
+    return false;
+}
+
 // FILTER:
 // /?operator=132
 // OPERATOR:
@@ -222,6 +227,11 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
 // /operator
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     print_to_js_with_obj(&format!("{:?}", restful_string).into());
+
+    if query_already_calculated(restful_string) {
+        return
+    }
+
     let split = restful_string.split_terminator("/");
 
     let mut filter_vec = Vec::new();
@@ -242,4 +252,5 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     let record_batch = eval_operations(record_batch, op_vec);
     let record_batch = eval_selections(record_batch, select_vec);
     send_record_batch_to_js(&record_batch);
+    insert_query(restful_string, record_batch);
 }

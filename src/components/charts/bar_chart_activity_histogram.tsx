@@ -21,8 +21,10 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
+    currentTimeBucketSelectionTuple: [number, number];
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
+    setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => void;
 
 }
 
@@ -106,7 +108,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
-                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
                 </div>
             }
         </div>;
@@ -123,9 +125,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         if (args[1]) {
             const selectedFrame = args[1];
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
-            console.log(bucketsFromTo);
+            setTimeout(() => {
+                this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
+            }, 1000);
         }
-        //TODO values selected from args[1] in redux store, add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
+        //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
     }
 
     createVisualizationData() {
@@ -310,11 +314,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     y: { "value": 0 },
                                     height: { "signal": "height" },
                                     fill: { "value": "#333" },
-                                    fillOpacity: { "value": 0.3 }
+                                    fillOpacity: { "value": 0.3 },
                                 },
                                 update: {
                                     x: { "signal": "brush[0]" },
-                                    x2: { "signal": "brush[1]" }
+                                    x2: { "signal": "brush[1]" },
                                 }
                             }
                         },
@@ -378,6 +382,7 @@ const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
+    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -389,6 +394,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
     }),
+    setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => dispatch({
+        type: model.StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE,
+        data: newCurrentTimeBucketSelectionTuple,
+    })
 });
 
 

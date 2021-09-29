@@ -3,12 +3,11 @@ import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { SignalListeners, Vega } from 'react-vega';
+import { Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import PipelinesSelector from '../utils/pipelines_selector';
 
 
 interface Props {

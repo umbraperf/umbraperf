@@ -124,7 +124,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     handleDetailDomainSelection(...args: any[]) {
         console.log(args);
         if (null === args[1]) {
-            this.props.setCurrentTimeBucketSelectionTuple([0, Number.POSITIVE_INFINITY]);
+            this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
         }
         else if (args[1]) {
             const selectedFrame = args[1];

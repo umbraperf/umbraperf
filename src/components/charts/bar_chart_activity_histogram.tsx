@@ -130,7 +130,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             }, 1000);
             console.log(this.props.currentTimeBucketSelectionTuple)
         }
-        //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store
+        //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store. Controller has already field in params for request chart data!
     }
 
     createVisualizationData() {

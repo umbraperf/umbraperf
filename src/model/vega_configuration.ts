@@ -9,6 +9,7 @@ export interface ChartConfiguration{
     activityHistogramXTitle: string;
     activityHistogramXLabelFontSize: number;
     axisLabelFontSize: number;
+    areaChartYLabelSeparation: number;
 
 }
 
@@ -26,7 +27,6 @@ export let chartConfiguration: ChartConfiguration = {
     activityHistogramXTitle: 'Execution Time',
     activityHistogramXLabelFontSize: 8,
     axisLabelFontSize: 9,
-
-
+    areaChartYLabelSeparation: 2,
 
 }

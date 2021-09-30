@@ -116,8 +116,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-            detailDomainRelease: this.handleDetailDomainSelection,
-        }
+/*             detailDomainRelease: this.handleDetailDomainSelection,
+ */        }
         return signalListeners;
     }
 
@@ -178,11 +178,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 visData.data,
             ],
 
-            signals: [
+/*             signals: [
                 {
                     name: "detailDomainRelease"
                 }
-            ],
+            ], */
 
             marks: [
                 {
@@ -198,7 +198,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         }
                     },
 
-                    signals: [
+/*                     signals: [
                         {
                             name: "brush",
                             value: 0,
@@ -256,7 +256,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             ]
                         }
-                    ],
+                    ], */
 
                     scales: [
                         {
@@ -317,7 +317,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 },
                             },
                         },
-                        {
+                        /* {
                             type: "rect",
                             name: "brush",
                             encode: {
@@ -370,7 +370,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     ]
                                 }
                             }
-                        }
+                        } */
                     ],
 
                 }

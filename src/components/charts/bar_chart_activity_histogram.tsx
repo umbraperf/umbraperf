@@ -278,7 +278,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
-                            title: "Execution Time",
+                            title: model.chartConfiguration.activityHistogramXTitle,
                             titlePadding: model.chartConfiguration.axisPadding,
                             encode: {
                                 labels: {
@@ -289,7 +289,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             },
                             values: xTicks(),
-                            labelFontSize: 8
+                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize
                         },
                     ],
 

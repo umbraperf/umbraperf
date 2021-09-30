@@ -3,7 +3,9 @@ import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Button } from '@material-ui/core';
+import { Button, InputLabel } from '@material-ui/core';
+import styles from '../../style/utils.module.css';
+
 
 interface Props {
     events: Array<string> | undefined;
@@ -19,7 +21,7 @@ function EventsButtons(props: Props) {
         Controller.requestEvents(context!.controller);
     }
     useEffect(() => {
-        if(events && props.currentEvent===""){
+        if (events && props.currentEvent === "") {
             props.setCurrentEvent(events[0]);
         }
     });
@@ -34,6 +36,7 @@ function EventsButtons(props: Props) {
 
     return (
         <div className={"eventButtonsArea"}>
+            <InputLabel className={styles.eventsButtonsLabel} id="interpolation-selector-label">Events:</InputLabel>
             {events && events!.map((event: string, index: number) => (
                 <Button
                     className={"eventButton"}

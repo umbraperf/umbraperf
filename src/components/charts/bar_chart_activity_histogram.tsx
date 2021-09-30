@@ -116,8 +116,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-/*             detailDomainRelease: this.handleDetailDomainSelection,
- */        }
+            detailDomainRelease: this.handleDetailDomainSelection,
+        }
         return signalListeners;
     }
 
@@ -131,7 +131,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
             this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
         }
-        //TODO values selected from args[1]: add to swim lanes queries, rerender swimlanes (and bar charts?) on change in store. Controller has already field in params for request chart data!
     }
 
     createVisualizationData() {
@@ -161,6 +160,9 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             }
         }
 
+        const selection0 = this.props.currentTimeBucketSelectionTuple[0];
+        const selection1 = this.props.currentTimeBucketSelectionTuple[1];
+
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width - 50,
@@ -178,11 +180,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 visData.data,
             ],
 
-/*             signals: [
+            signals: [
                 {
                     name: "detailDomainRelease"
                 }
-            ], */
+            ],
 
             marks: [
                 {
@@ -198,10 +200,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         }
                     },
 
-/*                     signals: [
+                    signals: [
                         {
                             name: "brush",
-                            value: 0,
+                            init: "[calcXScale0,calcXScale1]",
                             on: [
                                 {
                                     events: "@overview:mousedown",
@@ -255,8 +257,16 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     update: "detailDomain"
                                 }
                             ]
-                        }
-                    ], */
+                        },
+                        {
+                            name: "calcXScale0",
+                            init: "scale('xscale'," + selection0 + ")"
+                        },
+                        {
+                            name: "calcXScale1",
+                            init: "scale('xscale'," + selection1 + ")"
+                        },
+                    ],
 
                     scales: [
                         {
@@ -317,7 +327,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 },
                             },
                         },
-                        /* {
+                        {
                             type: "rect",
                             name: "brush",
                             encode: {
@@ -347,6 +357,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     x: { signal: "brush[0]" },
                                     fillOpacity: [
                                         { test: "detailDomain", value: 1 },
+                                        { test: "brush[0]", value: 1 },
                                         { value: 0 }
                                     ]
                                 }
@@ -366,11 +377,12 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     x: { signal: "brush[1]" },
                                     fillOpacity: [
                                         { test: "detailDomain", value: 1 },
+                                        { test: "brush[1]", value: 1 },
                                         { value: 0 }
                                     ]
                                 }
                             }
-                        } */
+                        }
                     ],
 
                 }

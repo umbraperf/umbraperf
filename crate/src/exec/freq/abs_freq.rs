@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, get_record_batches};
+use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -82,8 +82,9 @@ pub fn abs_freq_of_event(
 
     bucket_map.insert("sum", 0.0);
 
-    for time in time_column {
+    for (i, time) in time_column.into_iter().enumerate() {
         let current_event = event_column.value(column_index as usize);
+        
         while time_bucket < time.unwrap() {
             for event in vec_event {
                     let event = event.unwrap();
@@ -100,23 +101,38 @@ pub fn abs_freq_of_event(
             time_bucket += bucket_size;
         }
 
-        //if pipelines.contains(&current_pipeline) || pipelines.len() == 0 {
         bucket_map.insert(
             current_event,
             bucket_map.get(current_event).unwrap() + 1.0,
         );
-        //}
+
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+
+        if i == time_column.len() - 1 {
+
+            for event in vec_event {
+                let event = event.unwrap();
+                result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                result_vec_event.push(event);
+                let frequenzy = bucket_map.get("sum").unwrap();
+                result_builder.push(frequenzy.to_owned());
+        }
+        }
+
         column_index += 1;
     }
 
-    create_abs_freq_bucket(
+    let batch = create_abs_freq_bucket(
         &batch,
         column_for_event,
         result_bucket,
         result_vec_event,
         result_builder,
-    )
+    );
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
+
+    batch
 }
 
 pub fn abs_freq_of_pipelines(
@@ -168,7 +184,7 @@ pub fn abs_freq_of_pipelines(
 
     bucket_map.insert("sum", 0.0);
 
-    for time in time_column {
+    for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
         while time_bucket < time.unwrap() {
@@ -199,6 +215,18 @@ pub fn abs_freq_of_pipelines(
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
 
         }
+
+        if i == time_column.len() - 1 {
+
+            for operator in vec_operator {
+                    let operator = operator.unwrap();
+                    result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                    result_vec_operator.push(operator);
+                    let frequenzy = bucket_map.get(operator).unwrap();
+                    result_builder.push(frequenzy.to_owned());
+            }
+        }
+
         column_index += 1;
     }
 

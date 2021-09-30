@@ -125,7 +125,7 @@ pub fn rel_freq_with_pipelines(
 
     bucket_map.insert("sum", 0.0);
 
-    for time in time_column {
+    for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
         while time_bucket < time.unwrap() {
@@ -157,6 +157,20 @@ pub fn rel_freq_with_pipelines(
             );
         }
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+
+        if i == time_column.len() - 1 {
+
+            for operator in vec_operator {
+                let operator = operator.unwrap();
+                result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                result_vec_operator.push(operator);
+                let frequenzy =
+                    bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                result_builder.push(frequenzy_rounded);
+            }
+        }
+
         column_index += 1;
     }
 

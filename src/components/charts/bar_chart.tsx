@@ -188,6 +188,7 @@ class BarChart extends React.Component<Props, State> {
                     labelOverlap: false,
                     title: "Operators",
                     titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     encode: {
                         labels: {
                             update: {
@@ -204,6 +205,7 @@ class BarChart extends React.Component<Props, State> {
                     scale: 'yscale',
                     title: "Absolute Frequency",
                     labelOverlap: false,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
                 },
             ],
 

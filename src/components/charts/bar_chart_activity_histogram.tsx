@@ -116,8 +116,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-            detailDomainRelease: this.handleDetailDomainSelection,
-        }
+/*             detailDomainRelease: this.handleDetailDomainSelection,
+ */        }
         return signalListeners;
     }
 
@@ -178,11 +178,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 visData.data,
             ],
 
-            signals: [
+/*             signals: [
                 {
                     name: "detailDomainRelease"
                 }
-            ],
+            ], */
 
             marks: [
                 {
@@ -191,14 +191,14 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     name: "overview",
 
                     encode: {
-                        "enter": {
-                            "height": { "signal": "height" },
-                            "width": { "signal": "width" },
-                            "fill": { "value": "transparent" }
+                        enter: {
+                            height: { signal: "height" },
+                            width: { signal: "width" },
+                            fill: { value: "transparent" }
                         }
                     },
 
-                    signals: [
+/*                     signals: [
                         {
                             name: "brush",
                             value: 0,
@@ -251,12 +251,12 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: [{type: "mouseup", marktype: "group"}, {type: "mouseup", marktype: "rect"}],
+                                    events: [{ type: "mouseup", marktype: "group" }, { type: "mouseup", marktype: "rect" }],
                                     update: "detailDomain"
                                 }
                             ]
                         }
-                    ],
+                    ], */
 
                     scales: [
                         {
@@ -278,7 +278,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
-                            title: "Execution Time",
+                            title: model.chartConfiguration.activityHistogramXTitle,
                             titlePadding: model.chartConfiguration.axisPadding,
                             encode: {
                                 labels: {
@@ -289,7 +289,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             },
                             values: xTicks(),
-                            labelFontSize: 8
+                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize
                         },
                     ],
 
@@ -317,7 +317,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 },
                             },
                         },
-                        {
+                        /* {
                             type: "rect",
                             name: "brush",
                             encode: {
@@ -370,7 +370,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     ]
                                 }
                             }
-                        }
+                        } */
                     ],
 
                 }

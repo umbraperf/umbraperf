@@ -191,10 +191,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     name: "overview",
 
                     encode: {
-                        "enter": {
-                            "height": { "signal": "height" },
-                            "width": { "signal": "width" },
-                            "fill": { "value": "transparent" }
+                        enter: {
+                            height: { signal: "height" },
+                            width: { signal: "width" },
+                            fill: { value: "transparent" }
                         }
                     },
 
@@ -251,7 +251,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: [{type: "mouseup", marktype: "group"}, {type: "mouseup", marktype: "rect"}],
+                                    events: [{ type: "mouseup", marktype: "group" }, { type: "mouseup", marktype: "rect" }],
                                     update: "detailDomain"
                                 }
                             ]

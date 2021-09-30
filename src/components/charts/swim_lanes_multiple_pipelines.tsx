@@ -279,7 +279,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     zindex: 1,
                     title: this.props.absoluteValues ? model.chartConfiguration.areaChartYTitleAbsolute : model.chartConfiguration.areaChartYTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
-                    labelFontSize: model.chartConfiguration.axisLabelFontSize
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
+                    labelOverlap: true,
                 }
             ],
             marks: [

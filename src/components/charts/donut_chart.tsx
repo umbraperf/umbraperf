@@ -290,7 +290,7 @@ class DonutChart extends React.Component<Props, State> {
                             "fillOpacity": [
                                 { "test": "radius < 30", "value": 0 },
                                 { "value": 1 }
-                            ]
+                            ],
                         }
                     }
                 }

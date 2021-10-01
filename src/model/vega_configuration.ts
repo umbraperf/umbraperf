@@ -10,6 +10,7 @@ export interface ChartConfiguration{
     activityHistogramXLabelFontSize: number;
     axisLabelFontSize: number;
     areaChartYLabelSeparation: number;
+    barChartYLabelSeparation: number;
 
 }
 
@@ -28,5 +29,9 @@ export let chartConfiguration: ChartConfiguration = {
     activityHistogramXLabelFontSize: 8,
     axisLabelFontSize: 9,
     areaChartYLabelSeparation: 2,
+    barChartYLabelSeparation: 1,
+
+    //Value Lables
+    //TODO: donutChartLabelFontSize: 8,
 
 }

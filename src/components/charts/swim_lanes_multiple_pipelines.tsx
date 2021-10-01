@@ -223,7 +223,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 60,
-            height: this.state.width / 6,
+            height: this.state.width / 7,
             padding: { left: 10, right: 10, top: 20, bottom: 20 },
             resize: true,
             autosize: 'fit',

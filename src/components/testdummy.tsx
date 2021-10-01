@@ -45,13 +45,13 @@ class Dummy extends React.Component<Props, State> {
             <div >
                 <Grid container spacing={0} className={styles.dummyGridOptionsContainer} >
                     <Grid item xs={12} lg={7} >
-                        <div className={styles.dummyGridCell}>
+                        <div className={styles.dummyGridCellOptionsContainer}>
                             <EventsButtons />
                         </div>
 
                     </Grid>
                     <Grid item xs={12} lg={5} >
-                        <div className={styles.dummyGridCell} >
+                        <div className={styles.dummyGridCellOptionsContainer} >
                             <InterpolationDropdown />
                             <BucketsizeDropdwn />
                         </div>
@@ -60,29 +60,29 @@ class Dummy extends React.Component<Props, State> {
                 </Grid>
 
                 <Grid container spacing={0}>
-                    <Grid item md={12} lg={12}>
+                    <Grid item md={12} lg={12} className={styles.dummyGridCell}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChartActivityHistogram />
                         </div>
                     </Grid>
 
-                    <Grid item xs={5} lg={3}>
+                    <Grid item xs={5} lg={3} className={styles.dummyGridCell}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <DonutChart />
                         </div>
                     </Grid>
-                    <Grid item sm={12} lg={9}>
+                    <Grid item sm={12} lg={9} className={styles.dummyGridCell}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines />
                         </div>
                     </Grid>
 
-                    <Grid item xs={5} lg={3}>
+                    <Grid item xs={5} lg={3} className={styles.dummyGridCell}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <BarChart onDashboard={true} />
                         </div>
                     </Grid>
-                    <Grid item sm={12} lg={9}>
+                    <Grid item sm={12} lg={9} className={styles.dummyGridCell}>
                         <div className={styles.dummyGridCellChartContainer}>
                             <SwimLanesMultiplePipelines absoluteValues={true} />
                         </div>

@@ -64,43 +64,55 @@ class Dummy extends React.Component<Props, State> {
 
 
                 <Grid container>
-                    <Grid item md={12} lg={12}>
-                        <Box className={styles.dummyGridCellBox}>
-                            <div className={styles.dummyGridCellChartContainer}>
-                                <BarChartActivityHistogram />
-                            </div>
-                        </Box>
-                    </Grid>
+                    <Box clone order={{ sm: 1, lg: 1 }}>
+                        <Grid item md={12} lg={12} >
+                            <Box className={styles.dummyGridCellBox}>
+                                <div className={styles.dummyGridCellChartContainer}>
+                                    <BarChartActivityHistogram />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
 
-                    <Grid item xs={5} lg={3} >
-                        <Box className={styles.dummyGridCellBox}>
-                            <div className={styles.dummyGridCellChartContainer}>
-                                <DonutChart />
-                            </div>
-                        </Box>
-                    </Grid>
-                    <Grid item sm={12} lg={9}>
-                        <Box className={styles.dummyGridCellBox}>
-                            <div className={styles.dummyGridCellChartContainer}>
-                                <SwimLanesMultiplePipelines />
-                            </div>
-                        </Box>
-                    </Grid>
 
-                    <Grid item xs={5} lg={3} >
-                        <Box className={styles.dummyGridCellBox}>
-                            <div className={styles.dummyGridCellChartContainer}>
-                                <BarChart onDashboard={true} />
-                            </div>
-                        </Box>
-                    </Grid>
-                    <Grid item sm={12} lg={9} >
-                        <Box className={styles.dummyGridCellBox}>
-                            <div className={styles.dummyGridCellChartContainer}>
-                                <SwimLanesMultiplePipelines absoluteValues={true} />
-                            </div>
-                        </Box>
-                    </Grid>
+                    <Box clone order={{ sm: 2, lg: 2 }}>
+                        <Grid item xs={6} lg={3} >
+                            <Box className={styles.dummyGridCellBox}>
+                                <div className={styles.dummyGridCellChartContainer}>
+                                    <DonutChart />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
+                    <Box clone order={{ sm: 4, lg: 3 }}>
+                        <Grid item sm={12} lg={9}>
+                            <Box className={styles.dummyGridCellBox}>
+                                <div className={styles.dummyGridCellChartContainer}>
+                                    <SwimLanesMultiplePipelines />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
+
+
+                    <Box clone order={{ sm: 3, lg: 4 }}>
+                        <Grid item xs={6} lg={3} >
+                            <Box className={styles.dummyGridCellBox}>
+                                <div className={styles.dummyGridCellChartContainer}>
+                                    <BarChart onDashboard={true} />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
+                    <Box clone order={{ sm: 5, lg: 5 }}>
+                        <Grid item sm={12} lg={9} >
+                            <Box className={styles.dummyGridCellBox}>
+                                <div className={styles.dummyGridCellChartContainer}>
+                                    <SwimLanesMultiplePipelines absoluteValues={true} />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
 
                 </Grid>
 

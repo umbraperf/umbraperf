@@ -10,7 +10,8 @@ import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';
 import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
-import { Grid } from '@material-ui/core';
+import { Grid, Box } from '@material-ui/core';
+
 
 
 
@@ -43,49 +44,62 @@ class Dummy extends React.Component<Props, State> {
         return <div>
 
             <div >
-                <Grid container spacing={0} className={styles.dummyGridOptionsContainer} >
-                    <Grid item xs={12} lg={7} >
-                        <div className={styles.dummyGridCellOptionsContainer}>
-                            <EventsButtons />
-                        </div>
+                <Box className={styles.dummyGridCellBox}>
+                    <Grid container className={styles.dummyGridOptionsContainer} >
+                        <Grid item xs={12} lg={7} >
+                            <div className={styles.dummyGridCellOptionsContainer}>
+                                <EventsButtons />
+                            </div>
 
-                    </Grid>
-                    <Grid item xs={12} lg={5} >
-                        <div className={styles.dummyGridCellOptionsContainer} >
-                            <InterpolationDropdown />
-                            <BucketsizeDropdwn />
-                        </div>
+                        </Grid>
+                        <Grid item xs={12} lg={5} >
+                            <div className={styles.dummyGridCellOptionsContainer} >
+                                <InterpolationDropdown />
+                                <BucketsizeDropdwn />
+                            </div>
 
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Box>
 
-                <Grid container spacing={0}>
-                    <Grid item md={12} lg={12} className={styles.dummyGridCell}>
-                        <div className={styles.dummyGridCellChartContainer}>
-                            <BarChartActivityHistogram />
-                        </div>
-                    </Grid>
 
-                    <Grid item xs={5} lg={3} className={styles.dummyGridCell}>
-                        <div className={styles.dummyGridCellChartContainer}>
-                            <DonutChart />
-                        </div>
-                    </Grid>
-                    <Grid item sm={12} lg={9} className={styles.dummyGridCell}>
-                        <div className={styles.dummyGridCellChartContainer}>
-                            <SwimLanesMultiplePipelines />
-                        </div>
+                <Grid container>
+                    <Grid item md={12} lg={12}>
+                        <Box className={styles.dummyGridCellBox}>
+                            <div className={styles.dummyGridCellChartContainer}>
+                                <BarChartActivityHistogram />
+                            </div>
+                        </Box>
                     </Grid>
 
-                    <Grid item xs={5} lg={3} className={styles.dummyGridCell}>
-                        <div className={styles.dummyGridCellChartContainer}>
-                            <BarChart onDashboard={true} />
-                        </div>
+                    <Grid item xs={5} lg={3} >
+                        <Box className={styles.dummyGridCellBox}>
+                            <div className={styles.dummyGridCellChartContainer}>
+                                <DonutChart />
+                            </div>
+                        </Box>
                     </Grid>
-                    <Grid item sm={12} lg={9} className={styles.dummyGridCell}>
-                        <div className={styles.dummyGridCellChartContainer}>
-                            <SwimLanesMultiplePipelines absoluteValues={true} />
-                        </div>
+                    <Grid item sm={12} lg={9}>
+                        <Box className={styles.dummyGridCellBox}>
+                            <div className={styles.dummyGridCellChartContainer}>
+                                <SwimLanesMultiplePipelines />
+                            </div>
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={5} lg={3} >
+                        <Box className={styles.dummyGridCellBox}>
+                            <div className={styles.dummyGridCellChartContainer}>
+                                <BarChart onDashboard={true} />
+                            </div>
+                        </Box>
+                    </Grid>
+                    <Grid item sm={12} lg={9} >
+                        <Box className={styles.dummyGridCellBox}>
+                            <div className={styles.dummyGridCellChartContainer}>
+                                <SwimLanesMultiplePipelines absoluteValues={true} />
+                            </div>
+                        </Box>
                     </Grid>
 
                 </Grid>

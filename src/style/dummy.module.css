@@ -1,3 +1,8 @@
+:root {
+    --gridCellBoxMargin: 5px;
+    --gridCellBoxPaddingTop: 2px;
+}
+
 .dummyGridOptionsContainer{
     margin-top: 10px;
     margin-bottom: 10px;
@@ -8,12 +13,12 @@
     border-color: lightgray;
     border-width: 1px;
     border-radius: 10px;
-    margin: 5px; 
-    padding-top: 2px;   
+    margin: var(--gridCellBoxMargin); 
+    padding-top: var(--gridCellBoxPaddingTop);
+    height: calc(100% - var(--gridCellBoxMargin) - var(--gridCellBoxMargin) - var(--gridCellBoxPaddingTop));   
 }
 
 .dummyGridCellOptionsContainer{
-    height: 100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -22,6 +27,7 @@
 }
 
 .dummyGridCellChartContainer{
+    height: 100%;
     display: block;
     text-align: center;
     margin-left: 20px;

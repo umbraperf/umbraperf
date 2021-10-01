@@ -8,7 +8,8 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { values } from 'lodash';
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
+import IconButton from "@material-ui/core/IconButton";
 
 interface Props {
     appContext: Context.IAppContext;
@@ -50,6 +51,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
+        this.resetCurrentSelectionTuple = this.resetCurrentSelectionTuple.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -91,6 +93,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 width: newWidth,
             }));
 
+            this.resetCurrentSelectionTuple();
+
             child.style.display = 'block';
         }
 
@@ -108,10 +112,15 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
+                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 10, marginTop: -10, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
         </div>;
+    }
+
+    resetCurrentSelectionTuple(){
+        this.props.setCurrentTimeBucketSelectionTuple([-1,-1]);
     }
 
     createVegaSignalListeners() {
@@ -124,7 +133,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     handleDetailDomainSelection(...args: any[]) {
         console.log(args);
         if (null === args[1]) {
-            this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
+            this.resetCurrentSelectionTuple();
         }
         else if (args[1]) {
             const selectedFrame = args[1];

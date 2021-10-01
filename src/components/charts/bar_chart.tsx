@@ -152,7 +152,7 @@ class BarChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width - 40,
-            height: this.props.onDashboard ? this.state.width / 1.5 : this.state.height,
+            height: this.props.onDashboard ? this.state.width / 1.7 : this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -204,8 +204,9 @@ class BarChart extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     scale: 'yscale',
                     title: "Absolute Frequency",
-                    labelOverlap: false,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelSeparation: model.chartConfiguration.barChartYLabelSeparation,
+                    labelOverlap: true
                 },
             ],
 

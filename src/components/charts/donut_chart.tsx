@@ -184,7 +184,7 @@ class DonutChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width,
+            width: this.state.width -40,
             height: this.state.width / 2,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: false,

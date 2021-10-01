@@ -3,12 +3,13 @@
     margin-bottom: 10px;
 }
 
-.dummyGridCell{
+.dummyGridCellBox{
     border: solid;
     border-color: lightgray;
     border-width: 1px;
     border-radius: 10px;
-    margin: 5px;
+    margin: 5px; 
+    padding-top: 2px;   
 }
 
 .dummyGridCellOptionsContainer{

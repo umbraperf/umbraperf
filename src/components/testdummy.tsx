@@ -60,7 +60,7 @@ class Dummy extends React.Component<Props, {}> {
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={styles.dummyGridCellItem}  xs={12} >
+                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemWidthSmallScreen}`}  xs={12} >
                             <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxStaticWidthSmallScreen}`}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <BarChartActivityHistogram />

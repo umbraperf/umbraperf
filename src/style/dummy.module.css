@@ -2,6 +2,8 @@
     --gridCellBoxMargin: 10px;
     --gridCellBoxPaddingTop: 5px;
     --gridCellBoxPaddingBottom: 5px;
+    --gridCellOptionsBoxMargin: 1px;
+    --gridCellOptionsBoxPadding: 5px;
 }
 
 .dummyGrid{
@@ -16,8 +18,7 @@
 }
 
 .dummyGridOptionsContainer{
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 2px;
 }
 
 .dummyGridCellBox{
@@ -35,10 +36,16 @@
 .dummyGridCellOptionsBox{
     composes:dummyGridCellBox;
     width: auto;
-    height: calc(100% - var(--gridCellBoxMargin) - var(--gridCellBoxMargin) - var(--gridCellBoxPaddingTop) - var(--gridCellBoxPaddingBottom));
     display: flex;
     align-items: center;
     justify-content: center;
+    transform: scale(0.8);
+    padding-top: var(--gridCellOptionsBoxPadding);
+    padding-bottom: var(--gridCellOptionsBoxPadding);
+    margin-top: var(--gridCellOptionsBoxMargin);
+    margin-bottom: var(--gridCellOptionsBoxMargin);
+    height: calc(100% - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxPadding) - var(--gridCellOptionsBoxPadding));
+
 }
 
 .dummyGridCellOptionsContainer{

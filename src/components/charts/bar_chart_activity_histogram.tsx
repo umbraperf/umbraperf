@@ -183,6 +183,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
             },
 
             data: [
@@ -299,6 +300,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             labelOverlap: false,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titlePadding: model.chartConfiguration.axisPadding,
+                            titleFontSize: model.chartConfiguration.axisTitleFontSize,
                             encode: {
                                 labels: {
                                     update: {

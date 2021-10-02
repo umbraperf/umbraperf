@@ -70,7 +70,8 @@
     margin-right: 20px;
 }
 
-@media (max-width: 960px) {
+@media not all and (min-width: 960px) {
+    /* media query: inverted with min instead of max 960 to simulate > instead of >= */
     .dummyGridCellBox{
         composes: dummyGridCellBox;
         max-width: 450px; 

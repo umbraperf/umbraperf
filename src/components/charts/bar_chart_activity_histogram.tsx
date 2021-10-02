@@ -80,9 +80,9 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     resizeListener() {
-        if (!this.chartWrapper) return;
+        if (!this.elementWrapper) return;
 
-        const child = this.chartWrapper.current;
+        const child = this.elementWrapper.current;
         if (child) {
             const newWidth = child.offsetWidth;
 
@@ -177,7 +177,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             width: this.state.width - 50,
             height: 90,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
+            resize: false,
             autosize: 'fit',
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",

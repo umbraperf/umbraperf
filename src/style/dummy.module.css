@@ -70,14 +70,26 @@
     margin-right: 20px;
 }
 
-@media (max-width: 900px) {
+/*  @media (min-width: 600px) and (max-width: 1000px) {
     .dummyGridCellChartContainer{
         composes: dummyGridCellChartContainer;
-        min-width: 320px;
+        background-color: aquamarine;
     }
+} */
+
+@media (max-width: 960px) {
+
     .dummyGridCellBox{
+        composes: dummyGridCellBox;
+        max-width: 450px; 
+        margin-right: 1px;
+        margin-left: 1px;
+        background-color: brown;
+
+    }
+/*     .dummyGridCellBox{
         composes: dummyGridCellBox;
         min-width: 320px + var(--gridCellBoxMarginTopBottom) + var(--gridCellBoxMarginTopBottom);
         background-color: firebrick;
-    }    
-  }
+    }    */ 
+  } 

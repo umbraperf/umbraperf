@@ -45,14 +45,14 @@ class Dummy extends React.Component<Props, State> {
 
             <div >
                 <Grid container className={styles.dummyGridOptionsContainer} >
-                    <Grid item xs={12} lg={7} >
+                    <Grid item xs={12} lg={7} className={styles.dummyGridCellItem} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer}>
                                 <EventsButtons />
                             </div>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} lg={5} >
+                    <Grid item xs={12} lg={5} className={styles.dummyGridCellItem} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer} >
                                 <InterpolationDropdown />
@@ -63,9 +63,9 @@ class Dummy extends React.Component<Props, State> {
                 </Grid>
 
 
-                <Grid container> 
+                <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={12} lg={12} >
+                        <Grid item className={styles.dummyGridCellItem} md={12} >
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <BarChartActivityHistogram />
@@ -76,7 +76,7 @@ class Dummy extends React.Component<Props, State> {
 
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={6} lg={4} >
+                        <Grid item className={styles.dummyGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <DonutChart />
@@ -85,7 +85,7 @@ class Dummy extends React.Component<Props, State> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={12} lg={8}>
+                        <Grid item className={styles.dummyGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines />
@@ -96,7 +96,7 @@ class Dummy extends React.Component<Props, State> {
 
 
                     <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={6} lg={4} >
+                        <Grid item className={styles.dummyGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <BarChart onDashboard={true} />
@@ -105,7 +105,7 @@ class Dummy extends React.Component<Props, State> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={12} lg={8} >
+                        <Grid item className={styles.dummyGridCellItem} xs={12} md={12} lg={8} >
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines absoluteValues={true} />

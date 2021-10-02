@@ -283,7 +283,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
-                    labelOverlap: false,
+                    labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                 }
             ],

@@ -112,15 +112,15 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
-                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 10, marginTop: -10, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
+                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
         </div>;
     }
 
-    resetCurrentSelectionTuple(){
-        this.props.setCurrentTimeBucketSelectionTuple([-1,-1]);
+    resetCurrentSelectionTuple() {
+        this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
     }
 
     createVegaSignalListeners() {

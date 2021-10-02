@@ -186,7 +186,7 @@ class BarChart extends React.Component<Props, State> {
                 {
                     orient: 'bottom',
                     scale: 'xscale',
-                    labelOverlap: false,
+                    labelOverlap: true,
                     title: "Operators",
                     titleY: -5,
                     titleX: {signal: 'width', mult: 1.02},

@@ -60,6 +60,17 @@
     margin-bottom: -5px;
 }
 
+.eventButtonsContainer{
+    display: flex;
+    flex-direction: column;
+}
+.eventButtonsArea{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .eventsButtonsLabel{
     text-align: center;
     margin-top: 10px;

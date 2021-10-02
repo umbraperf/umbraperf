@@ -63,7 +63,7 @@ class Dummy extends React.Component<Props, State> {
                 </Grid>
 
 
-                <Grid container>
+                <Grid container> 
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
                         <Grid item className={styles.dummyGridCellItem} md={12} lg={12} >
                             <Box className={styles.dummyGridCellBox}>

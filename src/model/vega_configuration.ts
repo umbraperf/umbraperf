@@ -19,12 +19,12 @@ export interface ChartConfiguration{
 export let chartConfiguration: ChartConfiguration = {
 
     //Title:
-    titlePadding: -15,
+    titlePadding: -5,
     titleAlign: 'center',
     titleFontSize: 11,
 
     //Axis:
-    axisPadding: 5,
+    axisPadding: 2,
     areaChartYTitle: 'Relative Frequency',
     areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',

@@ -232,6 +232,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 text: 'Swim Lanes (variable Pipelines)',
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
             },
 
             data: [
@@ -267,11 +268,12 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     orient: "bottom",
                     scale: "x",
                     zindex: 1,
-                    labelOverlap: true,
+                    labelOverlap: false,
                     values: xTicks(),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
-                    labelFontSize: model.chartConfiguration.axisLabelFontSize
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
                 },
                 {
                     orient: "left",
@@ -281,7 +283,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
-                    labelOverlap: true,
+                    labelOverlap: false,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
                 }
             ],
             marks: [

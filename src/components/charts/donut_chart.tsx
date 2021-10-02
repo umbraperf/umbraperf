@@ -194,6 +194,7 @@ class DonutChart extends React.Component<Props, State> {
                 text: "Shares of Pipelines",
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
                 subtitle: "Toggle pipelines by selecting them in donut:",
             },
 

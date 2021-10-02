@@ -11,6 +11,8 @@ export interface ChartConfiguration{
     axisLabelFontSize: number;
     areaChartYLabelSeparation: number;
     barChartYLabelSeparation: number;
+    titleFontSize: number;
+    axisTitleFontSize: number;
 
 }
 
@@ -19,6 +21,7 @@ export let chartConfiguration: ChartConfiguration = {
     //Title:
     titlePadding: -15,
     titleAlign: 'center',
+    titleFontSize: 11,
 
     //Axis:
     axisPadding: 5,
@@ -26,6 +29,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',
     activityHistogramXTitle: 'Execution Time',
+    axisTitleFontSize: 8,
     activityHistogramXLabelFontSize: 7,
     axisLabelFontSize: 7,
     areaChartYLabelSeparation: 2,

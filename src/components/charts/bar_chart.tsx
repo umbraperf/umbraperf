@@ -160,6 +160,7 @@ class BarChart extends React.Component<Props, State> {
                 text: "Absolute Occurence of Operators per Event",
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
             },
 
             data: [
@@ -190,6 +191,7 @@ class BarChart extends React.Component<Props, State> {
                     titleY: -5,
                     titleX: {signal: 'width', mult: 1.02},
                     titleAlign: "left",
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     encode: {
                         labels: {
@@ -208,7 +210,9 @@ class BarChart extends React.Component<Props, State> {
                     title: "Absolute Frequency",
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.barChartYLabelSeparation,
-                    labelOverlap: true
+                    labelOverlap: false,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+
                 },
             ],
 

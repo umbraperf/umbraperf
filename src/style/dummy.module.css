@@ -81,6 +81,9 @@
 
     .dummyGridCellBoxStaticWidthSmallScreen{
         min-width: 940px;
+    }
 
+    .dummyGridCellItemWidthSmallScreen{
+        min-width: calc(940px + var(--gridCellBoxMarginRightLeft));
     }
   } 

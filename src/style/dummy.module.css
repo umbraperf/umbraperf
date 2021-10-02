@@ -9,12 +9,19 @@
     background-color: white;
 }
 
+.dummyGridCellItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .dummyGridOptionsContainer{
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
 .dummyGridCellBox{
+    width: 100%;
     border: solid;
     border-color: rgb(243, 243, 243);
     background-color: rgb(243, 243, 243);
@@ -27,6 +34,7 @@
 
 .dummyGridCellOptionsBox{
     composes:dummyGridCellBox;
+    width: auto;
     height: calc(100% - var(--gridCellBoxMargin) - var(--gridCellBoxMargin) - var(--gridCellBoxPaddingTop) - var(--gridCellBoxPaddingBottom));
     display: flex;
     align-items: center;

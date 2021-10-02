@@ -77,7 +77,10 @@
         max-width: 450px; 
         margin-right: 1px;
         margin-left: 1px;
-        background-color: brown;
+    }   
+
+    .dummyGridCellBoxStaticWidthSmallScreen{
+        min-width: 940px;
 
     }
   } 

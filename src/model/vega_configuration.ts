@@ -26,8 +26,8 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',
     activityHistogramXTitle: 'Execution Time',
-    activityHistogramXLabelFontSize: 8,
-    axisLabelFontSize: 9,
+    activityHistogramXLabelFontSize: 7,
+    axisLabelFontSize: 7,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
 

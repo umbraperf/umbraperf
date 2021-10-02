@@ -40,14 +40,14 @@ class Dummy extends React.Component<Props, {}> {
 
             <div >
                 <Grid container className={styles.dummyGridOptionsContainer} >
-                    <Grid item xs={12} lg={7} className={styles.dummyGridCellItem} >
+                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={7} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer}>
                                 <EventsButtons />
                             </div>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} lg={5} className={styles.dummyGridCellItem} >
+                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={5} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer} >
                                 <InterpolationDropdown />
@@ -60,7 +60,7 @@ class Dummy extends React.Component<Props, {}> {
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={styles.dummyGridCellItem} md={12} >
+                        <Grid item className={styles.dummyGridCellItem} xs={12} >
                             <Box className={styles.dummyGridCellBox}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <BarChartActivityHistogram />

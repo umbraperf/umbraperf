@@ -38,5 +38,9 @@
     .dummyGridCellChartContainer{
         composes: dummyGridCellChartContainer;
         min-width: 320px;
+    }
+    .dummyGridCellBox{
+        composes: dummyGridCellBox;
+        min-width: 320px + var(--gridCellBoxMargin) + var(--gridCellBoxMargin);
     }    
   }

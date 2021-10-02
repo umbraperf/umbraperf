@@ -35,20 +35,22 @@ function EventsButtons(props: Props) {
     }
 
     return (
-        <div className={"eventButtonsArea"}>
+        <div className={styles.eventButtonsContainer}>
             <InputLabel className={styles.eventsButtonsLabel} id="interpolation-selector-label">Events:</InputLabel>
-            {events && events!.map((event: string, index: number) => (
-                <Button
-                    className={"eventButton"}
-                    variant="contained"
-                    color={props.currentEvent === event ? "primary" : "default"}
-                    onClick={() => handleEventButtonClick(event)}
-                    style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
-                    key={index}
-                >
-                    {createEventShortString(event)}
-                </Button>
-            ))}
+            <div className={styles.eventButtonsArea}>
+                {events && events!.map((event: string, index: number) => (
+                    <Button
+                        className={"eventButton"}
+                        variant="contained"
+                        color={props.currentEvent === event ? "primary" : "default"}
+                        onClick={() => handleEventButtonClick(event)}
+                        style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
+                        key={index}
+                    >
+                        {createEventShortString(event)}
+                    </Button>
+                ))}
+            </div>
         </div>
     );
 }

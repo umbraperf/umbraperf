@@ -152,7 +152,7 @@ class BarChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width - 40,
-            height: this.props.onDashboard ? this.state.width / 2 : this.state.height,
+            height: this.props.onDashboard ? this.state.width / 2.5 : this.state.height,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

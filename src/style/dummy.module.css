@@ -1,5 +1,6 @@
 :root {
-    --gridCellBoxMargin: 10px;
+    --gridCellBoxMarginTopBottom: 5px;
+    --gridCellBoxMarginRightLeft: 10px;
     --gridCellBoxPaddingTop: 5px;
     --gridCellBoxPaddingBottom: 5px;
     --gridCellOptionsBoxMargin: 1px;
@@ -9,6 +10,8 @@
 .dummyGrid{
     padding-top: 10px;
     background-color: white;
+    margin-left: var(--gridCellBoxMarginRightLeft);
+    margin-right: var(--gridCellBoxMarginRightLeft);
 }
 
 .dummyGridCellItem{
@@ -28,7 +31,10 @@
     background-color: rgb(243, 243, 243);
     border-width: 1px;
     border-radius: 10px;
-    margin: var(--gridCellBoxMargin); 
+    margin-top: var(--gridCellBoxMarginTopBottom); 
+    margin-bottom: var(--gridCellBoxMarginTopBottom); 
+    margin-right: var(--gridCellBoxMarginRightLeft);
+    margin-left: var(--gridCellBoxMarginRightLeft);
     padding-top: var(--gridCellBoxPaddingTop);
     padding-bottom: var(--gridCellBoxPaddingBottom);
 }
@@ -71,7 +77,7 @@
     }
     .dummyGridCellBox{
         composes: dummyGridCellBox;
-        min-width: 320px + var(--gridCellBoxMargin) + var(--gridCellBoxMargin);
+        min-width: 320px + var(--gridCellBoxMarginTopBottom) + var(--gridCellBoxMarginTopBottom);
         background-color: firebrick;
     }    
   }

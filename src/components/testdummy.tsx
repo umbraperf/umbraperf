@@ -21,17 +21,12 @@ interface Props {
     csvParsingFinished: boolean;
 }
 
-interface State {
 
-}
-
-
-class Dummy extends React.Component<Props, State> {
+class Dummy extends React.Component<Props, {}> {
 
 
     constructor(props: Props) {
         super(props);
-
     }
 
 
@@ -131,12 +126,8 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 
-});
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dummy);
+export default connect(mapStateToProps)(Dummy);
 
 
 

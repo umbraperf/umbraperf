@@ -70,15 +70,7 @@
     margin-right: 20px;
 }
 
-/*  @media (min-width: 600px) and (max-width: 1000px) {
-    .dummyGridCellChartContainer{
-        composes: dummyGridCellChartContainer;
-        background-color: aquamarine;
-    }
-} */
-
 @media (max-width: 960px) {
-
     .dummyGridCellBox{
         composes: dummyGridCellBox;
         max-width: 450px; 
@@ -87,9 +79,4 @@
         background-color: brown;
 
     }
-/*     .dummyGridCellBox{
-        composes: dummyGridCellBox;
-        min-width: 320px + var(--gridCellBoxMarginTopBottom) + var(--gridCellBoxMarginTopBottom);
-        background-color: firebrick;
-    }    */ 
   } 

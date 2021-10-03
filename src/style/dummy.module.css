@@ -5,6 +5,10 @@
     --gridCellBoxPaddingBottom: 5px;
     --gridCellOptionsBoxMargin: 1px;
     --gridCellOptionsBoxPadding: 5px;
+    --normalChartsSmallScreenMinWidth: 450px;
+    --activityHistogramSmallScreenMinWidth: 940px;
+    --areaChartSmallScreenMinWidth: 700px;
+    --areaChartSmallScreenMinWidth: 700px;
 }
 
 .dummyGrid{
@@ -74,16 +78,24 @@
     /* media query: inverted with min instead of max 960 to simulate > instead of >= */
     .dummyGridCellBox{
         composes: dummyGridCellBox;
-        max-width: 450px; 
+        max-width: var(--normalChartsSmallScreenMinWidth); 
         margin-right: 1px;
         margin-left: 1px;
     }   
 
-    .dummyGridCellBoxStaticWidthSmallScreen{
-        min-width: 940px;
+    .dummyGridCellBoxActivityHistogramStaticWidthSmallScreen{
+        min-width: var(--activityHistogramSmallScreenMinWidth);
     }
 
-    .dummyGridCellItemWidthSmallScreen{
-        min-width: calc(940px + var(--gridCellBoxMarginRightLeft));
+    .dummyGridCellItemActivityHistogramStaticWidthSmallScreen{
+        min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
+    }
+
+    .dummyGridCellBoxAreaChartStaticWidthSmallScreen{
+        min-width: var(--areaChartSmallScreenMinWidth);
+    }
+
+    .dummyGridCellItemAreaChartStaticWidthSmallScreen{
+        min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
     }
   } 

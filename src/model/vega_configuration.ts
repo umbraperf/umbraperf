@@ -13,6 +13,9 @@ export interface ChartConfiguration{
     barChartYLabelSeparation: number;
     titleFontSize: number;
     axisTitleFontSize: number;
+    legendTitleFontSize: number;
+    legendLabelFontSize: number;
+    legendSymbolSize: number;
 
 }
 
@@ -34,6 +37,11 @@ export let chartConfiguration: ChartConfiguration = {
     axisLabelFontSize: 7,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
+
+    //Legend:
+    legendTitleFontSize: 9,
+    legendLabelFontSize: 8,
+    legendSymbolSize: 50,
 
     //Value Lables
     //TODO: donutChartLabelFontSize: 8,

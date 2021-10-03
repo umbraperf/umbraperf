@@ -348,6 +348,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 fill: "color",
                 title: "Operators",
                 orient: "right",
+                labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                symbolSize: model.chartConfiguration.legendSymbolSize,
             }
             ],
         } as VisualizationSpec;

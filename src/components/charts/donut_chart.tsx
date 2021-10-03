@@ -54,12 +54,12 @@ class DonutChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent && 
-            (this.props.currentEvent !== prevProps.currentEvent || 
+        if (this.props.currentEvent &&
+            (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
 
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART, {timeBucketFrame: this.props.currentTimeBucketSelectionTuple});
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART, { timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
         }
 
     }
@@ -184,7 +184,7 @@ class DonutChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width -40,
+            width: this.state.width - 40,
             height: this.state.width / 2.5,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: false,
@@ -300,6 +300,9 @@ class DonutChart extends React.Component<Props, State> {
                 fill: "color",
                 title: "Pipelines",
                 orient: "right",
+                labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                symbolSize: model.chartConfiguration.legendSymbolSize,
             }
             ],
         } as VisualizationSpec;

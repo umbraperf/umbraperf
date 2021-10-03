@@ -60,8 +60,8 @@ class Dummy extends React.Component<Props, {}> {
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemWidthSmallScreen}`}  xs={12} >
-                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxStaticWidthSmallScreen}`}>
+                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemActivityHistogramStaticWidthSmallScreen}`}  xs={12} >
+                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <BarChartActivityHistogram />
                                 </div>
@@ -80,8 +80,8 @@ class Dummy extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={styles.dummyGridCellItem} xs={12} md={12} lg={8}>
-                            <Box className={styles.dummyGridCellBox}>
+                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8}>
+                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxAreaChartStaticWidthSmallScreen}`}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines />
                                 </div>
@@ -100,8 +100,8 @@ class Dummy extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                        <Grid item className={styles.dummyGridCellItem} xs={12} md={12} lg={8} >
-                            <Box className={styles.dummyGridCellBox}>
+                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8} >
+                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxAreaChartStaticWidthSmallScreen}`}>
                                 <div className={styles.dummyGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines absoluteValues={true} />
                                 </div>

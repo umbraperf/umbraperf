@@ -272,11 +272,11 @@ class DonutChart extends React.Component<Props, State> {
                     "from": { "data": "table" },
                     "encode": {
                         "enter": {
-                            "x": { "signal": "width / 2" },
-                            "y": { "signal": "width / 2" },
-                            "radius": { "value": 60},
-/*                             "theta": { "signal": "(datum.startAngle + datum.endAngle)/2" },
- */                            "fill": { "value": "#000" },
+                            "x": {"signal": "if(width >= height, width, height) / 2"},
+                            "y": {"signal": "if(width >= height, height, width) / 2"},
+                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },
+                            "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
+                            "fill": { "value": "#000" },
                             "align": { "value": "center" },
                             "baseline": { "value": "middle" },
                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },

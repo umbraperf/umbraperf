@@ -33,17 +33,8 @@ interface Props {
 
 interface State {
     chartId: number,
-    chartData: IChartData | undefined,
+    chartData: model.ISwimlanesCombinedData | undefined,
     width: number,
-}
-
-interface IChartData {
-    buckets: Array<number>,
-    operators: Array<string>,
-    frequency: Array<number>,
-    bucketsNeg: Array<number>,
-    operatorsNeg: Array<string>,
-    frequencyNeg: Array<number>,
 }
 
 
@@ -72,7 +63,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         console.log(this.props.chartData[this.state.chartId]);
         if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
-            const chartDataElement: IChartData = {
+            const chartDataElement: model.ISwimlanesCombinedData = {
                 buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).buckets,
                 operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operators,
                 frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequency,

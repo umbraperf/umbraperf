@@ -34,15 +34,9 @@ interface Props {
 
 interface State {
    chartId: number,
-   chartData: Array<IChartData>,
+   chartData: Array<model.ISwimlanesData >,
    width: number,
    height: number,
-}
-
-interface IChartData {
-   buckets: Array<number>,
-   operators: Array<string>,
-   frequency: Array<number>,
 }
 
 const startSize = {

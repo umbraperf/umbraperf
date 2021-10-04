@@ -174,10 +174,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width - 50,
+            width: this.state.width-50,
             height: 90,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: false,
+            resize: true,
             autosize: 'fit',
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",
@@ -395,7 +395,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             }
                         }
                     ],
-
                 }
             ]
 

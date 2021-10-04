@@ -37,7 +37,8 @@ class VisualizationContainer extends React.Component<Props, State> {
     needsSwimLanesOptions() {
         if (this.props.visualizationName === "/swim-lanes" ||
             this.props.visualizationName === "/swim-lanes-pipelines" ||
-            this.props.visualizationName === "/swim-lanes-multiple-pipelines") {
+            this.props.visualizationName === "/swim-lanes-multiple-pipelines" ||
+            this.props.visualizationName === "/swim-lanes-multiple-pipelines-combined") {
             return true;
         }
         return false;

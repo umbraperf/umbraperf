@@ -21,6 +21,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesData>
+    | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesData>
     | ChartData<ChartType.DONUT_CHART, IDonutChartData>
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
     ;

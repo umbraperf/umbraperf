@@ -22,6 +22,7 @@ import Dummy from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
 import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
+import SwimLanesCombinedMultiplePipelines from './components/charts/swim_lanes_combined_multiple_pipelines';
 import DonutChart from './components/charts/donut_chart';
 
 import HelpIcon from '@material-ui/icons/Help';
@@ -32,6 +33,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
+import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -109,6 +111,12 @@ export const routes = [
         sidebarName: 'Swim Lanes (Multiple Pipelines)',
         component: SwimLanesMultiplePipelines,
         icon: () => { return (<MultilineChartIcon />) },
+    },
+    {
+        path: '/swim-lanes-multiple-pipelines-combined',
+        sidebarName: 'Swim Lanes (Multiple Pipelines Combined Events)',
+        component: SwimLanesCombinedMultiplePipelines,
+        icon: () => { return (<ViewStreamIcon />) },
     },
     {
         path: '/donut-chart',

@@ -136,7 +136,7 @@ pub fn rel_freq_with_pipelines(
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                     let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
                     if negative {
-                        result_builder.push((1.0-frequenzy_rounded) * -1.0);
+                        result_builder.push((frequenzy_rounded) * -1.0);
                     } else {
                         result_builder.push(frequenzy_rounded);
                     }
@@ -170,7 +170,7 @@ pub fn rel_freq_with_pipelines(
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                 let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
                 if negative {
-                    result_builder.push((1.0 - frequenzy_rounded) * -1.0);
+                    result_builder.push((frequenzy_rounded) * -1.0);
                 } else {
                     result_builder.push(frequenzy_rounded);
                 }

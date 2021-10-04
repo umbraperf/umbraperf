@@ -201,13 +201,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const chartDataPos = {
             buckets: this.state.chartData?.buckets,
             operators: this.state.chartData?.operators,
-            frequency: this.state.chartData?.frequency,
+            frequency: this.state.chartData?.frequency.map(elem => elem*100),
         }
 
         const chartDataNeg = {
             buckets: this.state.chartData?.bucketsNeg,
             operators: this.state.chartData?.operatorsNeg,
-            frequency: this.state.chartData?.frequencyNeg,
+            frequency: this.state.chartData?.frequencyNeg.map(elem => elem*100),
         }
         const data = [{
             name: "tablePos",
@@ -223,7 +223,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             values: chartDataNeg,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
+                { "type": "collect", "sort": { "field": "operators", "order": "descending" } },
                 { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
             ]
         }];
@@ -288,7 +288,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: [-1, 1]
+                    domain: [-100, 100]
 /*                     {
                         fields: [
                           {data: "tablePos", field: "y1"},

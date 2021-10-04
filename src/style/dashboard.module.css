@@ -1,41 +1,101 @@
+:root {
+    --gridCellBoxMarginTopBottom: 5px;
+    --gridCellBoxMarginRightLeft: 10px;
+    --gridCellBoxPaddingTop: 5px;
+    --gridCellBoxPaddingBottom: 5px;
+    --gridCellOptionsBoxMargin: 1px;
+    --gridCellOptionsBoxPadding: 5px;
+    --normalChartsSmallScreenMinWidth: 450px;
+    --activityHistogramSmallScreenMinWidth: 940px;
+    --areaChartSmallScreenMinWidth: 700px;
+    --areaChartSmallScreenMinWidth: 700px;
+}
 
-.gridBox{
+.dummyGrid{
+    padding-top: 10px;
+    background-color: white;
+    margin-left: var(--gridCellBoxMarginRightLeft);
+    margin-right: var(--gridCellBoxMarginRightLeft);
+}
+
+.dummyGridCellItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dummyGridOptionsContainer{
+    margin-top: 2px;
+}
+
+.dummyGridCellBox{
+    width: 100%;
     border: solid;
+    border-color: rgb(243, 243, 243);
+    background-color: rgb(243, 243, 243);
     border-width: 1px;
-    border-color: lightgray;
-    cursor: grab;
+    border-radius: 10px;
+    margin-top: var(--gridCellBoxMarginTopBottom); 
+    margin-bottom: var(--gridCellBoxMarginTopBottom); 
+    margin-right: var(--gridCellBoxMarginRightLeft);
+    margin-left: var(--gridCellBoxMarginRightLeft);
+    padding-top: var(--gridCellBoxPaddingTop);
+    padding-bottom: var(--gridCellBoxPaddingBottom);
+}
+
+.dummyGridCellOptionsBox{
+    composes:dummyGridCellBox;
+    width: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.widgetRemove{
-    position: absolute;
-    right: 2px;
-    top: 0;
-    cursor: pointer;
-    margin: 2px;
-    padding: 1px;
-}   
-
-.addIconContainer{
-    cursor: pointer;
-}
-
-.addIcon{
-    transition: transform 1s;
+    transform: scale(0.8);
+    padding-top: var(--gridCellOptionsBoxPadding);
+    padding-bottom: var(--gridCellOptionsBoxPadding);
+    margin-top: var(--gridCellOptionsBoxMargin);
+    margin-bottom: var(--gridCellOptionsBoxMargin);
+    height: calc(100% - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxPadding) - var(--gridCellOptionsBoxPadding));
 
 }
 
-.addIcon:hover{
-    transform: scale(1.25);
-
-}
-
-.outerAddIconContainer{
+.dummyGridCellOptionsContainer{
     display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: center;
-    margin: 20px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
+.dummyGridCellChartContainer{
+    height: 100%;
+    display: block;
+    text-align: center;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+@media not all and (min-width: 960px) {
+    /* media query: inverted with min instead of max 960 to simulate > instead of >= */
+    .dummyGridCellBox{
+        composes: dummyGridCellBox;
+        max-width: var(--normalChartsSmallScreenMinWidth); 
+        margin-right: 1px;
+        margin-left: 1px;
+    }   
+
+    .dummyGridCellBoxActivityHistogramStaticWidthSmallScreen{
+        min-width: var(--activityHistogramSmallScreenMinWidth);
+    }
+
+    .dummyGridCellItemActivityHistogramStaticWidthSmallScreen{
+        min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
+    }
+
+    .dummyGridCellBoxAreaChartStaticWidthSmallScreen{
+        min-width: var(--areaChartSmallScreenMinWidth);
+    }
+
+    .dummyGridCellItemAreaChartStaticWidthSmallScreen{
+        min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
+    }
+  } 

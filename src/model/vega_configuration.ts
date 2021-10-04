@@ -16,6 +16,7 @@ export interface ChartConfiguration{
     legendTitleFontSize: number;
     legendLabelFontSize: number;
     legendSymbolSize: number;
+    subtitleFontSize: number;
 
 }
 
@@ -25,6 +26,7 @@ export let chartConfiguration: ChartConfiguration = {
     titlePadding: -5,
     titleAlign: 'center',
     titleFontSize: 11,
+    subtitleFontSize: 10,
 
     //Axis:
     axisPadding: 2,

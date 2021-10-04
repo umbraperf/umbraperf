@@ -11,24 +11,24 @@
     --areaChartSmallScreenMinWidth: 700px;
 }
 
-.dummyGrid{
+.dashboardGrid{
     padding-top: 10px;
     background-color: white;
     margin-left: var(--gridCellBoxMarginRightLeft);
     margin-right: var(--gridCellBoxMarginRightLeft);
 }
 
-.dummyGridCellItem{
+.dashboardGridCellItem{
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.dummyGridOptionsContainer{
+.dashboardGridOptionsContainer{
     margin-top: 2px;
 }
 
-.dummyGridCellBox{
+.dashboardGridCellBox{
     width: 100%;
     border: solid;
     border-color: rgb(243, 243, 243);
@@ -43,8 +43,8 @@
     padding-bottom: var(--gridCellBoxPaddingBottom);
 }
 
-.dummyGridCellOptionsBox{
-    composes:dummyGridCellBox;
+.dashboardGridCellOptionsBox{
+    composes:dashboardGridCellBox;
     width: auto;
     display: flex;
     align-items: center;
@@ -58,7 +58,7 @@
 
 }
 
-.dummyGridCellOptionsContainer{
+.dashboardGridCellOptionsContainer{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -66,7 +66,7 @@
     flex-wrap: wrap;
 }
 
-.dummyGridCellChartContainer{
+.dashboardGridCellChartContainer{
     height: 100%;
     display: block;
     text-align: center;
@@ -76,26 +76,26 @@
 
 @media not all and (min-width: 960px) {
     /* media query: inverted with min instead of max 960 to simulate > instead of >= */
-    .dummyGridCellBox{
-        composes: dummyGridCellBox;
+    .dashboardGridCellBox{
+        composes: dashboardGridCellBox;
         max-width: var(--normalChartsSmallScreenMinWidth); 
         margin-right: 1px;
         margin-left: 1px;
     }   
 
-    .dummyGridCellBoxActivityHistogramStaticWidthSmallScreen{
+    .dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen{
         min-width: var(--activityHistogramSmallScreenMinWidth);
     }
 
-    .dummyGridCellItemActivityHistogramStaticWidthSmallScreen{
+    .dashboardGridCellItemActivityHistogramStaticWidthSmallScreen{
         min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
     }
 
-    .dummyGridCellBoxAreaChartStaticWidthSmallScreen{
+    .dashboardGridCellBoxAreaChartStaticWidthSmallScreen{
         min-width: var(--areaChartSmallScreenMinWidth);
     }
 
-    .dummyGridCellItemAreaChartStaticWidthSmallScreen{
+    .dashboardGridCellItemAreaChartStaticWidthSmallScreen{
         min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
     }
   } 

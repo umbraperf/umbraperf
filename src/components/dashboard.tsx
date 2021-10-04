@@ -15,8 +15,6 @@ import { Grid, Box } from '@material-ui/core';
 
 
 
-
-
 interface Props {
     csvParsingFinished: boolean;
 }
@@ -36,20 +34,20 @@ class Dashboard extends React.Component<Props, {}> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div className={styles.dummyGrid}>
+        return <div className={styles.dashboardGrid}>
 
             <div >
-                <Grid container className={styles.dummyGridOptionsContainer} >
-                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={7} >
-                        <Box className={styles.dummyGridCellOptionsBox}>
-                            <div className={styles.dummyGridCellOptionsContainer}>
+                <Grid container className={styles.dashboardGridOptionsContainer} >
+                    <Grid item className={styles.dashboardGridCellItem} xs={12} lg={7} >
+                        <Box className={styles.dashboardGridCellOptionsBox}>
+                            <div className={styles.dashboardGridCellOptionsContainer}>
                                 <EventsButtons />
                             </div>
                         </Box>
                     </Grid>
-                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={5} >
-                        <Box className={styles.dummyGridCellOptionsBox}>
-                            <div className={styles.dummyGridCellOptionsContainer} >
+                    <Grid item className={styles.dashboardGridCellItem} xs={12} lg={5} >
+                        <Box className={styles.dashboardGridCellOptionsBox}>
+                            <div className={styles.dashboardGridCellOptionsContainer} >
                                 <InterpolationDropdown />
                                 <BucketsizeDropdwn />
                             </div>
@@ -60,9 +58,9 @@ class Dashboard extends React.Component<Props, {}> {
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemActivityHistogramStaticWidthSmallScreen}`}  xs={12} >
-                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
-                                <div className={styles.dummyGridCellChartContainer}>
+                        <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemActivityHistogramStaticWidthSmallScreen}`}  xs={12} >
+                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <BarChartActivityHistogram />
                                 </div>
                             </Box>
@@ -71,18 +69,18 @@ class Dashboard extends React.Component<Props, {}> {
 
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dummyGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dummyGridCellBox}>
-                                <div className={styles.dummyGridCellChartContainer}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
+                            <Box className={styles.dashboardGridCellBox}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <DonutChart />
                                 </div>
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8}>
-                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxAreaChartStaticWidthSmallScreen}`}>
-                                <div className={styles.dummyGridCellChartContainer}>
+                        <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8}>
+                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines />
                                 </div>
                             </Box>
@@ -91,18 +89,18 @@ class Dashboard extends React.Component<Props, {}> {
 
 
                     <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
-                        <Grid item className={styles.dummyGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dummyGridCellBox}>
-                                <div className={styles.dummyGridCellChartContainer}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
+                            <Box className={styles.dashboardGridCellBox}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <BarChart onDashboard={true} />
                                 </div>
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                        <Grid item className={`${styles.dummyGridCellItem} ${styles.dummyGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8} >
-                            <Box className={`${styles.dummyGridCellBox} ${styles.dummyGridCellBoxAreaChartStaticWidthSmallScreen}`}>
-                                <div className={styles.dummyGridCellChartContainer}>
+                        <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8} >
+                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines absoluteValues={true} />
                                 </div>
                             </Box>

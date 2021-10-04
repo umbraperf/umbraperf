@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, get_record_batches};
+use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches, utils::{print_to_cons, record_batch_util::convert}};
 
 
 pub fn create_rel_freq_bucket(
@@ -68,6 +68,7 @@ pub fn rel_freq_for_each_pipelines(
             column_for_time,
             bucket_size,
             vec_pipeline,
+            false
         );
 
         vec.push(output_batch.to_owned());
@@ -82,6 +83,7 @@ pub fn rel_freq_with_pipelines(
     column_for_time: usize,
     bucket_size: f64,
     pipelines: Vec<&str>,
+    negative: bool,
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
 
@@ -137,7 +139,11 @@ pub fn rel_freq_with_pipelines(
                     let frequenzy =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                     let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                    result_builder.push(frequenzy_rounded);
+                    if negative {
+                        result_builder.push(frequenzy_rounded * -1.0);
+                    } else {
+                        result_builder.push(frequenzy_rounded);
+                    }
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);
                 }
@@ -167,7 +173,11 @@ pub fn rel_freq_with_pipelines(
                 let frequenzy =
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                 let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                result_builder.push(frequenzy_rounded);
+                if negative {
+                    result_builder.push(frequenzy_rounded * -1.0);
+                } else {
+                    result_builder.push(frequenzy_rounded);
+                }
             }
         }
 
@@ -182,3 +192,50 @@ pub fn rel_freq_with_pipelines(
         result_builder,
     )
 }
+
+
+
+pub fn rel_freq_with_pipelines_with_double_events (
+    batch: &RecordBatch,
+    column_for_operator: usize,
+    column_for_time: usize,
+    bucket_size: f64,
+    pipelines: Vec<&str>,
+    events: Vec<&str>) -> RecordBatch {
+
+        let mut vec = Vec::new();
+        vec.push(events[0]);
+        print_to_cons::print_to_js_with_obj(&format!("{:?}", vec).into());
+
+        let f_batch = analyze::filter_with(1, vec, batch);
+
+
+
+        let first_filter_batch = rel_freq_with_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone(), false);
+
+        print_to_cons::print_to_js_with_obj(&format!("{:?}", "1").into());
+
+        print_to_cons::print_to_js_with_obj(&format!("{:?}", first_filter_batch).into());
+
+
+
+        let mut vec = Vec::new();
+
+        vec.push(events[1]);
+        print_to_cons::print_to_js_with_obj(&format!("{:?}", vec).into());
+
+        let batch = analyze::filter_with(1, vec, &batch);
+        let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, true);
+
+        print_to_cons::print_to_js_with_obj(&format!("{:?}", second_filter_batch).into());
+
+
+        let mut vec_batch = Vec::new();
+        vec_batch.push(first_filter_batch);
+        vec_batch.push(second_filter_batch);
+        let unique_batch = convert(vec_batch);
+        let sort_batch = analyze::sort_batch(&unique_batch, 0);
+
+        sort_batch
+
+    }

@@ -157,6 +157,20 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 });
             break;
 
+        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES,
+                    data: {
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.resultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
+                    }
+                });
+            break;
+
         case model.RestQueryType.GET_PIPELINE_COUNT:
 
             chartDataElem = model.createChartDataObject(

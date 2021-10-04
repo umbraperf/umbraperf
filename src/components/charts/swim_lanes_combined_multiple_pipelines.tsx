@@ -40,6 +40,9 @@ interface IChartData {
     buckets: Array<number>,
     operators: Array<string>,
     frequency: Array<number>,
+    bucketsNeg: Array<number>,
+    operatorsNeg: Array<string>,
+    frequencyNeg: Array<number>,
 }
 
 
@@ -66,9 +69,12 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
             const chartDataElement: IChartData = {
-                buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-                operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-                frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
+                buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).buckets,
+                operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operators,
+                frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequency,
+                bucketsNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).bucketsNeg,
+                operatorsNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operatorsNeg,
+                frequencyNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequencyNeg,
             }
 
             this.setState((state, props) => {
@@ -151,7 +157,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
-                    <PipelinesSelector/>
+                    <PipelinesSelector />
                 </div>
             }
         </div>;
@@ -159,15 +165,68 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const data = {
-            "name": "table",
-            "values": this.state.chartData,
+/*         const tablePosNeg = this.state.chartData;
+        let bucketsPos = new Array<number>();
+        let bucketsNeg = new Array<number>();
+        let operatorsPos = new Array<string>();
+        let operatorsNeg = new Array<string>();
+        let frequencyPos = new Array<number>();
+        let frequencyNeg = new Array<number>();
+
+        for(let i = 0; i < tablePosNeg!.frequency!.length; i++){
+            if(tablePosNeg!.frequency[i] >= 0){
+                bucketsPos.push(tablePosNeg?.buckets[i]!);
+                operatorsPos.push(tablePosNeg?.operators[i]!);
+                frequencyPos.push(tablePosNeg?.frequency[i]!);
+            }
+            if(tablePosNeg!.frequency[i] <= 0){
+                bucketsNeg.push(tablePosNeg?.buckets[i]!);
+                operatorsNeg.push(tablePosNeg?.operators[i]!);
+                frequencyNeg.push(tablePosNeg?.frequency[i]!);
+            }
+        }
+
+        const chartDataPos: IChartData = {
+            buckets: bucketsPos,
+            operators: operatorsPos,
+            frequency: frequencyPos,
+        };
+
+        const chartDataNeg: IChartData = {
+            buckets: bucketsNeg,
+            operators: operatorsNeg,
+            frequency: frequencyNeg,
+        }; */
+
+        const chartDataPos = {
+            buckets: this.state.chartData?.buckets,
+            operators: this.state.chartData?.operators,
+            frequency: this.state.chartData?.frequency,
+        }
+
+        const chartDataNeg = {
+            buckets: this.state.chartData?.bucketsNeg,
+            operators: this.state.chartData?.operatorsNeg,
+            frequency: this.state.chartData?.frequencyNeg,
+        }
+        const data = [{
+            name: "tablePos",
+            values: chartDataPos,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
                 { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
             ]
-        };
+        },
+        {
+            name: "tableNeg",
+            values: chartDataNeg,
+            transform: [
+                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
+                { "type": "collect", "sort": { "field": "operators" } },
+                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+            ]
+        }];
 
         return data;
     }
@@ -209,10 +268,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 fontSize: model.chartConfiguration.titleFontSize,
             },
 
-            data: [
-                visData
-            ],
-
+            data: visData,
 
             scales: [
                 {
@@ -220,9 +276,11 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     type: "point",
                     range: "width",
                     domain: {
-                        data: "table",
-                        field: "buckets"
-                    }
+                        fields: [
+                          {data: "tablePos", field: "buckets"},
+                          {data: "tableNeg", field: "buckets"}
+                         ]
+                      }
                 },
                 {
                     name: "y",
@@ -230,7 +288,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: [0, 1]
+                    domain: [-1, 1]
+/*                     {
+                        fields: [
+                          {data: "tablePos", field: "y1"},
+                          {data: "tableNeg", field: "y1"}
+                         ]
+                      } */
                 },
                 {
                     name: "color",
@@ -239,11 +303,14 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                         scheme: "tableau20",
                     },
                     domain: {
-                        data: "table",
-                        field: "operators"
-                    }
+                        fields: [
+                          {data: "tablePos", field: "operators"},
+                          {data: "tableNeg", field: "operators"}
+                         ]
+                      }
                 }
             ],
+
             axes: [
                 {
                     orient: "bottom",
@@ -273,8 +340,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     type: "group",
                     from: {
                         facet: {
-                            name: "series",
-                            data: "table",
+                            name: "seriesPos",
+                            data: "tablePos",
                             groupby: "operators"
                         }
                     },
@@ -282,7 +349,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                         {
                             type: "area",
                             from: {
-                                data: "series"
+                                data: "seriesPos"
                             },
                             encode: {
                                 enter: {
@@ -307,6 +374,61 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                     },
                                     tooltip: {
                                         "field": "buckets",
+                                    },
+
+                                },
+                                update: {
+                                    fillOpacity: {
+                                        value: 1
+                                    }
+                                },
+                                hover: {
+                                    fillOpacity: {
+                                        value: 0.5
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    type: "group",
+                    from: {
+                        facet: {
+                            name: "seriesNeg",
+                            data: "tableNeg",
+                            groupby: "operators"
+                        }
+                    },
+                    marks: [
+                        {
+                            type: "area",
+                            from: {
+                                data: "seriesNeg"
+                            },
+                            encode: {
+                                enter: {
+                                    interpolate: {
+                                        value: this.props.currentInterpolation as string,
+                                    },
+                                    x: {
+                                        scale: "x",
+                                        field: "buckets"
+                                    },
+                                    y: {
+                                        scale: "y",
+                                        field: "y0"
+                                    },
+                                    y2: {
+                                        scale: "y",
+                                        field: "y1"
+                                    },
+                                    fill: {
+                                        scale: "color",
+                                        field: "operators"
+                                    },
+                                    tooltip: {
+                                        field: "buckets",
                                     },
 
                                 },

@@ -42,7 +42,7 @@ export function createDefaultState(): AppState {
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
-        chartIdCounter: 0,
+        chartIdCounter: 1,
         chartData: {},
         multipleChartDataLength: -1,
         dashboardState: undefined,

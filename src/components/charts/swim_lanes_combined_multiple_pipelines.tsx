@@ -165,49 +165,49 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-/*         const tablePosNeg = this.state.chartData;
-        let bucketsPos = new Array<number>();
-        let bucketsNeg = new Array<number>();
-        let operatorsPos = new Array<string>();
-        let operatorsNeg = new Array<string>();
-        let frequencyPos = new Array<number>();
-        let frequencyNeg = new Array<number>();
-
-        for(let i = 0; i < tablePosNeg!.frequency!.length; i++){
-            if(tablePosNeg!.frequency[i] >= 0){
-                bucketsPos.push(tablePosNeg?.buckets[i]!);
-                operatorsPos.push(tablePosNeg?.operators[i]!);
-                frequencyPos.push(tablePosNeg?.frequency[i]!);
-            }
-            if(tablePosNeg!.frequency[i] <= 0){
-                bucketsNeg.push(tablePosNeg?.buckets[i]!);
-                operatorsNeg.push(tablePosNeg?.operators[i]!);
-                frequencyNeg.push(tablePosNeg?.frequency[i]!);
-            }
-        }
-
-        const chartDataPos: IChartData = {
-            buckets: bucketsPos,
-            operators: operatorsPos,
-            frequency: frequencyPos,
-        };
-
-        const chartDataNeg: IChartData = {
-            buckets: bucketsNeg,
-            operators: operatorsNeg,
-            frequency: frequencyNeg,
-        }; */
+        /*         const tablePosNeg = this.state.chartData;
+                let bucketsPos = new Array<number>();
+                let bucketsNeg = new Array<number>();
+                let operatorsPos = new Array<string>();
+                let operatorsNeg = new Array<string>();
+                let frequencyPos = new Array<number>();
+                let frequencyNeg = new Array<number>();
+        
+                for(let i = 0; i < tablePosNeg!.frequency!.length; i++){
+                    if(tablePosNeg!.frequency[i] >= 0){
+                        bucketsPos.push(tablePosNeg?.buckets[i]!);
+                        operatorsPos.push(tablePosNeg?.operators[i]!);
+                        frequencyPos.push(tablePosNeg?.frequency[i]!);
+                    }
+                    if(tablePosNeg!.frequency[i] <= 0){
+                        bucketsNeg.push(tablePosNeg?.buckets[i]!);
+                        operatorsNeg.push(tablePosNeg?.operators[i]!);
+                        frequencyNeg.push(tablePosNeg?.frequency[i]!);
+                    }
+                }
+        
+                const chartDataPos: IChartData = {
+                    buckets: bucketsPos,
+                    operators: operatorsPos,
+                    frequency: frequencyPos,
+                };
+        
+                const chartDataNeg: IChartData = {
+                    buckets: bucketsNeg,
+                    operators: operatorsNeg,
+                    frequency: frequencyNeg,
+                }; */
 
         const chartDataPos = {
             buckets: this.state.chartData?.buckets,
             operators: this.state.chartData?.operators,
-            frequency: this.state.chartData?.frequency.map(elem => elem*100),
+            frequency: this.state.chartData?.frequency,
         }
 
         const chartDataNeg = {
             buckets: this.state.chartData?.bucketsNeg,
             operators: this.state.chartData?.operatorsNeg,
-            frequency: this.state.chartData?.frequencyNeg.map(elem => elem*100),
+            frequency: this.state.chartData?.frequencyNeg,
         }
         const data = [{
             name: "tablePos",
@@ -223,7 +223,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             values: chartDataNeg,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators", "order": "descending" } },
+                { "type": "collect", "sort": { "field": "operators" } },
                 { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
             ]
         }];
@@ -277,24 +277,37 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     range: "width",
                     domain: {
                         fields: [
-                          {data: "tablePos", field: "buckets"},
-                          {data: "tableNeg", field: "buckets"}
-                         ]
-                      }
+                            { data: "tablePos", field: "buckets" },
+                            { data: "tableNeg", field: "buckets" }
+                        ]
+                    }
                 },
                 {
                     name: "y",
                     type: "linear",
-                    range: "height",
+                    range: [{ signal: "height/2" }, 0],
                     nice: true,
                     zero: true,
-                    domain: [-100, 100]
-/*                     {
+                    domain: {
                         fields: [
-                          {data: "tablePos", field: "y1"},
-                          {data: "tableNeg", field: "y1"}
-                         ]
-                      } */
+                            { data: "tablePos", field: "y1" },
+                            { data: "tableNeg", field: "y1" }
+                        ]
+                    }
+                },
+                {
+                    name: "yNeg",
+                    type: "linear",
+                    range: [{ signal: "height" }, { signal: "height/2" }],
+                    nice: true,
+                    zero: true,
+                    reverse: true,
+                    domain: {
+                        fields: [
+                            { data: "tablePos", field: "y1" },
+                            { data: "tableNeg", field: "y1" }
+                        ]
+                    }
                 },
                 {
                     name: "color",
@@ -304,10 +317,10 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     },
                     domain: {
                         fields: [
-                          {data: "tablePos", field: "operators"},
-                          {data: "tableNeg", field: "operators"}
-                         ]
-                      }
+                            { data: "tablePos", field: "operators" },
+                            { data: "tableNeg", field: "operators" }
+                        ]
+                    }
                 }
             ],
 
@@ -326,6 +339,18 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 {
                     orient: "left",
                     scale: "y",
+                    zindex: 1,
+                    title: model.chartConfiguration.areaChartYTitle,
+                    titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
+                    labelOverlap: true,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                },
+                ,
+                {
+                    orient: "left",
+                    scale: "yNeg",
                     zindex: 1,
                     title: model.chartConfiguration.areaChartYTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
@@ -416,11 +441,11 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "buckets"
                                     },
                                     y: {
-                                        scale: "y",
+                                        scale: "yNeg",
                                         field: "y0"
                                     },
                                     y2: {
-                                        scale: "y",
+                                        scale: "yNeg",
                                         field: "y1"
                                     },
                                     fill: {

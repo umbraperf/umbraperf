@@ -79,7 +79,7 @@ class FileUploader extends React.Component<Props, State> {
 
     public render() {
         return <div className={styles.dropzoneContainer}>
-            {this.state.allowRedirect && <Redirect to={"/dashboard"} />}
+            {this.state.allowRedirect && <Redirect to={"/swim-lanes-multiple-pipelines-combined"} />}
 
             {(!this.props.csvParsingFinished && undefined !== this.props.file) && <div className={styles.fileUploaderLinearProgressContainer}>
                 <LinearProgress color="secondary" />

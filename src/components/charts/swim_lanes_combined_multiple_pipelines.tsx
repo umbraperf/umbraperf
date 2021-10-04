@@ -239,16 +239,18 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
         const xTicks = () => {
 
-            const bucketsArrayLength = this.state.chartData!.buckets.length;
+            //remove 0 values added to fill up in backend for same sized buckets array as second event to show 
+            const bucketsArrayFiltered = this.state.chartData!.buckets.filter(elem => elem > 0);
+            const bucketsArrayFilteredLength = bucketsArrayFiltered.length;
             const numberOfTicks = 20;
 
-            if (bucketsArrayLength > numberOfTicks) {
+            if (bucketsArrayFilteredLength > numberOfTicks) {
 
                 let ticks = [];
 
-                const delta = Math.floor(bucketsArrayLength / numberOfTicks);
+                const delta = Math.floor(bucketsArrayFilteredLength / numberOfTicks);
 
-                for (let i = 0; i < bucketsArrayLength; i = i + delta) {
+                for (let i = 0; i < bucketsArrayFilteredLength; i = i + delta) {
                     ticks.push(this.state.chartData!.buckets[i]);
                 }
                 return ticks;
@@ -294,7 +296,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     domain: {
                         fields: [
                             { data: "tablePos", field: "y1" },
-                            { data: "tableNeg", field: "y1" }
                         ]
                     }
                 },
@@ -307,7 +308,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     reverse: true,
                     domain: {
                         fields: [
-                            { data: "tablePos", field: "y1" },
                             { data: "tableNeg", field: "y1" }
                         ]
                     }

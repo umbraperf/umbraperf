@@ -1,7 +1,7 @@
 import {  ChartDataKeyValue } from "./chart_data_result";
 import { Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
-import {State as IDashboardState} from "../components/dashboard"
+import {State as IDashboardState} from "../components/dummy-dashboard"
 
 export interface AppState {
     /// The registered files

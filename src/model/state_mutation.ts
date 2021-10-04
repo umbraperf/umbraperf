@@ -3,7 +3,7 @@ import { AppState } from './state';
 import { Result, ResultLoading } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
-import { State as IDashboardState } from "../components/dashboard"
+import { State as IDashboardState } from "../components/dummy-dashboard"
 
 
 

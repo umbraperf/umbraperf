@@ -2,7 +2,7 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{exec::freq::rel_freq, get_query, insert_query, record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj};
+use crate::{exec::freq::rel_freq, get_query, insert_query, record_batch_util::send_record_batch_to_js, utils::print_to_cons::{self, print_to_js_with_obj}};
 
 use super::{
     basic::{analyze, count},
@@ -133,6 +133,40 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 // REQUEST FOR ONE! AREA CHART WITH SPECIFIC PIPELINES
                 // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:0.2!join_join_tablescan_lineitem 129928658138264
                 if params.contains("!") {
+
+                    if params.contains("&") {
+                        print_to_cons::print_to_js_with_obj(&format!("{:?}", "Right function").into());
+                        let split = params.split_terminator("!").collect::<Vec<&str>>();
+                        let end = split[1].split_terminator("&").collect::<Vec<&str>>();
+                        let split_fields_bucket_size =
+                        split[0].split_terminator(":").collect::<Vec<&str>>();
+                        let field_vec = split_fields_bucket_size[0]
+                        .split_terminator(",")
+                        .collect::<Vec<&str>>();
+                        let pipeline = field_vec[0];
+                        let time = field_vec[1];
+
+                        let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
+
+                        let pipeline_vec = end[0].split_terminator(",").collect::<Vec<&str>>();
+                        let event_vec = end[1].split_terminator(",").collect::<Vec<&str>>();
+
+                        print_to_cons::print_to_js_with_obj(&format!("{:?}", pipeline_vec).into());
+
+
+                        record_batch = rel_freq::rel_freq_with_pipelines_with_double_events(
+                            &record_batch,
+                            find_name("operator", &record_batch),
+                            find_name(time, &record_batch),
+                            bucket_size,
+                            pipeline_vec,
+                            event_vec
+                        );
+
+                        print_to_cons::print_to_js_with_obj(&format!("{:?}", record_batch).into());
+
+
+                    } else {
                     let split = params.split_terminator("!").collect::<Vec<&str>>();
                     let split_fields_bucket_size =
                         split[0].split_terminator(":").collect::<Vec<&str>>();
@@ -152,7 +186,9 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         find_name(time, &record_batch),
                         bucket_size,
                         pipeline_vec,
+                        false
                     );
+                }
                 }
                 // REQUEST FOR MULTIPLE PIPELINES
                 // range/operator/relfreq/?ev_name="No Operator"/relfreq?pipeline,time:20
@@ -189,6 +225,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                         find_name(fields, &record_batch),
                         bucket_size,
                         Vec::new(),
+                        false
                     );
                 }
             }

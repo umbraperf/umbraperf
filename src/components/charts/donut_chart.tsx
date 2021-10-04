@@ -225,13 +225,6 @@ class DonutChart extends React.Component<Props, State> {
                     "type": "ordinal",
                     "domain": { "data": "table", "field": "pipeline" },
                     "range": { "scheme": "category20c" }
-                },
-                {
-                    "name": "r",
-                    "type": "sqrt",
-                    "domain": { "data": "table", "field": "value" },
-                    "zero": true,
-                    "range": [100, 100]
                 }
             ],
 
@@ -257,8 +250,6 @@ class DonutChart extends React.Component<Props, State> {
                                 { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 },
                                 { "value": 0.1 }
                             ],
-                            "startAngle": { "field": "startAngle" },
-                            "endAngle": { "field": "endAngle" },
                             "padAngle": {
                                 "signal": "if(hover && hover.pipeline == datum.pipeline, 0.015, 0.015)"
                             },
@@ -279,12 +270,12 @@ class DonutChart extends React.Component<Props, State> {
                     "type": "text",
                     "from": { "data": "table" },
                     "encode": {
-                        "update": {
-                            "x": { "field": { "group": "width" }, "mult": 0.5 },
-                            "y": { "field": { "group": "height" }, "mult": 0.5 },
-                            "radius": { "signal": "radius" },
-                            "theta": { "signal": "(datum.startAngle + datum.endAngle)/2" },
-                            "fill": { "value": "#000" },
+                        "enter": {
+                            "x": { "signal": "width / 2" },
+                            "y": { "signal": "width / 2" },
+                            "radius": { "value": 60},
+/*                             "theta": { "signal": "(datum.startAngle + datum.endAngle)/2" },
+ */                            "fill": { "value": "#000" },
                             "align": { "value": "center" },
                             "baseline": { "value": "middle" },
                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },

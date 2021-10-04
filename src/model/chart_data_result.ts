@@ -21,7 +21,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesData>
-    | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesData>
+    | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesCombinedData>
     | ChartData<ChartType.DONUT_CHART, IDonutChartData>
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
     ;
@@ -42,6 +42,15 @@ export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
     frequency: Array<number>,
+}
+
+export interface ISwimlanesCombinedData {
+    buckets: Array<number>,
+    operators: Array<string>,
+    frequency: Array<number>,
+    bucketsNeg: Array<number>,
+    operatorsNeg: Array<string>,
+    frequencyNeg: Array<number>,
 }
 
 export interface IDonutChartData {

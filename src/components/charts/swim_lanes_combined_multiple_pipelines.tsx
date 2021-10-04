@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import PipelinesSelector from '../utils/pipelines_selector';
+import _ from "lodash";
 
 
 interface Props {
@@ -212,6 +213,11 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             operators: this.state.chartData?.operatorsNeg,
             frequency: this.state.chartData?.frequencyNeg,
         }
+
+        const operatorsCleand = {
+            operators: this.state.chartData?.operators.filter(elem => elem.length > 0),
+        };
+
         const data = [{
             name: "tablePos",
             values: chartDataPos,
@@ -229,7 +235,17 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 { "type": "collect", "sort": { "field": "operators" } },
                 { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
             ]
-        }];
+        },
+        {
+            name: "operatorsCleand",
+            values: operatorsCleand,
+            transform: [
+                { "type": "flatten", "fields": ["operators"] },
+                { "type": "collect", "sort": { "field": "operators" } },
+
+            ]
+        }
+        ];
 
         return data;
     }
@@ -319,10 +335,9 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                         scheme: "tableau20",
                     },
                     domain: {
-                        fields: [
-                            { data: "tablePos", field: "operators" },
-                            { data: "tableNeg", field: "operators" }
-                        ]
+                        data: "operatorsCleand",
+                        field: "operators",
+                        sort: { "op": "count", "order": "descending" }
                     }
                 }
             ],

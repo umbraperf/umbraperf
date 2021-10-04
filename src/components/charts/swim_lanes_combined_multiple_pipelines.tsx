@@ -8,6 +8,7 @@ import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import PipelinesSelector from '../utils/pipelines_selector';
 
 
 interface Props {
@@ -150,6 +151,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
+                    <PipelinesSelector/>
                 </div>
             }
         </div>;
@@ -201,7 +203,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             autosize: 'fit',
 
             title: {
-                text: 'Swim Lanes (variable Pipelines)',
+                text: 'Swim Lanes for multiple Events (variable Pipelines)',
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,

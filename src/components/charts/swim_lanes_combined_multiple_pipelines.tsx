@@ -336,9 +336,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     },
                     domain: {
                         data: "operatorsCleand",
-                        field: "operators",
-                        sort: { "op": "count", "order": "descending" }
-                    }
+                        field: "operators"                    }
                 }
             ],
 

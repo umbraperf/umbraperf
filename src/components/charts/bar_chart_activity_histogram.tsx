@@ -131,7 +131,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     handleDetailDomainSelection(...args: any[]) {
-        console.log(args);
         if (null === args[1]) {
             this.resetCurrentSelectionTuple();
         }

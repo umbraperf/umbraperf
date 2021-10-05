@@ -158,8 +158,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             break;
 
         case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
-            console.log("got new data");
-            console.log(store.getState().resultLoading[requestId]);
 
             chartDataElem = model.createChartDataObject(
                 requestId,

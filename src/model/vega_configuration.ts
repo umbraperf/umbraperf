@@ -20,6 +20,7 @@ export interface ChartConfiguration{
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
     donutChartTooltip: string;
+    activityHistogramTooltip: string;
 
 }
 
@@ -55,6 +56,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",
     areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Absolute Frequency': datum.frequency",
     donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
+    activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
 
 
 }

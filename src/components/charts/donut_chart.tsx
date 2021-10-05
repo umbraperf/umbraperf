@@ -241,7 +241,7 @@ class DonutChart extends React.Component<Props, State> {
                             "innerRadius": { "value": 60 },
                             "outerRadius": { "signal": "width / 2" },
                             "cornerRadius": { "value": 0 },
-                            "tooltip": { 
+                            "tooltip": {
                                 signal: model.chartConfiguration.donutChartTooltip,
                             }
                         },
@@ -271,8 +271,8 @@ class DonutChart extends React.Component<Props, State> {
                     "from": { "data": "table" },
                     "encode": {
                         "enter": {
-                            "x": {"signal": "if(width >= height, width, height) / 2"},
-                            "y": {"signal": "if(width >= height, height, width) / 2"},
+                            "x": { "signal": "if(width >= height, width, height) / 2" },
+                            "y": { "signal": "if(width >= height, height, width) / 2" },
                             "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },
                             "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
                             "fill": { "value": "#000" },

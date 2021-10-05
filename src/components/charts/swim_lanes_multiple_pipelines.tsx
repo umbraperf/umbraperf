@@ -320,10 +320,10 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                                         scale: "color",
                                         field: "operators"
                                     },
-                                    tooltip: {
-                                        "field": "buckets",
+                                    tooltip: 
+                                    {
+                                        signal: `{${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
-
                                 },
                                 update: {
                                     fillOpacity: {

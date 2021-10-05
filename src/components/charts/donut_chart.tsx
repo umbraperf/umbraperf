@@ -157,11 +157,6 @@ class DonutChart extends React.Component<Props, State> {
             values: dataArray,
             transform: [
                 {
-                    type: "formula",
-                    expr: "datum.pipeline + ': ' + datum.value",
-                    as: "tooltip"
-                },
-                {
                     type: "pie",
                     field: "value",
                     startAngle: 0,
@@ -246,7 +241,9 @@ class DonutChart extends React.Component<Props, State> {
                             "innerRadius": { "value": 60 },
                             "outerRadius": { "signal": "width / 2" },
                             "cornerRadius": { "value": 0 },
-                            "tooltip": { "field": "tooltip" }
+                            "tooltip": { 
+                                signal: model.chartConfiguration.donutChartTooltip,
+                            }
                         },
                         "update": {
                             "opacity": [

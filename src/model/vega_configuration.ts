@@ -19,6 +19,7 @@ export interface ChartConfiguration{
     subtitleFontSize: number;
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
+    donutChartTooltip: string;
 
 }
 
@@ -53,7 +54,7 @@ export let chartConfiguration: ChartConfiguration = {
     //Tooltip:
     areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",
     areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Absolute Frequency': datum.frequency",
-
+    donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
 
 
 }

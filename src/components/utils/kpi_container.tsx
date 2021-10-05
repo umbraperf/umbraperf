@@ -39,6 +39,7 @@ class KpiContainer extends React.Component<Props, State> {
     public render() {
 
         return <div >
+            Test
         </div>;
     }
 

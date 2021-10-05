@@ -1,5 +1,4 @@
 use arrow::{array::{ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
-use log::Record;
 use std::{
     collections::{HashSet},
     sync::Arc,
@@ -8,7 +7,7 @@ use arrow::error::Result as ArrowResult;
 
 use crate::{utils::{record_batch_util::create_record_batch}};
 
-pub fn get_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
+pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
 
     for index in &column_index {
@@ -54,6 +53,9 @@ pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch
 
 
 pub fn filter_with(column_num: usize, filter_str: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
+    if filter_str.len() == 1 && filter_str[0] == "" {
+        return batch.to_owned();
+    }
     let filter_array = batch
         .column(column_num)
         .as_any()
@@ -78,7 +80,6 @@ pub fn filter_with(column_num: usize, filter_str: Vec<&str>, batch: &RecordBatch
  
 pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
 
-    // if data_type == DataType::Utf8 {
     let options = arrow::compute::SortOptions{
         descending: false,
         nulls_first: false,

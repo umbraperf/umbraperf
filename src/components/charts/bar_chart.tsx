@@ -8,6 +8,8 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import _ from "lodash";
+
 
 interface Props {
     appContext: Context.IAppContext;
@@ -65,7 +67,7 @@ class BarChart extends React.Component<Props, State> {
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
-                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
+                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline, timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
         }
@@ -189,7 +191,7 @@ class BarChart extends React.Component<Props, State> {
                     labelOverlap: true,
                     title: "Operators",
                     titleY: -5,
-                    titleX: {signal: 'width', mult: 1.02},
+                    titleX: { signal: 'width', mult: 1.02 },
                     titleAlign: "left",
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,

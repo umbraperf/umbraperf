@@ -57,7 +57,9 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event or chart change, component did update is executed and queries new data for new event selected only if current event already set
-        if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.chartIdCounter != prevProps.chartIdCounter)) {
+        if (this.props.currentEvent && 
+            (this.props.currentEvent != prevProps.currentEvent 
+                || this.props.chartIdCounter != prevProps.chartIdCounter)) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
         }
 
@@ -131,7 +133,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     handleDetailDomainSelection(...args: any[]) {
-        console.log(args);
         if (null === args[1]) {
             this.resetCurrentSelectionTuple();
         }
@@ -174,10 +175,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width-50,
+            width: this.state.width - 50,
             height: 90,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: {type: "fit", resize: true},
+            autosize: { type: "fit", resize: true },
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,

@@ -30,7 +30,7 @@ interface Props {
 
 interface State {
    chartId: number,
-   chartData: model.ISwimlanesData  | undefined,
+   chartData: model.ISwimlanesData | undefined,
    width: number,
    height: number,
 }
@@ -62,7 +62,7 @@ class SwimLanes extends React.Component<Props, State> {
       //ensure changed app state and only proceed when result available
       if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
-         let chartDataElement: model.ISwimlanesData  = {
+         let chartDataElement: model.ISwimlanesData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
             operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
             frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
@@ -77,7 +77,10 @@ class SwimLanes extends React.Component<Props, State> {
       }
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
-      if (this.props.currentEvent && (this.props.currentEvent != prevProps.currentEvent || this.props.currentBucketSize != prevProps.currentBucketSize || this.props.chartIdCounter != prevProps.chartIdCounter)) {
+      if (this.props.currentEvent &&
+         (this.props.currentEvent !== prevProps.currentEvent ||
+            this.props.currentBucketSize !== prevProps.currentBucketSize ||
+            this.props.chartIdCounter !== prevProps.chartIdCounter)) {
          Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
       }
 
@@ -186,7 +189,7 @@ class SwimLanes extends React.Component<Props, State> {
             text: 'Swim Lanes (all Pipelines)',
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
-        },
+         },
 
          data: [
             visData

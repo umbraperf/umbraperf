@@ -251,7 +251,7 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
         selections.push(find_name(select, &record_batch));
     }
 
-    return analyze::get_columns(record_batch, selections);
+    return analyze::select_columns(record_batch, selections);
 }
 
 pub fn query_already_calculated(restful_string: &str) -> bool {

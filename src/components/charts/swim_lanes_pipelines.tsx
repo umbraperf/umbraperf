@@ -196,13 +196,20 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          autosize: 'fit',
 
          title: {
-            text: this.props.currentPipeline![chartId],
+            text: {signal: "currentPipeline"},
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
          },
 
          data: [
             visData
+         ],
+
+         signals: [
+            {
+               name: "currentPipeline",
+               value: this.props.currentPipeline![chartId],
+            }
          ],
 
          scales: [
@@ -292,7 +299,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                               field: "operators"
                            },
                            tooltip: {
-                              "field": "buckets",
+                              signal: `{'Pipeline': currentPipeline, ${model.chartConfiguration.areaChartTooltip}}`,
                            },
 
                         },

@@ -17,6 +17,11 @@ export interface ChartConfiguration{
     legendLabelFontSize: number;
     legendSymbolSize: number;
     subtitleFontSize: number;
+    areaChartTooltip: string;
+    areaChartAbsoluteTooltip: string;
+    donutChartTooltip: string;
+    activityHistogramTooltip: string;
+    barChartTooltip: string;
 
 }
 
@@ -47,5 +52,13 @@ export let chartConfiguration: ChartConfiguration = {
 
     //Value Lables
     //TODO: donutChartLabelFontSize: 8,
+
+    //Tooltip:
+    areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",
+    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Absolute Frequency': datum.frequency",
+    donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
+    activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
+    barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
+
 
 }

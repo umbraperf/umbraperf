@@ -281,7 +281,7 @@ class SwimLanes extends React.Component<Props, State> {
                               field: "operators"
                            },
                            tooltip: {
-                              "field": "buckets",
+                              signal: `{${model.chartConfiguration.areaChartTooltip}}`,
                            },
 
                         },

@@ -323,7 +323,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 enter: {
                                     tooltip:
                                     {
-                                        signal: "{'Time': datum.timeBuckets, 'Occurences': datum.occurrences}"
+                                        signal: model.chartConfiguration.activityHistogramTooltip,
                                     }
                                 },
                                 update: {

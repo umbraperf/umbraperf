@@ -278,6 +278,17 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
             data: visData,
 
+            signals: [
+                {
+                    name: "currentEvent",
+                    value: this.props.currentEvent,
+                },
+                {
+                    name: "upperEvent",
+                    value: this.props.events![0],
+                }
+            ],
+
             scales: [
                 {
                     name: "x",
@@ -402,7 +413,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        "field": "buckets",
+                                        signal: `{'Event': upperEvent, ${model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },
@@ -457,7 +468,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        field: "buckets",
+                                        signal: `{'Event': currentEvent, ${model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },

@@ -85,8 +85,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 this.props.currentBucketSize !== prevProps.currentBucketSize ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
-                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
-
+                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize, pipeline: this.props.currentPipeline, timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
 
         }
@@ -324,7 +323,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     },
                     domain: {
                         data: "operatorsCleand",
-                        field: "operators"                    }
+                        field: "operators"
+                    }
                 }
             ],
 

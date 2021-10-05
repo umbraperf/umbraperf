@@ -8,6 +8,8 @@ import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import _ from "lodash";
+
 
 interface Props {
     appContext: Context.IAppContext;
@@ -57,7 +59,7 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.currentEvent &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
+                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART, { timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
         }

@@ -58,9 +58,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         //ensure changed app state and only proceed when result available
-        console.log(this.props.resultLoading[this.state.chartId]);
-        console.log(prevProps.resultLoading[this.state.chartId]);
-        console.log(this.props.chartData[this.state.chartId]);
         if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
             const chartDataElement: model.ISwimlanesCombinedData = {

@@ -58,9 +58,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         //ensure changed app state and only proceed when result available
-        console.log(this.props.resultLoading[this.state.chartId]);
-        console.log(prevProps.resultLoading[this.state.chartId]);
-        console.log(this.props.chartData[this.state.chartId]);
         if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
 
             const chartDataElement: model.ISwimlanesCombinedData = {
@@ -88,8 +85,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 this.props.currentBucketSize !== prevProps.currentBucketSize ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
-                this.props.currentTimeBucketSelectionTuple !== prevProps.currentTimeBucketSelectionTuple)) {
-
+                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, { bucksetsize: "" + this.props.currentBucketSize, pipeline: this.props.currentPipeline, timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
 
         }
@@ -327,7 +323,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     },
                     domain: {
                         data: "operatorsCleand",
-                        field: "operators"                    }
+                        field: "operators"
+                    }
                 }
             ],
 

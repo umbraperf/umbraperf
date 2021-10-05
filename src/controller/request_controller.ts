@@ -28,10 +28,6 @@ export class RequestController {
             data: { key: requestingChartId ? requestingChartId : -1, value: true },
         });
 
-        console.log(requestingChartId!);
-        console.log(store.getState().resultLoading);
-        console.log(store.getState().resultLoading[requestingChartId!]);
-
         store.dispatch({
             type: model.StateMutationType.SET_RESULT,
             data: undefined,

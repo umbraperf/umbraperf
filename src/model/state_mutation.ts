@@ -168,7 +168,7 @@ export class AppStateMutation {
             case StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE:
                 return {
                     ...state,
-                    currentTimeBucketSelectionTuple: [...mutation.data],
+                    currentTimeBucketSelectionTuple: mutation.data,
                 }
             case StateMutationType.RESET_STATE:
                 return {

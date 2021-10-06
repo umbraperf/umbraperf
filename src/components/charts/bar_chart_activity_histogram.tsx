@@ -217,7 +217,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             init: "[calcXScale0,calcXScale1]",
                             on: [
                                 {
-                                    events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", marktype: "rect" }],//"@overview:mousedown",
+                                    events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", marktype: "rect" }],
                                     update: "[x(), x()]"
                                 },
                                 {

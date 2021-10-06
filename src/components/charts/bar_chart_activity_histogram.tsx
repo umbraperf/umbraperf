@@ -312,7 +312,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             },
                             values: xTicks(),
-                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize
+                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize,
+                            labelFont: model.chartConfiguration.axisLabelFont
                         },
                     ],
 

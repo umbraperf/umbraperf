@@ -192,6 +192,7 @@ class DonutChart extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont,
                 subtitle: "Toggle pipelines by selecting them in donut:",
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },

@@ -225,6 +225,10 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     update: "[brush[0], clamp(x(), 0, width)]"
                                 },
                                 {
+                                    events: "[@bars:mousedown, window:mouseup] > window:mousemove!",
+                                    update: "[brush[0], clamp(x(), 0, width)]"
+                                },
+                                {
                                     events: { signal: "delta" },
                                     update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
                                 }

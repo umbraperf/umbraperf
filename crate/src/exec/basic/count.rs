@@ -4,6 +4,33 @@ use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Fie
 
 use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches};
 
+pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
+
+    let vec = batch
+        .column(column_to_count)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+    let mut result_builder = Float64Array::builder(1);
+
+    let row_count = vec.len() as f64;
+    result_builder.append_value(row_count);
+
+
+    let builder = result_builder.finish();
+
+    let schema = batch.schema();
+    let result_field = Field::new("count", DataType::Float64, false);
+
+    let schema = Schema::new(vec![result_field]);
+
+
+    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
+    return batch;
+
+}
+
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
 
     let unique_batch = find_unique_string(&get_record_batches().unwrap(), column_to_groupby_over);

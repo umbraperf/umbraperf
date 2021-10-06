@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
-use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
+use arrow::{array::{Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
 use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches, utils::{print_to_cons, record_batch_util::convert}};
 
@@ -63,8 +63,7 @@ pub fn rel_freq_for_each_pipelines(
             column_for_operator,
             column_for_time,
             bucket_size,
-            vec_pipeline,
-            false
+            vec_pipeline
         );
 
         vec.push(output_batch.to_owned());
@@ -78,8 +77,7 @@ pub fn rel_freq_with_pipelines(
     column_for_operator: usize,
     column_for_time: usize,
     bucket_size: f64,
-    pipelines: Vec<&str>,
-    negative: bool,
+    pipelines: Vec<&str>
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2);
 
@@ -135,13 +133,7 @@ pub fn rel_freq_with_pipelines(
                     let frequenzy =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                     let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                    if negative {
-                        // result_builder.push((frequenzy_rounded) * -1.0);
-                        result_builder.push((frequenzy_rounded));
-
-                    } else {
-                        result_builder.push(frequenzy_rounded);
-                    }
+                    result_builder.push(frequenzy_rounded);
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);
                 }
@@ -171,12 +163,8 @@ pub fn rel_freq_with_pipelines(
                 let frequenzy =
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                 let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                if negative {
-                    // result_builder.push((frequenzy_rounded) * -1.0);
-                    result_builder.push((frequenzy_rounded));
-                } else {
-                    result_builder.push(frequenzy_rounded);
-                }
+                result_builder.push(frequenzy_rounded);
+                
             }
         }
 
@@ -214,7 +202,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
         let mut vec5 = Vec::new();
         let mut vec6 = Vec::new();
 
-        let first_filter_batch = rel_freq_with_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone(), false);
+        let first_filter_batch = rel_freq_with_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone());
 
         let column1 = first_filter_batch.column(0)
         .as_any()
@@ -245,7 +233,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
         vec.push(events[1]);
 
         let batch = analyze::filter_with(1, vec, &batch);
-        let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, true);
+        let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines);
 
         let column4 = second_filter_batch.column(0)
         .as_any()
@@ -299,8 +287,5 @@ pub fn rel_freq_with_pipelines_with_double_events (
 
 
         batch.unwrap()
-
- 
-
 
     }

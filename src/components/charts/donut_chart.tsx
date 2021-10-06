@@ -280,7 +280,9 @@ class DonutChart extends React.Component<Props, State> {
                             "align": { "value": "center" },
                             "baseline": { "value": "middle" },
                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
-                            "fillOpacity": [
+                            // TODO:
+/*                             "fontSize": model.chartConfiguration.donutChartLabelFontSize,
+ */                            "fillOpacity": [
                                 { "test": "radius < 30", "value": 0 },
                                 { "value": 1 }
                             ],

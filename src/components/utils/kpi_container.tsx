@@ -38,8 +38,8 @@ class KpiContainer extends React.Component<Props, State> {
 
     public render() {
 
-        return <div >
-            Test
+        return <div className={styles.kpiContainer} >
+            Interesting query fun facts will be displayed here!
         </div>;
     }
 

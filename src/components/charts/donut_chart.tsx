@@ -272,7 +272,7 @@ class DonutChart extends React.Component<Props, State> {
                     "from": { "data": "table" },
                     "encode": {
                         "enter": {
-                            fontSize: {value: model.chartConfiguration.donutChartLabelFontSize},
+                            fontSize: { value: model.chartConfiguration.donutChartLabelFontSize },
                             "x": { "signal": "if(width >= height, width, height) / 2" },
                             "y": { "signal": "if(width >= height, height, width) / 2" },
                             "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },

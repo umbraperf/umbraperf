@@ -163,6 +163,7 @@ class BarChart extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: [
@@ -194,6 +195,7 @@ class BarChart extends React.Component<Props, State> {
                     titleX: { signal: 'width', mult: 1.02 },
                     titleAlign: "left",
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     encode: {
                         labels: {
@@ -214,7 +216,7 @@ class BarChart extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.barChartYLabelSeparation,
                     labelOverlap: false,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
-
+                    titleFont: model.chartConfiguration.axisTitleFont,
                 },
             ],
 

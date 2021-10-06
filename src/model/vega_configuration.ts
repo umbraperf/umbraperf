@@ -25,6 +25,7 @@ export interface ChartConfiguration{
     axisTitleFont: string;
     axisLabelFont: string;
     titleFont: string;
+    donutChartLabelFontSize: number;
 
 
 }
@@ -58,7 +59,7 @@ export let chartConfiguration: ChartConfiguration = {
     legendSymbolSize: 50,
 
     //Value Lables
-    //TODO: donutChartLabelFontSize: 8,
+    donutChartLabelFontSize: 8,
 
     //Tooltip:
     areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",

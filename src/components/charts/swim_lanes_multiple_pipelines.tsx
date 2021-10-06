@@ -229,6 +229,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: [
@@ -270,6 +271,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
                 {
                     orient: "left",
@@ -281,6 +284,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 }
             ],
             marks: [
@@ -320,10 +325,10 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                                         scale: "color",
                                         field: "operators"
                                     },
-                                    tooltip: {
-                                        "field": "buckets",
+                                    tooltip: 
+                                    {
+                                        signal: `{${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
-
                                 },
                                 update: {
                                     fillOpacity: {

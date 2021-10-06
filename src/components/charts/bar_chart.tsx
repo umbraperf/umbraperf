@@ -163,6 +163,7 @@ class BarChart extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: [
@@ -194,7 +195,9 @@ class BarChart extends React.Component<Props, State> {
                     titleX: { signal: 'width', mult: 1.02 },
                     titleAlign: "left",
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                     encode: {
                         labels: {
                             update: {
@@ -214,7 +217,8 @@ class BarChart extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.barChartYLabelSeparation,
                     labelOverlap: false,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
-
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
             ],
 
@@ -229,6 +233,9 @@ class BarChart extends React.Component<Props, State> {
                             width: { scale: 'xscale', band: 1, offset: -1 },
                             y: { scale: 'yscale', field: 'values' },
                             y2: { scale: 'yscale', value: 0 },
+                            tooltip:{
+                                signal: model.chartConfiguration.barChartTooltip,
+                            }
                         },
                         update: {
                             fill: { value: this.props.appContext.primaryColor },

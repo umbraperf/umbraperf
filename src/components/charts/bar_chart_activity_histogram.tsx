@@ -184,6 +184,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: [
@@ -301,6 +302,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titlePadding: model.chartConfiguration.axisPadding,
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                            titleFont: model.chartConfiguration.axisTitleFont,
                             encode: {
                                 labels: {
                                     update: {
@@ -310,7 +312,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             },
                             values: xTicks(),
-                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize
+                            labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize,
+                            labelFont: model.chartConfiguration.axisLabelFont
                         },
                     ],
 
@@ -323,7 +326,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 enter: {
                                     tooltip:
                                     {
-                                        signal: "{'Time': datum.timeBuckets, 'Occurences': datum.occurrences}"
+                                        signal: model.chartConfiguration.activityHistogramTooltip,
                                     }
                                 },
                                 update: {

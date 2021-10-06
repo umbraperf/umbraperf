@@ -274,9 +274,21 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: visData,
+
+            signals: [
+                {
+                    name: "currentEvent",
+                    value: this.props.currentEvent,
+                },
+                {
+                    name: "upperEvent",
+                    value: this.props.events![0],
+                }
+            ],
 
             scales: [
                 {
@@ -339,6 +351,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
                 {
                     orient: "left",
@@ -350,6 +364,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
                 ,
                 {
@@ -362,6 +378,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 }
             ],
             marks: [
@@ -402,7 +420,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        "field": "buckets",
+                                        signal: `{'Event': upperEvent, ${model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },
@@ -457,7 +475,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        field: "buckets",
+                                        signal: `{'Event': currentEvent, ${model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },

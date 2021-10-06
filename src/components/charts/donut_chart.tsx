@@ -157,11 +157,6 @@ class DonutChart extends React.Component<Props, State> {
             values: dataArray,
             transform: [
                 {
-                    type: "formula",
-                    expr: "datum.pipeline + ': ' + datum.value",
-                    as: "tooltip"
-                },
-                {
                     type: "pie",
                     field: "value",
                     startAngle: 0,
@@ -197,6 +192,7 @@ class DonutChart extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont,
                 subtitle: "Toggle pipelines by selecting them in donut:",
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
@@ -246,7 +242,9 @@ class DonutChart extends React.Component<Props, State> {
                             "innerRadius": { "value": 60 },
                             "outerRadius": { "signal": "width / 2" },
                             "cornerRadius": { "value": 0 },
-                            "tooltip": { "field": "tooltip" }
+                            "tooltip": {
+                                signal: model.chartConfiguration.donutChartTooltip,
+                            }
                         },
                         "update": {
                             "opacity": [
@@ -274,8 +272,8 @@ class DonutChart extends React.Component<Props, State> {
                     "from": { "data": "table" },
                     "encode": {
                         "enter": {
-                            "x": {"signal": "if(width >= height, width, height) / 2"},
-                            "y": {"signal": "if(width >= height, height, width) / 2"},
+                            "x": { "signal": "if(width >= height, width, height) / 2" },
+                            "y": { "signal": "if(width >= height, height, width) / 2" },
                             "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },
                             "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
                             "fill": { "value": "#000" },

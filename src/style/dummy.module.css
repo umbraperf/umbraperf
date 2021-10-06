@@ -1,0 +1,101 @@
+:root {
+    --gridCellBoxMarginTopBottom: 5px;
+    --gridCellBoxMarginRightLeft: 10px;
+    --gridCellBoxPaddingTop: 5px;
+    --gridCellBoxPaddingBottom: 5px;
+    --gridCellOptionsBoxMargin: 1px;
+    --gridCellOptionsBoxPadding: 5px;
+    --normalChartsSmallScreenMinWidth: 450px;
+    --activityHistogramSmallScreenMinWidth: 940px;
+    --areaChartSmallScreenMinWidth: 700px;
+    --areaChartSmallScreenMinWidth: 700px;
+}
+
+.dashboardGrid{
+    padding-top: 10px;
+    background-color: white;
+    margin-left: var(--gridCellBoxMarginRightLeft);
+    margin-right: var(--gridCellBoxMarginRightLeft);
+}
+
+.dashboardGridCellItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboardGridOptionsContainer{
+    margin-top: 2px;
+}
+
+.dashboardGridCellBox{
+    width: 100%;
+    border: solid;
+    border-color: rgb(243, 243, 243);
+    background-color: rgb(243, 243, 243);
+    border-width: 1px;
+    border-radius: 10px;
+    margin-top: var(--gridCellBoxMarginTopBottom); 
+    margin-bottom: var(--gridCellBoxMarginTopBottom); 
+    margin-right: var(--gridCellBoxMarginRightLeft);
+    margin-left: var(--gridCellBoxMarginRightLeft);
+    padding-top: var(--gridCellBoxPaddingTop);
+    padding-bottom: var(--gridCellBoxPaddingBottom);
+}
+
+.dashboardGridCellOptionsBox{
+    composes:dashboardGridCellBox;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.8);
+    padding-top: var(--gridCellOptionsBoxPadding);
+    padding-bottom: var(--gridCellOptionsBoxPadding);
+    margin-top: var(--gridCellOptionsBoxMargin);
+    margin-bottom: var(--gridCellOptionsBoxMargin);
+    height: calc(100% - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxMargin) - var(--gridCellOptionsBoxPadding) - var(--gridCellOptionsBoxPadding));
+
+}
+
+.dashboardGridCellOptionsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dashboardGridCellChartContainer{
+    height: 100%;
+    display: block;
+    text-align: center;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+@media not all and (min-width: 960px) {
+    /* media query: inverted with min instead of max 960 to simulate > instead of >= */
+    .dashboardGridCellBox{
+        composes: dashboardGridCellBox;
+        max-width: var(--normalChartsSmallScreenMinWidth); 
+        margin-right: 1px;
+        margin-left: 1px;
+    }   
+
+    .dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen{
+        min-width: var(--activityHistogramSmallScreenMinWidth);
+    }
+
+    .dashboardGridCellItemActivityHistogramStaticWidthSmallScreen{
+        min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
+    }
+
+    .dashboardGridCellBoxAreaChartStaticWidthSmallScreen{
+        min-width: var(--areaChartSmallScreenMinWidth);
+    }
+
+    .dashboardGridCellItemAreaChartStaticWidthSmallScreen{
+        min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellBoxMarginRightLeft) + var(--gridCellBoxMarginRightLeft));
+    }
+  } 

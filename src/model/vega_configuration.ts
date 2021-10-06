@@ -22,6 +22,10 @@ export interface ChartConfiguration{
     donutChartTooltip: string;
     activityHistogramTooltip: string;
     barChartTooltip: string;
+    axisTitleFont: string;
+    axisLabelFont: string;
+    titleFont: string;
+
 
 }
 
@@ -32,6 +36,7 @@ export let chartConfiguration: ChartConfiguration = {
     titleAlign: 'center',
     titleFontSize: 11,
     subtitleFontSize: 10,
+    titleFont: "Segoe UI",
 
     //Axis:
     axisPadding: 2,
@@ -39,11 +44,13 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',
     activityHistogramXTitle: 'Execution Time',
-    axisTitleFontSize: 8,
+    axisTitleFontSize: 9,
     activityHistogramXLabelFontSize: 7,
-    axisLabelFontSize: 7,
+    axisLabelFontSize: 8,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
+    axisTitleFont: "Segoe UI",
+    axisLabelFont: "Arial",
 
     //Legend:
     legendTitleFontSize: 9,

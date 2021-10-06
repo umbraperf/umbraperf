@@ -274,6 +274,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont
             },
 
             data: visData,
@@ -350,6 +351,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
                 },
                 {
                     orient: "left",
@@ -361,6 +363,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
                 },
                 ,
                 {
@@ -373,6 +376,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
                 }
             ],
             marks: [

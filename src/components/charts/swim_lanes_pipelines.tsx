@@ -199,6 +199,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             text: {signal: "currentPipeline"},
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
+            font: model.chartConfiguration.titleFont
          },
 
          data: [
@@ -251,6 +252,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                values: xTicks(),
                title: model.chartConfiguration.areaChartXTitle,
                titlePadding: model.chartConfiguration.axisPadding,
+               titleFont: model.chartConfiguration.axisTitleFont,
             },
             {
                orient: "left",
@@ -259,6 +261,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                tickCount: 5,
                title: model.chartConfiguration.areaChartYTitle,
                titlePadding: model.chartConfiguration.axisPadding,
+               titleFont: model.chartConfiguration.axisTitleFont,
             }
          ],
          marks: [

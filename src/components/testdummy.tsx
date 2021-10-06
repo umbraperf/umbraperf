@@ -4,6 +4,7 @@ import styles from '../style/dummy.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import EventsButtons from './utils/events_buttons';
+import KpiContainer from './utils/kpi_container';
 import InterpolationDropdown from './utils/interpolation_dropdown';
 import BucketsizeDropdwn from './utils/bucketsize_dropdown';
 import DonutChart from '../components/charts/donut_chart';
@@ -40,14 +41,21 @@ class Dummy extends React.Component<Props, {}> {
 
             <div >
                 <Grid container className={styles.dummyGridOptionsContainer} >
-                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={7} >
+                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={5} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer}>
                                 <EventsButtons />
                             </div>
                         </Box>
                     </Grid>
-                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={5} >
+                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={3} >
+                        <Box className={styles.dummyGridCellOptionsBox}>
+                            <div className={styles.dummyGridCellOptionsContainer}>
+                                <KpiContainer />
+                            </div>
+                        </Box>
+                    </Grid>
+                    <Grid item className={styles.dummyGridCellItem} xs={12} lg={4} >
                         <Box className={styles.dummyGridCellOptionsBox}>
                             <div className={styles.dummyGridCellOptionsContainer} >
                                 <InterpolationDropdown />

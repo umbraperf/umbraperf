@@ -197,6 +197,7 @@ class BarChart extends React.Component<Props, State> {
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                     encode: {
                         labels: {
                             update: {
@@ -217,6 +218,7 @@ class BarChart extends React.Component<Props, State> {
                     labelOverlap: false,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
             ],
 

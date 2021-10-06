@@ -236,6 +236,7 @@ class SwimLanes extends React.Component<Props, State> {
                title: model.chartConfiguration.areaChartXTitle,
                titlePadding: model.chartConfiguration.axisPadding,
                titleFont: model.chartConfiguration.axisTitleFont,
+               labelFont: model.chartConfiguration.axisLabelFont,
             },
             {
                orient: "left",
@@ -244,6 +245,7 @@ class SwimLanes extends React.Component<Props, State> {
                title: model.chartConfiguration.areaChartYTitle,
                titlePadding: model.chartConfiguration.axisPadding,
                titleFont: model.chartConfiguration.axisTitleFont,
+               labelFont: model.chartConfiguration.axisLabelFont,
             }
          ],
          marks: [

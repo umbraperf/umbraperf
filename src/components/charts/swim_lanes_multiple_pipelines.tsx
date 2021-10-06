@@ -272,6 +272,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 },
                 {
                     orient: "left",
@@ -284,6 +285,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     labelOverlap: true,
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 }
             ],
             marks: [

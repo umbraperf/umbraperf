@@ -27,6 +27,7 @@ interface Props {
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
+    //TODO remove:
     onDashboard?: boolean;
 
 }
@@ -51,8 +52,8 @@ class BarChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: this.props.onDashboard ? 250 : startSize.width,
-            height: this.props.onDashboard ? 400 : startSize.height,
+            width: 0,
+            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -76,9 +77,10 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        this.props.onDashboard && this.setState((state, props) => ({
+        this.setState((state, props) => ({
             ...state,
             width: this.elementWrapper.current!.offsetWidth,
+            height: this.elementWrapper.current!.clientHeight,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -120,10 +122,10 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper}>
+        return <div ref={this.elementWrapper} style={{height: "100%"}}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
-                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                : <div className={"vegaContainer"} ref={this.chartWrapper} style={{height: "100%"}}>
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
             }
@@ -154,7 +156,7 @@ class BarChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width - 40,
-            height: this.props.onDashboard ? this.state.width / 2.5 : this.state.height,
+            height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

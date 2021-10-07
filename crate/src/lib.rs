@@ -1,5 +1,6 @@
 // Wasm Bindgen
 extern crate wasm_bindgen;
+use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
 
 // Aux
@@ -76,11 +77,11 @@ fn get_record_batches() -> Option<RecordBatch> {
     with_state(|s| s.record_batches.clone())
 }
 
-fn get_query() -> HashMap<String, RecordBatch> {
+fn get_query_from_cache() -> HashMap<String, RecordBatch> {
     with_state(|s| s.queries.clone())
 }
 
-fn insert_query(restful_string: &str, record_batch: RecordBatch) {
+fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
     _with_state_mut(|s| s.queries.insert(restful_string.to_string(), record_batch));
 }
 
@@ -100,6 +101,7 @@ pub fn analyze_file(file_size: i32) {
     );
 
     let elapsed = now.elapsed();
+    print_to_js_with_obj(&format!("{:?}", elapsed).into());
 
     let record_batch = record_batch_util::convert(batches);
     set_record_batches(record_batch);

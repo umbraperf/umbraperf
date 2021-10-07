@@ -5,7 +5,6 @@ use arrow::{array::ArrayRef, csv::Reader, datatypes::{DataType, Field, Schema, S
 use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
 
 
-// Helper function for more readable code
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
 }

@@ -248,8 +248,9 @@ class DonutChart extends React.Component<Props, State> {
                         },
                         "update": {
                             "opacity": [
-                                { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 },
-                                { "value": 0.1 }
+                                { "test": "datum['value'] === 0", "value": 0 }, //Hide if no pipeline appearance 
+                                { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 }, //full color if pipeline selected
+                                { "value": 0.1 } //lower opacity if pipeline not selected
                             ],
                             "padAngle": {
                                 "signal": "if(hover && hover.pipeline == datum.pipeline, 0.015, 0.015)"
@@ -260,10 +261,7 @@ class DonutChart extends React.Component<Props, State> {
                             "outerRadius": {
                                 "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 1.05 * 0.8, if(width >= height, height, width) / 2 * 0.8)"
                             },
-                            "stroke": { "signal": "scale('color', datum.pipeline)" },
-                            "fillOpacity": {
-                                "signal": "if(hover && hover.pipeline == datum.pipeline, 0.8, 0.8)"
-                            }
+                            "stroke": { "signal": "scale('color', datum.pipeline)" }
                         }
                     }
                 },
@@ -275,7 +273,7 @@ class DonutChart extends React.Component<Props, State> {
                             fontSize: { value: model.chartConfiguration.donutChartLabelFontSize },
                             "x": { "signal": "if(width >= height, width, height) / 2" },
                             "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },
+                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
                             "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
                             "fill": { "value": "#000" },
                             "align": { "value": "center" },
@@ -283,6 +281,7 @@ class DonutChart extends React.Component<Props, State> {
                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
                             "fillOpacity": [
                                 { "test": "radius < 30", "value": 0 },
+                                { "test": "datum['value'] === 0", "value": 0 },
                                 { "value": 1 }
                             ],
                         }

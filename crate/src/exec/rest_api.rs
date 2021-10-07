@@ -104,20 +104,30 @@ fn abs_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
     }
 }
 
+fn split_at_excl_mark(params: &str) -> Vec<&str> {
+    return params.split_terminator("!").collect::<Vec<&str>>();
+}
+
 fn rel_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> RecordBatch {
-    let split = params.split_terminator("!").collect::<Vec<&str>>();
-    let end = split[1].split_terminator("&").collect::<Vec<&str>>();
-    let split_fields_bucket_size = split[0].split_terminator(":").collect::<Vec<&str>>();
-    let field_vec = split_fields_bucket_size[0]
-        .split_terminator(",")
-        .collect::<Vec<&str>>();
-    let _pipeline = field_vec[0];
-    let time = field_vec[1];
+    let split = split_at_excl_mark(params);
 
-    let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
-
+    let before_excl_mark = 0;
+    let after_excl_mark = 1;
+    let split_fields_bucket_size = split[before_excl_mark].split_terminator(":").collect::<Vec<&str>>();
+    let end = split[after_excl_mark].split_terminator("&").collect::<Vec<&str>>();
     let pipeline_vec = end[0].split_terminator(",").collect::<Vec<&str>>();
     let event_vec = end[1].split_terminator(",").collect::<Vec<&str>>();
+    
+    let before_colon = 0;
+    let after_colon = 1;
+    let field_vec = split_fields_bucket_size[before_colon]
+        .split_terminator(",")
+        .collect::<Vec<&str>>();
+    let _pipeline = field_vec[before_colon];
+    let time = field_vec[after_colon];
+    let bucket_size = split_fields_bucket_size[after_colon].parse::<f64>().unwrap();
+
+
 
     return rel_freq::rel_freq_with_pipelines_with_double_events(
         &record_batch,
@@ -131,21 +141,21 @@ fn rel_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> Re
 
 
 fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> RecordBatch {
-    let split = params.split_terminator("!").collect::<Vec<&str>>();
+    let split = split_at_excl_mark(params);
+
     let before_excl_mark = 0;
     let after_excl_mark = 1;
     let split_fields_bucket_size = split[before_excl_mark].split_terminator(":").collect::<Vec<&str>>();
+    let pipeline_vec = split[after_excl_mark].split_terminator(",").collect::<Vec<&str>>();
+
     let before_colon = 0;
     let after_colon = 1;
-
     let field_vec = split_fields_bucket_size[before_colon]
         .split_terminator(",")
         .collect::<Vec<&str>>();
+    let bucket_size = split_fields_bucket_size[after_colon].parse::<f64>().unwrap();
     let _pipeline = field_vec[0];
     let time = field_vec[1];
-    let bucket_size = split_fields_bucket_size[after_colon].parse::<f64>().unwrap();
-
-    let pipeline_vec = split[after_excl_mark].split_terminator(",").collect::<Vec<&str>>();
 
     return rel_freq::rel_freq_with_pipelines(
         &record_batch,
@@ -164,7 +174,7 @@ fn rel_freq_multiple_pipelines(
     let field_vec = fields.split_terminator(",").collect::<Vec<&str>>();
 
     let time = field_vec[1];
-    let split = params.split_terminator("!").collect::<Vec<&str>>();
+    let split = split_at_excl_mark(params);
 
     let split_fields_bucket_size = params.split_terminator(":").collect::<Vec<&str>>();
     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();

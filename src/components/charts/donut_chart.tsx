@@ -283,6 +283,7 @@ class DonutChart extends React.Component<Props, State> {
                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
                             "fillOpacity": [
                                 { "test": "radius < 30", "value": 0 },
+                                { "test": "datum['value'] === 0", "value": 0 },
                                 { "value": 1 }
                             ],
                         }

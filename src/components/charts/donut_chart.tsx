@@ -275,7 +275,7 @@ class DonutChart extends React.Component<Props, State> {
                             fontSize: { value: model.chartConfiguration.donutChartLabelFontSize },
                             "x": { "signal": "if(width >= height, width, height) / 2" },
                             "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.05 * 0.65" },
+                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
                             "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
                             "fill": { "value": "#000" },
                             "align": { "value": "center" },

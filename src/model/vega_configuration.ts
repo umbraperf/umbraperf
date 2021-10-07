@@ -59,7 +59,7 @@ export let chartConfiguration: ChartConfiguration = {
     legendSymbolSize: 50,
 
     //Value Lables
-    donutChartLabelFontSize: 8,
+    donutChartLabelFontSize: 9,
 
     //Tooltip:
     areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",

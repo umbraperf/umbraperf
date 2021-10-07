@@ -125,7 +125,7 @@ class BarChart extends React.Component<Props, State> {
         return <div ref={this.elementWrapper} style={{height: "100%"}}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
-                : <div className={"vegaContainer"} ref={this.chartWrapper} style={{height: "100%"}}>
+                : <div className={"vegaContainer"} ref={this.chartWrapper} >
                     <Vega spec={this.createVisualizationSpec()} />
                 </div>
             }
@@ -155,7 +155,7 @@ class BarChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width - 40,
+            width: this.state.width - 50,
             height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,

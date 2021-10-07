@@ -43,6 +43,11 @@
     padding-bottom: var(--gridCellBoxPaddingBottom);
 }
 
+.dashboardGridCellBoxMainVisualizations{
+    composes:dashboardGridCellBox;
+    height: 210px;
+}
+
 .dashboardGridCellOptionsBox{
     composes:dashboardGridCellBox;
     width: auto;

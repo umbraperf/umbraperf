@@ -70,7 +70,7 @@ class Dashboard extends React.Component<Props, {}> {
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dashboardGridCellBox}>
+                            <Box className={styles.dashboardGridCellBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <DonutChart />
                                 </div>
@@ -79,7 +79,7 @@ class Dashboard extends React.Component<Props, {}> {
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
                         <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8}>
-                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
+                            <Box className={`${styles.dashboardGridCellBoxMainVisualizations} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines />
                                 </div>
@@ -90,7 +90,7 @@ class Dashboard extends React.Component<Props, {}> {
 
                     <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dashboardGridCellBox}>
+                            <Box className={styles.dashboardGridCellBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <BarChart onDashboard={true} />
                                 </div>
@@ -99,7 +99,7 @@ class Dashboard extends React.Component<Props, {}> {
                     </Box>
                     <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
                         <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemAreaChartStaticWidthSmallScreen}`} xs={12} md={12} lg={8} >
-                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
+                            <Box className={`${styles.dashboardGridCellBoxMainVisualizations} ${styles.dashboardGridCellBoxAreaChartStaticWidthSmallScreen}`}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <SwimLanesMultiplePipelines absoluteValues={true} />
                                 </div>

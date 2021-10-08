@@ -6,6 +6,7 @@
     --activityHistogramSmallScreenMinWidth: 940px;
     --areaChartSmallScreenMinWidth: 700px;
     --areaChartSmallScreenMinWidth: 700px;
+    --optionsItemCellHeight: 85px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
     --gridCellBoxColor: rgb(245, 245, 245);
@@ -27,6 +28,8 @@
 .dashboardGridCellOptionsItem{
     composes: dashboardGridCellItem;
     padding: 0px;
+    height: var(--optionsItemCellHeight);
+    transform: scale(0.8);
 }
 
 .dashboardGridCellBox{
@@ -34,7 +37,6 @@
     background-color: var(--gridCellBoxColor);
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
-    transform: scale(0.8);
 }
 
 .dashboardGridCellBoxActivityHistogram{
@@ -50,10 +52,7 @@
 .dashboardGridCellOptionsBox{
     composes:dashboardGridCellBox;
     width: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
+    height: 100%;
 }
 
 .dashboardGridCellOptionsContainer{

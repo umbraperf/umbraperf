@@ -43,7 +43,6 @@ interface State {
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
-    chartWrapper = createRef<HTMLDivElement>();
     elementWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
@@ -153,7 +152,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         return <div style={{height: "100%"}} ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                 ? <Spinner />
-                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                : <div className={"vegaContainer"}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
                 </div>
             }

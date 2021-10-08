@@ -8,6 +8,7 @@
     --areaChartSmallScreenMinWidth: 700px;
     --mainVisualizationsHeight: 210px;
     --gridCellBoxColor: rgb(245, 245, 245);
+    --smallScreenActivityChartAreaChartOffset: 12px;
 }
 
 .dashboardGrid{
@@ -69,20 +70,19 @@
         max-width: var(--normalChartsSmallScreenMinWidth); 
     }   
 
-/*     TODO add more width according to padding
- */    .dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen{
-        min-width: var(--activityHistogramSmallScreenMinWidth);
-    }
-
     .dashboardGridCellItemActivityHistogramStaticWidthSmallScreen{
-        min-width: var(--activityHistogramSmallScreenMinWidth);
+        min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
     }
 
-    .dashboardGridCellBoxAreaChartStaticWidthSmallScreen{
-        min-width: var(--areaChartSmallScreenMinWidth);
+    .dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen{
+        min-width: var(--activityHistogramSmallScreenMinWidth);
     }
 
     .dashboardGridCellItemAreaChartStaticWidthSmallScreen{
+        min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
+    }
+
+    .dashboardGridCellBoxAreaChartStaticWidthSmallScreen{
         min-width: var(--areaChartSmallScreenMinWidth);
     }
   } 

@@ -1,13 +1,13 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
+import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress } from '@material-ui/core';
 import _ from "lodash";
 
 
@@ -140,7 +140,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
       return <div>
          {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events || !this.props.currentPipeline)
-            ? <CircularProgress />
+            ? <Spinner />
             : <div className={"vegaContainer"} ref={this.chartWrapper}>
                {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
             </div>

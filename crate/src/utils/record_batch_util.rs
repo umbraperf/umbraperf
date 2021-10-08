@@ -139,8 +139,8 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
         &options,
     );
 
-    arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
-    arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
+    let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
+    let _writer_mess = arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
 
     notify_js_query_result(buff.into_inner());
 }

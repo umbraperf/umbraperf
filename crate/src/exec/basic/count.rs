@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{collections::HashSet, sync::Arc};
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
@@ -17,7 +17,6 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let row_count = vec.len() as f64;
     let _result_builder = result_builder.append_value(row_count);
 
-
     let builder = result_builder.finish();
 
     let result_field = Field::new("count", DataType::Float64, false);
@@ -27,6 +26,32 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
     return batch;
 
+}
+
+pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
+    let vec = batch
+        .column(column_index_for_unqiue)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+    let hash_set = vec
+        .into_iter()
+        .map(|item| item.unwrap())
+        .collect::<HashSet<&str>>()
+        .into_iter()
+        .collect::<Vec<&str>>();
+
+    let mut result_builder = Float64Array::builder(1);
+    let _result_builder = result_builder.append_value(hash_set.len() as f64);
+    let builder = result_builder.finish();
+
+    let result_field = Field::new("count", DataType::Float64, false);
+
+    let schema = Schema::new(vec![result_field]);
+
+    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
+    return batch;
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {

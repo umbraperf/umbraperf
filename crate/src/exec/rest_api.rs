@@ -252,6 +252,10 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 record_batch =
                     analyze::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
+            "count(distinct)" => {
+                record_batch =
+                count::count_total_unique(&record_batch, find_name(params, &record_batch));
+            }
             "basic_count" => {
                 record_batch = count::count(&record_batch, find_name(params, &record_batch));
             }

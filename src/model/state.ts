@@ -1,5 +1,5 @@
 import {  ChartDataKeyValue } from "./chart_data_result";
-import { Result, ResultLoading } from "./core_result";
+import { IKpiData, Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
 import {State as IDashboardState} from "../components/dummy-dashboard"
 
@@ -18,9 +18,11 @@ export interface AppState {
     currentRequest: RestQueryType | undefined;
     events: Array<string> |undefined;
     pipelines: Array<string> |undefined;
+    kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
     multipleChartDataLength: number;
+    //TODO remove:
     dashboardState: IDashboardState | undefined;
     currentInterpolation: String;
     currentBucketSize: number;
@@ -42,6 +44,7 @@ export function createDefaultState(): AppState {
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
+        kpis: undefined,
         chartIdCounter: 1,
         chartData: {},
         multipleChartDataLength: -1,

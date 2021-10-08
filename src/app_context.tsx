@@ -5,6 +5,7 @@ export interface IAppContext {
     controller: RequestController,
     primaryColor: string,
     secondaryColor: string,
+    tertiaryColor: string,
 }
 
 export const ctx = React.createContext<IAppContext | null>(null);

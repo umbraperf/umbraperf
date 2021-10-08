@@ -165,8 +165,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         const visData = this.createVisualizationData();
 
         const xTicks = () => {
-            if (visData.bucketsArray.length > 100) {
-                return Array.from(visData.bucketsArray.filter(bucket => bucket % 10 === 0));
+            if (visData.bucketsArray.length > 50) {
+                return Array.from(visData.bucketsArray.filter(bucket => bucket % 20 === 0));
             }
         }
 
@@ -176,7 +176,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.state.width - 60,
-            height: 90,
+            height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: true },
             title: {
@@ -309,14 +309,14 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
                             titleFont: model.chartConfiguration.axisTitleFont,
-                            encode: {
+                            /* encode: {
                                 labels: {
                                     update: {
                                         angle: { value: -45 },
                                         align: { value: "right" }
                                     }
                                 }
-                            },
+                            }, */
                             values: xTicks(),
                             labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize,
                             labelFont: model.chartConfiguration.axisLabelFont
@@ -371,7 +371,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     y: { value: 0 },
                                     height: { signal: "height" },
                                     width: { value: 2 },
-                                    fill: { value: this.props.appContext.primaryColor }
+                                    fill: { value: this.props.appContext.secondaryColor }
                                 },
                                 update: {
                                     x: { signal: "brush[0]" },
@@ -391,7 +391,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     y: { value: 0 },
                                     height: { signal: "height" },
                                     width: { value: 2 },
-                                    fill: { value: this.props.appContext.primaryColor }
+                                    fill: { value: this.props.appContext.secondaryColor }
                                 },
                                 update: {
                                     x: { signal: "brush[1]" },

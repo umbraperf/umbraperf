@@ -27,7 +27,6 @@
 .dashboardGridCellOptionsItem{
     composes: dashboardGridCellItem;
     padding: 0px;
-
 }
 
 .dashboardGridCellBox{
@@ -35,6 +34,7 @@
     background-color: var(--gridCellBoxColor);
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
+    transform: scale(0.8);
 }
 
 .dashboardGridCellBoxActivityHistogram{
@@ -53,7 +53,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(0.8);
 
 }
 

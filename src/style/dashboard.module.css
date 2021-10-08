@@ -1,4 +1,5 @@
 :root {
+    --outerGridPadding: 7px;
     --gridCellBoxPadding: 3px;
     --gridCellItemPadding: 7px;
     --normalChartsSmallScreenMinWidth: 450px;
@@ -6,13 +7,12 @@
     --areaChartSmallScreenMinWidth: 700px;
     --areaChartSmallScreenMinWidth: 700px;
     --mainVisualizationsHeight: 210px;
+    --gridCellBoxColor: rgb(245, 245, 245);
 }
 
 .dashboardGrid{
-    padding-top: 10px;
+    padding: var(--outerGridPadding);
     background-color: white;
-    margin-left: 10px;
-    margin-right: 10px;
 }
 
 .dashboardGridCellItem{
@@ -28,7 +28,7 @@
 
 .dashboardGridCellBox{
     width: 100%;
-    background-color: rgb(245, 245, 245);
+    background-color: var(--gridCellBoxColor);
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
 }

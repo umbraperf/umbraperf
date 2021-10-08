@@ -74,7 +74,7 @@ class Dashboard extends React.Component<Props, {}> {
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
                         <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemActivityHistogramStaticWidthSmallScreen}`}  xs={12} >
-                            <Box className={`${styles.dashboardGridCellBox} ${styles.dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
+                            <Box className={`${styles.dashboardGridCellBoxActivityHistogram} ${styles.dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <BarChartActivityHistogram />
                                 </div>

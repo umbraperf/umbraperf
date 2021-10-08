@@ -37,7 +37,6 @@ interface State {
 
 class BarChartActivityHistogram extends React.Component<Props, State> {
 
-    chartWrapper = createRef<HTMLDivElement>();
     elementWrapper = createRef<HTMLDivElement>();
 
 
@@ -113,7 +112,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
-                : <div className={"vegaContainer"} ref={this.chartWrapper} >
+                : <div className={"vegaContainer"} >
                     {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>

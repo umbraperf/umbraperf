@@ -39,7 +39,6 @@ interface State {
 
 class DonutChart extends React.Component<Props, State> {
 
-    chartWrapper = createRef<HTMLDivElement>();
     elementWrapper = createRef<HTMLDivElement>();
 
     constructor(props: Props) {
@@ -119,7 +118,7 @@ class DonutChart extends React.Component<Props, State> {
         return <div ref={this.elementWrapper} style={{height: "100%"}}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
-                : <div className={"vegaContainer"} ref={this.chartWrapper}>
+                : <div className={"vegaContainer"}>
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }

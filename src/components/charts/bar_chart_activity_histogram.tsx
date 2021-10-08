@@ -1,13 +1,13 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
+import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import { CircularProgress } from '@material-ui/core';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import IconButton from "@material-ui/core/IconButton";
 
@@ -112,7 +112,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         return <div ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
-                ? <CircularProgress />
+                ? <Spinner />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
                     {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />

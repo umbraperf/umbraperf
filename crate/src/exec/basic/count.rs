@@ -20,11 +20,9 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
 
     let builder = result_builder.finish();
 
-    let schema = batch.schema();
     let result_field = Field::new("count", DataType::Float64, false);
 
     let schema = Schema::new(vec![result_field]);
-
 
     let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
     return batch;

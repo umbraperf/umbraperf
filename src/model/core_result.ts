@@ -19,5 +19,4 @@ export function createResultObject(request: number, resultTable: ArrowTable.Tabl
 export interface IKpiData{
     title: string,
     value: string,
-    ecplanation: string,
 }

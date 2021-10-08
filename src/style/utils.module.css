@@ -60,8 +60,14 @@
     margin-bottom: -5px;
 }
 
-.eventButtonsContainer{
+.optionsContainer{
     display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eventButtonsContainer{
+    composes: optionsContainer;
     flex-direction: column;
 }
 .eventButtonsArea{
@@ -78,14 +84,20 @@
 }
 
 .kpiContainer{
+    composes: optionsContainer;
     margin: 10px;
     text-align: center;
-    display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+
 }
 
 .kpiCard{
     margin: 2px;
 }
+
+.dropdownOptionsContainer{
+    composes: optionsContainer;
+    flex-direction: row;
+
+}
+

@@ -43,6 +43,7 @@ class KpiContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        Controller.requestStatistics(this.props.appContext.controller);
         //add 2 dummy cards: 
         /*         let dummyKpiData = [{title: "Test 1", body:"KPI 1", explanation:"Explanation of KPI 1."}, {title: "Test 2", body:"KPI 2", explanation:"Explanation of KPI 2."}];
                 this.setState((state, props) => ({

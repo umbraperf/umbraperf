@@ -61,7 +61,7 @@ class KpiContainer extends React.Component<Props, State> {
     createKpiCard(key: number, title: string, body: string, explanation: string) {
         return <Card key={key} className={styles.kpiCard}>
             <CardContent>
-                <Typography color="secondary">
+                <Typography style={{color: this.props.appContext.tertiaryColor}}>
                     {title}
                 </Typography>
                 <Typography variant="h5" component="div">

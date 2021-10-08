@@ -240,7 +240,7 @@ class BarChart extends React.Component<Props, State> {
                             }
                         },
                         update: {
-                            fill: { value: this.props.appContext.primaryColor },
+                            fill: { value: this.props.appContext.tertiaryColor },
                         },
                         hover: {
                             fill: { value: this.props.appContext.secondaryColor },

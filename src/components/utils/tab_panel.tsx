@@ -46,15 +46,15 @@ function ScrollableTabsButtonForce(props: any) {
                     variant="scrollable"
                     scrollButtons="on"
 /*                     variant="fullWidth"
- */                    indicatorColor="primary"
-                    textColor="primary"
+ */                    indicatorColor="secondary"
+                    textColor="secondary"
                     aria-label="scrollable force tabs example"
                     className={csvParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
                     {routes.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
-                                <Tab classes={{ root: classes.tabRoot }} /* label={prop.sidebarName} */ value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
+                                <Tab classes={{ root: classes.tabRoot }} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
                             );
                         }
                     })}

@@ -62,6 +62,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             break;
 
         case model.RestQueryType.GET_STATISTICS:
+            const statistics = store.getState().result?.resultTable.getColumnAt(0)!.toArray();
 /*             const statistics = store.getState().result?.resultTable.getColumn('pipeline').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_PIPELINES,

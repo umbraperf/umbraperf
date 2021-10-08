@@ -182,7 +182,7 @@ fn rel_freq_multiple_pipelines(
     let field_vec = fields.split_terminator(",").collect::<Vec<&str>>();
 
     let time = field_vec[1];
-    let split = split_at_excl_mark(params);
+    let _split = split_at_excl_mark(params);
 
     let split_fields_bucket_size = split_at_colon(params);
     let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();

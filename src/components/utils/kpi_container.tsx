@@ -54,11 +54,11 @@ class KpiContainer extends React.Component<Props, State> {
 
     mapKpiArrayToCards() {
         //get array of kpis from redux, map to multiple cards
-        const kpiCardsArray = this.state.kpiDataArray.map((elem, index) => this.createKpiCard(index, elem.title, elem.body, elem.explanation));
+        const kpiCardsArray = this.state.kpiDataArray.map((elem, index) => this.createKpiCard(index, elem.title, elem.body));
         return kpiCardsArray;
     }
 
-    createKpiCard(key: number, title: string, body: string, explanation: string) {
+    createKpiCard(key: number, title: string, body: string) {
         return <Card key={key} className={styles.kpiCard}>
             <CardContent>
                 <Typography style={{color: this.props.appContext.tertiaryColor}}>
@@ -66,9 +66,6 @@ class KpiContainer extends React.Component<Props, State> {
                 </Typography>
                 <Typography variant="h5" component="div">
                     {body}
-                </Typography>
-                <Typography variant="body2">
-                    {explanation}
                 </Typography>
             </CardContent>
         </Card>

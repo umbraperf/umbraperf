@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{array::{Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches, utils::{print_to_cons, record_batch_util::convert}};
+use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches};
 
 
 pub fn create_rel_freq_bucket(

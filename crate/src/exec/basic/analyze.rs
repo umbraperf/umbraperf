@@ -1,11 +1,11 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{Field, Schema}, record_batch::RecordBatch};
 use std::{
     collections::{HashSet},
     sync::Arc,
 };
 use arrow::error::Result as ArrowResult;
 
-use crate::{utils::{record_batch_util::create_record_batch}};
+use crate::{utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch}};
 
 
 fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
@@ -78,8 +78,8 @@ pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch
 }
 
 
-pub fn filter_with(column_num: usize, filter_str: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
-    if filter_str.len() == 1 && filter_str[0] == "" {
+pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
+    if filter_strs.len() == 0 {
         return batch.to_owned();
     }
     let filter_array = batch
@@ -88,7 +88,7 @@ pub fn filter_with(column_num: usize, filter_str: Vec<&str>, batch: &RecordBatch
         .downcast_ref::<StringArray>()
         .unwrap()
         .iter()
-        .map(|value| Some(filter_str.contains(&value.unwrap())))
+        .map(|value| Some(filter_strs.contains(&value.unwrap())))
         .collect::<BooleanArray>();
 
     let mut arrays: Vec<ArrayRef> = Vec::new();

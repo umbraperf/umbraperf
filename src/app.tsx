@@ -52,8 +52,8 @@ const appColor = {
     // secondary: '#919191',
 
     primary: '#040404',
-    secondary: '#919191',
-    tertiary: '#d4733e', 
+    secondary: '#d4733e',
+    tertiary: '#919191', 
 }
 
 export const appContext: IAppContext = {

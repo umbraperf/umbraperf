@@ -37,15 +37,15 @@ class Dashboard extends React.Component<Props, {}> {
         return <div className={styles.dashboardGrid}>
 
             <div >
-                <Grid container className={styles.dashboardGridOptionsContainer} >
-                    <Grid item className={styles.dashboardGridCellItem} xs={12} lg={7} >
+                <Grid container >
+                    <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={7} >
                         <Box className={styles.dashboardGridCellOptionsBox}>
                             <div className={styles.dashboardGridCellOptionsContainer}>
                                 <EventsButtons />
                             </div>
                         </Box>
                     </Grid>
-                    <Grid item className={styles.dashboardGridCellItem} xs={12} lg={5} >
+                    <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={5} >
                         <Box className={styles.dashboardGridCellOptionsBox}>
                             <div className={styles.dashboardGridCellOptionsContainer} >
                                 <InterpolationDropdown />

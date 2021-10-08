@@ -109,7 +109,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
@@ -304,7 +304,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             labelOverlap: false,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
-                            titleX: { signal: 'width', mult: 1.01},
+                            titleX: { signal: 'width', mult: 1.01 },
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
                             titleFont: model.chartConfiguration.axisTitleFont,

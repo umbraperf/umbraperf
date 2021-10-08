@@ -1,4 +1,5 @@
 .cssloadPiano {
+    transform: rotate(-90deg);
 	margin: auto;
 	width: 38px;
 	height: 9px;

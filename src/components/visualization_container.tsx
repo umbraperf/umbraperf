@@ -5,12 +5,6 @@ import styles from '../style/charts.module.css';
 
 import EventsButtons from './utils/events_buttons';
 
-import BarChart from '../components/charts/bar_chart';
-import Dummy from '../components/testdummy';
-import SwimLanes from '../components/charts/swim_lanes';
-import SwimLanesPipelines from '../components/charts/swim_lanes_pipelines';
-import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
-import DonutChart from '../components/charts/donut_chart';
 import { Redirect } from "react-router";
 import InterpolationDropdown from "./utils/interpolation_dropdown";
 import BucketsizeDropdwn from "./utils/bucketsize_dropdown";

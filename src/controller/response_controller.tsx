@@ -60,6 +60,18 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
                 data: pipelines,
             });
             break;
+
+        case model.RestQueryType.GET_STATISTICS:
+/*             const statistics = store.getState().result?.resultTable.getColumn('pipeline').toArray();
+            store.dispatch({
+                type: model.StateMutationType.SET_PIPELINES,
+                data: pipelines,
+            });
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENTPIPELINE,
+                data: pipelines,
+            }); */
+            break;
     }
 
     store.dispatch({

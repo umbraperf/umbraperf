@@ -41,27 +41,21 @@ class Dashboard extends React.Component<Props, {}> {
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
                         <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
-                                <div className={styles.dashboardGridCellOptionsContainer}>
-                                    <EventsButtons />
-                                </div>
+                                <EventsButtons />
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 3, sm: 3, lg: 2 }}>
                         <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={3} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
-                                <div className={styles.dashboardGridCellOptionsContainer} >
-                                    <KpiContainer />
-                                </div>
+                                <KpiContainer />
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 2, sm: 2, lg: 3 }}>
                         <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={3} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
-                                <div className={styles.dashboardGridCellOptionsContainer} >
-                                    <DropdownsOptions />
-                                </div>
+                                <DropdownsOptions />
                             </Box>
                         </Grid>
                     </Box>
@@ -71,7 +65,7 @@ class Dashboard extends React.Component<Props, {}> {
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemActivityHistogramStaticWidthSmallScreen}`}  xs={12} >
+                        <Grid item className={`${styles.dashboardGridCellItem} ${styles.dashboardGridCellItemActivityHistogramStaticWidthSmallScreen}`} xs={12} >
                             <Box className={`${styles.dashboardGridCellBoxActivityHistogram} ${styles.dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen}`}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <BarChartActivityHistogram />

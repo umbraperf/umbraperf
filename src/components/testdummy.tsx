@@ -59,7 +59,6 @@ class Dashboard extends React.Component<Props, {}> {
                             </Box>
                         </Grid>
                     </Box>
-
                 </Grid>
 
 

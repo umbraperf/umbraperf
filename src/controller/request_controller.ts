@@ -59,8 +59,12 @@ export function requestPipelines(controller: RequestController) {
 
 //request statistics such as number of pipelines, number of cycles, ... from rust, metarequest
 export function requestStatistics(controller: RequestController) {
-    //TODO 
-
+    controller.calculateChartData(
+        model.RestQueryType.GET_STATISTICS,
+        model.createRestQuery({
+            type: model.RestQueryType.GET_STATISTICS,
+            data: {},
+        }), true); 
 }
 
 //request data for chart visualizations

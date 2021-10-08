@@ -5,8 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import EventsButtons from './utils/events_buttons';
 import KpiContainer from './utils/kpi_container';
-import InterpolationDropdown from './utils/interpolation_dropdown';
-import BucketsizeDropdwn from './utils/bucketsize_dropdown';
+import DropdownsOptions from './utils/dropdowns_options';
 import DonutChart from '../components/charts/donut_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';
@@ -61,8 +60,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={3} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <div className={styles.dashboardGridCellOptionsContainer} >
-                                    <InterpolationDropdown />
-                                    <BucketsizeDropdwn />
+                                    <DropdownsOptions />
                                 </div>
                             </Box>
                         </Grid>

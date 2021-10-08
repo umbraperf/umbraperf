@@ -1,6 +1,7 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
+import Spinner from './spinner';
 import styles from '../../style/utils.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -36,8 +37,8 @@ class KpiContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-    
-        if(undefined === this.props.kpis){
+
+        if (undefined === this.props.kpis) {
             Controller.requestStatistics(this.props.appContext.controller);
         }
     }
@@ -51,7 +52,7 @@ class KpiContainer extends React.Component<Props, State> {
     createKpiCard(key: number, title: string, body: string) {
         return <Card key={key} className={styles.kpiCard}>
             <CardContent>
-                <Typography style={{color: this.props.appContext.tertiaryColor}}>
+                <Typography style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
                 </Typography>
                 <Typography variant="h5" component="div">
@@ -65,9 +66,22 @@ class KpiContainer extends React.Component<Props, State> {
 
     public render() {
 
-        return <div className={styles.kpiContainer} >
-            {this.state.kpiDataArray && this.mapKpiArrayToCards()}
-        </div>;
+        return <div className={styles.kpiContainer}>
+            {this.props.kpis ?
+                <div></div>
+                : <Spinner />
+            }
+
+        </div>
+
+        if (this.props.kpis) {
+            return <div className={styles.kpiContainer} >
+                {this.state.kpiDataArray && this.mapKpiArrayToCards()}
+            </div>;
+        } else {
+            return
+        }
+
     }
 
 

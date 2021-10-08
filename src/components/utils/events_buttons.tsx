@@ -1,6 +1,7 @@
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
+import Spinner from './spinner';
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
@@ -36,21 +37,26 @@ function EventsButtons(props: Props) {
 
     return (
         <div className={styles.eventButtonsContainer}>
-            <InputLabel className={styles.eventsButtonsLabel} id="interpolation-selector-label">Events:</InputLabel>
-            <div className={styles.eventButtonsArea}>
-                {events && events!.map((event: string, index: number) => (
-                    <Button
-                        className={"eventButton"}
-                        variant="contained"
-                        color={props.currentEvent === event ? "primary" : "default"}
-                        onClick={() => handleEventButtonClick(event)}
-                        style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
-                        key={index}
-                    >
-                        {createEventShortString(event)}
-                    </Button>
-                ))}
-            </div>
+            {props.events ?
+                <div>
+                    <InputLabel className={styles.eventsButtonsLabel} id="interpolation-selector-label">Events:</InputLabel>
+                    <div className={styles.eventButtonsArea}>
+                        {events && events!.map((event: string, index: number) => (
+                            <Button
+                                className={"eventButton"}
+                                variant="contained"
+                                color={props.currentEvent === event ? "primary" : "default"}
+                                onClick={() => handleEventButtonClick(event)}
+                                style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
+                                key={index}
+                            >
+                                {createEventShortString(event)}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+                : <Spinner />
+            }
         </div>
     );
 }

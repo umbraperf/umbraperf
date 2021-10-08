@@ -115,7 +115,7 @@ class DonutChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{height: "100%"}}>
+        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
                 : <div className={"vegaContainer"}>

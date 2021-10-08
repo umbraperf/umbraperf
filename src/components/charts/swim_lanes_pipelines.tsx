@@ -196,7 +196,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          autosize: 'fit',
 
          title: {
-            text: {signal: "currentPipeline"},
+            text: { signal: "currentPipeline" },
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
             font: model.chartConfiguration.titleFont

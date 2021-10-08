@@ -34,7 +34,7 @@ import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
-import { AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
+import { StylesProvider, AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
@@ -53,7 +53,7 @@ const appColor = {
 
     primary: '#040404',
     secondary: '#d4733e',
-    tertiary: '#919191', 
+    tertiary: '#919191',
 }
 
 export const appContext: IAppContext = {
@@ -158,69 +158,69 @@ export default function App() {
     return (
         <AppContextProvider value={appContext}>
             <ReduxProvider store={store}>
-                <MuiThemeProvider theme={materialUiTheme}>
+                <StylesProvider injectFirst={true}>
+                    <MuiThemeProvider theme={materialUiTheme}>
+                        <BrowserRouter>
 
-                    <BrowserRouter>
+                            <div className={`app ${styles.app}`}>
 
-                        <div className={`app ${styles.app}`}>
+                                <div className={styles.appHeader}>
+                                    <AppBar position="static" >
+                                        <Toolbar style={{ minHeight: '38px' }}>
+                                            <Typography variant="h6" className={styles.appHeaderTitle}>
+                                                Umbra-Profiler
+                                            </Typography>
+                                        </Toolbar>
+                                    </AppBar>
+                                </div>
 
-                            <div className={styles.appHeader}>
-                                <AppBar position="static" >
-                                    <Toolbar style={{ minHeight: '38px' }}>
-                                        <Typography variant="h6" className={styles.appHeaderTitle}>
-                                            Umbra-Profiler
-                                        </Typography>
-                                    </Toolbar>
-                                </AppBar>
-                            </div>
+                                <div className={`appNavigation ${styles.appNavigation}`}>
 
-                            <div className={`appNavigation ${styles.appNavigation}`}>
+                                    <TabPanel />
 
-                                <TabPanel />
+                                </div>
 
-                            </div>
+                                <div className={styles.appBody}>
+                                    <Switch>
 
-                            <div className={styles.appBody}>
-                                <Switch>
-
-                                    <Route exact path="/" key="/">
-                                        <Redirect to="/upload" />
-                                    </Route>
-
-                                    <Route exact path="/upload" key="/upload">
-                                        <FileUploader />
-                                    </Route>
-
-                                    <Route exact path="/dashboard" key="/dashboard">
-                                        <Dashboard />
-                                    </Route>
-
-                                    <Route exact path="/dummy-dashboard" key="/dummy-dashboard">
-                                        <DummyDashboard />
-                                    </Route>
-
-                                    <Route exact path="/dummy" key="/dummy">
-                                        <Dummy />
-                                    </Route>
-
-                                    {routes.map((route: any) => {
-                                        return <Route exact path={route.path} key={route.path}>
-                                            <VisualizationContainer component={route.component} visualizationName={route.path} />
+                                        <Route exact path="/" key="/">
+                                            <Redirect to="/upload" />
                                         </Route>
-                                    })}
 
-                                    <Route path="*">
-                                        <NoMatch />
-                                    </Route>
+                                        <Route exact path="/upload" key="/upload">
+                                            <FileUploader />
+                                        </Route>
 
-                                </Switch>
+                                        <Route exact path="/dashboard" key="/dashboard">
+                                            <Dashboard />
+                                        </Route>
+
+                                        <Route exact path="/dummy-dashboard" key="/dummy-dashboard">
+                                            <DummyDashboard />
+                                        </Route>
+
+                                        <Route exact path="/dummy" key="/dummy">
+                                            <Dummy />
+                                        </Route>
+
+                                        {routes.map((route: any) => {
+                                            return <Route exact path={route.path} key={route.path}>
+                                                <VisualizationContainer component={route.component} visualizationName={route.path} />
+                                            </Route>
+                                        })}
+
+                                        <Route path="*">
+                                            <NoMatch />
+                                        </Route>
+
+                                    </Switch>
+                                </div>
+
                             </div>
 
-                        </div>
-
-                    </BrowserRouter>
-                </MuiThemeProvider>
-
+                        </BrowserRouter>
+                    </MuiThemeProvider>
+                </StylesProvider>
             </ReduxProvider>
         </AppContextProvider>
     );

@@ -43,11 +43,10 @@ function EventsButtons(props: Props) {
                     <div className={styles.eventButtonsArea}>
                         {events && events!.map((event: string, index: number) => (
                             <Button
-                                className={"eventButton"}
+                                className={styles.eventButton}
                                 variant="contained"
                                 color={props.currentEvent === event ? "primary" : "default"}
                                 onClick={() => handleEventButtonClick(event)}
-                                style={{ width: 150, borderRadius: 70, margin: 7, fontSize: '12px' }}
                                 key={index}
                             >
                                 {createEventShortString(event)}

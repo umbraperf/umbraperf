@@ -1,10 +1,8 @@
-import * as model from '../model';
 import { AppState } from './state';
-import { Result, ResultLoading } from "./core_result";
+import { IKpiData, Result } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
 import { State as IDashboardState } from "../components/dummy-dashboard"
-
 
 
 /// A mutation
@@ -29,6 +27,7 @@ export enum StateMutationType {
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
+    SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
     SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
@@ -55,6 +54,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
+    | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
     | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
@@ -135,6 +135,11 @@ export class AppStateMutation {
                     ...state,
                     pipelines: mutation.data,
                 };
+            case StateMutationType.SET_KPIS:
+                return {
+                    ...state,
+                    kpis: mutation.data,
+                };
             case StateMutationType.SET_CHARTIDCOUNTER:
                 return {
                     ...state,
@@ -185,6 +190,7 @@ export class AppStateMutation {
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,
+                    kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},
                     multipleChartDataLength: -1,

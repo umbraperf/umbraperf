@@ -122,7 +122,7 @@ class BarChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{height: "100%"}}>
+        return <div ref={this.elementWrapper} style={{ height: "100%" }}>
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper} >
@@ -185,6 +185,17 @@ class BarChart extends React.Component<Props, State> {
                     nice: true,
                     range: 'height',
                 },
+                {
+                    name: "color",
+                    type: "ordinal",
+                    range: {
+                        scheme: "tableau20",
+                    },
+                    domain: {
+                        data: "table",
+                        field: "operators"
+                    }
+                }
             ],
 
             axes: [
@@ -235,15 +246,18 @@ class BarChart extends React.Component<Props, State> {
                             width: { scale: 'xscale', band: 1, offset: -1 },
                             y: { scale: 'yscale', field: 'values' },
                             y2: { scale: 'yscale', value: 0 },
-                            tooltip:{
+                            tooltip: {
                                 signal: model.chartConfiguration.barChartTooltip,
                             }
                         },
                         update: {
-                            fill: { value: this.props.appContext.tertiaryColor },
+                            fill: {
+                                scale: "color",
+                                field: "operators"
+                            },
                         },
                         hover: {
-                            fill: { value: this.props.appContext.secondaryColor },
+                            fill: { value: this.props.appContext.tertiaryColor },
                         },
                     },
                 },
@@ -254,13 +268,12 @@ class BarChart extends React.Component<Props, State> {
                         enter: {
                             x: { field: "x", offset: { field: "width", mult: 0.5 } },
                             y: { field: "y", offset: -7 },
-                            fill: [
-                                { test: "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white" },
-                                { value: "black" }
-                            ],
+                            fill: { value: "black" },
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { field: "datum.values" }
+                            text: { field: "datum.values" },
+                            fontSize: {value: model.chartConfiguration.barChartValueLabelFontSize},
+                            font: model.chartConfiguration.valueLabelFont,
                         }
                     }
                 },

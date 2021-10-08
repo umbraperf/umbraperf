@@ -54,12 +54,12 @@ class KpiContainer extends React.Component<Props, State> {
 
     mapKpiArrayToCards() {
         //get array of kpis from redux, map to multiple cards
-        const kpiCardsArray = this.state.kpiDataArray.map(elem => this.createKpiCard(elem.title, elem.body, elem.explanation));
+        const kpiCardsArray = this.state.kpiDataArray.map((elem, index) => this.createKpiCard(index, elem.title, elem.body, elem.explanation));
         return kpiCardsArray;
     }
 
-    createKpiCard(title: string, body: string, explanation: string) {
-        return <Card className={styles.kpiCard}>
+    createKpiCard(key: number, title: string, body: string, explanation: string) {
+        return <Card key={key} className={styles.kpiCard}>
             <CardContent>
                 <Typography color="secondary">
                     {title}

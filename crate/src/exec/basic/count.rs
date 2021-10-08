@@ -15,7 +15,7 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let mut result_builder = Float64Array::builder(1);
 
     let row_count = vec.len() as f64;
-    result_builder.append_value(row_count);
+    let _result_builder = result_builder.append_value(row_count);
 
 
     let builder = result_builder.finish();
@@ -51,7 +51,7 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
         let row_count = group_batch.num_rows() as f64;
 
-        result_builder.append_value(row_count);
+        let _result_builder = result_builder.append_value(row_count);
     }
 
     let builder = result_builder.finish();

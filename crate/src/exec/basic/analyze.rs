@@ -1,4 +1,4 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{Field, Schema}, record_batch::RecordBatch};
 use std::{
     collections::{HashSet},
     sync::Arc,

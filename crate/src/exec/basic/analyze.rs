@@ -1,4 +1,4 @@
-use arrow::{array::{ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 use std::{
     collections::{HashSet},
     sync::Arc,
@@ -6,6 +6,32 @@ use std::{
 use arrow::error::Result as ArrowResult;
 
 use crate::{utils::{record_batch_util::create_record_batch}};
+
+
+fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
+    nested.into_iter().flatten().collect()
+}
+
+pub fn concat_record_batches(vec_batch: Vec<RecordBatch>) -> RecordBatch {
+
+    let mut vec_fields = Vec::new();
+    let mut vec_columns = Vec::new();
+
+    for batch in vec_batch {
+        vec_fields.push(batch.schema().fields().to_owned());
+        vec_columns.push(batch.columns().to_owned());
+    }
+
+    let fields = flatten::<Field>(vec_fields);
+    let columns = flatten::<Arc<dyn Array>>(vec_columns);
+
+    let schema = Schema::new(fields);
+    let batch = RecordBatch::try_new(Arc::new(schema), columns);
+   
+    batch.unwrap()
+
+}
+
 
 pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();

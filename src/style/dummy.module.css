@@ -11,7 +11,7 @@
     --activityHistogramHeight: 84px;
     --gridCellBoxColor: rgb(85, 133, 133);
 /*     --gridCellBoxColor: rgb(245, 245, 245);
- */    --smallScreenActivityChartAreaChartOffset: 12px;
+ */    --smallScreenActivityChartAreaChartOffset: 7px;
 }
 
 .dashboardGrid{
@@ -34,19 +34,23 @@
 }
 
 .dashboardGridCellBox{
-    width: 100%;
     background-color: var(--gridCellBoxColor);
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
 }
 
-.dashboardGridCellBoxActivityHistogram{
+.dashboardGridCellChartBox{
     composes:dashboardGridCellBox;
+    width: 100%;
+}
+
+.dashboardGridCellChartBoxActivityHistogram{
+    composes:dashboardGridCellChartBox;
     height: var(--activityHistogramHeight);
 }
 
-.dashboardGridCellBoxMainVisualizations{
-    composes:dashboardGridCellBox;
+.dashboardGridCellChartBoxMainVisualizations{
+    composes:dashboardGridCellChartBox;
     height: var(--mainVisualizationsHeight);
 }
 
@@ -64,16 +68,16 @@
 
 @media not all and (min-width: 960px) {
     /* media query: inverted with min instead of max 960 to simulate > instead of >= */
-    .dashboardGridCellBox{
-        composes: dashboardGridCellBox;
+    .dashboardGridCellChartBox{
+        composes: dashboardGridCellChartBox;
         max-width: var(--normalChartsSmallScreenMinWidth); 
-    }   
+    }     
 
     .dashboardGridCellItemActivityHistogramStaticWidthSmallScreen{
         min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
     }
 
-    .dashboardGridCellBoxActivityHistogramStaticWidthSmallScreen{
+    .dashboardGridCellChartBoxActivityHistogramStaticWidthSmallScreen{
         min-width: var(--activityHistogramSmallScreenMinWidth);
     }
 
@@ -81,7 +85,14 @@
         min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
     }
 
-    .dashboardGridCellBoxAreaChartStaticWidthSmallScreen{
+    .dashboardGridCellChartBoxAreaChartStaticWidthSmallScreen{
         min-width: var(--areaChartSmallScreenMinWidth);
     }
   } 
+
+  @media not all and (min-width: 700px) {
+    .dashboardGridCellOptionsItem{
+        composes: dashboardGridCellOptionsItem;
+        height: auto;
+    } 
+  }

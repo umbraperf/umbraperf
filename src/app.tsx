@@ -47,14 +47,20 @@ export const store = createDevStore();
 const webFileController = new RequestController();
 
 const appColor = {
-    primary: '#198fb0',
+    // depreciated blue style:
+    // primary: '#198fb0',
+    // secondary: '#919191',
+
+    primary: '#040404',
     secondary: '#919191',
+    tertiary: '#d4733e', 
 }
 
 export const appContext: IAppContext = {
     controller: webFileController,
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
+    tertiaryColor: appColor.tertiary,
 };
 
 const materialUiTheme = createTheme({

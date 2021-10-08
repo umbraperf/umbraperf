@@ -40,7 +40,7 @@ class Dashboard extends React.Component<Props, {}> {
             <div >
                 <Grid container className={styles.dashboardGridOptionsContainer} >
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} lg={5} >
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} lg={6} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <div className={styles.dashboardGridCellOptionsContainer}>
                                     <EventsButtons />
@@ -58,7 +58,7 @@ class Dashboard extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 2, sm: 2, lg: 3 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} lg={4} >
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} lg={3} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <div className={styles.dashboardGridCellOptionsContainer} >
                                     <InterpolationDropdown />

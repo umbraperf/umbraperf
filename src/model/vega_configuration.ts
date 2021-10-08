@@ -44,7 +44,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartYTitle: 'Relative Frequency',
     areaChartYTitleAbsolute: 'Absolute Frequency',
     areaChartXTitle: 'Time (ms)',
-    activityHistogramXTitle: 'Execution Time',
+    activityHistogramXTitle: 'Time (ms)',
     axisTitleFontSize: 9,
     activityHistogramXLabelFontSize: 7,
     axisLabelFontSize: 8,

@@ -37,6 +37,7 @@ interface State {
     chartId: number,
     chartData: model.ISwimlanesData | undefined,
     width: number,
+    height: number,
 }
 
 
@@ -50,6 +51,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         this.state = {
             chartId: this.props.chartIdCounter,
             width: 0,
+            height: 0,
             chartData: undefined,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
@@ -101,6 +103,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         this.setState((state, props) => ({
             ...state,
             width: this.elementWrapper.current!.offsetWidth,
+            height: this.elementWrapper.current!.offsetHeight,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -147,7 +150,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper}>
+        return <div style={{height: "100%"}} ref={this.elementWrapper}>
             {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
                 ? <CircularProgress />
                 : <div className={"vegaContainer"} ref={this.chartWrapper}>
@@ -218,8 +221,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width - 60,
-            height: this.state.width / 5.5,
+            width: this.state.width - 55,
+            height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

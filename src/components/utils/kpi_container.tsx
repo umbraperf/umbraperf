@@ -9,7 +9,7 @@ import { Card, CardContent, Typography } from '@material-ui/core';
 
 interface Props {
     appContext: Context.IAppContext;
-
+    kpis: Array<model.IKpiData> | undefined;
 }
 
 interface State {
@@ -35,21 +35,11 @@ class KpiContainer extends React.Component<Props, State> {
         this.mapKpiArrayToCards = this.mapKpiArrayToCards.bind(this);
     }
 
-    componentDidUpdate(prevProps: Props): void {
-
-        //Map redux kpi to state kpi? or use directly from redux...
-
-
-    }
-
     componentDidMount() {
-        Controller.requestStatistics(this.props.appContext.controller);
-        //add 2 dummy cards: 
-        /*         let dummyKpiData = [{title: "Test 1", body:"KPI 1", explanation:"Explanation of KPI 1."}, {title: "Test 2", body:"KPI 2", explanation:"Explanation of KPI 2."}];
-                this.setState((state, props) => ({
-                    ...state,
-                    kpiDataArray: dummyKpiData,
-                })); */
+    
+        if(undefined === this.props.kpis){
+            Controller.requestStatistics(this.props.appContext.controller);
+        }
     }
 
     mapKpiArrayToCards() {
@@ -84,12 +74,9 @@ class KpiContainer extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
+    kpis: state.kpis,
 
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 
-});
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(KpiContainer));
+export default connect(mapStateToProps)(Context.withAppContext(KpiContainer));

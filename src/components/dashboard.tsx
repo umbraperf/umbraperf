@@ -42,16 +42,16 @@ class Dashboard extends React.Component<Props, {}> {
         return <div className={styles.dashboardGrid}>
 
             <div >
-                <Grid container>
+            <Grid container>
                     <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={5}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={5}>
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <EventsButtons />
                             </Box>
                         </Grid>
                     </Box>
-                    <Box clone order={{ xs: 3, lg: 2, xl: 2 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={4} >
+                    <Box clone order={{ xs: 3, lg: 3, xl: 2 }}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={4} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <KpiContainer />
                             </Box>

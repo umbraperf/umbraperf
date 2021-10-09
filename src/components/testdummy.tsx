@@ -29,7 +29,7 @@ class Dashboard extends React.Component<Props, {}> {
     }
 
     componentDidMount() {
-        this.props.setCurrentChart(model.ChartType.DASHBOARD);
+        this.props.setCurrentChart(model.ChartType.DUMMY);
     }
 
 

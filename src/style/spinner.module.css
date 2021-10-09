@@ -7,11 +7,15 @@
 }
 
 .cssloadPiano {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	min-width: 20px;
+	overflow: hidden;
 	margin: auto;
 	width: 38px;
-	height: 9px;
+	height: 30px;
 	font-size: 9px;
-	transform: rotate(-90deg);
 }
 .cssloadPiano > div {
 	height: 100%;

@@ -1,29 +1,21 @@
+:root {
+    --labelFonSize: 11px;
+}
+
 .dropdownSelector{
-    width: 200px;
+    width: 150px;
     text-align: left;
 }
 
 .dropdownSelectorLabel{
-    padding-left: 10px;
+    padding-left: 1px;
+    font-size: var(--labelFonSize);
 
 }
 
 .dropdownSelectorContainer{
     margin: 10px;
-}
-
-
-.eventDropdownSelector{
-    composes: dropdownSelector;
-}
-
-.eventDropdownSelectorLabel{
-    composes: dropdownSelectorLabel;
-}
-
-.eventDropdownSelectorContainer{
-    composes: dropdownSelectorContainer;
-}    
+} 
 
 .interpolationDropdownSelector{
     composes: dropdownSelector;
@@ -120,7 +112,7 @@
 }
 
 .kpiCardLabel{
-    font-size: 10px;
+    font-size: var(--labelFonSize);
 
 }
 

@@ -5,7 +5,7 @@ import Spinner from './spinner';
 import styles from '../../style/utils.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import _ from "lodash";
 
 

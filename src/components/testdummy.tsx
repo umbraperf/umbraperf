@@ -69,15 +69,16 @@ class Dashboard extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 3, lg: 2, xl: 2 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={4} >
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={4} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <KpiContainer />
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 2, lg: 2, xl: 3 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={3}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={4} xl={3}>
                             <Box className={styles.dashboardGridCellOptionsBox}>
+                                <DropdownsOptions />
                             </Box>
                         </Grid>
                     </Box>

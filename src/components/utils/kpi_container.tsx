@@ -51,7 +51,6 @@ class KpiContainer extends React.Component<Props, State> {
 
         if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {
             const kpiCards = this.mapKpiArrayToCards();
-            window.alert("hier");
             this.setState((state, props) => ({
                 ...state,
                 kpiCards: kpiCards,

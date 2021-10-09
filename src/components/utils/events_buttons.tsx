@@ -9,6 +9,7 @@ import styles from '../../style/utils.module.css';
 
 
 interface Props {
+    appContext: Context.IAppContext;
     events: Array<string> | undefined;
     currentEvent: string;
     setCurrentEvent: (newCurrentEvent: string) => void;
@@ -39,7 +40,7 @@ function EventsButtons(props: Props) {
         <div className={styles.eventButtonsContainer}>
             {props.events ?
                 <div>
-                    <InputLabel className={styles.eventsButtonsLabel} id="interpolation-selector-label">Events:</InputLabel>
+                    <InputLabel className={styles.eventsButtonsLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Events:</InputLabel>
                     <div className={styles.eventButtonsArea}>
                         {events && events!.map((event: string, index: number) => (
                             <Button
@@ -72,4 +73,4 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EventsButtons)
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(EventsButtons));

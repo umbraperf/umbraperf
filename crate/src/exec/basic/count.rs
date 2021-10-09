@@ -2,7 +2,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
+use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches};
 
 use super::analyze;
 

@@ -65,7 +65,9 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             const numberSamplesKpi: model.IKpiData = {title: "Total Samples", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray()};
             const numberPipelinesKpi: model.IKpiData = {title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray()};
             const numberOperatorsKpi: model.IKpiData = {title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray()};
-            const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi);
+            const executionTimeKpi: model.IKpiData = {title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray()};
+            const errorRateKpi: model.IKpiData = {title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray()};
+            const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi, executionTimeKpi, errorRateKpi);
         
             store.dispatch({
                 type: model.StateMutationType.SET_KPIS,

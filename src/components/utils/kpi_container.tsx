@@ -71,14 +71,15 @@ class KpiContainer extends React.Component<Props, State> {
 
     }
 
-    createKpiCard(key: number, title: string, body: string) {
+    createKpiCard(key: number, title: string, value: string) {
+        const valueRounded = Math.round(value as any * 100) / 100
         return <Card key={key} className={styles.kpiCard}>
             <CardContent>
                 <Typography style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
                 </Typography>
                 <Typography variant="h5" component="div">
-                    {body}
+                    {valueRounded}
                 </Typography>
             </CardContent>
         </Card>

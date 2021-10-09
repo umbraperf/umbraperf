@@ -28,9 +28,8 @@
 
 .dashboardGridCellOptionsItem{
     composes: dashboardGridCellItem;
-    padding: 0px;
+    padding: var(--gridCellItemPadding);
     height: auto;
-    transform: scale(0.8);
 }
 
 .dashboardGridCellBox{
@@ -56,7 +55,7 @@
 
 .dashboardGridCellOptionsBox{
     composes:dashboardGridCellBox;
-    width: auto;
+    width: 100%;
     height: var(--optionsItemBoxHeight);
 }
 

@@ -252,6 +252,12 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 record_batch =
                     analyze::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
+            "max" => {
+                record_batch = count::max_execution_time(&record_batch, find_name("time", &record_batch));
+            }
+            "relative" => {
+                record_batch = count::relative(&record_batch, find_name("operator", &record_batch), find_name("operator", &record_batch));
+            }
             "count(distinct)" => {
                 record_batch =
                 count::count_total_unique(&record_batch, find_name(params, &record_batch));

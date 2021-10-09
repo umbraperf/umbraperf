@@ -1,4 +1,5 @@
 import * as model from '../../model';
+import * as Context from '../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel, Select } from '@material-ui/core';
@@ -7,6 +8,7 @@ import { connect } from 'react-redux';
 
 
 interface Props{
+    appContext: Context.IAppContext;
     currentBucketSize: number;
     setCurrentBucketSize: (newCurrentBucketSize: number) => void;
 }
@@ -22,7 +24,7 @@ function BucketsizeDropdwn(props: Props) {
 
     return (
         <div className={styles.bucketsizeDropdownSelectorContainer}>
-            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} id="bucketsize-selector-label">Bucket-Size:</InputLabel>
+            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} style={{color: props.appContext.tertiaryColor}} id="bucketsize-selector-label">Bucket-Size:</InputLabel>
             <Select className={styles.bucketsizeDropdownSelector}
                 labelId="bucketsize-selector-label"
                 id="bucketsize-selector"
@@ -48,4 +50,4 @@ const mapStateToProps = (state: model.AppState) => ({
     }),
  });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BucketsizeDropdwn);
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(BucketsizeDropdwn));

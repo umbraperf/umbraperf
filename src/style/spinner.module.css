@@ -4,10 +4,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+	transform: rotate(-90deg);
 }
 
 .cssloadPiano {
-    transform: rotate(-90deg);
 	margin: auto;
 	width: 38px;
 	height: 9px;

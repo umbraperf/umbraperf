@@ -6,6 +6,8 @@ import styles from '../../style/utils.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Card, CardContent, Typography } from '@material-ui/core';
+import _ from "lodash";
+
 
 
 interface Props {
@@ -14,14 +16,9 @@ interface Props {
 }
 
 interface State {
-    kpiDataArray: Array<IKpiData>;
+    kpiCards: Array<JSX.Element>;
 }
 
-interface IKpiData {
-    title: string,
-    body: string,
-    explanation: string,
-}
 
 class KpiContainer extends React.Component<Props, State> {
 
@@ -30,7 +27,6 @@ class KpiContainer extends React.Component<Props, State> {
         //add 2 dummy cards: 
         this.state = {
             ...this.state,
-            kpiDataArray: [{ title: "Test 1", body: "KPI 1", explanation: "Explanation of KPI 1." }, { title: "Test 2", body: "KPI 2", explanation: "Explanation of KPI 2." }],
         };
 
         this.mapKpiArrayToCards = this.mapKpiArrayToCards.bind(this);
@@ -43,10 +39,21 @@ class KpiContainer extends React.Component<Props, State> {
         }
     }
 
+    componentDidUpdate(prevProps: Props, prevState: State): void {
+        if (undefined !== this.props.kpis && !_.isEqual(this.props.kpis, prevProps.kpis)) {
+            const kpiCards = this.mapKpiArrayToCards();
+
+            this.setState((state, props) => ({
+                ...state,
+                kpiCards: kpiCards,
+            }));
+        }
+    }
+
     mapKpiArrayToCards() {
         //get array of kpis from redux, map to multiple cards
-        const kpiCardsArray = this.state.kpiDataArray.map((elem, index) => this.createKpiCard(index, elem.title, elem.body));
-        return kpiCardsArray;
+        return this.props.kpis!.map((elem, index) => this.createKpiCard(index, elem.title, elem.value));
+
     }
 
     createKpiCard(key: number, title: string, body: string) {
@@ -67,21 +74,13 @@ class KpiContainer extends React.Component<Props, State> {
     public render() {
 
         return <div className={styles.kpiContainer}>
-            {this.props.kpis ?
-                <div></div>
+            {this.props.kpis && this.state.kpiCards ?
+                <div className={styles.kpiCardsArea}>
+                    {this.state.kpiCards}
+                </div>
                 : <Spinner />
             }
-
         </div>
-
-        if (this.props.kpis) {
-            return <div className={styles.kpiContainer} >
-                {this.state.kpiDataArray && this.mapKpiArrayToCards()}
-            </div>;
-        } else {
-            return
-        }
-
     }
 
 

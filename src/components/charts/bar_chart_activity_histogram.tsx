@@ -138,6 +138,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         else if (args[1]) {
             const selectedFrame = args[1];
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
+            console.log(bucketsFromTo);
             this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
         }
     }
@@ -229,7 +230,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 },
                                 {
                                     events: { signal: "delta" },
-                                    update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+                                    update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0+1, width-1)"
                                 }
                             ]
                         },
@@ -267,7 +268,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: [{ type: "mouseup", marktype: "group" }, { type: "mouseup", marktype: "rect" }],
+                                    events: "window:mouseup",
                                     update: "detailDomain"
                                 }
                             ]
@@ -302,12 +303,12 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
-                            title: model.chartConfiguration.activityHistogramXTitle,
+                            /* title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
-                            titleX: { signal: 'width', mult: 1.01 },
+                            titleX: { signal: 'width' },
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
-                            titleFont: model.chartConfiguration.axisTitleFont,
+                            titleFont: model.chartConfiguration.axisTitleFont, */
                             /* encode: {
                                 labels: {
                                     update: {
@@ -377,6 +378,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     fillOpacity: [
                                         { test: "detailDomain", value: 1 },
                                         { test: "brush[0]", value: 1 },
+                                        { test: "brush[0] == 0", value: 1 },
                                         { value: 0 }
                                     ]
                                 }
@@ -402,6 +404,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             }
                         }
+
                     ],
                 }
             ]

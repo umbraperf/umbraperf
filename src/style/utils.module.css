@@ -73,13 +73,6 @@
     justify-content: center;
 }
 
-@media not all and (min-width: 645px) {
-    .eventButtonsArea{
-        composes: eventButtonsArea;
-        width: 300px;
-    }   
-}
-
 .eventsButtonsLabel{
     composes: optionsLables;
     text-align: center;
@@ -120,6 +113,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: black;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .kpiCardLabel{
@@ -135,5 +131,26 @@
     composes: optionsContainer;
     flex-direction: row;
 
+}
+
+@media not all and (min-width: 645px) {
+    .eventButtonsArea{
+        composes: eventButtonsArea;
+        width: 300px;
+    } 
+    
+    .kpiCardsArea{
+        composes: kpiCardsArea;
+        flex-direction: row;
+        flex-wrap: wrap;
+        height: 180px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .kpiCard{
+        composes: kpiCard;
+        flex-basis: 100px;
+    }
 }
 

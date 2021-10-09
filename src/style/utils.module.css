@@ -2,15 +2,18 @@
     --labelFonSize: 11px;
 }
 
+.optionsLables{
+    font-size: var(--labelFonSize);
+}
+
 .dropdownSelector{
     width: 150px;
     text-align: left;
 }
 
 .dropdownSelectorLabel{
+    composes: optionsLables;
     padding-left: 1px;
-    font-size: var(--labelFonSize);
-
 }
 
 .dropdownSelectorContainer{
@@ -70,17 +73,25 @@
     justify-content: center;
 }
 
+@media not all and (min-width: 645px) {
+    .eventButtonsArea{
+        composes: eventButtonsArea;
+        width: 300px;
+    }   
+}
+
 .eventsButtonsLabel{
+    composes: optionsLables;
     text-align: center;
     margin-top: 10px;
     margin-bottom: 5px;
 }
 
 .eventButton{
-    width: 150px;
+    width: 135px;
     border-radius: 70px;
     margin: 7px;
-    font-size: small;
+    font-size: 10px;
 }
 
 .kpiContainer{

@@ -145,6 +145,8 @@ pub fn relative(batch: &RecordBatch, column_index_for_numerator: usize, column_i
 
     let result = numerator as f64 / denominator as f64; 
 
+    let result = f64::trunc(result * 100.0) / 100.0;
+
     let mut result_builder = Float64Array::builder(1);
 
     let _result_builder = result_builder.append_value(result);

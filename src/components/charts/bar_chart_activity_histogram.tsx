@@ -178,7 +178,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             width: this.state.width - 60,
             height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: true },
+            autosize: { type: "fit", resize: false },
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,
@@ -230,7 +230,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 },
                                 {
                                     events: { signal: "delta" },
-                                    update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0+1, width-1)"
+                                    update: "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
                                 }
                             ]
                         },
@@ -259,7 +259,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             on: [
                                 {
                                     events: { signal: "brush" },
-                                    update: "span(brush) ? invert('xscale', brush) : null"
+                                    update: "span(brush) ? invert('xscale', [brush[0], brush[1]]) : null"
                                 }
                             ]
                         },
@@ -289,6 +289,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             type: 'band',
                             domain: { data: 'table', field: 'timeBuckets' },
                             range: 'width',
+                            align: 0.5,
                         },
                         {
                             name: 'yscale',
@@ -303,7 +304,9 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
-                            /* title: model.chartConfiguration.activityHistogramXTitle,
+                            /* 
+                            //TODO: remove in chart cofnig
+                            title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
                             titleX: { signal: 'width' },
                             titleAlign: "left",

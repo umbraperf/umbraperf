@@ -9,9 +9,8 @@
     --optionsItemBoxHeight: 85px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
-    --gridCellBoxColor: rgb(85, 133, 133);
-/*     --gridCellBoxColor: rgb(245, 245, 245);
- */    --smallScreenActivityChartAreaChartOffset: 7px;
+    --gridCellBoxColor: rgb(245, 245, 245);
+    --smallScreenActivityChartAreaChartOffset: 7px;
 }
 
 .dashboardGrid{

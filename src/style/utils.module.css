@@ -93,20 +93,39 @@
 
 .kpiContainer{
     composes: optionsContainer;
-    margin: 10px;
     text-align: center;
     flex-direction: row;
-
 }
 
 .kpiCardsArea{
-    width: 100%;
     display: flex;
     flex-direction: row;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .kpiCard{
-    margin: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+    width: 150px;
+    height: 60px;
+    background-color: white;
+    border-radius: 7px;
+    padding: 10px 5px 5px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.kpiCardLabel{
+    font-size: 10px;
+
+}
+
+.kpiCardValue{
+    font-size: 25px;
 }
 
 .dropdownOptionsContainer{

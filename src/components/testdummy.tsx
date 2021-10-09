@@ -39,14 +39,14 @@ class Dashboard extends React.Component<Props, {}> {
             <div >
                 <Grid container>
                     <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={6}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={5}>
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <EventsButtons />
                             </Box>
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 3, lg: 2, xl: 2 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={3} >
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={4} >
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <KpiContainer />
                             </Box>
@@ -56,6 +56,28 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={3}>
                             <Box className={styles.dashboardGridCellOptionsBox}>
                                 <DropdownsOptions />
+                            </Box>
+                        </Grid>
+                    </Box>
+                </Grid>
+
+                <Grid container>
+                    <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={5}>
+                            <Box className={styles.dashboardGridCellOptionsBox}>
+                            </Box>
+                        </Grid>
+                    </Box>
+                    <Box clone order={{ xs: 3, lg: 2, xl: 2 }}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={4} >
+                            <Box className={styles.dashboardGridCellOptionsBox}>
+                                <KpiContainer />
+                            </Box>
+                        </Grid>
+                    </Box>
+                    <Box clone order={{ xs: 2, lg: 2, xl: 3 }}>
+                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={6} xl={3}>
+                            <Box className={styles.dashboardGridCellOptionsBox}>
                             </Box>
                         </Grid>
                     </Box>

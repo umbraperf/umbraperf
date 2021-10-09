@@ -151,7 +151,7 @@
 }
 
 
-@media not all and (min-width: 645px) {
+@media not all and (min-width: 650px) {
     .eventButtonsArea{
         composes: eventButtonsArea;
         width: 300px;

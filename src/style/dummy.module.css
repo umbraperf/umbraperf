@@ -64,6 +64,14 @@
     text-align: center;
 }
 
+@media not all and (min-width: 1200px) {
+    .dashboardGridCellOptionsBox{
+        composes: dashboardGridCellOptionsBox;
+        width: 100%;
+        height: auto;
+    }  
+}
+
 @media not all and (min-width: 960px) {
     /* media query: inverted with min instead of max 960 to simulate > instead of >= */
     .dashboardGridCellChartBox{
@@ -91,11 +99,6 @@
   @media not all and (min-width: 700px) {
     .dashboardGridCellOptionsItem{
         composes: dashboardGridCellOptionsItem;
-        height: auto;
-    }
-
-    .dashboardGridCellOptionsBox{
-        composes: dashboardGridCellOptionsBox;
         height: auto;
     }
   }

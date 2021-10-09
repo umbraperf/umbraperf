@@ -1,4 +1,4 @@
-/* :root {
+:root {
     --outerGridPadding: 7px;
     --gridCellBoxPadding: 3px;
     --gridCellItemPadding: 7px;
@@ -9,8 +9,8 @@
     --optionsItemBoxHeight: 85px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
-    --gridCellBoxColor: rgb(85, 133, 133);
-     --smallScreenActivityChartAreaChartOffset: 7px;
+    --gridCellBoxColor: rgb(245, 245, 245);
+    --smallScreenActivityChartAreaChartOffset: 7px;
 }
 
 .dashboardGrid{
@@ -66,7 +66,7 @@
 
 @media not all and (min-width: 960px) {
     /* media query: inverted with min instead of max 960 to simulate > instead of >= */
-    /* .dashboardGridCellChartBox{
+    .dashboardGridCellChartBox{
         composes: dashboardGridCellChartBox;
         max-width: var(--normalChartsSmallScreenMinWidth); 
     }     
@@ -99,4 +99,3 @@
         height: auto;
     }
   }
- */

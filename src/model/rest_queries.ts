@@ -48,7 +48,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_STATISTICS:
-            return `count/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/basic_count?operator&&count/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/count(distinct)?pipeline&&count/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/count(distinct)?operator&&count/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/max?time&&count/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/relative?operator`;
+            return `count${timeFilter}/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/basic_count?operator&&count${timeFilter}/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/count(distinct)?pipeline&&count${timeFilter}/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/count(distinct)?operator&&count${timeFilter}/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/max?time&&count${timeFilter}/?pipeline="${pipelines}"/?ev_name="${query.data.event}"/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count/?ev_name="${query.data.event}"/?pipeline="${pipelines}"${timeFilter}/count?operator/sort?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:

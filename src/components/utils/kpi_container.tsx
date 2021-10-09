@@ -13,6 +13,9 @@ import _ from "lodash";
 interface Props {
     appContext: Context.IAppContext;
     kpis: Array<model.IKpiData> | undefined;
+    events: Array<string> | undefined;
+    currentTimeBucketSelectionTuple: [number, number],
+    currentPipeline: Array<string> | undefined,
 }
 
 interface State {
@@ -88,6 +91,9 @@ class KpiContainer extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     kpis: state.kpis,
+    events: state.events,
+    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentPipeline: state.currentPipeline,
 
 });
 

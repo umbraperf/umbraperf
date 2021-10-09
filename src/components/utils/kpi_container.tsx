@@ -41,7 +41,7 @@ class KpiContainer extends React.Component<Props, State> {
             Controller.requestPipelines(this.props.appContext.controller);
         }
         if (undefined === this.props.kpis) {
-            //Controller.requestStatistics(this.props.appContext.controller);
+            Controller.requestStatistics(this.props.appContext.controller);
         }
 
     }
@@ -61,7 +61,7 @@ class KpiContainer extends React.Component<Props, State> {
             this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
             this.props.currentEvent !== prevProps.currentEvent) {
 
-            //Controller.requestStatistics(this.props.appContext.controller);
+            Controller.requestStatistics(this.props.appContext.controller);
         }
     }
 

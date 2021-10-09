@@ -13,13 +13,13 @@ import _ from "lodash";
 interface Props {
     appContext: Context.IAppContext;
     kpis: Array<model.IKpiData> | undefined;
-    events: Array<string> | undefined;
+    currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | undefined,
 }
 
 interface State {
-    kpiCards: Array<JSX.Element>;
+    kpiCards: Array<JSX.Element> |undefined;
 }
 
 
@@ -30,6 +30,7 @@ class KpiContainer extends React.Component<Props, State> {
         //add 2 dummy cards: 
         this.state = {
             ...this.state,
+            kpiCards: undefined,
         };
 
         this.mapKpiArrayToCards = this.mapKpiArrayToCards.bind(this);
@@ -40,9 +41,11 @@ class KpiContainer extends React.Component<Props, State> {
         if (undefined === this.props.kpis) {
             Controller.requestStatistics(this.props.appContext.controller);
         }
+
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
+
         if (undefined !== this.props.kpis && !_.isEqual(this.props.kpis, prevProps.kpis)) {
             const kpiCards = this.mapKpiArrayToCards();
 
@@ -50,6 +53,13 @@ class KpiContainer extends React.Component<Props, State> {
                 ...state,
                 kpiCards: kpiCards,
             }));
+        }
+
+        if (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
+            this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
+            this.props.currentEvent !== prevProps.currentEvent) {
+
+            Controller.requestStatistics(this.props.appContext.controller);
         }
     }
 
@@ -91,7 +101,7 @@ class KpiContainer extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     kpis: state.kpis,
-    events: state.events,
+    currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
 

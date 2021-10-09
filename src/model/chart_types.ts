@@ -7,4 +7,5 @@ export enum ChartType {
     SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE = "swim_lanes_multiple_pipelines_absolute",
     SWIM_LANES_COMBINED_MULTIPLE_PIPELINES = "swim_lanes_combined_multiple_pipelines",
     BAR_CHART_ACTIVITY_HISTOGRAM = "bar_chart_activity_histogram",
+    DASHBOARD = "dashboard",
 }

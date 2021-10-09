@@ -16,6 +16,7 @@ interface Props {
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | undefined,
+    currentChart: string,
 }
 
 interface State {
@@ -48,9 +49,9 @@ class KpiContainer extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
-        if (undefined !== this.props.kpis && !_.isEqual(this.props.kpis, prevProps.kpis)) {
+        if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {
             const kpiCards = this.mapKpiArrayToCards();
-
+            window.alert("hier");
             this.setState((state, props) => ({
                 ...state,
                 kpiCards: kpiCards,
@@ -107,6 +108,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
+    currentChart: state.currentChart,
 
 });
 

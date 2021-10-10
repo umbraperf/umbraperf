@@ -1,7 +1,7 @@
 import { ChartType } from '../model';
 
-export interface ChartDataKeyValue{
-    [chartId:number ]: ChartDataObject;
+export interface ChartDataKeyValue {
+    [chartId: number]: ChartDataObject;
 }
 
 export interface ChartDataObject {
@@ -59,11 +59,12 @@ export interface IDonutChartData {
     count: Array<number>,
 }
 
-export interface IBarChartActivityHistogramData{
+export interface IBarChartActivityHistogramData {
     timeBucket: Array<number>,
     occurrences: Array<number>,
 }
 
-export interface ISunburstChartData{
-        //TODO: interface 
+export interface ISunburstChartData {
+    pipelines: Array<{pipelineName: string, pipelineOccurrences: number}>
+    operators: Array<{operatorName: string, operatorOccurrences: number, operatorParentPipeline: string, operatorId: string}>
 }

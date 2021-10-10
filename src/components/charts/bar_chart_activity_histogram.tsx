@@ -138,6 +138,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         else if (args[1]) {
             const selectedFrame = args[1];
             const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
+            console.log(bucketsFromTo);
             this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
         }
     }
@@ -177,7 +178,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             width: this.state.width - 60,
             height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: true },
+            autosize: { type: "fit", resize: false },
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,
@@ -258,7 +259,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             on: [
                                 {
                                     events: { signal: "brush" },
-                                    update: "span(brush) ? invert('xscale', brush) : null"
+                                    update: "span(brush) ? invert('xscale', [brush[0], brush[1]]) : null"
                                 }
                             ]
                         },
@@ -267,7 +268,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: [{ type: "mouseup", marktype: "group" }, { type: "mouseup", marktype: "rect" }],
+                                    events: "window:mouseup",
                                     update: "detailDomain"
                                 }
                             ]
@@ -288,6 +289,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             type: 'band',
                             domain: { data: 'table', field: 'timeBuckets' },
                             range: 'width',
+                            align: 0.5,
                         },
                         {
                             name: 'yscale',
@@ -302,12 +304,14 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
+                            /* 
+                            //TODO: remove in chart cofnig
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
-                            titleX: { signal: 'width', mult: 1.01 },
+                            titleX: { signal: 'width' },
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
-                            titleFont: model.chartConfiguration.axisTitleFont,
+                            titleFont: model.chartConfiguration.axisTitleFont, */
                             /* encode: {
                                 labels: {
                                     update: {
@@ -377,6 +381,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     fillOpacity: [
                                         { test: "detailDomain", value: 1 },
                                         { test: "brush[0]", value: 1 },
+                                        { test: "brush[0] == 0", value: 1 },
                                         { value: 0 }
                                     ]
                                 }
@@ -402,6 +407,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             }
                         }
+
                     ],
                 }
             ]

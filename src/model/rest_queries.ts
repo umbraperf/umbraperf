@@ -24,19 +24,19 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_PIPELINES, {}>
     | RestQuery<RestQueryType.GET_STATISTICS, { event: string, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: number }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: number }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
-    | RestQuery<RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, time: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
-    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS, { event1: string, event2: string, time: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, bucketSize: number }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, bucketSize: number }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, bucketSize: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, bucketSize: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS, { event1: string, event2: string, bucketSize: number, pipelines: Array<string> | undefined, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string, timeBucketFrame: [number, number] }>
-    | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, time: number }>
+    | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, bucketSize: number }>
     | RestQuery<RestQueryType.other, {}>
     ;
 
 export function createRestQuery(query: QueryVariant) {
 
-    const bucketSize = (query.data as any).time ? `time:${(query.data as any).time}` : '';
+    const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
     
     const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;

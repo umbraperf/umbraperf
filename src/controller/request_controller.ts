@@ -63,7 +63,7 @@ export function requestStatistics(controller: RequestController) {
         model.RestQueryType.GET_STATISTICS,
         model.createRestQuery({
             type: model.RestQueryType.GET_STATISTICS,
-            data: {event: store.getState().currentEvent, pipelines: store.getState().currentPipeline!, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
+            data: {event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
         }), true); 
 }
 

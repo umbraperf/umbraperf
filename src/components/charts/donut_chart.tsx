@@ -62,7 +62,7 @@ class DonutChart extends React.Component<Props, State> {
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART, { timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
         }
 
     }

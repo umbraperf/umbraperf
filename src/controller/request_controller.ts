@@ -68,7 +68,7 @@ export function requestStatistics(controller: RequestController) {
 }
 
 //request data for chart visualizations
-export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType, metadata?: { bucksetsize?: string, pipeline?: Array<string>, timeBucketFrame?: [number, number] }) {
+export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType) {
 
     switch (chartType) {
 
@@ -78,7 +78,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent, pipelines: metadata!.pipeline!, timeBucketFrame: metadata!.timeBucketFrame! },
+                    data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
                 }), false, chartId);
             break;
 
@@ -89,7 +89,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
+                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize },
                 }), false, chartId);
             break;
 
@@ -100,7 +100,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize! },
+                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize },
                 }), false, chartId);
             break;
 
@@ -110,7 +110,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline!, timeBucketFrame: metadata!.timeBucketFrame! },
+                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -120,7 +120,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline!, timeBucketFrame: metadata!.timeBucketFrame! },
+                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -130,7 +130,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                    data: { event1: store.getState().events![0], event2: store.getState().currentEvent, time: metadata!.bucksetsize!, pipelines: metadata!.pipeline!, timeBucketFrame: metadata!.timeBucketFrame! },
+                    data: { event1: store.getState().events![0], event2: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -140,7 +140,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_PIPELINE_COUNT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_PIPELINE_COUNT,
-                    data: { event: store.getState().currentEvent, timeBucketFrame: metadata!.timeBucketFrame! },
+                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -150,7 +150,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent, time: "10" },
+                    data: { event: store.getState().currentEvent, time: 10 },
                 }), false, chartId);
             break;
 

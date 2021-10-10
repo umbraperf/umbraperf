@@ -81,7 +81,7 @@ class SwimLanes extends React.Component<Props, State> {
          (this.props.currentEvent !== prevProps.currentEvent ||
             this.props.currentBucketSize !== prevProps.currentBucketSize ||
             this.props.chartIdCounter !== prevProps.chartIdCounter)) {
-         Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES, { bucksetsize: "" + this.props.currentBucketSize });
+         Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES);
       }
 
    }

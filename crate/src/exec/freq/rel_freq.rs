@@ -146,7 +146,7 @@ pub fn rel_freq_with_pipelines(
             }
         }
 
-        if pipelines.contains(&current_pipeline) || pipelines.len() == 0 {
+        if pipelines.contains(&current_pipeline) || pipelines.len() == 0 || (pipelines.len() == 1 && pipelines[0] == "All") {
             bucket_map.insert(
                 current_operator,
                 bucket_map.get(current_operator).unwrap() + 1.0,

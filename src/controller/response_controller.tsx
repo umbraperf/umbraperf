@@ -216,15 +216,15 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
 
-            chartDataElem = model.createChartDataObject(
+        //TODO store response with correct interface from chartData model
+/*             chartDataElem = model.createChartDataObject(
                 requestId,
                 {
                     chartType: model.ChartType.SUNBURST_CHART,
                     data: {
-/*                         pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
-                        count: resultObject.resultTable.getColumn('count').toArray(), */
+
                     }
-                });
+                }); */
             break;
 
     }

@@ -38,9 +38,9 @@ class KpiContainer extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        if(undefined === this.props.currentPipeline){
-            Controller.requestPipelines(this.props.appContext.controller);
-        }
+        // if(undefined === this.props.currentPipeline){
+        //     Controller.requestPipelines(this.props.appContext.controller);
+        // }
         if (undefined === this.props.kpis) {
             Controller.requestStatistics(this.props.appContext.controller);
         }

@@ -1,4 +1,5 @@
 import * as model from '../../model/';
+import * as Context from '../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel, Select } from '@material-ui/core';
@@ -7,6 +8,7 @@ import { connect } from 'react-redux';
 
 
 interface Props{
+    appContext: Context.IAppContext;
     currentInterpolation: String;
     setCurrentInterpolation: (newCurrentInterpolation: String) => void;
 }
@@ -23,7 +25,7 @@ function InterpolationDropdown(props: Props) {
 
     return (
         <div className={styles.interpolationDropdownSelectorContainer}>
-            <InputLabel className={styles.interpolationDropdownSelectorLabel} id="interpolation-selector-label">Interpolation:</InputLabel>
+            <InputLabel className={styles.interpolationDropdownSelectorLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Interpolation:</InputLabel>
             <Select className={styles.interpolationDropdownSelector}
                 labelId="interpolation-selector-label"
                 id="interpolation-selector"
@@ -49,4 +51,4 @@ const mapStateToProps = (state: model.AppState) => ({
     }),
  });
 
-export default connect(mapStateToProps, mapDispatchToProps)(InterpolationDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(InterpolationDropdown));

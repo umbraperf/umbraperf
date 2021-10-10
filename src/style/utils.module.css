@@ -1,29 +1,24 @@
+:root {
+    --labelFonSize: 11px;
+}
+
+.optionsLables{
+    font-size: var(--labelFonSize);
+}
+
 .dropdownSelector{
-    width: 200px;
+    width: 150px;
     text-align: left;
 }
 
 .dropdownSelectorLabel{
-    padding-left: 10px;
-
+    composes: optionsLables;
+    padding-left: 1px;
 }
 
 .dropdownSelectorContainer{
     margin: 10px;
-}
-
-
-.eventDropdownSelector{
-    composes: dropdownSelector;
-}
-
-.eventDropdownSelectorLabel{
-    composes: dropdownSelectorLabel;
-}
-
-.eventDropdownSelectorContainer{
-    composes: dropdownSelectorContainer;
-}    
+} 
 
 .interpolationDropdownSelector{
     composes: dropdownSelector;
@@ -79,33 +74,88 @@
 }
 
 .eventsButtonsLabel{
+    composes: optionsLables;
     text-align: center;
     margin-top: 10px;
     margin-bottom: 5px;
 }
 
 .eventButton{
-    width: 150px;
+    width: 135px;
     border-radius: 70px;
     margin: 7px;
-    font-size: small;
+    font-size: 10px;
 }
 
 .kpiContainer{
     composes: optionsContainer;
-    margin: 10px;
     text-align: center;
     flex-direction: row;
+}
 
+.kpiCardsArea{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .kpiCard{
-    margin: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+    width: 150px;
+    height: 60px;
+    background-color: white;
+    border-radius: 7px;
+    padding: 10px 5px 5px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: black;
+    border-style: solid;
+    border-width: 1px;
+    flex-basis: 100px;
+}
+
+.kpiCardLabel{
+    font-size: var(--labelFonSize);
+
+}
+
+.kpiCardValue{
+    font-size: 25px;
 }
 
 .dropdownOptionsContainer{
     composes: optionsContainer;
     flex-direction: row;
+
+}
+
+@media not all and (min-width: 900px) {
+    .kpiCardsArea{
+        composes: kpiCardsArea;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .kpiCard{
+        composes: kpiCard;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}
+
+
+@media not all and (min-width: 650px) {
+    .eventButtonsArea{
+        composes: eventButtonsArea;
+        width: 300px;
+    } 
 
 }
 

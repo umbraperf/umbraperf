@@ -55,6 +55,11 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
 }
 
 pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch: &RecordBatch) -> RecordBatch {
+
+    if filter_from < 0.0 && filter_to < 0.0 {
+        return batch.to_owned();
+    }
+
     let filter_array = batch
         .column(column_num)
         .as_any()

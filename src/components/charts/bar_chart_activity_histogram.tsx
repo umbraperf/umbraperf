@@ -143,7 +143,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             const selectedTimeBuckets = args[1][0];
             const selectedPosition = args[1][1]
             const timeBucketsFromTo: [number, number] = [selectedTimeBuckets[0], selectedTimeBuckets.at(-1)];
-            const positionFromTo: [number, number]  = [selectedPosition[0], selectedPosition.at(-1)];
+            const positionFromTo: [number, number] = [selectedPosition[0], selectedPosition.at(-1)];
             this.props.setCurrentTimeBucketSelectionTuple(timeBucketsFromTo);
             this.props.setCurrentTimePositionSelectionTuple(positionFromTo);
         }
@@ -220,7 +220,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     signals: [
                         {
                             name: "brush",
-                            init: [selectionPos0,selectionPos1],
+                            init: [selectionPos0, selectionPos1],
                             on: [
                                 {
                                     events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }],
@@ -319,14 +319,12 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             orient: 'bottom',
                             scale: 'xscale',
                             labelOverlap: false,
-                            /* 
-                            //TODO: remove in chart cofnig
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
-                            titleX: { signal: 'width' },
+                            titleX: { signal: 'width', mult: 1.01 },
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
-                            titleFont: model.chartConfiguration.axisTitleFont, */
+                            titleFont: model.chartConfiguration.axisTitleFont,
                             /* encode: {
                                 labels: {
                                     update: {

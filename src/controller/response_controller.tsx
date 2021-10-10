@@ -86,7 +86,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
     let chartDataElem: model.ChartDataObject | undefined;
-    let ChartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
+    let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
 
     switch (requestType) {
 
@@ -216,23 +216,29 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
 
-        //TODO store response with correct interface from chartData model
-/*             chartDataElem = model.createChartDataObject(
-                requestId,
-                {
-                    chartType: model.ChartType.SUNBURST_CHART,
-                    data: {
+            if (!chartDataCollection[requestId]) {
 
-                    }
-                }); */
+            } else {
+                /* chartDataElem = model.createChartDataObject(
+                    requestId,
+                    {
+                        chartType: model.ChartType.SUNBURST_CHART,
+                        data: {
+    
+                        }
+                    }); */
+            }
+
+            //TODO store response with correct interface from chartData model
             break;
+        //TODO idee: wenn mehrere responses zu selben request, zwei weitere antworten: expected answers und answer no. object assign und merge objekts in redux  beidem mal wenn expected > answer no, bei expected === answer no result loading auf false
 
     }
 
-    ChartDataCollection[requestId] = chartDataElem!;
+    chartDataCollection[requestId] = chartDataElem!;
     store.dispatch({
         type: model.StateMutationType.SET_CHARTDATA,
-        data: ChartDataCollection,
+        data: chartDataCollection,
     });
 
     store.dispatch({

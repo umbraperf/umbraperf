@@ -62,13 +62,13 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             break;
 
         case model.RestQueryType.GET_STATISTICS:
-            const numberSamplesKpi: model.IKpiData = {title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray()};
-            const numberPipelinesKpi: model.IKpiData = {title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray()};
-            const numberOperatorsKpi: model.IKpiData = {title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray()};
-            const executionTimeKpi: model.IKpiData = {title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray()};
-            const errorRateKpi: model.IKpiData = {title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray()};
+            const numberSamplesKpi: model.IKpiData = { title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
+            const numberPipelinesKpi: model.IKpiData = { title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
+            const numberOperatorsKpi: model.IKpiData = { title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
+            const executionTimeKpi: model.IKpiData = { title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
+            const errorRateKpi: model.IKpiData = { title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
             const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi, executionTimeKpi, errorRateKpi);
-        
+
             store.dispatch({
                 type: model.StateMutationType.SET_KPIS,
                 data: kpis,
@@ -208,9 +208,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
                     data: {
-                        // TODO rename colums to timebucket and occurrences
                         timeBucket: resultObject.resultTable.getColumn('bucket').toArray(),
                         occurrences: resultObject.resultTable.getColumn('absfreq').toArray(),
+                    }
+                });
+            break;
+
+        case model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.SUNBURST_CHART,
+                    data: {
+/*                         pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
+                        count: resultObject.resultTable.getColumn('count').toArray(), */
                     }
                 });
             break;

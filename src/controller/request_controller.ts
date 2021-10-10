@@ -63,8 +63,8 @@ export function requestStatistics(controller: RequestController) {
         model.RestQueryType.GET_STATISTICS,
         model.createRestQuery({
             type: model.RestQueryType.GET_STATISTICS,
-            data: {event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
-        }), true); 
+            data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+        }), true);
 }
 
 //request data for chart visualizations
@@ -78,7 +78,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
+                    data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -151,6 +151,16 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                     data: { event: store.getState().currentEvent, bucketSize: 10 },
+                }), false, chartId);
+            break;
+
+        case model.ChartType.SUNBURST_CHART:
+
+            controller.calculateChartData(
+                model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
+                model.createRestQuery({
+                    type: model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
+                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 

@@ -24,6 +24,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesCombinedData>
     | ChartData<ChartType.DONUT_CHART, IDonutChartData>
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
+    | ChartData<ChartType.SUNBURST_CHART, ISunburstChartData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
@@ -61,4 +62,8 @@ export interface IDonutChartData {
 export interface IBarChartActivityHistogramData{
     timeBucket: Array<number>,
     occurrences: Array<number>,
+}
+
+export interface ISunburstChartData{
+        //TODO: interface 
 }

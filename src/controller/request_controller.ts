@@ -89,7 +89,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
                 }), false, chartId);
             break;
 
@@ -100,7 +100,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
                 }), false, chartId);
             break;
 
@@ -110,7 +110,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -120,7 +120,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -130,7 +130,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                    data: { event1: store.getState().events![0], event2: store.getState().currentEvent, time: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event1: store.getState().events![0], event2: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -150,7 +150,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent, time: 10 },
+                    data: { event: store.getState().currentEvent, bucketSize: 10 },
                 }), false, chartId);
             break;
 

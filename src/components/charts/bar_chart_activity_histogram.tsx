@@ -184,7 +184,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             width: this.state.width - 60,
             height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: false },
+            autosize: { type: "fit", resize: true },
             title: {
                 text: "Absolute Activity per Event over Time of Query Execution",
                 align: model.chartConfiguration.titleAlign,

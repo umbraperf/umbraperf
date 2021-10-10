@@ -63,13 +63,12 @@ class BarChart extends React.Component<Props, State> {
 
         //if current event, chart, timeframe or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
         if (this.props.currentEvent &&
-            this.props.currentPipeline &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART, { pipeline: this.props.currentPipeline, timeBucketFrame: this.props.currentTimeBucketSelectionTuple });
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
         }
 
     }
@@ -85,9 +84,6 @@ class BarChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.BAR_CHART);
 
-            if (!this.props.currentPipeline) {
-                Controller.requestPipelines(this.props.appContext.controller);
-            }
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });

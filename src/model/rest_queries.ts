@@ -36,6 +36,8 @@ export type QueryVariant =
 
 export function createRestQuery(query: QueryVariant) {
 
+    const bucketSize = (query.data as any).time ? `time:${(query.data as any).time}` : '';
+    
     const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;
 
@@ -55,19 +57,19 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count${eventFilter}${pipelinesFilter}${timeFilter}/count?operator/sort?operator`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
-            return `bucket/operator/relfreq${eventFilter}/relfreq?time:${query.data.time}`;
+            return `bucket/operator/relfreq${eventFilter}/relfreq?${bucketSize}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
-            return `bucket/operator/relfreq${eventFilter}/relfreq?pipeline,time:${query.data.time}`;
+            return `bucket/operator/relfreq${eventFilter}/relfreq?pipeline,${bucketSize}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,time:${query.data.time}!${pipelines}`;
+            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}`;
         case RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,time:${query.data.time}!${pipelines}`;
+            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
-            return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter}/relfreq?pipeline,time:${query.data.time}!${pipelines}&${query.data.event1},${query.data.event2}`;
+            return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}&${query.data.event1},${query.data.event2}`;
         case RestQueryType.GET_PIPELINE_COUNT:
             return `pipeline/count${eventFilter}${timeFilter}/count?pipeline/sort?pipeline`;
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
-            return `bucket/absfreq${eventFilter}/absfreq?ev_name,time:${query.data.time}`;
+            return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

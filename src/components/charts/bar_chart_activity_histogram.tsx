@@ -23,9 +23,11 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentTimeBucketSelectionTuple: [number, number];
+    currentTimePositionSelectionTuple: [number, number];
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => void;
+    setCurrentTimePositionSelectionTuple: (newCurrentTimePositionSelectionTuple: [number, number]) => void;
 
 }
 
@@ -50,7 +52,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
-        this.resetCurrentSelectionTuple = this.resetCurrentSelectionTuple.bind(this);
+        this.resetCurrentSelectionTuples = this.resetCurrentSelectionTuples.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -94,7 +96,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                 width: newWidth,
             }));
 
-            this.resetCurrentSelectionTuple();
+            this.resetCurrentSelectionTuples();
 
             child.style.display = 'block';
         }
@@ -113,15 +115,16 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
-                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuple} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
+                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }
         </div>;
     }
 
-    resetCurrentSelectionTuple() {
+    resetCurrentSelectionTuples() {
         this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
+        this.props.setCurrentTimePositionSelectionTuple([-1, -1]);
     }
 
     createVegaSignalListeners() {
@@ -132,14 +135,17 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     handleDetailDomainSelection(...args: any[]) {
-        if (null === args[1]) {
-            this.resetCurrentSelectionTuple();
+        console.log(args);
+        if (null === args[1] || null === args[1][0] || null === args[0][1]) {
+            this.resetCurrentSelectionTuples();
         }
-        else if (args[1]) {
-            const selectedFrame = args[1];
-            const bucketsFromTo: [number, number] = [selectedFrame[0], selectedFrame.at(-1)];
-            console.log(bucketsFromTo);
-            this.props.setCurrentTimeBucketSelectionTuple(bucketsFromTo);
+        else if (args[1] && args[1][0] && args[1][1]) {
+            const selectedTimeBuckets = args[1][0];
+            const selectedPosition = args[1][1]
+            const timeBucketsFromTo: [number, number] = [selectedTimeBuckets[0], selectedTimeBuckets.at(-1)];
+            const positionFromTo: [number, number]  = [selectedPosition[0], selectedPosition.at(-1)];
+            this.props.setCurrentTimeBucketSelectionTuple(timeBucketsFromTo);
+            this.props.setCurrentTimePositionSelectionTuple(positionFromTo);
         }
     }
 
@@ -170,8 +176,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             }
         }
 
-        const selection0 = this.props.currentTimeBucketSelectionTuple[0];
-        const selection1 = this.props.currentTimeBucketSelectionTuple[1];
+        const selectionPos0 = this.props.currentTimePositionSelectionTuple[0];
+        const selectionPos1 = this.props.currentTimePositionSelectionTuple[1];
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
@@ -214,7 +220,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     signals: [
                         {
                             name: "brush",
-                            init: "[calcXScale0,calcXScale1]",
+                            init: [selectionPos0,selectionPos1],
                             on: [
                                 {
                                     events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }],
@@ -264,23 +270,32 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             ]
                         },
                         {
+                            name: "detailDomainPosition",
+                            on: [
+                                {
+                                    events: { signal: "brush" },
+                                    update: "span(brush) ? [brush[0], brush[1]] : null"
+                                }
+                            ]
+                        },
+                        {
                             name: "detailDomainRelease",
                             push: "outer",
                             on: [
                                 {
                                     events: "window:mouseup",
-                                    update: "detailDomain"
+                                    update: "[detailDomain, detailDomainPosition]"
                                 }
                             ]
                         },
-                        {
-                            name: "calcXScale0",
-                            init: "scale('xscale'," + selection0 + ")"
-                        },
-                        {
-                            name: "calcXScale1",
-                            init: "scale('xscale'," + selection1 + ")"
-                        },
+                        // {
+                        //     name: "calcXScale0",
+                        //     init: "scale('xscale'," + selection0 + ")"
+                        // },
+                        // {
+                        //     name: "calcXScale1",
+                        //     init: "scale('xscale'," + selection1 + ")"
+                        // },
                     ],
 
                     scales: [
@@ -379,7 +394,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 update: {
                                     x: { signal: "brush[0]" },
                                     fillOpacity: [
-                                        { test: "detailDomain", value: 1 },
+                                        { test: "brush[0] < 0", value: 0 },
                                         { test: "brush[0]", value: 1 },
                                         { test: "brush[0] == 0", value: 1 },
                                         { value: 0 }
@@ -400,7 +415,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 update: {
                                     x: { signal: "brush[1]" },
                                     fillOpacity: [
-                                        { test: "detailDomain", value: 1 },
+                                        { test: "brush[1] < 0", value: 0 },
                                         { test: "brush[1]", value: 1 },
                                         { value: 0 }
                                     ]
@@ -430,6 +445,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -444,6 +460,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => dispatch({
         type: model.StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE,
         data: newCurrentTimeBucketSelectionTuple,
+    }),
+    setCurrentTimePositionSelectionTuple: (newCurrentTimePositionSelectionTuple: [number, number]) => dispatch({
+        type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
+        data: newCurrentTimePositionSelectionTuple,
     })
 });
 

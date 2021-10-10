@@ -36,13 +36,13 @@ export type QueryVariant =
 
 export function createRestQuery(query: QueryVariant) {
 
-/*     const timeFilter = ((query.data as any).timeBucketFrame !== undefined && (query.data as any).timeBucketFrame.length > 0 && (query.data as any).timeBucketFrame[0] !== -1)
-        ? `/?time="${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}"`
-        : ""; */
+    /*     const timeFilter = ((query.data as any).timeBucketFrame !== undefined && (query.data as any).timeBucketFrame.length > 0 && (query.data as any).timeBucketFrame[0] !== -1)
+            ? `/?time="${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}"`
+            : ""; */
 
-    const event  = (query.data as any).event ? `${(query.data as any).event}` : '';
+    const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;
-    
+
     const time = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}` : '';
     const timeFilter = `/?time="${time}"`;
 

@@ -22,7 +22,7 @@ export enum RestQueryType {
 export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENTS, {}>
     | RestQuery<RestQueryType.GET_PIPELINES, {}>
-    | RestQuery<RestQueryType.GET_STATISTICS, {event: string, pipelines: Array<string>, timeBucketFrame: [number, number]}>
+    | RestQuery<RestQueryType.GET_STATISTICS, { event: string, pipelines: Array<string>, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: Array<string>, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, time: string }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, time: string }>
@@ -36,9 +36,11 @@ export type QueryVariant =
 
 export function createRestQuery(query: QueryVariant) {
 
-    const timeFilter = ((query.data as any).timeBucketFrame !== undefined && (query.data as any).timeBucketFrame.length > 0 && (query.data as any).timeBucketFrame[0] !== -1)
+/*     const timeFilter = ((query.data as any).timeBucketFrame !== undefined && (query.data as any).timeBucketFrame.length > 0 && (query.data as any).timeBucketFrame[0] !== -1)
         ? `/?time="${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}"`
-        : "";
+        : ""; */
+
+    const timeFilter = (query.data as any).timeBucketFrame ? `/?time="${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}"` : "";
 
     const pipelines = (query.data as any).pipelines ? (query.data as any).pipelines.join() : "";
 

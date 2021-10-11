@@ -208,7 +208,7 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "partition",
                     field: "opOccurrences",
                     sort: { "field": "value" },
-                    size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }],
+                    size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }], //determine size of circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],

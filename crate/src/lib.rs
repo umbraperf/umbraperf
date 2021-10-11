@@ -44,6 +44,8 @@ use utils::bindings;
 use utils::record_batch_util;
 use crate::utils::bindings::notify_js_finished_reading;
 
+use parquet;
+
 
 //STATE
 pub struct State {

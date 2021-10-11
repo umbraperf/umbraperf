@@ -8,7 +8,7 @@ import styles from '../../style/utils.module.css';
 
 interface Props {
     pipelines: Array<string> | undefined;
-    currentPipeline: Array<string> | undefined;
+    currentPipeline: Array<string> | "All";
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
 }
 
@@ -33,11 +33,11 @@ function PipelinesSelector(props: Props) {
     }
 
     const checkBoxClicked = (event: any, pipeline: string) => {
-        if (event.target.checked === false) {
-            props.setCurrentPipeline(props.currentPipeline!.filter(e => e !== pipeline));
-        } else {
-            props.setCurrentPipeline(props.currentPipeline?.concat(pipeline)!);
-        }
+        // if (event.target.checked === false) {
+        //     props.setCurrentPipeline(props.currentPipeline!.filter(e => e !== pipeline));
+        // } else {
+        //     props.setCurrentPipeline(props.currentPipeline?.concat(pipeline)!);
+        // }
 
     }
 

@@ -22,7 +22,7 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
-    currentPipeline: Array<string> | undefined;
+    currentPipeline: Array<string> | "All";
     pipelines: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
@@ -78,7 +78,7 @@ class DonutChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.DONUT_CHART);
 
-            if (!this.props.currentPipeline) {
+            if (undefined === this.props.pipelines) {
                 Controller.requestPipelines(this.props.appContext.controller);
             }
 
@@ -134,13 +134,22 @@ class DonutChart extends React.Component<Props, State> {
 
     handleCklickPipeline(...args: any[]) {
         const selectedPipeline = args[1].pipeline;
-        if (undefined !== this.props.currentPipeline) {
-            if (this.props.currentPipeline?.includes(selectedPipeline)) {
+        if (this.props.currentPipeline === "All") {
+            this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
+        } else {
+            if (this.props.currentPipeline.includes(selectedPipeline)) {
                 this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
             } else {
                 this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
             }
         }
+        /*         if (undefined !== this.props.currentPipeline) {
+                    if (this.props.currentPipeline.includes(selectedPipeline)) {
+                        this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+                    } else {
+                        this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                    }
+                } */
     }
 
     createVisualizationData() {
@@ -217,6 +226,14 @@ class DonutChart extends React.Component<Props, State> {
                     on: [
                         { "events": "mouseover", "update": "datum" }
                     ]
+                },
+                {
+                    name: "selectedPipelines",
+                    value: this.props.currentPipeline,
+                },
+                {
+                    name: "initialAllSelected",
+                    update: "isString(selectedPipelines)",
                 }
             ],
 
@@ -250,6 +267,7 @@ class DonutChart extends React.Component<Props, State> {
                         },
                         "update": {
                             "opacity": [
+                                { "test": "initialAllSelected", "value": 1 }, //initially show all pipelines as selected
                                 { "test": "datum['value'] === 0", "value": 0 }, //Hide if no pipeline appearance 
                                 { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 }, //full color if pipeline selected
                                 { "value": 0.1 } //lower opacity if pipeline not selected

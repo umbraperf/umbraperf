@@ -73,7 +73,9 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
-            return `parent/pipeline/count/count?pipeline/add_column?inner/sort?pipeline%%parent/operator/count/?pipeline="No pipeline"/count?operator/add_column?No pipeline/sort?operator%%parent/operator/count/?pipeline="No pipeline running"/count?operator/add_column?No pipeline running/sort?operator`;
+            return `parent/pipeline/count${eventFilter}${timeFilter}/count?pipeline/add_column?inner/sort?pipeline
+            %%parent/operator/count${eventFilter}${timeFilter}/?pipeline="No pipeline"/count?operator/add_column?No pipeline/sort?operator
+            %%parent/operator/count${eventFilter}${timeFilter}/?pipeline="No pipeline running"/count?operator/add_column?No pipeline running/sort?operator`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

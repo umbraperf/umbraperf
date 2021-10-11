@@ -275,47 +275,48 @@ class SunburstChart extends React.Component<Props, State> {
             scales: [
 
                 {
-                    "name": "colorOperators",
-                    "type": "ordinal",
-                    "domain": visData.operatorsUnique, //Array of Operators
-                    "range": { "scheme": "tableau20" }
+                    name: "colorOperators",
+                    type: "ordinal",
+                    domain: visData.operatorsUnique, //Array of Operators
+                    range: { scheme: "tableau20" }
                 },
                 {
-                    "name": "colorPipelines",
-                    "type": "ordinal",
-                    "domain": this.props.pipelines,
-                    "range": { "scheme": "oranges" }
+                    name: "colorPipelines",
+                    type: "ordinal",
+                    domain: this.props.pipelines, //Array of Pipelines
+                    range: { scheme: "oranges" }
                 }
             ],
 
             marks: [
                 {
-                    "type": "arc",
-                    "from": { "data": "tree" },
-                    "encode": {
-                        "enter": {
-                            "x": { "signal": "width / 2" },
-                            "y": { "signal": "height / 2" },
-                            "fill": [
-                                { "test": "datum.parent==='inner'", "scale": "colorPipelines", "field": "operator" }, //fill pipelines
-                                { "scale": "colorOperators", "field": "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
+                    type: "arc",
+                    from: { "data": "tree" },
+                    encode: {
+                        enter: {
+                            x: { signal: "width / 2" },
+                            y: { signal: "height / 2" },
+                            fill: [
+                                { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" }, //fill pipelines
+                                { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
                             ],
                             "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
-                        "update": {
-                            "startAngle": { "field": "a0" },
-                            "endAngle": { "field": "a1" },
-                            "innerRadius": { "field": "r0" },
-                            "outerRadius": { "field": "r1" },
-                            "stroke": { "value": "white" },
-                            "strokeWidth": { "value": 0.5 },
-                            "zindex": { "value": 0 }
-                        }/* ,
-                        "hover": {
-                            "stroke": { "value": "red" },
-                            "strokeWidth": { "value": 2 },
-                            "zindex": { "value": 1 }
-                        } */
+                        update: {
+                            startAngle: { field: "a0" },
+                            endAngle: { field: "a1" },
+                            innerRadius: { field: "r0" },
+                            outerRadius: { field: "r1" },
+                            stroke: { value: "white" },
+                            strokeWidth: { value: 0.5 },
+                            zindex: { value: 0 },
+                            fillOpacity: { value: 1 }
+                        },
+                        hover: {
+                            fillOpacity: {
+                                value: 0.5
+                            }
+                        }
                     }
                 }
                 // TODO lables
@@ -344,7 +345,6 @@ class SunburstChart extends React.Component<Props, State> {
                     }
                 } */
             ],
-            //TODO legend
             legends: [{
                 fill: "colorPipelines",
                 title: "Pipelines",

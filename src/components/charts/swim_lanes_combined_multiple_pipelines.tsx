@@ -23,7 +23,7 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
-    currentPipeline: Array<string> | undefined,
+    currentPipeline: Array<string> | "All",
     currentInterpolation: String,
     currentBucketSize: number,
     currentTimeBucketSelectionTuple: [number, number],
@@ -82,7 +82,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.currentBucketSize !== prevProps.currentBucketSize ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
+                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
 
@@ -101,9 +101,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
             this.props.setCurrentChart(model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
 
-            if (!this.props.currentPipeline) {
-                Controller.requestPipelines(this.props.appContext.controller);
-            }
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });

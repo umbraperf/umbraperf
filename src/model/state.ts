@@ -14,7 +14,7 @@ export interface AppState {
     file: undefined | File;
     currentChart: string;
     currentEvent: string;
-    currentPipeline: Array<string> |undefined;
+    currentPipeline: Array<string> | "All";
     currentRequest: RestQueryType | undefined;
     events: Array<string> |undefined;
     pipelines: Array<string> |undefined;
@@ -41,7 +41,7 @@ export function createDefaultState(): AppState {
         file: undefined,
         currentChart: "",
         currentEvent: "",
-        currentPipeline: undefined,
+        currentPipeline: "All",
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,

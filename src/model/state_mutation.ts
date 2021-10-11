@@ -193,7 +193,7 @@ export class AppStateMutation {
                     file: undefined,
                     currentChart: "",
                     currentEvent: "",
-                    currentPipeline: undefined,
+                    currentPipeline: "All",
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,

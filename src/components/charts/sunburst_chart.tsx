@@ -22,7 +22,7 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
-    currentPipeline: Array<string> | undefined;
+    currentPipeline: Array<string> | "All";
     pipelines: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
@@ -78,10 +78,6 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
-            if (!this.props.currentPipeline) {
-                Controller.requestPipelines(this.props.appContext.controller);
-            }
-
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -133,14 +129,14 @@ class SunburstChart extends React.Component<Props, State> {
     }
 
     handleCklickPipeline(...args: any[]) {
-        const selectedPipeline = args[1].pipeline;
-        if (undefined !== this.props.currentPipeline) {
-            if (this.props.currentPipeline?.includes(selectedPipeline)) {
-                this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-            } else {
-                this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
-            }
-        }
+        // const selectedPipeline = args[1].pipeline;
+        // if (undefined !== this.props.currentPipeline) {
+        //     if (this.props.currentPipeline.includes(selectedPipeline)) {
+        //         this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+        //     } else {
+        //         this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+        //     }
+        // }
     }
 
     createVisualizationData() {

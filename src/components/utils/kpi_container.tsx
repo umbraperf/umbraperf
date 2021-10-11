@@ -15,12 +15,12 @@ interface Props {
     kpis: Array<model.IKpiData> | undefined;
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
-    currentPipeline: Array<string> | undefined,
+    currentPipeline: Array<string> | "All",
     currentChart: string,
 }
 
 interface State {
-    kpiCards: Array<JSX.Element> |undefined;
+    kpiCards: Array<JSX.Element> | undefined;
 }
 
 
@@ -41,7 +41,7 @@ class KpiContainer extends React.Component<Props, State> {
         // if(undefined === this.props.currentPipeline){
         //     Controller.requestPipelines(this.props.appContext.controller);
         // }
-        if (undefined === this.props.kpis) {
+        if (undefined === this.props.kpis && this.props.currentEvent) {
             Controller.requestStatistics(this.props.appContext.controller);
         }
 
@@ -58,8 +58,8 @@ class KpiContainer extends React.Component<Props, State> {
         }
 
         if (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-            this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
-            this.props.currentEvent !== prevProps.currentEvent) {
+                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                this.props.currentEvent !== prevProps.currentEvent) {
 
             Controller.requestStatistics(this.props.appContext.controller);
         }

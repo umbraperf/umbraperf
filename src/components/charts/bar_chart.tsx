@@ -22,7 +22,7 @@ interface Props {
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
-    currentPipeline: Array<string> | undefined,
+    currentPipeline: Array<string> | "All",
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
@@ -65,7 +65,7 @@ class BarChart extends React.Component<Props, State> {
         if (this.props.currentEvent &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentPipeline?.length !== prevProps.currentPipeline?.length ||
+                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
@@ -134,11 +134,12 @@ class BarChart extends React.Component<Props, State> {
 
         const data = {
 
-            transform: [{ type: "flatten", fields: ["operators", "values"] }],
             name: "table",
             values: [
                 { operators: operatorsArray, values: valueArray }
-            ]
+            ],
+            transform: [{ type: "flatten", fields: ["operators", "values"] }],
+
         };
 
 

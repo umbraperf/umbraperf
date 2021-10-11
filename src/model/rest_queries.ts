@@ -55,7 +55,6 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_STATISTICS:
-            console.log(`count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`);
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count${eventFilter}${pipelinesFilter}${timeFilter}/count?operator/sort?operator`;
@@ -74,7 +73,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
-            return ``;
+            return `parent/pipeline/count/count?pipeline/add_column?inner/sort?pipeline%%parent/operator/count/?pipeline="No pipeline"/count?operator/add_column?No pipeline/sort?operator%%parent/operator/count/?pipeline="No pipeline running"/count?operator/add_column?No pipeline running/sort?operator`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

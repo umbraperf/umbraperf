@@ -66,6 +66,6 @@ export interface IBarChartActivityHistogramData {
 
 export interface ISunburstChartData {
     operator: Array<string>;
-    parent: Array<string>;
-    count: Array<number>; 
+    parent: Array<string | null>;
+    count: Array<number | null>; 
 }

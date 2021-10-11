@@ -134,11 +134,12 @@ class BarChart extends React.Component<Props, State> {
 
         const data = {
 
-            transform: [{ type: "flatten", fields: ["operators", "values"] }],
             name: "table",
             values: [
                 { operators: operatorsArray, values: valueArray }
-            ]
+            ],
+            transform: [{ type: "flatten", fields: ["operators", "values"] }],
+
         };
 
 

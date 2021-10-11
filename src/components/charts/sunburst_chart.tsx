@@ -154,6 +154,10 @@ class SunburstChart extends React.Component<Props, State> {
         const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
         const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
 
+        //create unique operators array for operators color scale
+        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
+        console.log(operatorsUnique);
+
         //add datum for inner circle:
         operatorIdArray.unshift("inner");
         parentPipelinesArray.unshift(null);
@@ -198,7 +202,7 @@ class SunburstChart extends React.Component<Props, State> {
 
         ];
 
-        return data;
+        return { data, operatorsUnique };
     }
 
     createVisualizationSpec() {
@@ -207,9 +211,9 @@ class SunburstChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 50,
-            height: this.state.height - 10,
+            height: 250,//this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: false,
+            resize: true,
             autosize: 'fit',
 
             title: {
@@ -222,7 +226,7 @@ class SunburstChart extends React.Component<Props, State> {
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 
-            data: visData,
+            data: visData.data,
 
             signals: [
                 { //TODO 
@@ -246,10 +250,16 @@ class SunburstChart extends React.Component<Props, State> {
             scales: [
 
                 {
+                    "name": "colorOperators",
+                    "type": "ordinal",
+                    "domain": visData.operatorsUnique, //Array of Operators
+                    "range": { "scheme": "tableau20" }
+                },
+                {
                     "name": "colorPipelines",
                     "type": "ordinal",
-                    "domain": { "data": "tree", "field": "depth" },
-                    "range": { "scheme": "tableau20" }
+                    "domain": { "data": "tree", "field": "operator" },
+                    "range": { "scheme": "tableau10" }
                 }
             ],
 
@@ -262,8 +272,9 @@ class SunburstChart extends React.Component<Props, State> {
                             "x": { "signal": "width / 2" },
                             "y": { "signal": "height / 2" },
                             "fill": [
-                                {"scale": "colorPipelines", "field": "depth"}
-                            ], //test: parent null: no fill, parent: inner: use scale, rest orange or black
+                                { "test": "datum.parent==='inner'", "scale": "colorPipelines", "field": "operator" }, //fill pipelines
+                                { "scale": "colorOperators", "field": "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
+                            ],
                             "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
                         "update": {
@@ -309,15 +320,15 @@ class SunburstChart extends React.Component<Props, State> {
                 } */
             ],
             //TODO legend
-            /*             legends: [{
-                            fill: "color",
-                            title: "Pipelines",
-                            orient: "right",
-                            labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                            titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                            symbolSize: model.chartConfiguration.legendSymbolSize,
-                        }
-                        ], */
+            legends: [{
+                fill: "colorPipelines",
+                title: "Pipelines",
+                orient: "right",
+                labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                symbolSize: model.chartConfiguration.legendSymbolSize,
+            }
+            ],
         } as VisualizationSpec;
 
         return spec;

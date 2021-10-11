@@ -78,6 +78,10 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
+            if(undefined === this.props.pipelines){
+                Controller.requestPipelines(this.props.appContext.controller);
+            }
+
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -112,14 +116,12 @@ class SunburstChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-
-            {/*             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events || !this.props.pipelines)
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
-            } */}
+            }
         </div>;
     }
 
@@ -146,13 +148,13 @@ class SunburstChart extends React.Component<Props, State> {
     createVisualizationData() {
 
         //TODO: enable when data from rust
-        //const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
-        //const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
-        //const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
+        const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
+        const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
+        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
 
-        const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
-        const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
-        const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
+        // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
+        // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
+        // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
 
         //create unique operators array for operators color scale
         const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
@@ -211,10 +213,10 @@ class SunburstChart extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 50,
-            height: 250,//this.state.height - 10,
+            height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
-            autosize: 'fit',
+            autosize: { type: "fit", resize: true },
+
 
             title: {
                 text: "Shares of Pipelines and Operators",
@@ -285,12 +287,12 @@ class SunburstChart extends React.Component<Props, State> {
                             "stroke": { "value": "white" },
                             "strokeWidth": { "value": 0.5 },
                             "zindex": { "value": 0 }
-                        },
+                        }/* ,
                         "hover": {
                             "stroke": { "value": "red" },
                             "strokeWidth": { "value": 2 },
                             "zindex": { "value": 1 }
-                        }
+                        } */
                     }
                 }
                 // TODO lables

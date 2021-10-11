@@ -25,8 +25,8 @@ interface Props {
    chartData: model.ChartDataKeyValue,
    multipleChartDataLength: number;
    currentInterpolation: String,
-   currentBucketSize: number,
-   currentPipeline: Array<string> | undefined,
+   currentBucketSize: number;
+   currentPipeline: Array<string> | "All";
    setCurrentChart: (newCurrentChart: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -94,10 +94,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidMount() {
       if (this.props.csvParsingFinished) {
          this.props.setCurrentChart(model.ChartType.SWIM_LANES_PIPELINES);
-
-         if (!this.props.currentPipeline) {
-            Controller.requestPipelines(this.props.appContext.controller);
-         }
 
          addEventListener('resize', (event) => {
             this.resizeListener();

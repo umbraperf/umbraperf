@@ -2,7 +2,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches};
+use crate::{exec::basic::analyze::{filter_with, find_unique_string}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
 
 use super::analyze;
 
@@ -99,17 +99,23 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
 
+    print_to_js_with_obj(&format!("{:?}", batch).into());
+
+
+    print_to_js_with_obj(&format!("{:?}", "Before").into());
+
+
     let vec = batch
     .column(column_index_for_max)
     .as_any()
     .downcast_ref::<Float64Array>()
     .unwrap();
 
-    let max = arrow::compute::max(vec).unwrap();
+    print_to_js_with_obj(&format!("{:?}", "In Max function").into());
 
     let mut result_builder = Float64Array::builder(1);
 
-    let _result_builder = result_builder.append_value(max);
+    let _result_builder = result_builder.append_value(if vec.len() > 0 { arrow::compute::max(vec).unwrap() } else  { 0.0 });
     let result_builder = result_builder.finish();
 
     let result_field = Field::new("count", DataType::Float64, false);
@@ -117,6 +123,8 @@ pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> R
     let schema = Schema::new(vec![result_field]);
 
     let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(result_builder)]).unwrap();
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
     
     batch
 

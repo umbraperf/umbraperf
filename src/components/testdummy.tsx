@@ -118,7 +118,7 @@ class Dashboard extends React.Component<Props, {}> {
                             </Box>
                         </Grid>
                     </Box>
-                    <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
+                    <Box clone order={{ xs: 6, md: 6, lg: 6 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>

@@ -171,22 +171,22 @@ class SunburstChart extends React.Component<Props, State> {
         //create single occurrences arrays for operators and pipelines
         let opCount = [];
         let pipeCount = [];
-        for(let i=0; i<countArray.length; i++){
-            if(parentPipelinesArray[i]==="inner"){
+        for (let i = 0; i < countArray.length; i++) {
+            if (parentPipelinesArray[i] === "inner") {
                 opCount.push(0);
                 pipeCount.push(countArray[i]);
-            }else{
+            } else {
                 opCount.push(countArray[i]);
                 pipeCount.push(0);
             }
         }
 
         //add datum for inner circle only on first rerender
-         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
-         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-         countArray[0] !== null && countArray.unshift(null);
-         opCount[0] !== null && opCount.unshift(null);
-         pipeCount[0] !== null && pipeCount.unshift(null);
+        operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
+        parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
+        countArray[0] !== null && countArray.unshift(null);
+        opCount[0] !== null && opCount.unshift(null);
+        pipeCount[0] !== null && pipeCount.unshift(null);
 
         const data = [{
 
@@ -283,8 +283,8 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     "name": "colorPipelines",
                     "type": "ordinal",
-                    "domain": { "data": "tree", "field": "operator" },
-                    "range": { "scheme": "tableau10" }
+                    "domain": this.props.pipelines,
+                    "range": { "scheme": "oranges" }
                 }
             ],
 

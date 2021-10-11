@@ -143,13 +143,6 @@ class DonutChart extends React.Component<Props, State> {
                 this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
             }
         }
-        /*         if (undefined !== this.props.currentPipeline) {
-                    if (this.props.currentPipeline.includes(selectedPipeline)) {
-                        this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-                    } else {
-                        this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
-                    }
-                } */
     }
 
     createVisualizationData() {

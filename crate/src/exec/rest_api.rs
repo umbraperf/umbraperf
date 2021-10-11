@@ -247,12 +247,15 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
         let operator = split[0];
         let params = split[1];
 
+        print_to_js_with_obj(&format!("{:?}", op).into());
+
         match operator {
             "distinct" => {
                 record_batch =
                     analyze::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
-            "max" => {
+            "max(time)" => {
+                print_to_js_with_obj(&format!("{:?}", "This").into());
                 record_batch = count::max_execution_time(&record_batch, find_name("time", &record_batch));
             }
             "relative" => {
@@ -338,13 +341,17 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
 }
 
 fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
+    if false {
     print_to_js_with_obj(&format!("{:?}", restful_string).into());
     print_to_js_with_obj(&format!("{:?}", record_batch).into());
+    }
     send_record_batch_to_js(&record_batch);
     insert_query_to_cache(restful_string, record_batch);
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
+    print_to_js_with_obj(&format!("{:?}", restful_string).into());
+
     if query_already_calculated(restful_string) {
         return;
     }

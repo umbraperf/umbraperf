@@ -8,7 +8,7 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import _ from "lodash";
+import _, { values } from "lodash";
 import { isFieldPredicate } from 'vega-lite/build/src/predicate';
 
 
@@ -208,7 +208,7 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "partition",
                     field: "opOccurrences",
                     sort: { "field": "value" },
-                    size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }], //determine size of circles
+                    size: [{ "signal": "2 * PI" }, { "signal": "width / 3" }], //determine size of circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],
@@ -254,17 +254,17 @@ class SunburstChart extends React.Component<Props, State> {
             data: visData.data,
 
             signals: [
-                { //TODO 
+                {
                     name: "radius",
                     update: "width / 3.1"
                 },
-                { // TODO 
+                {
                     name: "clickPipeline",
                     on: [
                         { events: "arc:click", update: "datum" }
                     ]
                 },
-                { //TODO 
+                {
                     name: "hover",
                     on: [
                         { "events": "mouseover", "update": "datum" }
@@ -273,17 +273,16 @@ class SunburstChart extends React.Component<Props, State> {
             ],
 
             scales: [
-
                 {
                     name: "colorOperators",
                     type: "ordinal",
-                    domain: visData.operatorsUnique, //Array of Operators
+                    domain: visData.operatorsUnique,
                     range: { scheme: "tableau20" }
                 },
                 {
                     name: "colorPipelines",
                     type: "ordinal",
-                    domain: this.props.pipelines, //Array of Pipelines
+                    domain: this.props.pipelines,
                     range: { scheme: "oranges" }
                 }
             ],
@@ -297,7 +296,7 @@ class SunburstChart extends React.Component<Props, State> {
                             x: { signal: "width / 2" },
                             y: { signal: "height / 2" },
                             fill: [
-                                { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" }, //fill pipelines
+                                { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" },
                                 { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
                             ],
                             "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
@@ -346,12 +345,27 @@ class SunburstChart extends React.Component<Props, State> {
                 } */
             ],
             legends: [{
+                //TODO only pipelines in array
                 fill: "colorPipelines",
                 title: "Pipelines",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
+                values: this.props.pipelines,
+                //stroke and fill set to 0 leads to remove elements (not just hide them) -> remove all elemnts that are no pipeline
+                // fillColor: { "test": "datum['parent'] != 'inner", "value": "0" }
+            },
+            {
+                //TODO only pipelines in array
+                fill: "colorOperators",
+                title: "Operators",
+                orient: "bottom",
+                direction: "horizontal",
+                labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                symbolSize: model.chartConfiguration.legendSymbolSize,
+                values: visData.operatorsUnique,
             }
             ],
         } as VisualizationSpec;

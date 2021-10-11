@@ -9,6 +9,7 @@ import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
+import { isFieldPredicate } from 'vega-lite/build/src/predicate';
 
 
 interface Props {
@@ -56,12 +57,16 @@ class SunburstChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
+        console.log(this.props.pipelines);
+
+
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
+            this.props.pipelines &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
+                this.props.pipelines !== prevProps.pipelines ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
         }
 
@@ -78,7 +83,7 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
-            if(undefined === this.props.pipelines){
+            if (undefined === this.props.pipelines) {
                 Controller.requestPipelines(this.props.appContext.controller);
             }
 
@@ -150,31 +155,49 @@ class SunburstChart extends React.Component<Props, State> {
         //TODO: enable when data from rust
         const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
         const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
-        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
+        const countArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count);
 
         // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
         // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
         // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
 
+        console.log(operatorIdArray);
+        console.log(parentPipelinesArray);
+        console.log(countArray);
+
         //create unique operators array for operators color scale
         const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
-        console.log(operatorsUnique);
 
-        //add datum for inner circle:
-        operatorIdArray.unshift("inner");
-        parentPipelinesArray.unshift(null);
-        countArray.unshift(null);
+        //create single occurrences arrays for operators and pipelines
+        let opCount = [];
+        let pipeCount = [];
+        for(let i=0; i<countArray.length; i++){
+            if(parentPipelinesArray[i]==="inner"){
+                opCount.push(0);
+                pipeCount.push(countArray[i]);
+            }else{
+                opCount.push(countArray[i]);
+                pipeCount.push(0);
+            }
+        }
+
+        //add datum for inner circle only on first rerender
+         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
+         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
+         countArray[0] !== null && countArray.unshift(null);
+         opCount[0] !== null && opCount.unshift(null);
+         pipeCount[0] !== null && pipeCount.unshift(null);
 
         const data = [{
 
             name: "tree",
             values: [
-                { operator: operatorIdArray, parent: parentPipelinesArray, occurrences: countArray }
+                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipeCount, opOccurrences: opCount }
             ],
             transform: [
                 {
                     type: "flatten",
-                    fields: ["operator", "parent", "occurrences"]
+                    fields: ["operator", "parent", "pipeOccurrences", "opOccurrences"]
                 },
                 {
                     type: "stratify",
@@ -183,7 +206,7 @@ class SunburstChart extends React.Component<Props, State> {
                 },
                 {
                     type: "partition",
-                    field: "occurrences",
+                    field: "opOccurrences",
                     sort: { "field": "value" },
                     size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }],
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]

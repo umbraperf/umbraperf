@@ -5,7 +5,7 @@ use std::{
 };
 use arrow::error::Result as ArrowResult;
 
-use crate::{utils::{record_batch_util::create_record_batch}};
+use crate::{utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch}};
 
 
 fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
@@ -56,7 +56,13 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
 
 pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch: &RecordBatch) -> RecordBatch {
 
+    print_to_js_with_obj(&format!("{:?}", filter_from).into());
+    print_to_js_with_obj(&format!("{:?}", filter_from  < 0.0).into());
+
+
     if filter_from < 0.0 && filter_to < 0.0 {
+        print_to_js_with_obj(&format!("{:?}", "No filter").into());
+
         return batch.to_owned();
     }
 

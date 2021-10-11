@@ -235,7 +235,7 @@ class DonutChart extends React.Component<Props, State> {
                     "name": "color",
                     "type": "ordinal",
                     "domain": { "data": "table", "field": "pipeline" },
-                    "range": { "scheme": "category20c" }
+                    "range": { "scheme": "oranges" } //old: category20c
                 }
             ],
 

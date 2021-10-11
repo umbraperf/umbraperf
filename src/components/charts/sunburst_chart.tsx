@@ -78,6 +78,10 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
+            if(undefined === this.props.pipelines){
+                Controller.requestPipelines(this.props.appContext.controller);
+            }
+
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -112,14 +116,12 @@ class SunburstChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-
-            {/*             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events || !this.props.pipelines)
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
-            } */}
+            }
         </div>;
     }
 
@@ -146,13 +148,17 @@ class SunburstChart extends React.Component<Props, State> {
     createVisualizationData() {
 
         //TODO: enable when data from rust
-        //const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
-        //const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
-        //const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
+        const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
+        const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
+        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
 
-        const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
-        const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
-        const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
+        // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
+        // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
+        // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
+
+        //create unique operators array for operators color scale
+        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
+        console.log(operatorsUnique);
 
         //add datum for inner circle:
         operatorIdArray.unshift("inner");
@@ -198,7 +204,7 @@ class SunburstChart extends React.Component<Props, State> {
 
         ];
 
-        return data;
+        return { data, operatorsUnique };
     }
 
     createVisualizationSpec() {
@@ -209,8 +215,8 @@ class SunburstChart extends React.Component<Props, State> {
             width: this.state.width - 50,
             height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: false,
-            autosize: 'fit',
+            autosize: { type: "fit", resize: true },
+
 
             title: {
                 text: "Shares of Pipelines and Operators",
@@ -222,7 +228,7 @@ class SunburstChart extends React.Component<Props, State> {
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 
-            data: visData,
+            data: visData.data,
 
             signals: [
                 { //TODO 
@@ -246,10 +252,16 @@ class SunburstChart extends React.Component<Props, State> {
             scales: [
 
                 {
+                    "name": "colorOperators",
+                    "type": "ordinal",
+                    "domain": visData.operatorsUnique, //Array of Operators
+                    "range": { "scheme": "tableau20" }
+                },
+                {
                     "name": "colorPipelines",
                     "type": "ordinal",
-                    "domain": { "data": "tree", "field": "depth" },
-                    "range": { "scheme": "tableau20" }
+                    "domain": { "data": "tree", "field": "operator" },
+                    "range": { "scheme": "tableau10" }
                 }
             ],
 
@@ -262,8 +274,9 @@ class SunburstChart extends React.Component<Props, State> {
                             "x": { "signal": "width / 2" },
                             "y": { "signal": "height / 2" },
                             "fill": [
-                                {"scale": "colorPipelines", "field": "depth"}
-                            ], //test: parent null: no fill, parent: inner: use scale, rest orange or black
+                                { "test": "datum.parent==='inner'", "scale": "colorPipelines", "field": "operator" }, //fill pipelines
+                                { "scale": "colorOperators", "field": "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
+                            ],
                             "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
                         "update": {
@@ -274,12 +287,12 @@ class SunburstChart extends React.Component<Props, State> {
                             "stroke": { "value": "white" },
                             "strokeWidth": { "value": 0.5 },
                             "zindex": { "value": 0 }
-                        },
+                        }/* ,
                         "hover": {
                             "stroke": { "value": "red" },
                             "strokeWidth": { "value": 2 },
                             "zindex": { "value": 1 }
-                        }
+                        } */
                     }
                 }
                 // TODO lables
@@ -309,15 +322,15 @@ class SunburstChart extends React.Component<Props, State> {
                 } */
             ],
             //TODO legend
-            /*             legends: [{
-                            fill: "color",
-                            title: "Pipelines",
-                            orient: "right",
-                            labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                            titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                            symbolSize: model.chartConfiguration.legendSymbolSize,
-                        }
-                        ], */
+            legends: [{
+                fill: "colorPipelines",
+                title: "Pipelines",
+                orient: "right",
+                labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                symbolSize: model.chartConfiguration.legendSymbolSize,
+            }
+            ],
         } as VisualizationSpec;
 
         return spec;

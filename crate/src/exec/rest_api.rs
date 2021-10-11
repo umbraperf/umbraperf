@@ -3,8 +3,10 @@ use std::usize;
 use arrow::record_batch::RecordBatch;
 
 use crate::{
-    exec::freq::rel_freq, get_query_from_cache, insert_query_to_cache,
-    record_batch_util::send_record_batch_to_js, utils::print_to_cons::print_to_js_with_obj,
+    exec::freq::rel_freq,
+    get_query_from_cache, insert_query_to_cache,
+    record_batch_util::send_record_batch_to_js,
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::convert},
 };
 
 use super::{
@@ -30,6 +32,10 @@ fn split_at_and(params: &str) -> Vec<&str> {
 
 fn split_at_double_and(params: &str) -> Vec<&str> {
     return params.split_terminator("&&").collect::<Vec<&str>>();
+}
+
+fn split_at_double_percent(params: &str) -> Vec<&str> {
+    return params.split_terminator("%%").collect::<Vec<&str>>();
 }
 
 // Find name in Record Batch
@@ -250,20 +256,32 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
         print_to_js_with_obj(&format!("{:?}", op).into());
 
         match operator {
+            "add_column" => {
+                record_batch = analyze::add_column(&record_batch, params, "parent");
+                print_to_js_with_obj(&format!("{:?}", "pipeline adding").into());
+                print_to_js_with_obj(&format!("{:?}", record_batch).into());
+
+
+            }
             "distinct" => {
                 record_batch =
                     analyze::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
             "max(time)" => {
                 print_to_js_with_obj(&format!("{:?}", "This").into());
-                record_batch = count::max_execution_time(&record_batch, find_name("time", &record_batch));
+                record_batch =
+                    count::max_execution_time(&record_batch, find_name("time", &record_batch));
             }
             "relative" => {
-                record_batch = count::relative(&record_batch, find_name("operator", &record_batch), find_name("operator", &record_batch));
+                record_batch = count::relative(
+                    &record_batch,
+                    find_name("operator", &record_batch),
+                    find_name("operator", &record_batch),
+                );
             }
             "count(distinct)" => {
                 record_batch =
-                count::count_total_unique(&record_batch, find_name(params, &record_batch));
+                    count::count_total_unique(&record_batch, find_name(params, &record_batch));
             }
             "basic_count" => {
                 record_batch = count::count(&record_batch, find_name(params, &record_batch));
@@ -328,8 +346,12 @@ fn split_query(restful_string: &str) -> (Vec<&str>, Vec<&str>, Vec<&str>) {
     return (filter_vec, op_vec, select_vec);
 }
 
-fn multiple_queries(restful_string: &str) -> bool {
+fn multiple_queries_concat(restful_string: &str) -> bool {
     restful_string.contains("&&")
+}
+
+fn multiple_queries_union(restful_string: &str) -> bool {
+    restful_string.contains("%%")
 }
 
 fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
@@ -341,9 +363,9 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
 }
 
 fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
-    if false {
-    print_to_js_with_obj(&format!("{:?}", restful_string).into());
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
+    if true {
+        print_to_js_with_obj(&format!("{:?}", restful_string).into());
+        print_to_js_with_obj(&format!("{:?}", record_batch).into());
     }
     send_record_batch_to_js(&record_batch);
     insert_query_to_cache(restful_string, record_batch);
@@ -356,13 +378,20 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
         return;
     }
 
-    if multiple_queries(restful_string) {
+    if multiple_queries_concat(restful_string) {
         let split = split_at_double_and(restful_string);
         let mut vec_batch = Vec::new();
         for query in split {
             vec_batch.push(exec_query(record_batch.to_owned(), query));
         }
         finish_query_exec(analyze::concat_record_batches(vec_batch), restful_string);
+    } else if multiple_queries_union(restful_string) {
+        let split = split_at_double_percent(restful_string);
+        let mut vec_batch = Vec::new();
+        for query in split {
+            vec_batch.push(exec_query(record_batch.to_owned(), query));
+        }
+        finish_query_exec(convert(vec_batch), restful_string);
     } else {
         let batch = exec_query(record_batch, restful_string);
         finish_query_exec(batch, restful_string);

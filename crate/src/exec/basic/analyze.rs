@@ -1,4 +1,4 @@
-use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{Field, Schema}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray}, compute::{take, sort_to_indices}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 use std::{
     collections::{HashSet},
     sync::Arc,
@@ -61,8 +61,6 @@ pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch
 
 
     if filter_from < 0.0 && filter_to < 0.0 {
-        print_to_js_with_obj(&format!("{:?}", "No filter").into());
-
         return batch.to_owned();
     }
 
@@ -158,6 +156,35 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
 
     let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
     return batch;
+}
+
+pub fn add_column(batch: &RecordBatch, string_to_add: &str, name_of_column: &str) -> RecordBatch {
+
+    let batch_len = batch
+    .column(0)
+    .as_any()
+    .downcast_ref::<StringArray>()
+    .unwrap().len();
+
+    let mut vec_str = Vec::new();
+
+    let mut i = 0;
+    while i < batch_len {
+        vec_str.push(string_to_add);
+        i = i + 1;
+    }
+  
+    let stri_arr = StringArray::from(vec_str);
+
+    let result_field = Field::new(name_of_column, DataType::Utf8, false);
+
+    let schema = Schema::new(vec![result_field]);
+
+    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
+
+    concat_record_batches(vec![batch.to_owned(), extra_batch])
+    
+
 }
 
 pub fn count_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {

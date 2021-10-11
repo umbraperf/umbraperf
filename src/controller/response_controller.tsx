@@ -217,7 +217,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SUNBURST_CHART,
                     data: {
-                        operator: resultObject.resultTable.getColumn('operator').toArray(),
+                        operator: resultObject.resultTable.getColumn('pipeline').toArray(),
                         parent: resultObject.resultTable.getColumn('parent').toArray(),
                         count: resultObject.resultTable.getColumn('count').toArray(),
                     }

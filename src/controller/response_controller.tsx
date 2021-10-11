@@ -55,10 +55,6 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
                 type: model.StateMutationType.SET_PIPELINES,
                 data: pipelines,
             });
-            // store.dispatch({
-            //     type: model.StateMutationType.SET_CURRENTPIPELINE,
-            //     data: pipelines,
-            // });
             break;
 
         case model.RestQueryType.GET_STATISTICS:

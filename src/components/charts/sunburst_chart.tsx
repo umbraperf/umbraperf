@@ -115,7 +115,7 @@ class SunburstChart extends React.Component<Props, State> {
             {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-{/*                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+                    {/*                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
  */}                </div>
             }
         </div>;
@@ -143,164 +143,182 @@ class SunburstChart extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-/*         const pipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).pipeline;
-        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IDonutChartData).count;
+        const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
+        const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
+        const countArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count;
 
-        let dataArray: { pipeline: string; value: number; }[] = [];
-        pipelinesArray.forEach((elem, index) => {
-            const dataObject = { pipeline: elem, value: countArray[index] };
-            dataArray.push(dataObject);
-        });
+        //add datum for inner circle:
+        operatorIdArray.unshift("inner");
+        parentPipelinesArray.unshift(null);
+        countArray.unshift(null);
 
         const data = [{
-            name: "table",
-            values: dataArray,
+
+            name: "tree",
+            values: [
+                { operator: operatorIdArray, parent: parentPipelinesArray, occurrences: countArray }
+            ],
             transform: [
                 {
-                    type: "pie",
-                    field: "value",
-                    startAngle: 0,
-                    endAngle: 6.29,
-                    sort: true
+                    type: "flatten",
+                    fields: ["operator", "parent", "occurrences"]
+                },
+                {
+                    type: "stratify",
+                    key: "operator",
+                    parentKey: "parent"
+                },
+                {
+                    type: "partition",
+                    field: "occurrences",
+                    sort: { "field": "value" },
+                    size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }],
+                    as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
-            ]
+            ],
+
         },
         {
-            name: "selected",
+            name: "selectedPipelines",
             values: { pipelinesUsed: this.props.currentPipeline },
-            transform: [{ type: "flatten", fields: ["pipelinesUsed"] }]
+            transform: [
+                {
+                    type: "flatten",
+                    fields: ["pipelinesUsed"]
+                }
+            ]
         }
-        ]
 
+        ];
 
-        return data; */
+        return data;
     }
 
     createVisualizationSpec() {
-       /*  const visData = this.createVisualizationData();
-
-        const spec: VisualizationSpec = {
-            $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width - 50,
-            height: this.state.height - 10,
-            padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: false,
-            autosize: 'fit',
-
-            title: {
-                text: "Shares of Pipelines",
-                align: model.chartConfiguration.titleAlign,
-                dy: model.chartConfiguration.titlePadding,
-                fontSize: model.chartConfiguration.titleFontSize,
-                font: model.chartConfiguration.titleFont,
-                subtitle: "Toggle pipelines by selecting them in donut:",
-                subtitleFontSize: model.chartConfiguration.subtitleFontSize,
-            },
-
-            data: visData,
-
-            signals: [
-                {
-                    name: "radius",
-                    update: "width / 3.1"
-                },
-                {
-                    name: "clickPipeline",
-                    on: [
-                        { events: "arc:click", update: "datum" }
-                    ]
-                },
-                {
-                    name: "hover",
-                    on: [
-                        { "events": "mouseover", "update": "datum" }
-                    ]
-                }
-            ],
-
-            scales: [
-                {
-                    "name": "color",
-                    "type": "ordinal",
-                    "domain": { "data": "table", "field": "pipeline" },
-                    "range": { "scheme": "category20c" }
-                }
-            ],
-
-            marks: [
-                {
-                    "name": "arc",
-                    "type": "arc",
-                    "from": { "data": "table" },
-                    "encode": {
-                        "enter": {
-                            "fill": { "scale": "color", "field": "pipeline" },
-                            "x": { "signal": "width / 2" },
-                            "y": { "signal": "height / 2" },
-                            "startAngle": { "field": "startAngle" },
-                            "endAngle": { "field": "endAngle" },
-                            "innerRadius": { "value": 60 },
-                            "outerRadius": { "signal": "width / 2" },
-                            "cornerRadius": { "value": 0 },
-                            "tooltip": {
-                                signal: model.chartConfiguration.donutChartTooltip,
-                            }
-                        },
-                        "update": {
-                            "opacity": [
-                                { "test": "datum['value'] === 0", "value": 0 }, //Hide if no pipeline appearance 
-                                { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 }, //full color if pipeline selected
-                                { "value": 0.1 } //lower opacity if pipeline not selected
-                            ],
-                            "padAngle": {
-                                "signal": "if(hover && hover.pipeline == datum.pipeline, 0.015, 0.015)"
-                            },
-                            "innerRadius": {
-                                "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 0.45, if(width >= height, height, width) / 2 * 0.5)"
-                            },
-                            "outerRadius": {
-                                "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 1.05 * 0.8, if(width >= height, height, width) / 2 * 0.8)"
-                            },
-                            "stroke": { "signal": "scale('color', datum.pipeline)" }
-                        }
-                    }
-                },
-                {
-                    "type": "text",
-                    "from": { "data": "table" },
-                    "encode": {
-                        "enter": {
-                            fontSize: { value: model.chartConfiguration.donutChartValueLabelFontSize },
-                            font: model.chartConfiguration.valueLabelFont,
-                            "x": { "signal": "if(width >= height, width, height) / 2" },
-                            "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
-                            "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
-                            "fill": { "value": "#000" },
-                            "align": { "value": "center" },
-                            "baseline": { "value": "middle" },
-                            "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
-                            "fillOpacity": [
-                                { "test": "radius < 30", "value": 0 },
-                                { "test": "datum['value'] === 0", "value": 0 },
-                                { "value": 1 }
-                            ],
-                        }
-                    }
-                }
-            ],
-            legends: [{
-                fill: "color",
-                title: "Pipelines",
-                orient: "right",
-                labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                symbolSize: model.chartConfiguration.legendSymbolSize,
-            }
-            ],
-        } as VisualizationSpec;
-
-        return spec; */
+        /*  const visData = this.createVisualizationData();
+ 
+         const spec: VisualizationSpec = {
+             $schema: "https://vega.github.io/schema/vega/v5.json",
+             width: this.state.width - 50,
+             height: this.state.height - 10,
+             padding: { left: 5, right: 5, top: 5, bottom: 5 },
+             resize: false,
+             autosize: 'fit',
+ 
+             title: {
+                 text: "Shares of Pipelines",
+                 align: model.chartConfiguration.titleAlign,
+                 dy: model.chartConfiguration.titlePadding,
+                 fontSize: model.chartConfiguration.titleFontSize,
+                 font: model.chartConfiguration.titleFont,
+                 subtitle: "Toggle pipelines by selecting them in donut:",
+                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
+             },
+ 
+             data: visData,
+ 
+             signals: [
+                 {
+                     name: "radius",
+                     update: "width / 3.1"
+                 },
+                 {
+                     name: "clickPipeline",
+                     on: [
+                         { events: "arc:click", update: "datum" }
+                     ]
+                 },
+                 {
+                     name: "hover",
+                     on: [
+                         { "events": "mouseover", "update": "datum" }
+                     ]
+                 }
+             ],
+ 
+             scales: [
+                 {
+                     "name": "color",
+                     "type": "ordinal",
+                     "domain": { "data": "table", "field": "pipeline" },
+                     "range": { "scheme": "category20c" }
+                 }
+             ],
+ 
+             marks: [
+                 {
+                     "name": "arc",
+                     "type": "arc",
+                     "from": { "data": "table" },
+                     "encode": {
+                         "enter": {
+                             "fill": { "scale": "color", "field": "pipeline" },
+                             "x": { "signal": "width / 2" },
+                             "y": { "signal": "height / 2" },
+                             "startAngle": { "field": "startAngle" },
+                             "endAngle": { "field": "endAngle" },
+                             "innerRadius": { "value": 60 },
+                             "outerRadius": { "signal": "width / 2" },
+                             "cornerRadius": { "value": 0 },
+                             "tooltip": {
+                                 signal: model.chartConfiguration.donutChartTooltip,
+                             }
+                         },
+                         "update": {
+                             "opacity": [
+                                 { "test": "datum['value'] === 0", "value": 0 }, //Hide if no pipeline appearance 
+                                 { "test": "indata('selected', 'pipelinesUsed', datum.pipeline)", "value": 1 }, //full color if pipeline selected
+                                 { "value": 0.1 } //lower opacity if pipeline not selected
+                             ],
+                             "padAngle": {
+                                 "signal": "if(hover && hover.pipeline == datum.pipeline, 0.015, 0.015)"
+                             },
+                             "innerRadius": {
+                                 "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 0.45, if(width >= height, height, width) / 2 * 0.5)"
+                             },
+                             "outerRadius": {
+                                 "signal": "if(hover && hover.pipeline == datum.pipeline, if(width >= height, height, width) / 2 * 1.05 * 0.8, if(width >= height, height, width) / 2 * 0.8)"
+                             },
+                             "stroke": { "signal": "scale('color', datum.pipeline)" }
+                         }
+                     }
+                 },
+                 {
+                     "type": "text",
+                     "from": { "data": "table" },
+                     "encode": {
+                         "enter": {
+                             fontSize: { value: model.chartConfiguration.donutChartValueLabelFontSize },
+                             font: model.chartConfiguration.valueLabelFont,
+                             "x": { "signal": "if(width >= height, width, height) / 2" },
+                             "y": { "signal": "if(width >= height, height, width) / 2" },
+                             "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
+                             "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
+                             "fill": { "value": "#000" },
+                             "align": { "value": "center" },
+                             "baseline": { "value": "middle" },
+                             "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
+                             "fillOpacity": [
+                                 { "test": "radius < 30", "value": 0 },
+                                 { "test": "datum['value'] === 0", "value": 0 },
+                                 { "value": 1 }
+                             ],
+                         }
+                     }
+                 }
+             ],
+             legends: [{
+                 fill: "color",
+                 title: "Pipelines",
+                 orient: "right",
+                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                 symbolSize: model.chartConfiguration.legendSymbolSize,
+             }
+             ],
+         } as VisualizationSpec;
+ 
+         return spec; */
     }
 
 

@@ -1,6 +1,6 @@
 use std::{io::Cursor, sync::Arc};
 
-use arrow::{array::ArrayRef, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 
 use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
 

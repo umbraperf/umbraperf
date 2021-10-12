@@ -1,8 +1,8 @@
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as model from "../model";
+import { store } from '../app';
 import * as RequestController from "./request_controller";
 import { appContext } from "../app";
-import { store } from '../app';
 
 
 export function setCsvReadingFinished() {
@@ -12,7 +12,6 @@ export function setCsvReadingFinished() {
         data: true,
     });
 
-    //request all metadata as soon as CSV reading is finished
     RequestController.requestMetadata(appContext.controller);
 }
 
@@ -52,6 +51,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
                 type: model.StateMutationType.SET_CURRENTEVENT,
                 data: events[0],
             });
+            window.alert("store events")
             break;
 
         case model.RestQueryType.GET_PIPELINES:

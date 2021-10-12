@@ -120,33 +120,6 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     create_record_batch(batches[0].schema(), columns)
 }
 
-// Only for two batches
-pub fn convert_exact(batches: Vec<RecordBatch>) -> RecordBatch {
-
-
-        let mut array_vec = Vec::new();
-        for column in &batches[0].columns() {
-            for column in &batches[1].columns() {
-                if columns.as_any().
-
-            }
-            array_vec.push(batch.column(i as usize).as_ref());
-        }
-        to_concat_array.push(array_vec);
-    }
-    
-    
-    
-    let mut columns = Vec::new();
-
-    for array in to_concat_array {
-        let concat_array = arrow::compute::kernels::concat::concat(&array);
-        columns.push(concat_array.unwrap());
-    }
-
-    create_record_batch(batches[0].schema(), columns)
-}
-
 // Send one record batch to JavaScript
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let mut buff = Cursor::new(vec![]);

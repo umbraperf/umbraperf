@@ -202,8 +202,35 @@ pub fn add_column(batch: &RecordBatch, string_to_add: &str, name_of_column: &str
 
     let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
 
-    concat_record_batches(vec![batch.to_owned(), extra_batch])
-    
+    concat_record_batches(vec![batch.to_owned(), extra_batch]) 
+
+}
+
+pub fn add_column_float(batch: &RecordBatch, float_to_add: f64, name_of_column: &str) -> RecordBatch {
+
+    let batch_len = batch
+    .column(0)
+    .as_any()
+    .downcast_ref::<StringArray>()
+    .unwrap().len();
+
+    let mut vec_str = Vec::new();
+
+    let mut i = 0;
+    while i < batch_len {
+        vec_str.push(float_to_add);
+        i = i + 1;
+    }
+  
+    let stri_arr = Float64Array::from(vec_str);
+
+    let result_field = Field::new(name_of_column, DataType::Float64, false);
+
+    let schema = Schema::new(vec![result_field]);
+
+    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
+
+    concat_record_batches(vec![batch.to_owned(), extra_batch]) 
 
 }
 

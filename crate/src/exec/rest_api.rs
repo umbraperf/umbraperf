@@ -247,21 +247,28 @@ fn rel_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
     }
 }
 
+fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
+    let split = split_at_comma(params);
+    analyze::add_column(record_batch, split[0], split[1])
+}
+
+fn rename(record_batch: &RecordBatch, params: &str) -> RecordBatch {
+    let split = split_at_comma(params);
+    analyze::rename(record_batch, split[0], split[1])
+}
+
 fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
     for op in op_vec {
         let split = op.split_terminator("?").collect::<Vec<&str>>();
         let operator = split[0];
         let params = split[1];
-
-        print_to_js_with_obj(&format!("{:?}", op).into());
-
+        
         match operator {
+            "rename" => {
+                record_batch = rename(&record_batch, params);
+            }
             "add_column" => {
-                record_batch = analyze::add_column(&record_batch, params, "parent");
-                print_to_js_with_obj(&format!("{:?}", "pipeline adding").into());
-                print_to_js_with_obj(&format!("{:?}", record_batch).into());
-
-
+                record_batch = add_column(&record_batch, params);
             }
             "distinct" => {
                 record_batch =

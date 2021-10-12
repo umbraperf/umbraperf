@@ -115,12 +115,15 @@ fn abs_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
         let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();
 
         let pipeline_vec = split_at_comma(split[1]);
+        let operator_vec = split_at_comma(split[2]);
+
         return abs_freq::abs_freq_of_pipelines(
             &record_batch,
             find_name("operator", &record_batch),
             find_name("time", &record_batch),
             bucket_size,
             pipeline_vec,
+            operator_vec
         );
     }
 }
@@ -162,6 +165,7 @@ fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> Recor
     let after_excl_mark = 1;
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
     let pipeline_vec = split_at_comma(split[after_excl_mark]);
+    let operator_vec = split_at_comma(split[2]);
 
     let before_colon = 0;
     let after_colon = 1;
@@ -180,6 +184,7 @@ fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> Recor
         find_name(time, &record_batch),
         bucket_size,
         pipeline_vec,
+        operator_vec
     );
 }
 
@@ -226,6 +231,7 @@ fn rel_freq_total_pipelines(record_batch: RecordBatch, fields: &str, params: &st
         find_name(fields, &record_batch),
         bucket_size,
         Vec::new(),
+        Vec::new()
     );
 }
 
@@ -262,6 +268,18 @@ fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
 fn rename(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     let split = split_at_comma(params);
     analyze::rename(record_batch, split[0], split[1])
+}
+
+fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
+    if params.contains(",") {
+        let split = split_at_comma(params);
+        if split[1] == "desc" {
+            return analyze::sort_batch(&record_batch, find_name(params, &record_batch), true);
+        } else {
+            return analyze::sort_batch(&record_batch, find_name(params, &record_batch), false);
+        }
+    }
+    return analyze::sort_batch(&record_batch, find_name(params, &record_batch), false);
 }
 
 fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
@@ -311,7 +329,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 record_batch = rel_freq(record_batch, params);
             }
             "sort" => {
-                record_batch = analyze::sort_batch(&record_batch, find_name(params, &record_batch));
+                record_batch = sort(&record_batch, params);
             }
             _ => {
                 panic!("Not supported operator!");

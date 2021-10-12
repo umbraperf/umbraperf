@@ -133,10 +133,10 @@ pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatc
     create_record_batch(batch.schema(), arrays)
 }
  
-pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize) -> RecordBatch {
+pub fn sort_batch(batch: &RecordBatch, column_index_to_sort: usize, descending: bool) -> RecordBatch {
 
     let options = arrow::compute::SortOptions{
-        descending: false,
+        descending: descending,
         nulls_first: false,
     };
 

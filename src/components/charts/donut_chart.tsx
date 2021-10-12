@@ -176,7 +176,6 @@ class DonutChart extends React.Component<Props, State> {
         }
         ]
 
-
         return data;
     }
 

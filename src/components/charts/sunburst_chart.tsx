@@ -57,9 +57,6 @@ class SunburstChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        console.log(this.props.pipelines);
-
-
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
             this.props.pipelines &&
@@ -161,16 +158,18 @@ class SunburstChart extends React.Component<Props, State> {
         // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
         // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
 
+        //create unique operators array for operators color scale
+        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
+        console.log(operatorsUnique);
+
+        let opCount: Array<number | null> = [];
+        let pipeCount: Array<number | null> = [];
+
         console.log(operatorIdArray);
         console.log(parentPipelinesArray);
         console.log(countArray);
 
-        //create unique operators array for operators color scale
-        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
-
         //create single occurrences arrays for operators and pipelines
-        let opCount = [];
-        let pipeCount = [];
         for (let i = 0; i < countArray.length; i++) {
             if (parentPipelinesArray[i] === "inner") {
                 opCount.push(0);
@@ -206,9 +205,9 @@ class SunburstChart extends React.Component<Props, State> {
                 },
                 {
                     type: "partition",
-                    field: "opOccurrences",
+                    field: "opOccurrences", //size of leaves -> operators
                     sort: { "field": "value" },
-                    size: [{ "signal": "2 * PI" }, { "signal": "width / 3" }], //determine size of circles
+                    size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],
@@ -300,8 +299,8 @@ class SunburstChart extends React.Component<Props, State> {
                                 { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
                             ],
                             tooltip: [
-                                {test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true)},
-                                {test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false)}
+                                { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
+                                { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
                             ],
                             // "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },

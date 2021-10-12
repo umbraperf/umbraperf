@@ -32,14 +32,14 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS, { event1: string, event2: string, bucketSize: number, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string, timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, bucketSize: number }>
-    | RestQuery<RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | RestQuery<RestQueryType.other, {}>
     ;
 
 export function createRestQuery(query: QueryVariant) {
 
     const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
-    
+
     const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;
 
@@ -73,9 +73,11 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
-            return `parent/pipeline/count${eventFilter}${timeFilter}/count?pipeline/add_column?inner/sort?pipeline
-            %%parent/operator/count${eventFilter}${timeFilter}/?pipeline="No pipeline"/count?operator/add_column?No pipeline/sort?operator
-            %%parent/operator/count${eventFilter}${timeFilter}/?pipeline="No pipeline running"/count?operator/add_column?No pipeline running/sort?operator`;
+            const queryInnerCircle: string = `parent/pipeline/count${eventFilter}${timeFilter}/count?pipeline/add_column?inner/sort?pipeline`;
+            const queryOuterCircles: Array<string> = (((query.data as any).allPipelines) as Array<string>).map(elem => (`%%parent/operator/count${eventFilter}${timeFilter}/?pipeline="${elem}"/count?operator/add_column?${elem}/sort?operator`));
+            const completeQuery: string = queryInnerCircle + queryOuterCircles.join("");
+            console.log(completeQuery);
+            return completeQuery;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

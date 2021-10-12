@@ -160,7 +160,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
-                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, allPipelines: store.getState().pipelines! },
                 }), false, chartId);
             break;
 

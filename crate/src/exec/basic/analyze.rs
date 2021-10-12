@@ -86,6 +86,26 @@ pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch
     create_record_batch(batch.schema(), arrays)
 }
 
+pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
+    let schema = record_batch.schema();
+    let fields = schema.fields();
+
+    let mut new_field_names = Vec::new();
+    for field in fields {
+        let name = field.name();
+        if name == from {
+            let new_field = Field::new(to, field.data_type().to_owned(), false);
+            new_field_names.push(new_field);
+        } else {
+            new_field_names.push(field.to_owned());
+        }
+    }
+
+    let new_schema = Arc::new(Schema::new(new_field_names));
+
+    RecordBatch::try_new(new_schema, record_batch.columns().to_owned()).unwrap()
+}
+
 
 pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     if filter_strs.len() == 1 && filter_strs[0] == "All" {
@@ -182,8 +202,35 @@ pub fn add_column(batch: &RecordBatch, string_to_add: &str, name_of_column: &str
 
     let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
 
-    concat_record_batches(vec![batch.to_owned(), extra_batch])
-    
+    concat_record_batches(vec![batch.to_owned(), extra_batch]) 
+
+}
+
+pub fn add_column_float(batch: &RecordBatch, float_to_add: f64, name_of_column: &str) -> RecordBatch {
+
+    let batch_len = batch
+    .column(0)
+    .as_any()
+    .downcast_ref::<StringArray>()
+    .unwrap().len();
+
+    let mut vec_str = Vec::new();
+
+    let mut i = 0;
+    while i < batch_len {
+        vec_str.push(float_to_add);
+        i = i + 1;
+    }
+  
+    let stri_arr = Float64Array::from(vec_str);
+
+    let result_field = Field::new(name_of_column, DataType::Float64, false);
+
+    let schema = Schema::new(vec![result_field]);
+
+    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
+
+    concat_record_batches(vec![batch.to_owned(), extra_batch]) 
 
 }
 

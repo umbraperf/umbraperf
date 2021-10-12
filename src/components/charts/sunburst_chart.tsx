@@ -24,12 +24,15 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
+    currentOperator: Array<string> | "All";
     pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
+    setCurrentOperator: (newCurrentOperator: Array<string>) => void;
+
 
 }
 
@@ -205,6 +208,16 @@ class SunburstChart extends React.Component<Props, State> {
                     fields: ["pipelinesUsed"]
                 }
             ]
+        },
+        {
+            name: "selectedOperators",
+            values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+            transform: [
+                {
+                    type: "flatten",
+                    fields: ["operatorsUsed"]
+                }
+            ]
         }
 
         ];
@@ -378,6 +391,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentOperator: state.currentOperator,
     pipelines: state.pipelines,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
@@ -395,6 +409,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => dispatch({
         type: model.StateMutationType.SET_CURRENTPIPELINE,
         data: newCurrentPipeline,
+    }),
+    setCurrentOperator: (newCurrentOperator: Array<string>) => dispatch({
+        type: model.StateMutationType.SET_CURRENTOPERATOR,
+        data: newCurrentOperator,
     }),
 });
 

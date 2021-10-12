@@ -59,7 +59,7 @@ export function createRestQuery(query: QueryVariant) {
         //return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATORS:
             return `operator${eventFilter}/count?operator/sort?count`
-            // TODO desc: return `operator${eventFilter}/count?operator/sort?count,desc`
+        // TODO desc: return `operator${eventFilter}/count?operator/sort?count,desc`
         case RestQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:

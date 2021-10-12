@@ -37,7 +37,7 @@ export class RequestController {
     }
 }
 
-export function requestMetadata(controller: RequestController){
+export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
@@ -70,7 +70,7 @@ export function requestOperators(controller: RequestController) {
         model.RestQueryType.GET_OPERATORS,
         model.createRestQuery({
             type: model.RestQueryType.GET_OPERATORS,
-            data: {},
+            data: { event: store.getState().currentEvent },
         }), true);
 }
 

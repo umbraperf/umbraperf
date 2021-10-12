@@ -238,7 +238,7 @@ class SunburstChart extends React.Component<Props, State> {
             width: this.state.width - 50,
             height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: true },
+            autosize: { type: "fit", resize: false },
 
 
             title: {
@@ -299,7 +299,11 @@ class SunburstChart extends React.Component<Props, State> {
                                 { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" },
                                 { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
                             ],
-                            "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
+                            tooltip: [
+                                {test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true)},
+                                {test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false)}
+                            ],
+                            // "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
                         update: {
                             startAngle: { field: "a0" },

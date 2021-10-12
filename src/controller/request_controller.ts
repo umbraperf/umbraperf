@@ -38,6 +38,7 @@ export class RequestController {
 }
 
 export function requestMetadata(controller: RequestController) {
+    //TODO set default event in store
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
@@ -153,7 +154,7 @@ export function requestChartData(controller: RequestController, chartId: number,
 
         case model.ChartType.DONUT_CHART:
 
-        //TODO depreciated
+            //TODO depreciated
             controller.calculateChartData(
                 model.RestQueryType.GET_PIPELINE_COUNT,
                 model.createRestQuery({

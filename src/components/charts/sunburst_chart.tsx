@@ -86,8 +86,12 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
+            //TODO remove
             if (undefined === this.props.pipelines) {
                 Controller.requestPipelines(this.props.appContext.controller);
+            }
+            if (undefined === this.props.operators) {
+                Controller.requestOperators(this.props.appContext.controller);
             }
 
             addEventListener('resize', (event) => {
@@ -151,7 +155,7 @@ class SunburstChart extends React.Component<Props, State> {
                 if (this.props.currentPipeline.includes(selectedPipeline)) {
                     this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
                 } else {
-                    this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                    this.props.setCurrentPipeline(this.props.currentPipeline.concat(selectedPipeline));
                 }
             }
         }
@@ -159,21 +163,20 @@ class SunburstChart extends React.Component<Props, State> {
 
 
     handleClickOperator(...args: any[]) {
-        window.alert(args[1]);
-        // TODO 
-        // if (args[1]) {
-        //     console.log(args[1]);
-        //     const selectedPipeline = args[1];
-        //     if (this.props.currentPipeline === "All") {
-        //         this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
-        //     } else {
-        //         if (this.props.currentPipeline.includes(selectedPipeline)) {
-        //             this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-        //         } else {
-        //             this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
-        //         }
-        //     }
-        // }
+        window.alert(args[1]); 
+        if (args[1]) {
+            const selectedOperator = args[1];
+            if (this.props.currentOperator === "All") {
+                this.props.setCurrentOperator(this.props.operators!.filter(e => e !== selectedOperator));
+            } else {
+                if (this.props.currentOperator.includes(selectedOperator)) {
+                    this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));
+                } else {
+                    this.props.setCurrentOperator(this.props.currentOperator.concat(selectedOperator));
+                }
+            }
+        }
+        console.log(this.props.currentOperator);
     }
 
     createVisualizationData() {

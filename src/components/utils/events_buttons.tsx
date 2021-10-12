@@ -20,6 +20,7 @@ function EventsButtons(props: Props) {
     const context = useContext(Context.ctx);
     const events = props.events;
     if (undefined === events) {
+        window.alert("hier")
         Controller.requestEvents(context!.controller);
     }
     useEffect(() => {

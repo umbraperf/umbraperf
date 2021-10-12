@@ -135,7 +135,7 @@ class SunburstChart extends React.Component<Props, State> {
     }
 
     handleCklickPipeline(...args: any[]) {
-        if(args[1]){
+        if (args[1]) {
             console.log(args[1]);
             const selectedPipeline = args[1];
             if (this.props.currentPipeline === "All") {
@@ -194,7 +194,7 @@ class SunburstChart extends React.Component<Props, State> {
         },
         {
             name: "selectedPipelines",
-            values: { pipelinesUsed: this.props.currentPipeline },
+            values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
             transform: [
                 {
                     type: "flatten",
@@ -239,7 +239,7 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: {marktype: "arc", type: "click"}, update: "if(datum.parent === 'inner', datum.operator, null)" }
+                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent === 'inner', datum.operator, null)" }
                     ]
                 }
             ],
@@ -256,6 +256,12 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "ordinal",
                     domain: this.props.pipelines,
                     range: { scheme: "oranges" }
+                },
+                {
+                    name: "colorPipelinesDisabled",
+                    type: "ordinal",
+                    domain: this.props.pipelines,
+                    range: { scheme: "greys" }
                 }
             ],
 
@@ -267,10 +273,6 @@ class SunburstChart extends React.Component<Props, State> {
                         enter: {
                             x: { signal: "width / 2" },
                             y: { signal: "height / 2" },
-                            fill: [
-                                { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" },
-                                { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
-                            ],
                             tooltip: [
                                 { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
                                 { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
@@ -284,7 +286,12 @@ class SunburstChart extends React.Component<Props, State> {
                             stroke: { value: "white" },
                             strokeWidth: { value: 0.5 },
                             zindex: { value: 0 },
-                            fillOpacity: { value: 1 }
+                            fillOpacity: { value: 1 },
+                            fill: [
+                                { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", scale: "colorPipelines", field: "operator" }, // use orange color scale if pipeline is selected
+                                { test: "datum.parent==='inner'", scale: "colorPipelinesDisabled", field: "operator" }, //use grey color scale if pipeline is not selected
+                                { scale: "colorOperators", field: "operator" } //fill operators as they do not have inner as parent (inner operator is not includes as it is not in domain of colorOperators scale)
+                            ],
                         },
                         hover: {
                             fillOpacity: {

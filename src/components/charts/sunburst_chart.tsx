@@ -57,6 +57,7 @@ class SunburstChart extends React.Component<Props, State> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleClickPipeline = this.handleClickPipeline.bind(this);
+        this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -167,7 +168,9 @@ class SunburstChart extends React.Component<Props, State> {
         if (args[1]) {
             const selectedOperator = args[1];
             if (this.props.currentOperator === "All") {
+                console.log(this.props.currentOperator);
                 this.props.setCurrentOperator(this.props.operators!.filter(e => e !== selectedOperator));
+                console.log(this.props.currentOperator);
             } else {
                 if (this.props.currentOperator.includes(selectedOperator)) {
                     this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));

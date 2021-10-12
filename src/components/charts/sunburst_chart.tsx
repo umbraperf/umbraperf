@@ -226,7 +226,7 @@ class SunburstChart extends React.Component<Props, State> {
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
                 font: model.chartConfiguration.titleFont,
-                subtitle: "(Toggle pipelines by click)",
+                subtitle: "Toggle pipelines by click:",
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 

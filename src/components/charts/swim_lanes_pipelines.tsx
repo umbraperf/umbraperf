@@ -21,6 +21,7 @@ interface Props {
    currentEvent: string;
    currentRequest: model.RestQueryType | undefined;
    events: Array<string> | undefined;
+   operators: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
    multipleChartDataLength: number;
@@ -78,7 +79,9 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
       if (this.props.currentEvent &&
+         this.props.operators &&
          (this.props.currentEvent !== prevProps.currentEvent ||
+            this.props.operators !== prevProps.operators ||
             this.props.currentBucketSize !== prevProps.currentBucketSize ||
             this.props.chartIdCounter !== prevProps.chartIdCounter)) {
          this.setState((state, props) => ({
@@ -233,10 +236,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                range: {
                   scheme: "tableau20",
                },
-               domain: {
-                  data: "table",
-                  field: "operators"
-               }
+               domain: this.props.operators,
             }
          ],
          axes: [
@@ -340,6 +340,7 @@ const mapStateToProps = (state: model.AppState) => ({
    currentEvent: state.currentEvent,
    currentRequest: state.currentRequest,
    events: state.events,
+   operators: state.operators,
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
    multipleChartDataLength: state.multipleChartDataLength,

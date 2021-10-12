@@ -135,6 +135,7 @@ class SunburstChart extends React.Component<Props, State> {
     }
 
     handleCklickPipeline(...args: any[]) {
+        window.alert(args);
         const selectedPipeline = args[1].pipeline;
         if (this.props.currentPipeline === "All") {
             this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
@@ -149,15 +150,10 @@ class SunburstChart extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        //TODO: enable when data from rust
         const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
         const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
         const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operatorOccurrences);
         const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
-
-        // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
-        // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
-        // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
 
         //create unique operators array for operators color scale
         const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
@@ -241,15 +237,15 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: "arc:click", update: "datum" }
-                    ]
-                },
-                {
-                    name: "hover",
-                    on: [
-                        { "events": "mouseover", "update": "datum" }
+                        { events: {marktype: "arc", type: "click"}, update: "if(datum.parent === 'inner', datum, null)" }
                     ]
                 }
+                // {
+                //     name: "hover",
+                //     on: [
+                //         { events: "mouseover", update: "datum" }
+                //     ]
+                // }
             ],
 
             scales: [
@@ -344,12 +340,19 @@ class SunburstChart extends React.Component<Props, State> {
                 //TODO only pipelines in array
                 fill: "colorOperators",
                 title: "Operators",
-                orient: "bottom",
+                orient: "top",
                 direction: "horizontal",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
                 values: visData.operatorsUnique,
+                encode: {
+                    labels: {
+                        update: {
+                            text: { signal: "truncate(datum.value, 9)" },
+                        }
+                    }
+                }
             }
             ],
         } as VisualizationSpec;

@@ -1,5 +1,7 @@
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as model from "../model";
+import * as RequestController from "./request_controller";
+import { appContext } from "../app";
 import { store } from '../app';
 
 
@@ -9,6 +11,9 @@ export function setCsvReadingFinished() {
         type: model.StateMutationType.SET_CSVPARSINGFINISHED,
         data: true,
     });
+
+    //request all metadata as soon as CSV reading is finished
+    RequestController.requestMetadata(appContext.controller);
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {

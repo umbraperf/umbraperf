@@ -274,9 +274,9 @@ fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     if params.contains(",") {
         let split = split_at_comma(params);
         if split[1] == "desc" {
-            return analyze::sort_batch(&record_batch, find_name(params, &record_batch), true);
+            return analyze::sort_batch(&record_batch, find_name(split[0], &record_batch), true);
         } else {
-            return analyze::sort_batch(&record_batch, find_name(params, &record_batch), false);
+            return analyze::sort_batch(&record_batch, find_name(split[0], &record_batch), false);
         }
     }
     return analyze::sort_batch(&record_batch, find_name(params, &record_batch), false);

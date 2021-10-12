@@ -46,7 +46,7 @@ pub fn abs_freq_of_event(
     column_for_time: usize,
     bucket_size: f64,
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, 2);
+    let batch = &sort_batch(batch, 2, false);
 
     let unique_event = find_unique_string(batch, column_for_event);
 
@@ -141,8 +141,9 @@ pub fn abs_freq_of_pipelines(
     column_for_time: usize,
     bucket_size: f64,
     pipelines: Vec<&str>,
+    operators: Vec<&str>
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, 2);
+    let batch = &sort_batch(batch, 2, false);
 
     let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
 
@@ -191,7 +192,7 @@ pub fn abs_freq_of_pipelines(
             for operator in vec_operator {
                 if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
-                    result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                    result_bucket.push(f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     let frequenzy = bucket_map.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());
@@ -207,7 +208,8 @@ pub fn abs_freq_of_pipelines(
             }
         }
 
-        if pipelines.contains(&current_pipeline) || pipelines.len() == 0 || (pipelines.len() == 1 && pipelines[0] == "All") {
+        if pipelines.contains(&current_pipeline) || pipelines.len() == 0 || (pipelines.len() == 1 && pipelines[0] == "All") 
+        && operators.contains(&current_operator) || operators.len() == 0 || (operators.len() == 1 && operators[0] == "All") {
         bucket_map.insert(
             current_operator,
             bucket_map.get(current_operator).unwrap() + 1.0,
@@ -220,7 +222,7 @@ pub fn abs_freq_of_pipelines(
 
             for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                    result_bucket.push(f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     let frequenzy = bucket_map.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());

@@ -327,7 +327,6 @@ class SunburstChart extends React.Component<Props, State> {
                 } */
             ],
             legends: [{
-                //TODO only pipelines in array
                 fill: "colorPipelines",
                 title: "Pipelines",
                 orient: "right",
@@ -335,11 +334,8 @@ class SunburstChart extends React.Component<Props, State> {
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
                 values: this.props.pipelines,
-                //stroke and fill set to 0 leads to remove elements (not just hide them) -> remove all elemnts that are no pipeline
-                // fillColor: { "test": "datum['parent'] != 'inner", "value": "0" }
             },
             {
-                //TODO only pipelines in array
                 fill: "colorOperators",
                 title: "Operators",
                 orient: "right",

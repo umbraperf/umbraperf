@@ -152,7 +152,8 @@ class SunburstChart extends React.Component<Props, State> {
         //TODO: enable when data from rust
         const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
         const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
-        const countArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count);
+        const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operatorOccurrences);
+        const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
 
         // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
         // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
@@ -160,38 +161,18 @@ class SunburstChart extends React.Component<Props, State> {
 
         //create unique operators array for operators color scale
         const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
-        console.log(operatorsUnique);
-
-        let opCount: Array<number | null> = [];
-        let pipeCount: Array<number | null> = [];
-
-        console.log(operatorIdArray);
-        console.log(parentPipelinesArray);
-        console.log(countArray);
-
-        //create single occurrences arrays for operators and pipelines
-        for (let i = 0; i < countArray.length; i++) {
-            if (parentPipelinesArray[i] === "inner") {
-                opCount.push(0);
-                pipeCount.push(countArray[i]);
-            } else {
-                opCount.push(countArray[i]);
-                pipeCount.push(0);
-            }
-        }
 
         //add datum for inner circle only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-        countArray[0] !== null && countArray.unshift(null);
-        opCount[0] !== null && opCount.unshift(null);
-        pipeCount[0] !== null && pipeCount.unshift(null);
+        operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
+        pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
 
         const data = [{
 
             name: "tree",
             values: [
-                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipeCount, opOccurrences: opCount }
+                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
             ],
             transform: [
                 {

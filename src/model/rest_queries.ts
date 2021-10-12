@@ -51,6 +51,9 @@ export function createRestQuery(query: QueryVariant) {
     const pipelines = (query.data as any).pipelines ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : '';
     const pipelinesFilter = `/?pipeline="${pipelines}"`;
 
+    const operators = (query.data as any).operators ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : '';
+    const operatorsFilter = `/?operator="${operators}"`;
+
     switch (query.type) {
         case RestQueryType.GET_EVENTS:
             return 'ev_name/distinct?ev_name/sort?ev_name';

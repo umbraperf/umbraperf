@@ -67,9 +67,9 @@ export function requestPipelines(controller: RequestController) {
 //request operators from rust, metarequest
 export function requestOperators(controller: RequestController) {
     controller.calculateChartData(
-        model.RestQueryType.GET_PIPELINES,
+        model.RestQueryType.GET_OPERATORS,
         model.createRestQuery({
-            type: model.RestQueryType.GET_PIPELINES,
+            type: model.RestQueryType.GET_OPERATORS,
             data: {},
         }), true);
 }

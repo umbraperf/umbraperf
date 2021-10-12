@@ -25,6 +25,7 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
     pipelines: Array<string> | undefined;
+    operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
@@ -60,9 +61,11 @@ class SunburstChart extends React.Component<Props, State> {
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
             this.props.pipelines &&
+            this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.pipelines !== prevProps.pipelines ||
+                this.props.operators !== prevProps.operators ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
         }
@@ -158,7 +161,7 @@ class SunburstChart extends React.Component<Props, State> {
         const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
 
         //create unique operators array for operators color scale
-        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
+        //const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
 
         //add datum for inner circle only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
@@ -206,7 +209,7 @@ class SunburstChart extends React.Component<Props, State> {
 
         ];
 
-        return { data, operatorsUnique };
+        return data;
     }
 
     createVisualizationSpec() {
@@ -230,7 +233,7 @@ class SunburstChart extends React.Component<Props, State> {
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 
-            data: visData.data,
+            data: visData,
 
             signals: [
                 {
@@ -249,7 +252,7 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "colorOperators",
                     type: "ordinal",
-                    domain: visData.operatorsUnique,
+                    domain: this.props.operators,
                     range: { scheme: "tableau20" }
                 },
                 {
@@ -345,7 +348,7 @@ class SunburstChart extends React.Component<Props, State> {
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: visData.operatorsUnique,
+                values: this.props.operators,
                 encode: {
                     labels: {
                         update: {
@@ -376,6 +379,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     pipelines: state.pipelines,
+    operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 

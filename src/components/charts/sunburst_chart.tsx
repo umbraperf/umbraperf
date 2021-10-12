@@ -186,7 +186,8 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "partition",
                     field: "opOccurrences", //size of leaves -> operators
                     sort: { "field": "value" },
-                    size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
+                    // size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
+                    size: [{ "signal": "2 * PI" }, { "signal": "50" }], //determine size of pipeline circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],
@@ -340,6 +341,7 @@ class SunburstChart extends React.Component<Props, State> {
                 title: "Operators",
                 orient: "right",
                 direction: "vertical",
+                columns: 3,
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,

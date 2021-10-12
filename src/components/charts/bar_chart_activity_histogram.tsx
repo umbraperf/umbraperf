@@ -283,7 +283,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             push: "outer",
                             on: [
                                 {
-                                    events: "window:mouseup",
+                                    events: "view:mouseup",
                                     update: "[detailDomain, detailDomainPosition]"
                                 }
                             ]

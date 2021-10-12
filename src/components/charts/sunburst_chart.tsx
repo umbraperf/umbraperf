@@ -187,7 +187,7 @@ class SunburstChart extends React.Component<Props, State> {
                     field: "opOccurrences", //size of leaves -> operators
                     sort: { "field": "value" },
                     // size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
-                    size: [{ "signal": "2 * PI" }, { "signal": "50" }], //determine size of pipeline circles
+                    size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],
@@ -234,8 +234,8 @@ class SunburstChart extends React.Component<Props, State> {
 
             signals: [
                 {
-                    name: "radius",
-                    update: "width / 3.1"
+                    name: "pieSize",
+                    update: "if(width > 140, 75, 50)"
                 },
                 {
                     name: "clickPipeline",

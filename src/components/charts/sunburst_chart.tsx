@@ -163,9 +163,6 @@ class SunburstChart extends React.Component<Props, State> {
         const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operatorOccurrences);
         const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
 
-        //create unique operators array for operators color scale
-        //const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== "inner" && elem !== "inner")));
-
         //add datum for inner circle only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
@@ -279,6 +276,12 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "ordinal",
                     domain: this.props.pipelines,
                     range: { scheme: "greys" }
+                },
+                {
+                    name: "colorOperatorsDisabled",
+                    type: "ordinal",
+                    domain: this.props.operators,
+                    range: { scheme: "greys" }
                 }
             ],
 
@@ -307,7 +310,8 @@ class SunburstChart extends React.Component<Props, State> {
                             fill: [
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", scale: "colorPipelines", field: "operator" }, // use orange color scale if pipeline is selected
                                 { test: "datum.parent==='inner'", scale: "colorPipelinesDisabled", field: "operator" }, //use grey color scale if pipeline is not selected
-                                { scale: "colorOperators", field: "operator" } //fill operators as they do not have inner as parent (inner operator is not includes as it is not in domain of colorOperators scale)
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain)
+                                { scale: "colorOperatorsDisabled", field: "operator" } //use grey color scale for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
                             ],
                         },
                         hover: {

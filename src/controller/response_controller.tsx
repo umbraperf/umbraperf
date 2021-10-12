@@ -57,6 +57,14 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             });
             break;
 
+        case model.RestQueryType.GET_OPERATORS:
+            const operators = store.getState().result?.resultTable.getColumn('operator').toArray();
+            store.dispatch({
+                type: model.StateMutationType.SET_OPERATORS,
+                data: operators,
+            });
+            break;
+
         case model.RestQueryType.GET_STATISTICS:
             const numberSamplesKpi: model.IKpiData = { title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
             const numberPipelinesKpi: model.IKpiData = { title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };

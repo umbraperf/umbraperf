@@ -7,6 +7,7 @@ export type RestQuery<T, P> = {
 export enum RestQueryType {
     GET_EVENTS = "GET_EVENTS",
     GET_PIPELINES = "GET_PIPELINES",
+    GET_OPERATORS = "GET_OPERATORS",
     GET_STATISTICS = "GET_STATISTICS",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
     GET_REL_OP_DISTR_PER_BUCKET = "GET_REL_OP_DISTR_PER_BUCKET",
@@ -23,6 +24,7 @@ export enum RestQueryType {
 export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENTS, {}>
     | RestQuery<RestQueryType.GET_PIPELINES, {}>
+    | RestQuery<RestQueryType.GET_OPERATORS, {}>
     | RestQuery<RestQueryType.GET_STATISTICS, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, bucketSize: number }>
@@ -55,6 +57,8 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/count?pipeline/sort?count'
         //return 'pipeline/distinct?pipeline/sort?pipeline';
+        case RestQueryType.GET_OPERATORS:
+            return 'operator/count?operator/sort?count'
         case RestQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:

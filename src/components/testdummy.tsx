@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import EventsButtons from './utils/events_buttons';
 import KpiContainer from './utils/kpi_container';
 import DropdownsOptions from './utils/dropdowns_options';
-import DonutChart from '../components/charts/donut_chart';
 import SunburstChart from '../components/charts/sunburst_chart';
 import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
 import BarChart from '../components/charts/bar_chart';

@@ -24,11 +24,15 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
+    currentOperator: Array<string> | "All";
     pipelines: Array<string> | undefined;
+    operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
+    setCurrentOperator: (newCurrentOperator: Array<string>) => void;
+
 
 }
 
@@ -52,20 +56,19 @@ class SunburstChart extends React.Component<Props, State> {
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
-        this.handleCklickPipeline = this.handleCklickPipeline.bind(this);
+        this.handleClickPipeline = this.handleClickPipeline.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
 
-        console.log(this.props.pipelines);
-
-
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
             this.props.pipelines &&
+            this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.pipelines !== prevProps.pipelines ||
+                this.props.operators !== prevProps.operators ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
         }
@@ -132,67 +135,65 @@ class SunburstChart extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-            clickPipeline: this.handleCklickPipeline,
+            clickPipeline: this.handleClickPipeline,
+            clickOperator: this.handleClickOperator,
         }
         return signalListeners;
     }
 
-    handleCklickPipeline(...args: any[]) {
-        const selectedPipeline = args[1].pipeline;
-        if (this.props.currentPipeline === "All") {
-            this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
-        } else {
-            if (this.props.currentPipeline.includes(selectedPipeline)) {
-                this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+    handleClickPipeline(...args: any[]) {
+        if (args[1]) {
+            console.log(args[1]);
+            const selectedPipeline = args[1];
+            if (this.props.currentPipeline === "All") {
+                this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
             } else {
-                this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                if (this.props.currentPipeline.includes(selectedPipeline)) {
+                    this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+                } else {
+                    this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                }
             }
         }
     }
 
+
+    handleClickOperator(...args: any[]) {
+        window.alert(args[1]);
+        // TODO 
+        // if (args[1]) {
+        //     console.log(args[1]);
+        //     const selectedPipeline = args[1];
+        //     if (this.props.currentPipeline === "All") {
+        //         this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
+        //     } else {
+        //         if (this.props.currentPipeline.includes(selectedPipeline)) {
+        //             this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+        //         } else {
+        //             this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+        //         }
+        //     }
+        // }
+    }
+
     createVisualizationData() {
 
-        //TODO: enable when data from rust
         const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
         const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).parent;
-        const countArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).count);
-
-        // const operatorIdArray = ["pipeline1", "pipeline2", "pipeline3", "tablescan1", "group1", "join1", "map1", "tablescan1", "join1", "tablescan1"];
-        // const parentPipelinesArray: Array<string | null> = ["inner", "inner", "inner", "pipeline1", "pipeline1", "pipeline1", "pipeline1", "pipeline2", "pipeline2", "pipeline2"];
-        // const countArray: Array<number | null> = [10, 20, 10, 5, 10, 1, 5, 10, 2, 2];
-
-        console.log(operatorIdArray);
-        console.log(parentPipelinesArray);
-        console.log(countArray);
-
-        //create unique operators array for operators color scale
-        const operatorsUnique = _.uniq(operatorIdArray.filter((elem, index) => (parentPipelinesArray[index] !== ("inner" || null))));
-
-        //create single occurrences arrays for operators and pipelines
-        let opCount = [];
-        let pipeCount = [];
-        for (let i = 0; i < countArray.length; i++) {
-            if (parentPipelinesArray[i] === "inner") {
-                opCount.push(0);
-                pipeCount.push(countArray[i]);
-            } else {
-                opCount.push(countArray[i]);
-                pipeCount.push(0);
-            }
-        }
+        const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operatorOccurrences);
+        const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
 
         //add datum for inner circle only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-        countArray[0] !== null && countArray.unshift(null);
-        opCount[0] !== null && opCount.unshift(null);
-        pipeCount[0] !== null && pipeCount.unshift(null);
+        operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
+        pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
 
         const data = [{
 
             name: "tree",
             values: [
-                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipeCount, opOccurrences: opCount }
+                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
             ],
             transform: [
                 {
@@ -206,9 +207,10 @@ class SunburstChart extends React.Component<Props, State> {
                 },
                 {
                     type: "partition",
-                    field: "opOccurrences",
+                    field: "opOccurrences", //size of leaves -> operators
                     sort: { "field": "value" },
-                    size: [{ "signal": "2 * PI" }, { "signal": "width / 3" }], //determine size of circles
+                    // size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
+                    size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
             ],
@@ -216,18 +218,28 @@ class SunburstChart extends React.Component<Props, State> {
         },
         {
             name: "selectedPipelines",
-            values: { pipelinesUsed: this.props.currentPipeline },
+            values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
             transform: [
                 {
                     type: "flatten",
                     fields: ["pipelinesUsed"]
                 }
             ]
+        },
+        {
+            name: "selectedOperators",
+            values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+            transform: [
+                {
+                    type: "flatten",
+                    fields: ["operatorsUsed"]
+                }
+            ]
         }
 
         ];
 
-        return { data, operatorsUnique };
+        return data;
     }
 
     createVisualizationSpec() {
@@ -238,7 +250,7 @@ class SunburstChart extends React.Component<Props, State> {
             width: this.state.width - 50,
             height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: true },
+            autosize: { type: "fit", resize: false },
 
 
             title: {
@@ -247,27 +259,27 @@ class SunburstChart extends React.Component<Props, State> {
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
                 font: model.chartConfiguration.titleFont,
-                subtitle: "(Toggle pipelines by click)",
+                subtitle: "Toggle pipelines by click:",
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 
-            data: visData.data,
+            data: visData,
 
             signals: [
                 {
-                    name: "radius",
-                    update: "width / 3.1"
+                    name: "pieSize",
+                    update: "if(width > 140, 75, 50)"
                 },
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: "arc:click", update: "datum" }
+                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent === 'inner', datum.operator, null)" }
                     ]
                 },
                 {
-                    name: "hover",
+                    name: "clickOperator",
                     on: [
-                        { "events": "mouseover", "update": "datum" }
+                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', datum.operator, null)" }
                     ]
                 }
             ],
@@ -276,7 +288,7 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "colorOperators",
                     type: "ordinal",
-                    domain: visData.operatorsUnique,
+                    domain: this.props.operators,
                     range: { scheme: "tableau20" }
                 },
                 {
@@ -284,6 +296,18 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "ordinal",
                     domain: this.props.pipelines,
                     range: { scheme: "oranges" }
+                },
+                {
+                    name: "colorPipelinesDisabled",
+                    type: "ordinal",
+                    domain: this.props.pipelines,
+                    range: { scheme: "greys" }
+                },
+                {
+                    name: "colorOperatorsDisabled",
+                    type: "ordinal",
+                    domain: this.props.operators,
+                    range: { scheme: "greys" }
                 }
             ],
 
@@ -295,11 +319,10 @@ class SunburstChart extends React.Component<Props, State> {
                         enter: {
                             x: { signal: "width / 2" },
                             y: { signal: "height / 2" },
-                            fill: [
-                                { test: "datum.parent==='inner'", scale: "colorPipelines", field: "operator" },
-                                { scale: "colorOperators", field: "operator" } //fill operators (does not include inner as not in domain of colorOperators scale)
+                            tooltip: [
+                                { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
+                                { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
                             ],
-                            "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
                         update: {
                             startAngle: { field: "a0" },
@@ -309,7 +332,13 @@ class SunburstChart extends React.Component<Props, State> {
                             stroke: { value: "white" },
                             strokeWidth: { value: 0.5 },
                             zindex: { value: 0 },
-                            fillOpacity: { value: 1 }
+                            fillOpacity: { value: 1 },
+                            fill: [
+                                { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", scale: "colorPipelines", field: "operator" }, // use orange color scale if pipeline is selected
+                                { test: "datum.parent==='inner'", scale: "colorPipelinesDisabled", field: "operator" }, //use grey color scale if pipeline is not selected
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain)
+                                { scale: "colorOperatorsDisabled", field: "operator" } //use grey color scale for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
+                            ],
                         },
                         hover: {
                             fillOpacity: {
@@ -345,7 +374,6 @@ class SunburstChart extends React.Component<Props, State> {
                 } */
             ],
             legends: [{
-                //TODO only pipelines in array
                 fill: "colorPipelines",
                 title: "Pipelines",
                 orient: "right",
@@ -353,19 +381,24 @@ class SunburstChart extends React.Component<Props, State> {
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
                 values: this.props.pipelines,
-                //stroke and fill set to 0 leads to remove elements (not just hide them) -> remove all elemnts that are no pipeline
-                // fillColor: { "test": "datum['parent'] != 'inner", "value": "0" }
             },
             {
-                //TODO only pipelines in array
                 fill: "colorOperators",
                 title: "Operators",
-                orient: "bottom",
-                direction: "horizontal",
+                orient: "right",
+                direction: "vertical",
+                columns: 3,
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: visData.operatorsUnique,
+                values: this.props.operators,
+                encode: {
+                    labels: {
+                        update: {
+                            text: { signal: "truncate(datum.value, 9)" },
+                        }
+                    }
+                }
             }
             ],
         } as VisualizationSpec;
@@ -388,7 +421,9 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentOperator: state.currentOperator,
     pipelines: state.pipelines,
+    operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 
@@ -404,6 +439,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => dispatch({
         type: model.StateMutationType.SET_CURRENTPIPELINE,
         data: newCurrentPipeline,
+    }),
+    setCurrentOperator: (newCurrentOperator: Array<string>) => dispatch({
+        type: model.StateMutationType.SET_CURRENTOPERATOR,
+        data: newCurrentOperator,
     }),
 });
 

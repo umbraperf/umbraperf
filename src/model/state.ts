@@ -15,9 +15,11 @@ export interface AppState {
     currentChart: string;
     currentEvent: string;
     currentPipeline: Array<string> | "All";
+    currentOperator: Array<string> | "All";
     currentRequest: RestQueryType | undefined;
     events: Array<string> |undefined;
     pipelines: Array<string> |undefined;
+    operators: Array<string> | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
@@ -42,9 +44,11 @@ export function createDefaultState(): AppState {
         currentChart: "",
         currentEvent: "",
         currentPipeline: "All",
+        currentOperator: "All",
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
+        operators: undefined,
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},

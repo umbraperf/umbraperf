@@ -24,9 +24,11 @@ export enum StateMutationType {
     SET_CURRENTCHART = 'SET_CURRENTCHART',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
+    SET_CURRENTOPERATOR = 'SET_CURRENTOPERATOR',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
+    SET_OPERATORS = 'SET_OPERATORS',
     SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
@@ -52,9 +54,11 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
+    | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
@@ -122,6 +126,11 @@ export class AppStateMutation {
                     ...state,
                     currentPipeline: mutation.data,
                 };
+            case StateMutationType.SET_CURRENTOPERATOR:
+                return {
+                    ...state,
+                    currentOperator: mutation.data,
+                };
             case StateMutationType.SET_CURRENTREQUEST:
                 return {
                     ...state,
@@ -136,6 +145,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     pipelines: mutation.data,
+                };
+            case StateMutationType.SET_OPERATORS:
+                return {
+                    ...state,
+                    operators: mutation.data,
                 };
             case StateMutationType.SET_KPIS:
                 return {
@@ -194,9 +208,11 @@ export class AppStateMutation {
                     currentChart: "",
                     currentEvent: "",
                     currentPipeline: "All",
+                    currentOperator: "All",
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,
+                    operators: undefined,
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},

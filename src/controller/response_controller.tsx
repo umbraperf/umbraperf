@@ -1,5 +1,7 @@
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as model from "../model";
+import * as RequestController from "./request_controller";
+import { appContext } from "../app";
 import { store } from '../app';
 
 
@@ -9,6 +11,9 @@ export function setCsvReadingFinished() {
         type: model.StateMutationType.SET_CSVPARSINGFINISHED,
         data: true,
     });
+
+    //request all metadata as soon as CSV reading is finished
+    RequestController.requestMetadata(appContext.controller);
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {
@@ -54,6 +59,14 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             store.dispatch({
                 type: model.StateMutationType.SET_PIPELINES,
                 data: pipelines,
+            });
+            break;
+
+        case model.RestQueryType.GET_OPERATORS:
+            const operators = store.getState().result?.resultTable.getColumn('operator').toArray();
+            store.dispatch({
+                type: model.StateMutationType.SET_OPERATORS,
+                data: operators,
             });
             break;
 
@@ -219,7 +232,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: {
                         operator: resultObject.resultTable.getColumn('pipeline').toArray(),
                         parent: resultObject.resultTable.getColumn('parent').toArray(),
-                        count: resultObject.resultTable.getColumn('count').toArray(),
+                        operatorOccurrences: resultObject.resultTable.getColumn('occurrences').toArray(),
+                        pipelineOccurrences: resultObject.resultTable.getColumn('pipeOccurrences').toArray(),
                     }
                 });
             break;

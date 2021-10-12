@@ -211,7 +211,7 @@ class DonutChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: "arc:click", update: "datum" }
+                        { events: {marktype: "arc", type: "click"}, update: "datum" }
                     ]
                 },
                 {

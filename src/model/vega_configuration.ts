@@ -22,6 +22,7 @@ export interface ChartConfiguration{
     donutChartTooltip: string;
     activityHistogramTooltip: string;
     barChartTooltip: string;
+    sunburstChartTooltip: (pipeline: boolean) => string;
     axisTitleFont: string;
     axisLabelFont: string;
     titleFont: string;
@@ -71,6 +72,7 @@ export let chartConfiguration: ChartConfiguration = {
     donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
     barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
+    sunburstChartTooltip: (pipeline) => {return pipeline ? "{'Pipeline': datum.operator, 'Occurences': datum.pipeOccurrences}" : "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parent}"},
 
 
 }

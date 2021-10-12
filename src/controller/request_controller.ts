@@ -37,6 +37,13 @@ export class RequestController {
     }
 }
 
+export function requestMetadata(controller: RequestController) {
+    requestEvents(controller);
+    requestPipelines(controller);
+    requestOperators(controller);
+    requestStatistics(controller);
+}
+
 //request events from rust, metarequest
 export function requestEvents(controller: RequestController) {
     controller.calculateChartData(
@@ -54,6 +61,16 @@ export function requestPipelines(controller: RequestController) {
         model.createRestQuery({
             type: model.RestQueryType.GET_PIPELINES,
             data: {},
+        }), true);
+}
+
+//request operators from rust, metarequest
+export function requestOperators(controller: RequestController) {
+    controller.calculateChartData(
+        model.RestQueryType.GET_OPERATORS,
+        model.createRestQuery({
+            type: model.RestQueryType.GET_OPERATORS,
+            data: { event: store.getState().currentEvent },
         }), true);
 }
 
@@ -110,7 +127,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -120,7 +137,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -136,6 +153,7 @@ export function requestChartData(controller: RequestController, chartId: number,
 
         case model.ChartType.DONUT_CHART:
 
+        //TODO depreciated
             controller.calculateChartData(
                 model.RestQueryType.GET_PIPELINE_COUNT,
                 model.createRestQuery({

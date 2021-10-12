@@ -57,6 +57,16 @@ export function requestPipelines(controller: RequestController) {
         }), true);
 }
 
+//request operators from rust, metarequest
+export function requestOperators(controller: RequestController) {
+    controller.calculateChartData(
+        model.RestQueryType.GET_PIPELINES,
+        model.createRestQuery({
+            type: model.RestQueryType.GET_PIPELINES,
+            data: {},
+        }), true);
+}
+
 //request statistics such as number of pipelines, number of cycles, ... from rust, metarequest
 export function requestStatistics(controller: RequestController) {
     controller.calculateChartData(

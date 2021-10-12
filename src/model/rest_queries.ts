@@ -73,8 +73,8 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
-            const queryInnerCircle: string = `parent/pipeline/size/occurrencies${eventFilter}${timeFilter}/count?pipeline/sort?pipeline/add_column?"inner",parent/rename?count,size/add_column?0.0,occurrencies`;
-            const queryOuterCircles: Array<string> = (((query.data as any).allPipelines) as Array<string>).map(elem => (`%%parent/operator/size/occurrencies${eventFilter}${timeFilter}/?pipeline="${elem}"/count?operator/sort?operator/add_column?"${elem}",parent/add_column?0.0,size/rename?count,occurrencies`));
+            const queryInnerCircle: string = `parent/pipeline/pipeOccurrences/occurrences${eventFilter}${timeFilter}/count?pipeline/sort?pipeline/add_column?"inner",parent/rename?count,pipeOccurrences/add_column?0.0,occurrences`;
+            const queryOuterCircles: Array<string> = (((query.data as any).allPipelines) as Array<string>).map(elem => (`%%parent/operator/pipeOccurrences/occurrences${eventFilter}${timeFilter}/?pipeline="${elem}"/count?operator/sort?operator/add_column?"${elem}",parent/add_column?0.0,pipeOccurrences/rename?count,occurrences`));
             const completeQuery: string = queryInnerCircle + queryOuterCircles.join("");
             console.log(completeQuery);
             return completeQuery;

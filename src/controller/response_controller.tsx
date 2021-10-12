@@ -219,7 +219,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: {
                         operator: resultObject.resultTable.getColumn('pipeline').toArray(),
                         parent: resultObject.resultTable.getColumn('parent').toArray(),
-                        count: resultObject.resultTable.getColumn('count').toArray(),
+                        operatorOccurrences: resultObject.resultTable.getColumn('occurrences').toArray(),
+                        pipelineOccurrences: resultObject.resultTable.getColumn('pipeOccurrences').toArray(),
                     }
                 });
             break;

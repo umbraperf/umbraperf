@@ -102,17 +102,11 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 }
 
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
-    print_to_js_with_obj(&format!("{:?}", batch).into());
-
-    print_to_js_with_obj(&format!("{:?}", "Before").into());
-
     let vec = batch
         .column(column_index_for_max)
         .as_any()
         .downcast_ref::<Float64Array>()
         .unwrap();
-
-    print_to_js_with_obj(&format!("{:?}", "In Max function").into());
 
     let mut result_builder = Float64Array::builder(1);
 

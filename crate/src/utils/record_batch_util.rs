@@ -1,6 +1,6 @@
 use std::{io::Cursor, sync::Arc};
 
-use arrow::{array::ArrayRef, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 
 use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
 
@@ -110,6 +110,33 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
         to_concat_array.push(array_vec);
     }
 
+    let mut columns = Vec::new();
+
+    for array in to_concat_array {
+        let concat_array = arrow::compute::kernels::concat::concat(&array);
+        columns.push(concat_array.unwrap());
+    }
+
+    create_record_batch(batches[0].schema(), columns)
+}
+
+// Only for two batches
+pub fn convert_exact(batches: Vec<RecordBatch>) -> RecordBatch {
+
+
+        let mut array_vec = Vec::new();
+        for column in &batches[0].columns() {
+            for column in &batches[1].columns() {
+                if columns.as_any().
+
+            }
+            array_vec.push(batch.column(i as usize).as_ref());
+        }
+        to_concat_array.push(array_vec);
+    }
+    
+    
+    
     let mut columns = Vec::new();
 
     for array in to_concat_array {

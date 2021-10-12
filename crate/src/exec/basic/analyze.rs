@@ -86,6 +86,26 @@ pub fn filter_between(column_num: usize, filter_from: f64, filter_to: f64, batch
     create_record_batch(batch.schema(), arrays)
 }
 
+pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
+    let schema = record_batch.schema();
+    let fields = schema.fields();
+
+    let mut new_field_names = Vec::new();
+    for field in fields {
+        let name = field.name();
+        if name == from {
+            let new_field = Field::new(to, field.data_type().to_owned(), false);
+            new_field_names.push(new_field);
+        } else {
+            new_field_names.push(field.to_owned());
+        }
+    }
+
+    let new_schema = Arc::new(Schema::new(new_field_names));
+
+    RecordBatch::try_new(new_schema, record_batch.columns().to_owned()).unwrap()
+}
+
 
 pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     if filter_strs.len() == 1 && filter_strs[0] == "All" {

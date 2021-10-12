@@ -135,15 +135,17 @@ class SunburstChart extends React.Component<Props, State> {
     }
 
     handleCklickPipeline(...args: any[]) {
-        window.alert(args);
-        const selectedPipeline = args[1].pipeline;
-        if (this.props.currentPipeline === "All") {
-            this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
-        } else {
-            if (this.props.currentPipeline.includes(selectedPipeline)) {
-                this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+        if(args[1]){
+            console.log(args[1]);
+            const selectedPipeline = args[1];
+            if (this.props.currentPipeline === "All") {
+                this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
             } else {
-                this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                if (this.props.currentPipeline.includes(selectedPipeline)) {
+                    this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+                } else {
+                    this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                }
             }
         }
     }
@@ -237,15 +239,9 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: {marktype: "arc", type: "click"}, update: "if(datum.parent === 'inner', datum, null)" }
+                        { events: {marktype: "arc", type: "click"}, update: "if(datum.parent === 'inner', datum.operator, null)" }
                     ]
                 }
-                // {
-                //     name: "hover",
-                //     on: [
-                //         { events: "mouseover", update: "datum" }
-                //     ]
-                // }
             ],
 
             scales: [
@@ -279,7 +275,6 @@ class SunburstChart extends React.Component<Props, State> {
                                 { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
                                 { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
                             ],
-                            // "tooltip": { "signal": "datum.name + (datum.occurences ? ', ' + datum.occurences + ' occurences' : '')" }
                         },
                         update: {
                             startAngle: { field: "a0" },
@@ -340,8 +335,8 @@ class SunburstChart extends React.Component<Props, State> {
                 //TODO only pipelines in array
                 fill: "colorOperators",
                 title: "Operators",
-                orient: "top",
-                direction: "horizontal",
+                orient: "right",
+                direction: "vertical",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,

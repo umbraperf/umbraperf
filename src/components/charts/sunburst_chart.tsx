@@ -159,6 +159,7 @@ class SunburstChart extends React.Component<Props, State> {
 
 
     handleClickOperator(...args: any[]) {
+        window.alert(args[1]);
         // TODO 
         // if (args[1]) {
         //     console.log(args[1]);
@@ -273,6 +274,12 @@ class SunburstChart extends React.Component<Props, State> {
                     name: "clickPipeline",
                     on: [
                         { events: { marktype: "arc", type: "click" }, update: "if(datum.parent === 'inner', datum.operator, null)" }
+                    ]
+                },
+                {
+                    name: "clickOperator",
+                    on: [
+                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', datum.operator, null)" }
                     ]
                 }
             ],

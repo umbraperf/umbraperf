@@ -56,7 +56,7 @@ class SunburstChart extends React.Component<Props, State> {
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
-        this.handleCklickPipeline = this.handleCklickPipeline.bind(this);
+        this.handleClickPipeline = this.handleClickPipeline.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -135,12 +135,13 @@ class SunburstChart extends React.Component<Props, State> {
 
     createVegaSignalListeners() {
         const signalListeners: SignalListeners = {
-            clickPipeline: this.handleCklickPipeline,
+            clickPipeline: this.handleClickPipeline,
+            clickOperator: this.handleClickOperator,
         }
         return signalListeners;
     }
 
-    handleCklickPipeline(...args: any[]) {
+    handleClickPipeline(...args: any[]) {
         if (args[1]) {
             console.log(args[1]);
             const selectedPipeline = args[1];
@@ -154,6 +155,24 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             }
         }
+    }
+
+
+    handleClickOperator(...args: any[]) {
+        // TODO 
+        // if (args[1]) {
+        //     console.log(args[1]);
+        //     const selectedPipeline = args[1];
+        //     if (this.props.currentPipeline === "All") {
+        //         this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
+        //     } else {
+        //         if (this.props.currentPipeline.includes(selectedPipeline)) {
+        //             this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
+        //         } else {
+        //             this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+        //         }
+        //     }
+        // }
     }
 
     createVisualizationData() {

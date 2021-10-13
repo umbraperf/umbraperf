@@ -86,12 +86,12 @@ class SunburstChart extends React.Component<Props, State> {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
             //TODO remove
-            if (undefined === this.props.pipelines) {
-                Controller.requestPipelines(this.props.appContext.controller);
-            }
-            if (undefined === this.props.operators) {
-                Controller.requestOperators(this.props.appContext.controller);
-            }
+            // if (undefined === this.props.pipelines) {
+            //     Controller.requestPipelines(this.props.appContext.controller);
+            // }
+            // if (undefined === this.props.operators) {
+            //     Controller.requestOperators(this.props.appContext.controller);
+            // }
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -212,7 +212,7 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "partition",
                     field: "opOccurrences", //size of leaves -> operators
                     sort: { "field": "value" },
-                    // size: [{ "signal": "2 * PI" }, { "signal": "width / 4" }], //determine size of pipeline circles
+                    // size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }], //determine size of pipeline circles
                     size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
                     as: ["a0", "r0", "a1", "r1", "depth", "children"]
                 }
@@ -292,25 +292,25 @@ class SunburstChart extends React.Component<Props, State> {
                     name: "colorOperators",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: { scheme: "tableau20" }
+                    range: { scheme: model.chartConfiguration.operatorColorSceme }
                 },
                 {
                     name: "colorPipelines",
                     type: "ordinal",
                     domain: this.props.pipelines,
-                    range: { scheme: "oranges" }
+                    range: { scheme: model.chartConfiguration.pipelineColorSceme }
                 },
                 {
                     name: "colorPipelinesDisabled",
                     type: "ordinal",
                     domain: this.props.pipelines,
-                    range: { scheme: "greys" }
+                    range: { scheme: model.chartConfiguration.disabledColorSceme }
                 },
                 {
                     name: "colorOperatorsDisabled",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: { scheme: "greys" }
+                    range: { scheme: model.chartConfiguration.disabledColorSceme }
                 }
             ],
 
@@ -344,9 +344,7 @@ class SunburstChart extends React.Component<Props, State> {
                             ],
                         },
                         hover: {
-                            fillOpacity: {
-                                value: 0.5
-                            }
+                            fillOpacity: model.chartConfiguration.hoverFillOpacity,
                         }
                     }
                 }

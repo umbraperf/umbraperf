@@ -19,9 +19,9 @@ function EventsButtons(props: Props) {
 
     const context = useContext(Context.ctx);
     const events = props.events;
-    if (undefined === events) {
+/*     if (undefined === events) {
         Controller.requestEvents(context!.controller);
-    }
+    } */
     useEffect(() => {
         if (events && props.currentEvent === "") {
             props.setCurrentEvent(events[0]);

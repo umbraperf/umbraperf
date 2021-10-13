@@ -62,7 +62,7 @@ class SunburstChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-       this.requestNewChartData(this.props, prevProps);
+        this.requestNewChartData(this.props, prevProps);
     }
 
     requestNewChartData(props: Props, prevProps: Props): void {
@@ -129,6 +129,13 @@ class SunburstChart extends React.Component<Props, State> {
 
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.pipelines || !this.props.operators) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
@@ -137,7 +144,7 @@ class SunburstChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events || !this.props.pipelines)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />

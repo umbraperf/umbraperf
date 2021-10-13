@@ -126,6 +126,13 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
@@ -134,7 +141,7 @@ class BarChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
                     <Vega spec={this.createVisualizationSpec()} />

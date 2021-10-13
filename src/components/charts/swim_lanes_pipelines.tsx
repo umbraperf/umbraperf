@@ -142,6 +142,13 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
    }
 
+   isComponentLoading(): boolean {
+      if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.pipelines || !this.props.operators) {
+          return true;
+      } else {
+          return false;
+      }
+  }
 
    public render() {
 
@@ -150,7 +157,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
       }
 
       return <div>
-         {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events || !this.props.currentPipeline)
+         {this.isComponentLoading()
             ? <Spinner />
             : <div className={"vegaContainer"} ref={this.chartWrapper}>
                {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}

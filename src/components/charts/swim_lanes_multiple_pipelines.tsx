@@ -79,23 +79,31 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             });
 
         }
+        this.requestNewChartData(this.props, prevProps);
+    }
 
-        //if current event, chart, bucketsize, timeframe, operators selected or pipelines selected change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (prevProps.currentEvent !== "Default" &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.currentOperators.length !== prevProps.currentOperators.length ||
-                this.props.currentBucketSize !== prevProps.currentBucketSize ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
             if (this.props.absoluteValues) {
-                Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
             } else {
-                Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
             }
         }
+    }
 
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.currentOperators.length !== prevProps.currentOperators.length ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

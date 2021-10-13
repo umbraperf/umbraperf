@@ -57,13 +57,26 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event or chart change, component did update is executed and queries new data for new event selected
-        if (this.props.currentEvent != prevProps.currentEvent
-                || this.props.chartIdCounter != prevProps.chartIdCounter) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
-        }
+        this.requestNewChartData(this.props, prevProps);
 
     }
+
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (props.currentEvent != prevProps.currentEvent
+            || props.chartIdCounter != prevProps.chartIdCounter) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
     componentDidMount() {
 

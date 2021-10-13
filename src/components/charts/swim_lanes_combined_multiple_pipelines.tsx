@@ -425,9 +425,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                     }
                                 },
                                 hover: {
-                                    fillOpacity: {
-                                        value: 0.5
-                                    }
+                                    fillOpacity: model.chartConfiguration.hoverFillOpacity,
                                 }
                             }
                         }

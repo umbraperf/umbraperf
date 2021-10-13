@@ -32,6 +32,7 @@ export interface ChartConfiguration{
     operatorColorSceme: string;
     pipelineColorSceme: string;
     disabledColorSceme: string;
+    hoverFillOpacity: number;
 
 
 }
@@ -81,5 +82,8 @@ export let chartConfiguration: ChartConfiguration = {
     operatorColorSceme: "tableau20",
     pipelineColorSceme: "oranges",
     disabledColorSceme: "greys",
+
+    //Hover behaviour: 
+    hoverFillOpacity: 0.5,
 
 }

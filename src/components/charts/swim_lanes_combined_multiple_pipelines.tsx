@@ -329,7 +329,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     name: "color",
                     type: "ordinal",
                     range: {
-                        scheme: "tableau20",
+                        scheme: model.chartConfiguration.operatorColorSceme,
                     },
                     domain: this.props.operators,
                 }
@@ -425,9 +425,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                     }
                                 },
                                 hover: {
-                                    fillOpacity: {
-                                        value: 0.5
-                                    }
+                                    fillOpacity: model.chartConfiguration.hoverFillOpacity,
                                 }
                             }
                         }

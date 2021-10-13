@@ -221,7 +221,7 @@ class SwimLanes extends React.Component<Props, State> {
                name: "color",
                type: "ordinal",
                range: {
-                  scheme: "tableau20",
+                  scheme: model.chartConfiguration.operatorColorSceme,
                },
                domain: this.props.operators,
             }
@@ -296,9 +296,7 @@ class SwimLanes extends React.Component<Props, State> {
                            }
                         },
                         hover: {
-                           fillOpacity: {
-                              value: 0.5
-                           }
+                           fillOpacity: model.chartConfiguration.hoverFillOpacity,
                         }
                      }
                   }

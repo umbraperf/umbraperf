@@ -65,7 +65,6 @@ export function createRestQuery(query: QueryVariant) {
             //return `operator${eventFilter}/count?operator/sort?count`
             return `operator/?ev_name="cycles:ppp"/count?operator/sort?count,desc`
         //return `operator${eventFilter}/count?operator/sort?count,desc`
-
         case RestQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:

@@ -135,6 +135,7 @@ pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatc
         return batch.to_owned();
     } else if filter_strs.len() == 1 && filter_strs[0] == "Default" {
         let unique_batch = find_unique_string(batch, 1);
+        let unique_batch = sort_batch(&unique_batch, 0, false);
         let first_appearance = unique_batch.column(0).as_any().downcast_ref::<StringArray>().unwrap();
         return filter(column_num, vec![first_appearance.value(0)], batch);
     } else {

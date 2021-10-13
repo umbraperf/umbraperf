@@ -37,7 +37,6 @@ interface Props {
 
 interface State {
     chartId: number,
-    chartData: model.ISwimlanesData | undefined,
     width: number,
     height: number,
 }
@@ -53,7 +52,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
             height: 0,
-            chartData: undefined,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -62,40 +60,31 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
-        //ensure changed app state and only proceed when result available
-        if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
+        this.requestNewChartData(this.props, prevProps);
+    }
 
-            const chartDataElement: model.ISwimlanesData = {
-                buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-                operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-                frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
-            }
-
-            this.setState((state, props) => {
-                return {
-                    ...this.state,
-                    chartData: chartDataElement,
-                }
-            });
-
-        }
-
-        //if current event, chart, bucketsize, timeframe, operators selected or pipelines selected change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.currentOperators.length !== prevProps.currentOperators.length ||
-                this.props.currentBucketSize !== prevProps.currentBucketSize ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
             if (this.props.absoluteValues) {
-                Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
             } else {
-                Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
             }
         }
+    }
 
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.currentOperators.length !== prevProps.currentOperators.length ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -140,6 +129,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]  || !this.props.operators) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public render() {
 
@@ -148,7 +145,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
@@ -159,9 +156,15 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     createVisualizationData() {
 
+        const chartDataElement: model.ISwimlanesData = {
+            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
+            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
+            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
+        }
+
         const data = {
-            "name": "table",
-            "values": this.state.chartData,
+            name: "table",
+            values: chartDataElement,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
@@ -169,7 +172,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
-        return data;
+        return {data: data, chartDataElement: chartDataElement};
     }
 
     createVisualizationSpec() {
@@ -177,7 +180,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const xTicks = () => {
 
-            const bucketsArrayLength = this.state.chartData!.buckets.length;
+            const bucketsArrayLength = visData.chartDataElement.buckets.length;
             const numberOfTicks = 20;
 
             if (bucketsArrayLength > numberOfTicks) {
@@ -187,7 +190,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 const delta = Math.floor(bucketsArrayLength / numberOfTicks);
 
                 for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-                    ticks.push(this.state.chartData!.buckets[i]);
+                    ticks.push(visData.chartDataElement.buckets[i]);
                 }
                 return ticks;
             }
@@ -233,7 +236,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             },
 
             data: [
-                visData
+                visData.data
             ],
 
 
@@ -333,7 +336,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                                     }
                                 },
                                 hover: {
-                                    fillOpacity: model.chartConfiguration.hoverFillOpacity,
+                                    fillOpacity: {
+                                        value: model.chartConfiguration.hoverFillOpacity,
+                                    },
                                 }
                             }
                         }

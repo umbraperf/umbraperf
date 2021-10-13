@@ -1,5 +1,4 @@
 import * as model from '../../model';
-import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
 import Spinner from './spinner';
 import React, { useContext, useEffect } from 'react';
@@ -17,11 +16,8 @@ interface Props {
 
 function EventsButtons(props: Props) {
 
-    const context = useContext(Context.ctx);
     const events = props.events;
-/*     if (undefined === events) {
-        Controller.requestEvents(context!.controller);
-    } */
+
     useEffect(() => {
         if (events && props.currentEvent === "") {
             props.setCurrentEvent(events[0]);
@@ -36,9 +32,17 @@ function EventsButtons(props: Props) {
         return event.length > 20 ? (event.substr(0, 15) + "...") : event;
     }
 
+    const isComponentLoading = () => {
+        if(props.events){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     return (
         <div className={styles.eventButtonsContainer}>
-            {props.events ?
+            {isComponentLoading() ?
                 <div>
                     <InputLabel className={styles.eventsButtonsLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Events:</InputLabel>
                     <div className={styles.eventButtonsArea}>

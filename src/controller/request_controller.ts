@@ -63,8 +63,7 @@ export function requestOperators(controller: RequestController) {
         model.RestQueryType.GET_OPERATORS,
         model.createRestQuery({
             type: model.RestQueryType.GET_OPERATORS,
-            //TODO 
-            data: { event: "cycles:ppp" }, //for ordered operators array always use order of first event loaded to stay consitet.
+            data: { event: "Default" }, //for ordered operators array always use order of first event loaded to stay consitet.
         }), true);
 }
 

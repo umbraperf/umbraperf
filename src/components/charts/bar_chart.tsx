@@ -269,7 +269,10 @@ class BarChart extends React.Component<Props, State> {
                             fill: [
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
                                 { scale: "colorDisabled", field: "operators" },
-                            ]
+                            ],
+                            fillOpacity: {
+                                value: 1,
+                            },
                         },
                         hover: {
                             fillOpacity: {

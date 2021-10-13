@@ -62,16 +62,26 @@ class SunburstChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (prevProps.currentEvent !== "Default" &&
-            this.props.pipelines &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.pipelines !== prevProps.pipelines ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
-        }
+       this.requestNewChartData(this.props, prevProps);
+    }
 
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            props.pipelines &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.pipelines !== prevProps.pipelines ||
+                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     componentDidMount() {

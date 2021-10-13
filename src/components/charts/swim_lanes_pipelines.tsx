@@ -78,19 +78,31 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          });
       }
 
-      //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
-      if (prevProps.currentEvent !== "Default" &&
-         (this.props.currentEvent !== prevProps.currentEvent ||
-            this.props.operators !== prevProps.operators ||
-            this.props.currentBucketSize !== prevProps.currentBucketSize ||
-            this.props.chartIdCounter !== prevProps.chartIdCounter)) {
+      this.requestNewChartData(this.props, prevProps);
+
+   }
+
+   requestNewChartData(props: Props, prevProps: Props): void {
+      if (this.newChartDataNeeded(props, prevProps)) {
          this.setState((state, props) => ({
             ...state,
             chartData: [],
          }));
-         Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES);
-      }
+         Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES);
 
+      }
+   }
+
+   newChartDataNeeded(props: Props, prevProps: Props): boolean {
+      if (prevProps.currentEvent !== "Default" &&
+         (props.currentEvent !== prevProps.currentEvent ||
+            props.operators !== prevProps.operators ||
+            props.currentBucketSize !== prevProps.currentBucketSize ||
+            props.chartIdCounter !== prevProps.chartIdCounter)) {
+         return true;
+      } else {
+         return false;
+      }
    }
 
 

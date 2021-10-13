@@ -56,15 +56,25 @@ class DonutChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (prevProps.currentEvent !== "Default" &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+        this.requestNewChartData(this.props, prevProps);
 
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
+    }
+
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
         }
+    }
 
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     componentDidMount() {
@@ -211,7 +221,7 @@ class DonutChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: {marktype: "arc", type: "click"}, update: "datum" }
+                        { events: { marktype: "arc", type: "click" }, update: "datum" }
                     ]
                 },
                 {

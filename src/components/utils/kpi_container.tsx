@@ -36,7 +36,7 @@ class KpiContainer extends React.Component<Props, State> {
 
     componentDidMount() {
         
-        if (undefined === this.props.kpis && this.props.currentEvent) {
+        if (undefined === this.props.kpis) {
             Controller.requestStatistics(this.props.appContext.controller);
         }
 

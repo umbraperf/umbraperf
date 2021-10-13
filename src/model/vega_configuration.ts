@@ -29,6 +29,8 @@ export interface ChartConfiguration{
     donutChartValueLabelFontSize: number;
     barChartValueLabelFontSize: number;
     valueLabelFont: string;
+    operatorColorSceme: string;
+    pipelineColorSceme: string;
 
 
 }
@@ -74,5 +76,8 @@ export let chartConfiguration: ChartConfiguration = {
     barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
     sunburstChartTooltip: (pipeline) => {return pipeline ? "{'Pipeline': datum.operator, 'Occurences': datum.pipeOccurrences}" : "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parent}"},
 
+    //Color scale:
+    operatorColorSceme: "tableau20",
+    pipelineColorSceme: "oranges",
 
 }

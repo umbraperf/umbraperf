@@ -252,7 +252,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     name: "color",
                     type: "ordinal",
                     range: {
-                        scheme: "tableau20",
+                        scheme: model.chartConfiguration.operatorColorSceme,
                     },
                     domain: this.props.operators,
                 }
@@ -349,6 +349,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
+                values: this.props.operators,
             }
             ],
         } as VisualizationSpec;

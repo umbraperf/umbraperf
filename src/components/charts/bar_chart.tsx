@@ -188,7 +188,7 @@ class BarChart extends React.Component<Props, State> {
                     name: "color",
                     type: "ordinal",
                     range: {
-                        scheme: "tableau20",
+                        scheme: model.chartConfiguration.operatorColorSceme,
                     },
                     domain: this.props.operators,
                 }

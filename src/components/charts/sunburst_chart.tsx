@@ -86,12 +86,12 @@ class SunburstChart extends React.Component<Props, State> {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
             //TODO remove
-            if (undefined === this.props.pipelines) {
-                Controller.requestPipelines(this.props.appContext.controller);
-            }
-            if (undefined === this.props.operators) {
-                Controller.requestOperators(this.props.appContext.controller);
-            }
+            // if (undefined === this.props.pipelines) {
+            //     Controller.requestPipelines(this.props.appContext.controller);
+            // }
+            // if (undefined === this.props.operators) {
+            //     Controller.requestOperators(this.props.appContext.controller);
+            // }
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -292,13 +292,13 @@ class SunburstChart extends React.Component<Props, State> {
                     name: "colorOperators",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: { scheme: "tableau20" }
+                    range: { scheme: model.chartConfiguration.operatorColorSceme }
                 },
                 {
                     name: "colorPipelines",
                     type: "ordinal",
                     domain: this.props.pipelines,
-                    range: { scheme: "oranges" }
+                    range: { scheme: model.chartConfiguration.pipelineColorSceme }
                 },
                 {
                     name: "colorPipelinesDisabled",

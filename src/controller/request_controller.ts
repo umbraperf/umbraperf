@@ -37,14 +37,6 @@ export class RequestController {
     }
 }
 
-export function requestMetadata(controller: RequestController) {
-    //TODO set default event in store
-    //requestEvents(controller);
-    //requestPipelines(controller);
-    //requestOperators(controller);
-    //requestStatistics(controller);
-}
-
 //request events from rust, metarequest
 export function requestEvents(controller: RequestController) {
     controller.calculateChartData(
@@ -71,7 +63,8 @@ export function requestOperators(controller: RequestController) {
         model.RestQueryType.GET_OPERATORS,
         model.createRestQuery({
             type: model.RestQueryType.GET_OPERATORS,
-            data: { event: store.getState().currentEvent },
+            //TODO 
+            data: { event: "cycles:ppp" }, //for ordered operators array always use order of first event loaded to stay consitet.
         }), true);
 }
 

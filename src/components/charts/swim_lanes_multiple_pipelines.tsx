@@ -4,7 +4,7 @@ import * as Context from '../../app_context';
 import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Vega } from 'react-vega';
+import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
@@ -41,6 +41,8 @@ interface State {
     height: number,
 }
 
+//TODO 
+// let globalMaxDomainAbsoluteValues = 0;
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -148,11 +150,23 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
+                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleNewView} />
                 </div>
             }
         </div>;
     }
+
+    // TODO 
+    handleNewView(...view: any[]) {
+        console.log((view as any))
+    }
+
+    //TODO 
+    // setGlobalMaxValue(currentMaxFreq: number) {
+    //     if (0 === globalMaxDomainAbsoluteValues || currentMaxFreq > globalMaxDomainAbsoluteValues) {
+    //         globalMaxDomainAbsoluteValues = currentMaxFreq;
+    //     }
+    // }
 
     createVisualizationData() {
 
@@ -172,11 +186,35 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
+        //TODO 
+        // let currentMaxFreq = undefined;
+        // if (this.props.absoluteValues) {
+        //     currentMaxFreq = Math.max(...chartDataElement.frequency);
+        //     this.setGlobalMaxValue(currentMaxFreq);
+        // }
+
+        // TODO return { data: data, chartDataElement: chartDataElement, currentMaxFreq: currentMaxFreq };
         return { data: data, chartDataElement: chartDataElement };
+
     }
 
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
+
+        //TODO  
+        // const calcAdjustedMaxYDomain = () => {
+        //             const currentMaxFreq = visData.currentMaxFreq!;
+        //             const differenceCurrentMax = globalMaxDomainAbsoluteValues;
+        //             if (differenceCurrentMax > 0) {
+        // /*                 const adjustedDifference = differenceCurrentMax * 0.7;
+        //                 return adjustedDifference; */
+        //                 console.log(currentMaxFreq)
+        //                 return currentMaxFreq;
+        //             } else {
+        //                 console.log(currentMaxFreq)
+        //                 return currentMaxFreq;
+        //             }
+        //         };
 
         const xTicks = () => {
 
@@ -195,7 +233,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 return ticks;
             }
 
-        }
+        };
 
         const yScale = () => {
             if (this.props.absoluteValues) {
@@ -205,6 +243,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
+                    // TODO domain: [0, calcAdjustedMaxYDomain()]
                     domain: { data: "table", field: "y1" }
                 };
             } else {
@@ -217,7 +256,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     domain: [0, 1]
                 };
             }
-        }
+        };
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -239,6 +278,13 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 visData.data
             ],
 
+            signals: [
+                {
+                    name: "getMaxY1Absolute",
+                    value: 10
+                }
+
+            ],
 
             scales: [
                 {

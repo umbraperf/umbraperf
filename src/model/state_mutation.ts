@@ -206,7 +206,7 @@ export class AppStateMutation {
                     csvParsingFinished: false,
                     file: undefined,
                     currentChart: "",
-                    currentEvent: "",
+                    currentEvent: "Default",
                     currentPipeline: "All",
                     currentOperator: "All",
                     currentRequest: undefined,

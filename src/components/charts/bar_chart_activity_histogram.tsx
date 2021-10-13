@@ -57,14 +57,26 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event or chart change, component did update is executed and queries new data for new event selected only if current event already set
-        if (this.props.currentEvent &&
-            (this.props.currentEvent != prevProps.currentEvent
-                || this.props.chartIdCounter != prevProps.chartIdCounter)) {
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
-        }
+        this.requestNewChartData(this.props, prevProps);
 
     }
+
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (props.currentEvent != prevProps.currentEvent
+            || props.chartIdCounter != prevProps.chartIdCounter) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
     componentDidMount() {
 
@@ -104,6 +116,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
@@ -112,7 +131,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
                     {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}

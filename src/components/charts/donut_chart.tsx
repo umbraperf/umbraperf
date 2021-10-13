@@ -56,15 +56,25 @@ class DonutChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+        this.requestNewChartData(this.props, prevProps);
 
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
+    }
+
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.DONUT_CHART);
         }
+    }
 
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     componentDidMount() {
@@ -108,6 +118,14 @@ class DonutChart extends React.Component<Props, State> {
 
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public render() {
 
@@ -116,7 +134,7 @@ class DonutChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
@@ -211,7 +229,7 @@ class DonutChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: {marktype: "arc", type: "click"}, update: "datum" }
+                        { events: { marktype: "arc", type: "click" }, update: "datum" }
                     ]
                 },
                 {

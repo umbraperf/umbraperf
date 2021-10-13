@@ -16,47 +16,38 @@ interface Props {
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
-    currentChart: string,
+    chartIdCounter: number,
 }
 
-interface State {
-    kpiCards: Array<JSX.Element> | undefined;
-}
-
-
-class KpiContainer extends React.Component<Props, State> {
+class KpiContainer extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
         this.state = {
             ...this.state,
-            kpiCards: undefined,
         };
     }
 
-    componentDidMount() {
-        
-        if (undefined === this.props.kpis && this.props.currentEvent) {
-            Controller.requestStatistics(this.props.appContext.controller);
-        }
+    componentDidUpdate(prevProps: Props): void {
 
+        this.requestNewChartData(this.props, prevProps);
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-
-        if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {
-            const kpiCardsNew = this.mapKpiArrayToCards();
-            this.setState((state, props) => ({
-                ...state,
-                kpiCards: kpiCardsNew,
-            }));
-        }
-
-        if (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                this.props.currentEvent !== prevProps.currentEvent) {
-
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
             Controller.requestStatistics(this.props.appContext.controller);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                props.currentEvent !== prevProps.currentEvent)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -67,27 +58,34 @@ class KpiContainer extends React.Component<Props, State> {
     }
 
     createKpiCard(key: number, title: string, value: string) {
-        const valueRounded = Math.round(+value * 100) / 100
+        const valueRounded = Math.round(+value * 100) / 100;
+        const valueString = Number.isNaN(valueRounded) ? "-" : valueRounded;
         return <div key={key} className={styles.kpiCard}>
             <div>
-                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
+                <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
-                </Typography> 
+                </Typography>
                 <Typography className={styles.kpiCardValue} variant="h5" component="div">
-                    {valueRounded}
-                </Typography> 
+                    {valueString}
+                </Typography>
             </div>
         </div>
     }
 
-
+    isComponentLoading(): boolean {
+        if (this.props.kpis) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
         return <div className={styles.kpiContainer}>
-            {this.props.kpis && this.state.kpiCards ?
+            {this.isComponentLoading() ?
                 <div className={styles.kpiCardsArea}>
-                    {this.state.kpiCards}
+                    {this.mapKpiArrayToCards()}
                 </div>
                 : <Spinner />
             }
@@ -102,7 +100,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
-    currentChart: state.currentChart,
+    chartIdCounter: state.chartIdCounter,
 
 });
 

@@ -12,9 +12,7 @@ export function setCsvReadingFinished() {
         data: true,
     });
 
-    RequestController.requestEvents(appContext.controller);
-    RequestController.requestPipelines(appContext.controller);
-    RequestController.requestOperators(appContext.controller);
+    RequestController.requestMetadata(appContext.controller);
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {

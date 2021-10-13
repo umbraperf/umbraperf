@@ -63,21 +63,31 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, chart, timeframe, operato or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent &&
-            this.props.operators &&
-            (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.operators !== prevProps.operators ||
-                this.props.chartIdCounter !== prevProps.chartIdCounter ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                this.props.currentOperator.length !== prevProps.currentOperator.length ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-
-            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
-        }
+        this.requestNewChartData(this.props, prevProps);
 
     }
+
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
+            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.operators !== prevProps.operators ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                props.currentOperator.length !== prevProps.currentOperator.length ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     componentDidMount() {
 
@@ -116,6 +126,13 @@ class BarChart extends React.Component<Props, State> {
 
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
@@ -124,7 +141,7 @@ class BarChart extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {(this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
                     <Vega spec={this.createVisualizationSpec()} />
@@ -269,7 +286,10 @@ class BarChart extends React.Component<Props, State> {
                             fill: [
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
                                 { scale: "colorDisabled", field: "operators" },
-                            ]
+                            ],
+                            fillOpacity: {
+                                value: 1,
+                            },
                         },
                         hover: {
                             fillOpacity: {

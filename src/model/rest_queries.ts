@@ -43,6 +43,7 @@ export function createRestQuery(query: QueryVariant) {
     const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
 
     //TODO default event in redux, type!
+    //TODO remove hardcoded cycles:ppp in not condition
     const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;
 
@@ -60,10 +61,8 @@ export function createRestQuery(query: QueryVariant) {
             return 'ev_name/distinct?ev_name/sort?ev_name';
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/count?pipeline/sort?count'
-        //return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATORS:
             //return `operator${eventFilter}/count?operator/sort?count`
-            window.alert(eventFilter);
             return `operator/?ev_name="cycles:ppp"/count?operator/sort?count,desc`
         //return `operator${eventFilter}/count?operator/sort?count,desc`
 

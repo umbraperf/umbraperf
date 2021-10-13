@@ -39,10 +39,10 @@ export class RequestController {
 
 export function requestMetadata(controller: RequestController) {
     //TODO set default event in store
-    requestEvents(controller);
-    requestPipelines(controller);
-    requestOperators(controller);
-    requestStatistics(controller);
+    //requestEvents(controller);
+    //requestPipelines(controller);
+    //requestOperators(controller);
+    //requestStatistics(controller);
 }
 
 //request events from rust, metarequest
@@ -154,7 +154,7 @@ export function requestChartData(controller: RequestController, chartId: number,
 
         case model.ChartType.DONUT_CHART:
 
-            //TODO depreciated
+            //depreciated
             controller.calculateChartData(
                 model.RestQueryType.GET_PIPELINE_COUNT,
                 model.createRestQuery({

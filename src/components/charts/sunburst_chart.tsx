@@ -65,11 +65,9 @@ class SunburstChart extends React.Component<Props, State> {
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
             this.props.pipelines &&
-            this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.pipelines !== prevProps.pipelines ||
-                this.props.operators !== prevProps.operators ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
         }
@@ -164,7 +162,6 @@ class SunburstChart extends React.Component<Props, State> {
 
 
     handleClickOperator(...args: any[]) {
-        window.alert(args[1]); 
         if (args[1]) {
             const selectedOperator = args[1];
             if (this.props.currentOperator === "All") {
@@ -353,31 +350,6 @@ class SunburstChart extends React.Component<Props, State> {
                         }
                     }
                 }
-                // TODO lables
-                /* ,
-                {
-                    "type": "text",
-                    "from": { "data": "table" },
-                    "encode": {
-                        "enter": {
-                            fontSize: { value: model.chartConfiguration.donutChartValueLabelFontSize },
-                            font: model.chartConfiguration.valueLabelFont,
-                            "x": { "signal": "if(width >= height, width, height) / 2" },
-                            "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
-                            "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
-                            "fill": { "value": "#000" },
-                            "align": { "value": "center" },
-                            "baseline": { "value": "middle" },
-                            "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
-                            "fillOpacity": [
-                                { "test": "radius < 30", "value": 0 },
-                                { "test": "datum['value'] === 0", "value": 0 },
-                                { "value": 1 }
-                            ],
-                        }
-                    }
-                } */
             ],
             legends: [{
                 fill: "colorPipelines",

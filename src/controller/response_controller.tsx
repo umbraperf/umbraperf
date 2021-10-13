@@ -51,7 +51,6 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
                 type: model.StateMutationType.SET_CURRENTEVENT,
                 data: events[0],
             });
-            window.alert("store events")
             break;
 
         case model.RestQueryType.GET_PIPELINES:

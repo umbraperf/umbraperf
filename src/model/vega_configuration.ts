@@ -31,6 +31,7 @@ export interface ChartConfiguration{
     valueLabelFont: string;
     operatorColorSceme: string;
     pipelineColorSceme: string;
+    disabledColorSceme: string;
 
 
 }
@@ -79,5 +80,6 @@ export let chartConfiguration: ChartConfiguration = {
     //Color scale:
     operatorColorSceme: "tableau20",
     pipelineColorSceme: "oranges",
+    disabledColorSceme: "greys",
 
 }

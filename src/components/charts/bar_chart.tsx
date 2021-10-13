@@ -191,6 +191,14 @@ class BarChart extends React.Component<Props, State> {
                         scheme: model.chartConfiguration.operatorColorSceme,
                     },
                     domain: this.props.operators,
+                },
+                {
+                    name: "colorDisabled",
+                    type: "ordinal",
+                    range: {
+                        scheme: model.chartConfiguration.disabledColorSceme,
+                    },
+                    domain: this.props.operators,
                 }
             ],
 

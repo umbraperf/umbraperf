@@ -40,9 +40,12 @@ interface State {
     chartId: number,
     width: number,
     height: number,
+    // maxYDomainAbsoluteValues: number,
+    // currentDomainAbsoluteValues: number,
 }
 
-let globalMaxYDomainAbsoluteValues = 0;
+let globalMaxYDomainAbsoluteValue = 0;
+let globalCurrentYDomainAbsoluteValue = 0;
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -54,6 +57,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
             height: 0,
+            // maxYDomainAbsoluteValues: 0,
+            // currentDomainAbsoluteValues: 0,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -163,15 +168,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
-            this.setGlobalMaxValue(maxY1Value);
+            this.setGlobalMaxAndCurrentAbsoluteYDomain(maxY1Value);
             console.log(maxY1Value);
         }
     }
 
-    setGlobalMaxValue(currentMaxFreqStacked: number) {
-        if (0 === globalMaxYDomainAbsoluteValues || currentMaxFreqStacked > globalMaxYDomainAbsoluteValues) {
-            globalMaxYDomainAbsoluteValues = currentMaxFreqStacked;
-            console.log(globalMaxYDomainAbsoluteValues);
+    setGlobalMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
+        globalCurrentYDomainAbsoluteValue = currentMaxFreqStacked;
+        if (0 === globalMaxYDomainAbsoluteValue || currentMaxFreqStacked > globalMaxYDomainAbsoluteValue) {
+            globalMaxYDomainAbsoluteValue = currentMaxFreqStacked;
+            console.log(globalMaxYDomainAbsoluteValue);
         }
     }
 
@@ -193,35 +199,12 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
-        //TODO 
-        // let currentMaxFreq = undefined;
-        // if (this.props.absoluteValues) {
-        //     currentMaxFreq = Math.max(...chartDataElement.frequency);
-        //     this.setGlobalMaxValue(currentMaxFreq);
-        // }
-
-        // TODO return { data: data, chartDataElement: chartDataElement, currentMaxFreq: currentMaxFreq };
         return { data: data, chartDataElement: chartDataElement };
 
     }
 
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
-
-        //TODO  
-        // const calcAdjustedMaxYDomain = () => {
-        //             const currentMaxFreq = visData.currentMaxFreq!;
-        //             const differenceCurrentMax = globalMaxDomainAbsoluteValues;
-        //             if (differenceCurrentMax > 0) {
-        // /*                 const adjustedDifference = differenceCurrentMax * 0.7;
-        //                 return adjustedDifference; */
-        //                 console.log(currentMaxFreq)
-        //                 return currentMaxFreq;
-        //             } else {
-        //                 console.log(currentMaxFreq)
-        //                 return currentMaxFreq;
-        //             }
-        //         };
 
         const xTicks = () => {
 
@@ -241,6 +224,23 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             }
 
         };
+
+        //TODO  
+        // const calcAdjustedMaxYDomain = () => {
+        //             const currentMaxFreq = visData.currentMaxFreq!;
+        //             const differenceCurrentMax = globalMaxDomainAbsoluteValues;
+        //             if (differenceCurrentMax > 0) {
+        // /*                 const adjustedDifference = differenceCurrentMax * 0.7;
+        //                 return adjustedDifference; */
+        //                 console.log(currentMaxFreq)
+        //                 return currentMaxFreq;
+        //             } else {
+        //                 console.log(currentMaxFreq)
+        //                 return currentMaxFreq;
+        //             }
+        //         };
+             //const calcAdjustedMaxYDomain = () => {
+
 
         const yScale = () => {
             if (this.props.absoluteValues) {

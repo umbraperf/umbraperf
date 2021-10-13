@@ -137,7 +137,7 @@ class SwimLanes extends React.Component<Props, State> {
    }
 
    isComponentLoading(): boolean {
-      if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+      if (this.props.resultLoading[this.state.chartId] || !this.state.chartData  || !this.props.operators) {
           return true;
       } else {
           return false;

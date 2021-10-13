@@ -32,15 +32,10 @@ class KpiContainer extends React.Component<Props, State> {
             ...this.state,
             kpiCards: undefined,
         };
-
-        this.mapKpiArrayToCards = this.mapKpiArrayToCards.bind(this);
     }
 
     componentDidMount() {
-
-        // if(undefined === this.props.currentPipeline){
-        //     Controller.requestPipelines(this.props.appContext.controller);
-        // }
+        
         if (undefined === this.props.kpis && this.props.currentEvent) {
             Controller.requestStatistics(this.props.appContext.controller);
         }
@@ -50,10 +45,10 @@ class KpiContainer extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {
-            const kpiCards = this.mapKpiArrayToCards();
+            const kpiCardsNew = this.mapKpiArrayToCards();
             this.setState((state, props) => ({
                 ...state,
-                kpiCards: kpiCards,
+                kpiCards: kpiCardsNew,
             }));
         }
 
@@ -72,15 +67,15 @@ class KpiContainer extends React.Component<Props, State> {
     }
 
     createKpiCard(key: number, title: string, value: string) {
-        const valueRounded = Math.round(value as any * 100) / 100
+        const valueRounded = Math.round(+value * 100) / 100
         return <div key={key} className={styles.kpiCard}>
             <div>
-                <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
+                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
-                </Typography>
+                </Typography> 
                 <Typography className={styles.kpiCardValue} variant="h5" component="div">
                     {valueRounded}
-                </Typography>
+                </Typography> 
             </div>
         </div>
     }

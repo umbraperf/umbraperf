@@ -24,6 +24,7 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All",
+    currentOperators: Array<string> | "All",
     currentInterpolation: String,
     currentBucketSize: number,
     currentTimeBucketSelectionTuple: [number, number],
@@ -79,16 +80,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         }
 
-        //if current event, chart, bucketsize, timeframe or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
+        //if current event, chart, bucketsize, timeframe, operators selected or pipelines selected change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
         if (this.props.currentEvent &&
-            this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
-                this.props.operators !== prevProps.operators ||
+                this.props.currentOperators.length !== prevProps.currentOperators.length ||
                 this.props.currentBucketSize !== prevProps.currentBucketSize ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-
 
             if (this.props.absoluteValues) {
                 Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
@@ -371,6 +370,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentOperators: state.currentOperator,
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,

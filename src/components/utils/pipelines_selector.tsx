@@ -1,3 +1,5 @@
+//depreciated, use sunburst
+
 import * as model from '../../model';
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';

@@ -193,7 +193,6 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             }
         }
-        console.log(this.props.currentOperator);
     }
 
     createVisualizationData() {

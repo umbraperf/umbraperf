@@ -81,7 +81,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
 
         //if current event, chart, bucketsize, timeframe, operators selected or pipelines selected change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent &&
+        if (prevProps.currentEvent !== "Default" &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.currentOperators.length !== prevProps.currentOperators.length ||
                 this.props.currentBucketSize !== prevProps.currentBucketSize ||

@@ -63,7 +63,7 @@ class SunburstChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
-        if (this.props.currentEvent &&
+        if (prevProps.currentEvent !== "Default" &&
             this.props.pipelines &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||

@@ -64,8 +64,7 @@ class BarChart extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props): void {
 
         //if current event, chart, timeframe, operato or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
-        if (this.props.currentEvent &&
-            this.props.operators &&
+        if (prevProps.currentEvent !== "Default" &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.operators !== prevProps.operators ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||

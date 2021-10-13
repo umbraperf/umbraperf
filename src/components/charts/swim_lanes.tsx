@@ -78,8 +78,7 @@ class SwimLanes extends React.Component<Props, State> {
       }
 
       //if current event, chart or bucketsize changes, component did update is executed and queries new data for new event, only if curent event already set
-      if (this.props.currentEvent &&
-         this.props.operators &&
+      if (prevProps.currentEvent !== "Default" &&
          (this.props.currentEvent !== prevProps.currentEvent ||
             this.props.operators !== prevProps.operators ||
             this.props.currentBucketSize !== prevProps.currentBucketSize ||

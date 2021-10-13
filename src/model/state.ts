@@ -13,7 +13,7 @@ export interface AppState {
     csvParsingFinished: boolean;
     file: undefined | File;
     currentChart: string;
-    currentEvent: string;
+    currentEvent: string | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     currentRequest: RestQueryType | undefined;
@@ -42,7 +42,7 @@ export function createDefaultState(): AppState {
         csvParsingFinished: false,
         file: undefined,
         currentChart: "",
-        currentEvent: "",
+        currentEvent: "Default",
         currentPipeline: "All",
         currentOperator: "All",
         currentRequest: undefined,

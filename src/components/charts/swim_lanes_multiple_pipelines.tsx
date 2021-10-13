@@ -37,7 +37,6 @@ interface Props {
 
 interface State {
     chartId: number,
-    chartData: model.ISwimlanesData | undefined,
     width: number,
     height: number,
 }
@@ -53,7 +52,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
             height: 0,
-            chartData: undefined,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -62,23 +60,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
-        //ensure changed app state and only proceed when result available
-        if (!this.props.resultLoading[this.state.chartId] && this.props.chartData[this.state.chartId] && prevProps.resultLoading[this.state.chartId] !== this.props.resultLoading[this.state.chartId]) {
-
-            const chartDataElement: model.ISwimlanesData = {
-                buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-                operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-                frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
-            }
-
-            this.setState((state, props) => {
-                return {
-                    ...this.state,
-                    chartData: chartDataElement,
-                }
-            });
-
-        }
         this.requestNewChartData(this.props, prevProps);
     }
 
@@ -149,7 +130,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.state.chartData  || !this.props.operators) {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]  || !this.props.operators) {
             return true;
         } else {
             return false;
@@ -175,9 +156,15 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     createVisualizationData() {
 
+        const chartDataElement: model.ISwimlanesData = {
+            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
+            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
+            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
+        }
+
         const data = {
-            "name": "table",
-            "values": this.state.chartData,
+            name: "table",
+            values: chartDataElement,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
@@ -185,7 +172,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
-        return data;
+        return {data: data, chartDataElement: chartDataElement};
     }
 
     createVisualizationSpec() {
@@ -193,7 +180,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const xTicks = () => {
 
-            const bucketsArrayLength = this.state.chartData!.buckets.length;
+            const bucketsArrayLength = visData.chartDataElement.buckets.length;
             const numberOfTicks = 20;
 
             if (bucketsArrayLength > numberOfTicks) {
@@ -203,7 +190,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 const delta = Math.floor(bucketsArrayLength / numberOfTicks);
 
                 for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-                    ticks.push(this.state.chartData!.buckets[i]);
+                    ticks.push(visData.chartDataElement.buckets[i]);
                 }
                 return ticks;
             }
@@ -249,7 +236,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             },
 
             data: [
-                visData
+                visData.data
             ],
 
 

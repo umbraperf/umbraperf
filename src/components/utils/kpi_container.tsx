@@ -72,12 +72,18 @@ class KpiContainer extends React.Component<Props, {}> {
         </div>
     }
 
-
+    isComponentLoading(): boolean {
+        if (this.props.kpis) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public render() {
 
         return <div className={styles.kpiContainer}>
-            {this.props.kpis ?
+            {this.isComponentLoading() ?
                 <div className={styles.kpiCardsArea}>
                     {this.mapKpiArrayToCards()}
                 </div>

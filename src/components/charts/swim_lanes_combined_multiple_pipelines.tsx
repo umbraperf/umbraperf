@@ -142,6 +142,14 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
     }
 
+    isComponentLoading(): boolean {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public render() {
 
@@ -150,7 +158,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
 
         return <div ref={this.elementWrapper}>
-            {(this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.events)
+            {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />

@@ -34,14 +34,6 @@ class KpiContainer extends React.Component<Props, State> {
         };
     }
 
-    componentDidMount() {
-        
-        if (undefined === this.props.kpis) {
-            Controller.requestStatistics(this.props.appContext.controller);
-        }
-
-    }
-
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
         if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {

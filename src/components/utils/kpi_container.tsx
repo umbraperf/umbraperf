@@ -16,33 +16,19 @@ interface Props {
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
-    currentChart: string,
+    chartIdCounter: number,
 }
 
-interface State {
-    kpiCards: Array<JSX.Element> | undefined;
-}
-
-
-class KpiContainer extends React.Component<Props, State> {
+class KpiContainer extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
         this.state = {
             ...this.state,
-            kpiCards: undefined,
         };
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-
-        if (undefined !== this.props.kpis && (!_.isEqual(this.props.kpis, prevProps.kpis) || prevProps.currentChart !== this.props.currentChart)) {
-            const kpiCardsNew = this.mapKpiArrayToCards();
-            this.setState((state, props) => ({
-                ...state,
-                kpiCards: kpiCardsNew,
-            }));
-        }
+    componentDidUpdate(prevProps: Props): void {
 
         this.requestNewChartData(this.props, prevProps);
     }
@@ -54,10 +40,11 @@ class KpiContainer extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" && 
-        (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-            props.currentPipeline.length !== prevProps.currentPipeline.length ||
-            props.currentEvent !== prevProps.currentEvent)) {
+        if (prevProps.currentEvent !== "Default" &&
+            (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                props.currentEvent !== prevProps.currentEvent)) {
             return true;
         } else {
             return false;
@@ -90,9 +77,9 @@ class KpiContainer extends React.Component<Props, State> {
     public render() {
 
         return <div className={styles.kpiContainer}>
-            {this.props.kpis && this.state.kpiCards ?
+            {this.props.kpis ?
                 <div className={styles.kpiCardsArea}>
-                    {this.state.kpiCards}
+                    {this.mapKpiArrayToCards()}
                 </div>
                 : <Spinner />
             }
@@ -107,7 +94,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
-    currentChart: state.currentChart,
+    chartIdCounter: state.chartIdCounter,
 
 });
 

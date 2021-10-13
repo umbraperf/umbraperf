@@ -44,12 +44,23 @@ class KpiContainer extends React.Component<Props, State> {
             }));
         }
 
-        if (prevProps.currentEvent !== "Default" && //ensure no rendering bevor events loaded, //TODO add logic to charts
-            (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                this.props.currentEvent !== prevProps.currentEvent)) {
+        this.requestNewChartData(this.props, prevProps);
+    }
 
+    requestNewChartData(props: Props, prevProps: Props): void {
+        if (this.newChartDataNeeded(props, prevProps)) {
             Controller.requestStatistics(this.props.appContext.controller);
+        }
+    }
+
+    newChartDataNeeded(props: Props, prevProps: Props): boolean {
+        if (prevProps.currentEvent !== "Default" && 
+        (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
+            props.currentPipeline.length !== prevProps.currentPipeline.length ||
+            props.currentEvent !== prevProps.currentEvent)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

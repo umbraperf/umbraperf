@@ -44,7 +44,7 @@ class KpiContainer extends React.Component<Props, State> {
             }));
         }
 
-        if (prevProps.currentEvent !== "Default" &&
+        if (prevProps.currentEvent !== "Default" && //ensure no rendering bevor events loaded, //TODO add logic to charts
             (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
                 this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
                 this.props.currentEvent !== prevProps.currentEvent)) {

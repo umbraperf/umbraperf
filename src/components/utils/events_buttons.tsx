@@ -33,9 +33,9 @@ function EventsButtons(props: Props) {
     }
 
     const isComponentLoading = () => {
-        if(props.events){
+        if (props.events) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -44,7 +44,7 @@ function EventsButtons(props: Props) {
         <div className={styles.eventButtonsContainer}>
             {isComponentLoading() ?
                 <div>
-                    <InputLabel className={styles.eventsButtonsLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Events:</InputLabel>
+                    <InputLabel className={styles.eventsButtonsLabel} style={{ color: props.appContext.tertiaryColor }} id="interpolation-selector-label">Events:</InputLabel>
                     <div className={styles.eventButtonsArea}>
                         {events && events!.map((event: string, index: number) => (
                             <Button

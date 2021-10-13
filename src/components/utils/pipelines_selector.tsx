@@ -21,8 +21,8 @@ function PipelinesSelector(props: Props) {
     }
 
     const isBoxChecked = (pipeline: string) => {
-        if (props.currentPipeline === "All") { 
-            return true 
+        if (props.currentPipeline === "All") {
+            return true
         } else if (props.currentPipeline?.includes(pipeline)) {
             return true;
         } else {

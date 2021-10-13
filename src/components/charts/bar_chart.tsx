@@ -24,6 +24,7 @@ interface Props {
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All",
+    currentOperator: Array<string> | "All",
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
@@ -62,13 +63,15 @@ class BarChart extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
 
-        //if current event, chart, timeframe or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
+        //if current event, chart, timeframe, operato or pipelines change, component did update is executed and queries new data for new event and pipelines selected only if current event and current pipelines already set
         if (this.props.currentEvent &&
             this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.operators !== prevProps.operators ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                this.props.currentOperator.length !== prevProps.currentOperator.length ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
 
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
@@ -135,15 +138,25 @@ class BarChart extends React.Component<Props, State> {
         const operatorsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).operators;
         const valueArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).frequency;
 
-        const data = {
-
-            name: "table",
-            values: [
-                { operators: operatorsArray, values: valueArray }
-            ],
-            transform: [{ type: "flatten", fields: ["operators", "values"] }],
-
-        };
+        const data = [
+            {
+                name: "table",
+                values: [
+                    { operators: operatorsArray, values: valueArray }
+                ],
+                transform: [{ type: "flatten", fields: ["operators", "values"] }],
+            },
+            {
+                name: "selectedOperators",
+                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operatorsUsed"]
+                    }
+                ]
+            }
+        ];
 
 
         return data;
@@ -167,9 +180,7 @@ class BarChart extends React.Component<Props, State> {
                 font: model.chartConfiguration.titleFont
             },
 
-            data: [
-                visData,
-            ],
+            data: visData,
 
             scales: [
                 {
@@ -255,10 +266,10 @@ class BarChart extends React.Component<Props, State> {
                             }
                         },
                         update: {
-                            fill: {
-                                scale: "color",
-                                field: "operators"
-                            },
+                            fill: [
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
+                                { scale: "colorDisabled", field: "operators" },
+                            ]
                         },
                         hover: {
                             fill: { value: this.props.appContext.tertiaryColor },
@@ -301,6 +312,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentOperator: state.currentOperator,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 

@@ -146,10 +146,7 @@ worker.onmessage = (message) => {
     case WorkerRequestType.REGISTER_FILE:
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
-
-      //TODO: add file id to rust request
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
-
       globalFileIdCounter++;
       break;
 

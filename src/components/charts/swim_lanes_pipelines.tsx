@@ -22,6 +22,7 @@ interface Props {
    currentRequest: model.RestQueryType | undefined;
    events: Array<string> | undefined;
    operators: Array<string> | undefined;
+   pipelines: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
    multipleChartDataLength: number;
@@ -208,7 +209,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          signals: [
             {
                name: "currentPipeline",
-               value: this.props.currentPipeline![chartId],
+               value: this.props.pipelines![chartId],
             }
          ],
 
@@ -341,6 +342,7 @@ const mapStateToProps = (state: model.AppState) => ({
    currentRequest: state.currentRequest,
    events: state.events,
    operators: state.operators,
+   pipelines: state.pipelines,
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
    multipleChartDataLength: state.multipleChartDataLength,

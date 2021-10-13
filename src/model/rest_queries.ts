@@ -42,6 +42,8 @@ export function createRestQuery(query: QueryVariant) {
 
     const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
 
+    //TODO default event in redux, type!
+    //TODO remove hardcoded cycles:ppp in not condition
     const event = (query.data as any).event ? `${(query.data as any).event}` : '';
     const eventFilter = `/?ev_name="${event}"`;
 
@@ -59,10 +61,11 @@ export function createRestQuery(query: QueryVariant) {
             return 'ev_name/distinct?ev_name/sort?ev_name';
         case RestQueryType.GET_PIPELINES:
             return 'pipeline/count?pipeline/sort?count'
-        //return 'pipeline/distinct?pipeline/sort?pipeline';
         case RestQueryType.GET_OPERATORS:
-            return `operator${eventFilter}/count?operator/sort?count`
-        // TODO desc: return `operator${eventFilter}/count?operator/sort?count,desc`
+            //return `operator${eventFilter}/count?operator/sort?count`
+            return `operator/?ev_name="cycles:ppp"/count?operator/sort?count,desc`
+        //return `operator${eventFilter}/count?operator/sort?count,desc`
+
         case RestQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
@@ -72,11 +75,11 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `bucket/operator/relfreq${eventFilter}/relfreq?pipeline,${bucketSize}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}`;
-            //TODO return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}!${operators}`;
+            //return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}`;
+            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}!${operators}`;
         case RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}`;
-            //TODO return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}!${operators}`;
+            //return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}`;
+            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}!${operators}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
             return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}&${query.data.event1},${query.data.event2}`;
         case RestQueryType.GET_PIPELINE_COUNT:
@@ -87,7 +90,6 @@ export function createRestQuery(query: QueryVariant) {
             const queryInnerCircle: string = `parent/pipeline/pipeOccurrences/occurrences${eventFilter}${timeFilter}/count?pipeline/sort?pipeline/add_column?"inner",parent/rename?count,pipeOccurrences/add_column?0.0,occurrences`;
             const queryOuterCircles: Array<string> = (((query.data as any).allPipelines) as Array<string>).map(elem => (`%%parent/operator/pipeOccurrences/occurrences${eventFilter}${timeFilter}/?pipeline="${elem}"/count?operator/sort?operator/add_column?"${elem}",parent/add_column?0.0,pipeOccurrences/rename?count,occurrences`));
             const completeQuery: string = queryInnerCircle + queryOuterCircles.join("");
-            console.log(completeQuery);
             return completeQuery;
         case RestQueryType.other:
             return 'error - bad request to backend';

@@ -57,6 +57,7 @@ class SunburstChart extends React.Component<Props, State> {
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleClickPipeline = this.handleClickPipeline.bind(this);
+        this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -64,11 +65,9 @@ class SunburstChart extends React.Component<Props, State> {
         //if current event, timeframe or chart changes, component did update is executed and queries new data for new event, only if curent event already set
         if (this.props.currentEvent &&
             this.props.pipelines &&
-            this.props.operators &&
             (this.props.currentEvent !== prevProps.currentEvent ||
                 this.props.chartIdCounter !== prevProps.chartIdCounter ||
                 this.props.pipelines !== prevProps.pipelines ||
-                this.props.operators !== prevProps.operators ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
         }
@@ -86,8 +85,12 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
+            //TODO remove
             if (undefined === this.props.pipelines) {
                 Controller.requestPipelines(this.props.appContext.controller);
+            }
+            if (undefined === this.props.operators) {
+                Controller.requestOperators(this.props.appContext.controller);
             }
 
             addEventListener('resize', (event) => {
@@ -151,7 +154,7 @@ class SunburstChart extends React.Component<Props, State> {
                 if (this.props.currentPipeline.includes(selectedPipeline)) {
                     this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
                 } else {
-                    this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
+                    this.props.setCurrentPipeline(this.props.currentPipeline.concat(selectedPipeline));
                 }
             }
         }
@@ -159,21 +162,21 @@ class SunburstChart extends React.Component<Props, State> {
 
 
     handleClickOperator(...args: any[]) {
-        window.alert(args[1]);
-        // TODO 
-        // if (args[1]) {
-        //     console.log(args[1]);
-        //     const selectedPipeline = args[1];
-        //     if (this.props.currentPipeline === "All") {
-        //         this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
-        //     } else {
-        //         if (this.props.currentPipeline.includes(selectedPipeline)) {
-        //             this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-        //         } else {
-        //             this.props.setCurrentPipeline(this.props.currentPipeline!.concat(selectedPipeline));
-        //         }
-        //     }
-        // }
+        if (args[1]) {
+            const selectedOperator = args[1];
+            if (this.props.currentOperator === "All") {
+                console.log(this.props.currentOperator);
+                this.props.setCurrentOperator(this.props.operators!.filter(e => e !== selectedOperator));
+                console.log(this.props.currentOperator);
+            } else {
+                if (this.props.currentOperator.includes(selectedOperator)) {
+                    this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));
+                } else {
+                    this.props.setCurrentOperator(this.props.currentOperator.concat(selectedOperator));
+                }
+            }
+        }
+        console.log(this.props.currentOperator);
     }
 
     createVisualizationData() {
@@ -347,31 +350,6 @@ class SunburstChart extends React.Component<Props, State> {
                         }
                     }
                 }
-                // TODO lables
-                /* ,
-                {
-                    "type": "text",
-                    "from": { "data": "table" },
-                    "encode": {
-                        "enter": {
-                            fontSize: { value: model.chartConfiguration.donutChartValueLabelFontSize },
-                            font: model.chartConfiguration.valueLabelFont,
-                            "x": { "signal": "if(width >= height, width, height) / 2" },
-                            "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "if(width >= height, height, width) / 2 * 1.02 * 0.65" },
-                            "theta": { "signal": "(datum['startAngle'] + datum['endAngle'])/2" },
-                            "fill": { "value": "#000" },
-                            "align": { "value": "center" },
-                            "baseline": { "value": "middle" },
-                            "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
-                            "fillOpacity": [
-                                { "test": "radius < 30", "value": 0 },
-                                { "test": "datum['value'] === 0", "value": 0 },
-                                { "value": 1 }
-                            ],
-                        }
-                    }
-                } */
             ],
             legends: [{
                 fill: "colorPipelines",

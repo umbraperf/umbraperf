@@ -40,12 +40,12 @@ interface State {
     chartId: number,
     width: number,
     height: number,
-    // maxYDomainAbsoluteValues: number,
-    // currentDomainAbsoluteValues: number,
+    maxYDomainAbsoluteValues: number,
+    currentDomainAbsoluteValues: number,
 }
 
-let globalMaxYDomainAbsoluteValue = 0;
-let globalCurrentYDomainAbsoluteValue = 0;
+// let globalMaxYDomainAbsoluteValue = 0;
+// let globalCurrentYDomainAbsoluteValue = 0;
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -57,8 +57,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
             height: 0,
-            // maxYDomainAbsoluteValues: 0,
-            // currentDomainAbsoluteValues: 0,
+            maxYDomainAbsoluteValues: 0,
+            currentDomainAbsoluteValues: 0,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -174,10 +174,17 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     setGlobalMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
-        globalCurrentYDomainAbsoluteValue = currentMaxFreqStacked;
-        if (0 === globalMaxYDomainAbsoluteValue || currentMaxFreqStacked > globalMaxYDomainAbsoluteValue) {
-            globalMaxYDomainAbsoluteValue = currentMaxFreqStacked;
-            console.log(globalMaxYDomainAbsoluteValue);
+
+        if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
+            this.setState((state, props) => ({
+                ...state,
+                maxYDomainAbsoluteValues: currentMaxFreqStacked,
+            }));
+        } else {
+            this.setState((state, props) => ({
+                ...state,
+                currentDomainAbsoluteValues: currentMaxFreqStacked,
+            }));
         }
     }
 
@@ -225,21 +232,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         };
 
-        //TODO  
-        // const calcAdjustedMaxYDomain = () => {
-        //             const currentMaxFreq = visData.currentMaxFreq!;
-        //             const differenceCurrentMax = globalMaxDomainAbsoluteValues;
-        //             if (differenceCurrentMax > 0) {
-        // /*                 const adjustedDifference = differenceCurrentMax * 0.7;
-        //                 return adjustedDifference; */
-        //                 console.log(currentMaxFreq)
-        //                 return currentMaxFreq;
-        //             } else {
-        //                 console.log(currentMaxFreq)
-        //                 return currentMaxFreq;
-        //             }
-        //         };
-             //const calcAdjustedMaxYDomain = () => {
+        const calcAdjustedAbsoluteMaxYDomain = () => {
+            return this.state.maxYDomainAbsoluteValues;
+            // const differenceCurrentMax = globalCurrentYDomainAbsoluteValue - globalCurrentYDomainAbsoluteValue;
+            // if (differenceCurrentMax > 0) {
+            //     const adjustedDifference = differenceCurrentMax * 0.7;
+            //     return adjustedDifference;
+            // } else {
+            //     return globalCurrentYDomainAbsoluteValue;
+            // }
+        }
 
 
         const yScale = () => {
@@ -250,8 +252,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    // TODO domain: [0, calcAdjustedMaxYDomain()]
-                    domain: { data: "table", field: "y1" }
+                    domain: [0, calcAdjustedAbsoluteMaxYDomain()]
+                    //domain: { data: "table", field: "y1" }
                 };
             } else {
                 return {

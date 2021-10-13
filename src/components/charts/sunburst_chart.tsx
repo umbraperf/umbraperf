@@ -304,13 +304,13 @@ class SunburstChart extends React.Component<Props, State> {
                     name: "colorPipelinesDisabled",
                     type: "ordinal",
                     domain: this.props.pipelines,
-                    range: { scheme: "greys" }
+                    range: { scheme: model.chartConfiguration.disabledColorSceme }
                 },
                 {
                     name: "colorOperatorsDisabled",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: { scheme: "greys" }
+                    range: { scheme: model.chartConfiguration.disabledColorSceme }
                 }
             ],
 

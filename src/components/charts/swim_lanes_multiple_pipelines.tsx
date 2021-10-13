@@ -4,11 +4,12 @@ import * as Context from '../../app_context';
 import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
-import { SignalListeners, Vega } from 'react-vega';
+import { Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
+import { View } from 'vega';
 
 
 interface Props {
@@ -41,8 +42,7 @@ interface State {
     height: number,
 }
 
-//TODO 
-// let globalMaxDomainAbsoluteValues = 0;
+let globalMaxYDomainAbsoluteValues = 0;
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -58,6 +58,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleVegaView = this.handleVegaView.bind(this);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
@@ -150,23 +151,29 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleNewView} />
+                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
                 </div>
             }
         </div>;
     }
 
-    // TODO 
-    handleNewView(...view: any[]) {
-        console.log((view as any))
+    handleVegaView(view: View) {
+        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max
+        if (this.props.absoluteValues) {
+            const viewData = view.data("table");
+            const dataY1Array = viewData.map(datum => datum.y1);
+            const maxY1Value = Math.max(...dataY1Array);
+            this.setGlobalMaxValue(maxY1Value);
+            console.log(maxY1Value);
+        }
     }
 
-    //TODO 
-    // setGlobalMaxValue(currentMaxFreq: number) {
-    //     if (0 === globalMaxDomainAbsoluteValues || currentMaxFreq > globalMaxDomainAbsoluteValues) {
-    //         globalMaxDomainAbsoluteValues = currentMaxFreq;
-    //     }
-    // }
+    setGlobalMaxValue(currentMaxFreqStacked: number) {
+        if (0 === globalMaxYDomainAbsoluteValues || currentMaxFreqStacked > globalMaxYDomainAbsoluteValues) {
+            globalMaxYDomainAbsoluteValues = currentMaxFreqStacked;
+            console.log(globalMaxYDomainAbsoluteValues);
+        }
+    }
 
     createVisualizationData() {
 

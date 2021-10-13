@@ -32,9 +32,17 @@ function EventsButtons(props: Props) {
         return event.length > 20 ? (event.substr(0, 15) + "...") : event;
     }
 
+    const isComponentLoading = () => {
+        if(props.events){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     return (
         <div className={styles.eventButtonsContainer}>
-            {props.events ?
+            {isComponentLoading() ?
                 <div>
                     <InputLabel className={styles.eventsButtonsLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Events:</InputLabel>
                     <div className={styles.eventButtonsArea}>

@@ -233,6 +233,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         };
 
         const calcAdjustedAbsoluteMaxYDomain = () => {
+            // TODO percentual adjustment
             return this.state.maxYDomainAbsoluteValues;
             // const differenceCurrentMax = globalCurrentYDomainAbsoluteValue - globalCurrentYDomainAbsoluteValue;
             // if (differenceCurrentMax > 0) {

@@ -67,12 +67,12 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (prevProps.currentEvent !== "Default" &&
-        (props.currentEvent !== prevProps.currentEvent ||
-            props.operators !== prevProps.operators ||
-            props.currentBucketSize !== prevProps.currentBucketSize ||
-            props.chartIdCounter !== prevProps.chartIdCounter ||
-            props.currentPipeline.length !== prevProps.currentPipeline.length ||
-            !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.operators !== prevProps.operators ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
+                props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
         } else {
             return false;
@@ -120,7 +120,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]  || !this.props.operators) {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
             return true;
         } else {
             return false;
@@ -201,7 +201,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
         ];
 
-        return {data: data, chartDataElement: chartDataElement};
+        return { data: data, chartDataElement: chartDataElement };
     }
 
     createVisualizationSpec() {

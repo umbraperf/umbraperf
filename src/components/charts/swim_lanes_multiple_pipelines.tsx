@@ -76,6 +76,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (prevProps.currentEvent !== "Default" &&
             (props.currentEvent !== prevProps.currentEvent ||
+                props.operators !== prevProps.operators ||
                 props.currentOperators.length !== prevProps.currentOperators.length ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
@@ -86,7 +87,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             return false;
         }
     }
-
 
     componentDidMount() {
         this.setState((state, props) => ({
@@ -130,7 +130,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]  || !this.props.operators) {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
             return true;
         } else {
             return false;
@@ -172,7 +172,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
-        return {data: data, chartDataElement: chartDataElement};
+        return { data: data, chartDataElement: chartDataElement };
     }
 
     createVisualizationSpec() {

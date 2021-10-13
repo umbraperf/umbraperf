@@ -44,9 +44,10 @@ class KpiContainer extends React.Component<Props, State> {
             }));
         }
 
-        if (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
+        if (prevProps.currentEvent !== "Default" &&
+            (!_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
                 this.props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                this.props.currentEvent !== prevProps.currentEvent) {
+                this.props.currentEvent !== prevProps.currentEvent)) {
 
             Controller.requestStatistics(this.props.appContext.controller);
         }
@@ -63,12 +64,12 @@ class KpiContainer extends React.Component<Props, State> {
         const valueString = Number.isNaN(valueRounded) ? "-" : valueRounded;
         return <div key={key} className={styles.kpiCard}>
             <div>
-                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
+                <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
-                </Typography> 
+                </Typography>
                 <Typography className={styles.kpiCardValue} variant="h5" component="div">
                     {valueString}
-                </Typography> 
+                </Typography>
             </div>
         </div>
     }

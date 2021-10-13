@@ -42,7 +42,6 @@ export function createRestQuery(query: QueryVariant) {
 
     const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
 
-    //TODO remove hardcoded cycles:ppp in not condition
     const event = (query.data as any).event ? ((query.data as any).event === "Default" ? 'Default' : (query.data as any).event) : '';
     const eventFilter = event && `/?ev_name="${event}"`;
 

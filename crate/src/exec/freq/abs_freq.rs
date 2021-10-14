@@ -183,14 +183,11 @@ pub fn abs_freq_of_pipelines(
         bucket_map.insert(operator.unwrap(), 0.0);
     }
 
-    bucket_map.insert("sum", 0.0);
-
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
-                if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
                     result_bucket.push(f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
@@ -198,11 +195,9 @@ pub fn abs_freq_of_pipelines(
                     result_builder.push(frequenzy.to_owned());
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);
-                }
+                
             }
 
-            // reset sum
-            bucket_map.insert("sum", 0.0);
             while time_bucket < time.unwrap() {
                 time_bucket += bucket_size;
             }
@@ -214,8 +209,6 @@ pub fn abs_freq_of_pipelines(
             current_operator,
             bucket_map.get(current_operator).unwrap() + 1.0,
         );
-        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
-
         }
 
         if i == time_column.len() - 1 {

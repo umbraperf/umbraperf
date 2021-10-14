@@ -20,7 +20,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-import { routes } from '../../app';
+import { topLevelComponents } from '../../app';
 import { Link, withRouter } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -140,7 +140,7 @@ function PersistentDrawerLeft(props: any) {
                 </div>
                 <Divider />
                 <List>
-                    {routes.map((prop, key) => {
+                    {topLevelComponents.map((prop, key) => {
                         return (
                             <Link to={prop.path} style={{ textDecoration: 'none', color: 'black' }} key={key}>
                                 <ListItem button selected={activeRoute(prop.path)} >

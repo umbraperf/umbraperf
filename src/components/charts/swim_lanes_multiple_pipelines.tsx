@@ -185,8 +185,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props){
-        //reset max y domain for absolute chart on event change
-        if(props.currentEvent !== prevProps.currentEvent){
+        //reset max y domain for absolute chart on event and bucketsize change
+        if(props.currentEvent !== prevProps.currentEvent || props.currentBucketSize !== prevProps.currentBucketSize){
             this.setState((state, props) => ({
                 ...state,
                 maxYDomainAbsoluteValues: 0,

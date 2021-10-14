@@ -167,7 +167,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
             this.setMaxAndCurrentAbsoluteYDomain(maxY1Value);
-            console.log(maxY1Value);
         }
     }
 
@@ -197,7 +196,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
 
     createVisualizationData() {
-
+        
         const chartDataElement: model.ISwimlanesData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
             operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,

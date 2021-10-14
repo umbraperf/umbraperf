@@ -205,10 +205,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: {
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
+                        frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
                         bucketsNeg: resultObject.resultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.resultTable.getColumn('operatorNEG').toArray(),
-                        frequencyNeg: resultObject.resultTable.getColumn('relfreqNEG').toArray(),
+                        frequencyNeg: resultObject.resultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });
             break;

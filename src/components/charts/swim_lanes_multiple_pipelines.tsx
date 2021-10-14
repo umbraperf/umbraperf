@@ -33,7 +33,6 @@ interface Props {
     setChartIdCounter: (newChartIdCounter: number) => void;
 
     absoluteValues?: boolean;
-
 }
 
 interface State {
@@ -43,9 +42,6 @@ interface State {
     maxYDomainAbsoluteValues: number,
     currentDomainAbsoluteValues: number,
 }
-
-// let globalMaxYDomainAbsoluteValue = 0;
-// let globalCurrentYDomainAbsoluteValue = 0;
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -70,6 +66,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
+
     }
 
     requestNewChartData(props: Props, prevProps: Props): void {
@@ -106,7 +103,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         if (this.props.csvParsingFinished) {
 
-            this.props.absoluteValues ? this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE) : this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
+            this.props.setCurrentChart(this.props.absoluteValues ? model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -175,7 +172,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     setMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
-
         if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
             this.setState((state, props) => ({
                 ...state,
@@ -190,6 +186,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props){
+        //reset max y domain for absolute chart on event change
         if(props.currentEvent !== prevProps.currentEvent){
             this.setState((state, props) => ({
                 ...state,
@@ -243,29 +240,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         };
 
-        const yScale = () => {
-            if (this.props.absoluteValues) {
-                return {
-                    name: "y",
-                    type: "linear",
-                    range: "height",
-                    nice: true,
-                    zero: true,
-                    domain: [0, this.state.maxYDomainAbsoluteValues]
-                    //domain: { data: "table", field: "y1" }
-                };
-            } else {
-                return {
-                    name: "y",
-                    type: "linear",
-                    range: "height",
-                    nice: true,
-                    zero: true,
-                    domain: [0, 1]
-                };
-            }
-        };
-
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 55,
@@ -304,7 +278,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                         field: "buckets"
                     }
                 },
-                yScale(),
+                {
+                    name: "y",
+                    type: "linear",
+                    range: "height",
+                    nice: true,
+                    zero: true,
+                    domain: this.props.absoluteValues  ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
+                },
                 {
                     name: "color",
                     type: "ordinal",

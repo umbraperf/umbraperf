@@ -320,10 +320,10 @@ pub fn abs_freq_with_pipelines_with_double_events (
 
         let field1 =  Field::new("bucket", DataType::Float64, false);
         let field2 = Field::new("operator", DataType::Utf8, false);
-        let field3 = Field::new("relfreq", DataType::Float64, false);
+        let field3 = Field::new("absfreq", DataType::Float64, false);
         let field4 = Field::new("bucketNEG", DataType::Float64, false);
         let field5 = Field::new("operatorNEG", DataType::Utf8, false);
-        let field6 = Field::new("relfreqNEG", DataType::Float64, false);
+        let field6 = Field::new("absfreqNEG", DataType::Float64, false);
 
         let schema = Schema::new(vec![field1, field2, field3, field4, field5, field6]);
 

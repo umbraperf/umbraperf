@@ -145,7 +145,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
-                    <PipelinesSelector />
                 </div>
             }
         </div>;

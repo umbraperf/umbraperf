@@ -79,7 +79,6 @@ class BarChart extends React.Component<Props, State> {
                 props.operators !== prevProps.operators ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
                 props.currentPipeline.length !== prevProps.currentPipeline.length ||
-                props.currentPipeline.length !== prevProps.currentPipeline.length ||
                 props.currentOperator.length !== prevProps.currentOperator.length ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;

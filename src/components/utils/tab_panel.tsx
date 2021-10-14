@@ -5,7 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withRouter, Link } from 'react-router-dom';
-import { routes } from '../../app';
+import { topLevelComponents } from '../../app';
 import { useSelector } from 'react-redux';
 
 
@@ -51,7 +51,7 @@ function ScrollableTabsButtonForce(props: any) {
                     aria-label="scrollable force tabs example"
                     className={csvParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
-                    {routes.map((prop, key) => {
+                    {topLevelComponents.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
                                 <Tab classes={{ root: classes.tabRoot }} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />

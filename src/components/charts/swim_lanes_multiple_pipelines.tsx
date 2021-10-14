@@ -9,6 +9,7 @@ import { VisualizationSpec } from "../../../node_modules/react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
+import { View } from 'vega';
 
 
 interface Props {
@@ -32,15 +33,15 @@ interface Props {
     setChartIdCounter: (newChartIdCounter: number) => void;
 
     absoluteValues?: boolean;
-
 }
 
 interface State {
     chartId: number,
     width: number,
     height: number,
+    maxYDomainAbsoluteValues: number,
+    currentDomainAbsoluteValues: number,
 }
-
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
@@ -52,15 +53,20 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
             height: 0,
+            maxYDomainAbsoluteValues: 0,
+            currentDomainAbsoluteValues: 0,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleVegaView = this.handleVegaView.bind(this);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
+        this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
+
     }
 
     requestNewChartData(props: Props, prevProps: Props): void {
@@ -76,6 +82,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (prevProps.currentEvent !== "Default" &&
             (props.currentEvent !== prevProps.currentEvent ||
+                props.operators !== prevProps.operators ||
                 props.currentOperators.length !== prevProps.currentOperators.length ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
@@ -87,7 +94,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
     }
 
-
     componentDidMount() {
         this.setState((state, props) => ({
             ...state,
@@ -97,7 +103,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         if (this.props.csvParsingFinished) {
 
-            this.props.absoluteValues ? this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE) : this.props.setCurrentChart(model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
+            this.props.setCurrentChart(this.props.absoluteValues ? model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -130,7 +136,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]  || !this.props.operators) {
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
             return true;
         } else {
             return false;
@@ -148,11 +154,47 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
+                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
                 </div>
             }
         </div>;
     }
+
+    handleVegaView(view: View) {
+        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max
+        if (this.props.absoluteValues) {
+            const viewData = view.data("table");
+            const dataY1Array = viewData.map(datum => datum.y1);
+            const maxY1Value = Math.max(...dataY1Array);
+            this.setMaxAndCurrentAbsoluteYDomain(maxY1Value);
+            console.log(maxY1Value);
+        }
+    }
+
+    setMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
+        if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
+            this.setState((state, props) => ({
+                ...state,
+                maxYDomainAbsoluteValues: currentMaxFreqStacked,
+            }));
+        } else {
+            this.setState((state, props) => ({
+                ...state,
+                currentDomainAbsoluteValues: currentMaxFreqStacked,
+            }));
+        }
+    }
+
+    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props){
+        //reset max y domain for absolute chart on event change
+        if(props.currentEvent !== prevProps.currentEvent){
+            this.setState((state, props) => ({
+                ...state,
+                maxYDomainAbsoluteValues: 0,
+            }));
+        }
+    }
+
 
     createVisualizationData() {
 
@@ -172,7 +214,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             ]
         };
 
-        return {data: data, chartDataElement: chartDataElement};
+        return { data: data, chartDataElement: chartDataElement };
+
     }
 
     createVisualizationSpec() {
@@ -195,29 +238,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 return ticks;
             }
 
-        }
-
-        const yScale = () => {
-            if (this.props.absoluteValues) {
-                return {
-                    name: "y",
-                    type: "linear",
-                    range: "height",
-                    nice: true,
-                    zero: true,
-                    domain: { data: "table", field: "y1" }
-                };
-            } else {
-                return {
-                    name: "y",
-                    type: "linear",
-                    range: "height",
-                    nice: true,
-                    zero: true,
-                    domain: [0, 1]
-                };
-            }
-        }
+        };
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -239,6 +260,13 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 visData.data
             ],
 
+            signals: [
+                {
+                    name: "getMaxY1Absolute",
+                    value: 10
+                }
+
+            ],
 
             scales: [
                 {
@@ -250,7 +278,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                         field: "buckets"
                     }
                 },
-                yScale(),
+                {
+                    name: "y",
+                    type: "linear",
+                    range: "height",
+                    nice: true,
+                    zero: true,
+                    domain: this.props.absoluteValues  ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
+                },
                 {
                     name: "color",
                     type: "ordinal",

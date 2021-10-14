@@ -30,6 +30,8 @@ interface Props {
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
+
+    absoluteValues?: boolean;
 }
 
 interface State {
@@ -61,7 +63,11 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
-            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
+            if(this,props.absoluteValues){
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE);
+            }else{
+                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
+            }
         }
     }
 
@@ -87,7 +93,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
         if (this.props.csvParsingFinished) {
 
-            this.props.setCurrentChart(model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
+            this.props.setCurrentChart(this.props.absoluteValues ? model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -168,10 +174,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             frequency: chartDataElement.frequencyNeg,
         }
 
-        const operatorsCleand = {
-            operators: chartDataElement.operators.filter(elem => elem.length > 0),
-        };
-
         const data = [{
             name: "tablePos",
             values: chartDataPos,
@@ -188,15 +190,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
                 { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
-            ]
-        },
-        {
-            name: "operatorsCleand",
-            values: operatorsCleand,
-            transform: [
-                { "type": "flatten", "fields": ["operators"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-
             ]
         }
         ];
@@ -231,7 +224,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 60,
-            height: this.state.width / 4,
+            height: this.state.width / 6,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -287,7 +280,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     range: [{ signal: "height" }, { signal: "height/2" }],
                     nice: true,
                     zero: true,
-                    reverse: true,
+                    reverse: true, //down counting values
                     domain: {
                         fields: [
                             { data: "tableNeg", field: "y1" }
@@ -322,7 +315,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: `Relative Frequency (${this.props.events![0]})`,
+                    title: `${this.props.absoluteValues? "Abs." : "Rel."} Fr. (${this.props.events![0]})`,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -336,7 +329,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "yNeg",
                     zindex: 1,
-                    title: `Relative Frequency (${this.props.currentEvent})`,
+                    title: `${this.props.absoluteValues? "Abs." : "Rel."} Rel. Fr. (${this.props.currentEvent})`,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -384,7 +377,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        signal: `{'Event': upperEvent, ${model.chartConfiguration.areaChartTooltip}}`,
+                                        signal: `{'Event': upperEvent, ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },

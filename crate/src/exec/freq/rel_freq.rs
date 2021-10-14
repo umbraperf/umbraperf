@@ -96,9 +96,6 @@ pub fn rel_freq_with_pipelines(
     let mut result_vec_operator = Vec::new();
     let mut result_builder = Vec::new();
 
-    let mut time_bucket = bucket_size;
-    let mut column_index = 0;
-
     let operator_column = batch
         .column(column_for_operator)
         .as_any()
@@ -116,6 +113,11 @@ pub fn rel_freq_with_pipelines(
         .downcast_ref::<StringArray>()
         .unwrap();
 
+    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    time_bucket = f64::trunc(time_bucket );
+    let mut column_index = 0;
+    
+
     let mut bucket_map = HashMap::new();
     for operator in vec_operator {
         bucket_map.insert(operator.unwrap(), 0.0);
@@ -126,26 +128,28 @@ pub fn rel_freq_with_pipelines(
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
-        while time_bucket < time.unwrap() {
+        while time_bucket <= time.unwrap() {
+            
             for operator in vec_operator {
-                if bucket_map.get("sum").unwrap() > &0.0 {
                     let operator = operator.unwrap();
-                    result_bucket.push((f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0));
+                    result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0));
                     result_vec_operator.push(operator);
-                    let frequenzy =
+                    if bucket_map.get(operator).unwrap() == &0.0 {
+                        let frequenzy = 0.0;
+                    result_builder.push(frequenzy);
+                    } else {
+                        let frequenzy =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
                     let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
                     result_builder.push(frequenzy_rounded);
+                    }
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);
-                }
             }
 
             // reset sum
             bucket_map.insert("sum", 0.0);
-            while time_bucket < time.unwrap() {
-                time_bucket += bucket_size;
-            }
+            time_bucket += bucket_size;
         }
 
         if (pipelines.contains(&current_pipeline) || pipelines.len() == 0 || (pipelines.len() == 1 && pipelines[0] == "All")) 
@@ -161,7 +165,7 @@ pub fn rel_freq_with_pipelines(
 
             for operator in vec_operator {
                 let operator = operator.unwrap();
-                result_bucket.push((f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0) );
+                result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0) );
                 result_vec_operator.push(operator);
                 let frequenzy =
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();

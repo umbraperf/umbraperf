@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
+use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -240,3 +240,112 @@ pub fn abs_freq_of_pipelines(
         result_builder,
     )
 }
+
+pub fn abs_freq_with_pipelines_with_double_events (
+    batch: &RecordBatch,
+    column_for_operator: usize,
+    column_for_time: usize,
+    bucket_size: f64,
+    pipelines: Vec<&str>,
+    events: Vec<&str>) -> RecordBatch {
+
+        let mut vec = Vec::new();
+        vec.push(events[0]);
+        let f_batch = analyze::filter_with(1, vec, batch);
+        
+
+        let mut vec1 = Vec::new();
+        let mut vec2 = Vec::new();
+        let mut vec3 = Vec::new();
+        let mut vec4 = Vec::new();
+        let mut vec5 = Vec::new();
+        let mut vec6 = Vec::new();
+
+        let first_filter_batch = abs_freq_of_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone(), Vec::new());
+
+        let column1 = first_filter_batch.column(0)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+        let column2 = first_filter_batch.column(1)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+        let column3 = first_filter_batch.column(2)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+
+        let mut i = 0;
+        while i < column1.len() {
+            vec1.push(column1.value(i));
+            vec2.push(column2.value(i));
+            vec3.push(column3.value(i));
+            vec4.push(0.0);
+            vec5.push("");
+            vec6.push(0.0);
+            i = i + 1;
+        }
+
+        let mut vec = Vec::new();
+
+        vec.push(events[1]);
+
+        let batch = analyze::filter_with(1, vec, &batch);
+        let second_filter_batch = abs_freq_of_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, Vec::new());
+
+        let column4 = second_filter_batch.column(0)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+        let column5 = second_filter_batch.column(1)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+        let column6 = second_filter_batch.column(2)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+
+        let mut i = 0;
+        while i < column4.len() {
+            vec1.push(0.0);
+            vec2.push("");
+            vec3.push(0.0);
+            vec4.push(column4.value(i));
+            vec5.push(column5.value(i));
+            vec6.push(column6.value(i));
+            i = i + 1;
+        }
+
+        let field1 =  Field::new("bucket", DataType::Float64, false);
+        let field2 = Field::new("operator", DataType::Utf8, false);
+        let field3 = Field::new("relfreq", DataType::Float64, false);
+        let field4 = Field::new("bucketNEG", DataType::Float64, false);
+        let field5 = Field::new("operatorNEG", DataType::Utf8, false);
+        let field6 = Field::new("relfreqNEG", DataType::Float64, false);
+
+        let schema = Schema::new(vec![field1, field2, field3, field4, field5, field6]);
+
+        let vec1 = Float64Array::from(vec1);
+        let vec2 = StringArray::from(vec2);
+        let vec3 = Float64Array::from(vec3);
+        let vec4 = Float64Array::from(vec4);
+        let vec5 = StringArray::from(vec5);
+        let vec6 = Float64Array::from(vec6);
+
+
+        let batch = RecordBatch::try_new(Arc::new(schema), vec![
+            Arc::new(vec1),
+            Arc::new(vec2),
+            Arc::new(vec3),
+            Arc::new(vec4),
+            Arc::new(vec5),
+            Arc::new(vec6)
+        ]);
+
+
+        batch.unwrap()
+
+    }
+

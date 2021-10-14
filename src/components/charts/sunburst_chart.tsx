@@ -193,7 +193,6 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             }
         }
-        console.log(this.props.currentOperator);
     }
 
     createVisualizationData() {
@@ -356,7 +355,7 @@ class SunburstChart extends React.Component<Props, State> {
                             fill: [
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", scale: "colorPipelines", field: "operator" }, // use orange color scale if pipeline is selected
                                 { test: "datum.parent==='inner'", scale: "colorPipelinesDisabled", field: "operator" }, //use grey color scale if pipeline is not selected
-                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain)
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
                                 { scale: "colorOperatorsDisabled", field: "operator" } //use grey color scale for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
                             ],
                         },

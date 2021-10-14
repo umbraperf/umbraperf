@@ -144,11 +144,11 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
    isComponentLoading(): boolean {
       if (this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.pipelines || !this.props.operators) {
-          return true;
+         return true;
       } else {
-          return false;
+         return false;
       }
-  }
+   }
 
    public render() {
 

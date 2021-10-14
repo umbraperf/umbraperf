@@ -68,6 +68,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
 
+        this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
     }
 
@@ -168,12 +169,12 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
-            this.setGlobalMaxAndCurrentAbsoluteYDomain(maxY1Value);
+            this.setMaxAndCurrentAbsoluteYDomain(maxY1Value);
             console.log(maxY1Value);
         }
     }
 
-    setGlobalMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
+    setMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
 
         if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
             this.setState((state, props) => ({
@@ -187,6 +188,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             }));
         }
     }
+
+    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props){
+        if(props.currentEvent !== prevProps.currentEvent){
+            this.setState((state, props) => ({
+                ...state,
+                maxYDomainAbsoluteValues: 0,
+            }));
+        }
+    }
+
 
     createVisualizationData() {
 
@@ -232,19 +243,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         };
 
-        const calcAdjustedAbsoluteMaxYDomain = () => {
-            // TODO percentual adjustment
-            return this.state.maxYDomainAbsoluteValues;
-            // const differenceCurrentMax = globalCurrentYDomainAbsoluteValue - globalCurrentYDomainAbsoluteValue;
-            // if (differenceCurrentMax > 0) {
-            //     const adjustedDifference = differenceCurrentMax * 0.7;
-            //     return adjustedDifference;
-            // } else {
-            //     return globalCurrentYDomainAbsoluteValue;
-            // }
-        }
-
-
         const yScale = () => {
             if (this.props.absoluteValues) {
                 return {
@@ -253,7 +251,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: [0, calcAdjustedAbsoluteMaxYDomain()]
+                    domain: [0, this.state.maxYDomainAbsoluteValues]
                     //domain: { data: "table", field: "y1" }
                 };
             } else {

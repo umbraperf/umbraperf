@@ -96,7 +96,7 @@ fn abs_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
     let fields = split_fields_bucket_size[0];
 
     if params.contains("&") {
-        return abs_freq(record_batch, params);
+        return abs_freq_double_event_pipeline(record_batch, params);
     } else {
         if !fields.contains("pipeline") {
             let bucket_size = split_fields_bucket_size[1].parse::<f64>().unwrap();

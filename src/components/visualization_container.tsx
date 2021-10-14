@@ -62,8 +62,8 @@ class VisualizationContainer extends React.Component<Props, State> {
                     {this.props.visualizationName === "/swim-lanes-multiple-pipelines-combined"
                         ?
                         <div>
-                            {React.createElement(this.props.component)}
-                            {React.createElement(this.props.component)}
+                            {React.createElement(this.props.component, null)}
+                            {React.createElement(this.props.component, null)}
                             <PipelinesSelector />
                         </div>
                     :

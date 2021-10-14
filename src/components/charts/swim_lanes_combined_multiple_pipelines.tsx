@@ -223,13 +223,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 60,
-            height: this.state.width / 6,
+            height: this.state.width / 7,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
 
             title: {
-                text: 'Swim Lanes for multiple Events (variable Pipelines)',
+                text: `Swim Lanes for multiple Events (variable Pipelines) with ${this.props.absoluteValues ? "Absolute" : "Relative"} Frequencies`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
@@ -314,7 +314,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: `${this.props.absoluteValues? "Abs." : "Rel."} Fr. (${this.props.events![0]})`,
+                    title: this.props.events![0],
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -328,7 +328,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "yNeg",
                     zindex: 1,
-                    title: `${this.props.absoluteValues? "Abs." : "Rel."} Rel. Fr. (${this.props.currentEvent})`,
+                    title: this.props.currentEvent,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,

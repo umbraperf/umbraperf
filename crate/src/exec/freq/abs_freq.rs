@@ -158,9 +158,6 @@ pub fn abs_freq_of_pipelines(
     let mut result_vec_operator = Vec::new();
     let mut result_builder = Vec::new();
 
-    let mut time_bucket = bucket_size;
-    let mut column_index = 0;
-
     let operator_column = batch
         .column(column_for_operator)
         .as_any()
@@ -178,6 +175,12 @@ pub fn abs_freq_of_pipelines(
         .downcast_ref::<StringArray>()
         .unwrap();
 
+    
+    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    time_bucket = f64::trunc(time_bucket );
+    let mut column_index = 0;
+    
+
     let mut bucket_map = HashMap::new();
     for operator in vec_operator {
         bucket_map.insert(operator.unwrap(), 0.0);
@@ -189,18 +192,14 @@ pub fn abs_freq_of_pipelines(
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push(f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0);
+                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     let frequenzy = bucket_map.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());
                     // reset bucket_map
                     bucket_map.insert(operator, 0.0);
-                
             }
-
-            while time_bucket < time.unwrap() {
-                time_bucket += bucket_size;
-            }
+             time_bucket += bucket_size;
         }
 
         if (pipelines.contains(&current_pipeline) || pipelines.len() == 0 || (pipelines.len() == 1 && pipelines[0] == "All"))  
@@ -215,7 +214,7 @@ pub fn abs_freq_of_pipelines(
 
             for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push(f64::trunc((time_bucket - bucket_size) * 100.0) / 100.0);
+                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     let frequenzy = bucket_map.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());

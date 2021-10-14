@@ -63,10 +63,10 @@ class VisualizationContainer extends React.Component<Props, State> {
                         ?
                         <div>
                             {React.createElement(this.props.component, null)}
-                            {React.createElement(this.props.component, {absoluteValues: true} as any)}
+                            {React.createElement(this.props.component, { absoluteValues: true } as any)}
                             <PipelinesSelector />
                         </div>
-                    :
+                        :
                         React.createElement(this.props.component)}
                 </div>
             </div>

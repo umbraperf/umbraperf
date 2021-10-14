@@ -8,6 +8,7 @@ import EventsButtons from './utils/events_buttons';
 import { Redirect } from "react-router";
 import InterpolationDropdown from "./utils/interpolation_dropdown";
 import BucketsizeDropdwn from "./utils/bucketsize_dropdown";
+import PipelinesSelector from "./utils/pipelines_selector";
 
 
 interface State {
@@ -58,7 +59,15 @@ class VisualizationContainer extends React.Component<Props, State> {
                     }
                 </div>
                 <div>
-                    {React.createElement(this.props.component)}
+                    {this.props.visualizationName === "/swim-lanes-multiple-pipelines-combined"
+                        ?
+                        <div>
+                            {React.createElement(this.props.component)}
+                            {React.createElement(this.props.component)}
+                            <PipelinesSelector />
+                        </div>
+                    :
+                        React.createElement(this.props.component)}
                 </div>
             </div>
 

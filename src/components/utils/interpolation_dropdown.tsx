@@ -7,7 +7,7 @@ import styles from "../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 
-interface Props{
+interface Props {
     appContext: Context.IAppContext;
     currentInterpolation: String;
     setCurrentInterpolation: (newCurrentInterpolation: String) => void;
@@ -25,7 +25,7 @@ function InterpolationDropdown(props: Props) {
 
     return (
         <div className={styles.interpolationDropdownSelectorContainer}>
-            <InputLabel className={styles.interpolationDropdownSelectorLabel} style={{color: props.appContext.tertiaryColor}} id="interpolation-selector-label">Interpolation:</InputLabel>
+            <InputLabel className={styles.interpolationDropdownSelectorLabel} style={{ color: props.appContext.tertiaryColor }} id="interpolation-selector-label">Interpolation:</InputLabel>
             <Select className={styles.interpolationDropdownSelector}
                 labelId="interpolation-selector-label"
                 id="interpolation-selector"
@@ -42,13 +42,13 @@ function InterpolationDropdown(props: Props) {
 
 const mapStateToProps = (state: model.AppState) => ({
     currentInterpolation: state.currentInterpolation,
- });
- 
- const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentInterpolation: (newCurrentInterpolation: String) => dispatch({
-       type: model.StateMutationType.SET_CURRENTINTERPOLATION,
-       data: newCurrentInterpolation,
+        type: model.StateMutationType.SET_CURRENTINTERPOLATION,
+        data: newCurrentInterpolation,
     }),
- });
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(InterpolationDropdown));

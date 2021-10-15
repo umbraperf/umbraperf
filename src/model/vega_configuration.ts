@@ -1,5 +1,5 @@
 
-export interface ChartConfiguration{
+export interface ChartConfiguration {
     titlePadding: number;
     titleAlign: string;
     axisPadding: number;
@@ -28,7 +28,7 @@ export interface ChartConfiguration{
     axisTitleFont: string;
     axisLabelFont: string;
     titleFont: string;
-    donutChartValueLabelFontSize: number;
+    sunburstChartValueLabelFontSize: number;
     barChartValueLabelFontSize: number;
     valueLabelFont: string;
     operatorColorSceme: string;
@@ -70,7 +70,7 @@ export let chartConfiguration: ChartConfiguration = {
     legendSymbolSize: 50,
 
     //Value Lables
-    donutChartValueLabelFontSize: 9,
+    sunburstChartValueLabelFontSize: 11,
     barChartValueLabelFontSize: 9,
     valueLabelFont: "Segoe UI",
 
@@ -80,7 +80,7 @@ export let chartConfiguration: ChartConfiguration = {
     donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
     barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
-    sunburstChartTooltip: (pipeline) => {return pipeline ? "{'Pipeline': datum.operator, 'Occurences': datum.pipeOccurrences}" : "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parent}"},
+    sunburstChartTooltip: (pipeline) => { return pipeline ? "{'Pipeline': datum.operator, 'Occurences': datum.pipeOccurrences}" : "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parent}" },
 
     //Color scale:
     operatorColorSceme: "tableau20",

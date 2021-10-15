@@ -77,7 +77,7 @@ class KpiContainer extends React.Component<Props, {}> {
                 const valueString = valueRounded + "s";
                 return this.createKpiCard(index, elem.title, valueString);
             } else if (elem.id === "errRate") {
-                const valueString = isNaN(+elem.value) ? "-" : ((+elem.value * 100) + "%");
+                const valueString = isNaN(+elem.value) ? "-" : (Math.round(+elem.value * 100) + "%");
                 return this.createKpiCard(index, elem.title, valueString);
             } else {
                 return this.createKpiCard(index, elem.title, elem.value);

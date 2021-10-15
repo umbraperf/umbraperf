@@ -9,6 +9,8 @@ export interface ChartConfiguration{
     activityHistogramXTitle: string;
     activityHistogramXLabelFontSize: number;
     axisLabelFontSize: number;
+    activityHistogramXLabelSeparation: number;
+    areaChartXLabelSeparation: number;
     areaChartYLabelSeparation: number;
     barChartYLabelSeparation: number;
     titleFontSize: number;
@@ -55,6 +57,8 @@ export let chartConfiguration: ChartConfiguration = {
     axisTitleFontSize: 9,
     activityHistogramXLabelFontSize: 7,
     axisLabelFontSize: 8,
+    activityHistogramXLabelSeparation: 2,
+    areaChartXLabelSeparation: 2,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
     axisTitleFont: "Segoe UI",

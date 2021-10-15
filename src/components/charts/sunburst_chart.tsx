@@ -26,6 +26,7 @@ interface Props {
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     pipelines: Array<string> | undefined;
+    pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
@@ -377,7 +378,7 @@ class SunburstChart extends React.Component<Props, State> {
                             ],
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { value: "a" }, //TODO map current pipeline array into short form
+                            text: { value: "a" }, //TODO use pipeline map to short array from redux 
                             fillOpacity: [
                                 { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
                                 { test: "datum.parent === 'inner'", value: 1 },
@@ -438,6 +439,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
     pipelines: state.pipelines,
+    pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });

@@ -95,14 +95,6 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.csvParsingFinished) {
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
-            //TODO remove
-            // if (undefined === this.props.pipelines) {
-            //     Controller.requestPipelines(this.props.appContext.controller);
-            // }
-            // if (undefined === this.props.operators) {
-            //     Controller.requestOperators(this.props.appContext.controller);
-            // }
-
             addEventListener('resize', (event) => {
                 this.resizeListener();
             });
@@ -166,7 +158,7 @@ class SunburstChart extends React.Component<Props, State> {
             console.log(args[1]);
             const selectedPipeline = args[1];
             if (this.props.currentPipeline === "All") {
-                this.props.setCurrentPipeline(this.props.pipelines!.filter(e => e !== selectedPipeline));
+                this.props.setCurrentPipeline(new Array<string>(selectedPipeline));
             } else {
                 if (this.props.currentPipeline.includes(selectedPipeline)) {
                     this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
@@ -180,15 +172,17 @@ class SunburstChart extends React.Component<Props, State> {
 
     handleClickOperator(...args: any[]) {
         if (args[1]) {
-            const selectedOperator = args[1];
+            const selectedOperator = args[1][0];
+            const selectedOperatorPipeline = args[1][1];
             if (this.props.currentOperator === "All") {
-                console.log(this.props.currentOperator);
                 this.props.setCurrentOperator(this.props.operators!.filter(e => e !== selectedOperator));
-                console.log(this.props.currentOperator);
             } else {
                 if (this.props.currentOperator.includes(selectedOperator)) {
                     this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));
                 } else {
+                    if(!this.props.currentPipeline.includes(selectedOperatorPipeline)){
+                        this.handleClickPipeline(undefined, selectedOperatorPipeline);
+                    }
                     this.props.setCurrentOperator(this.props.currentOperator.concat(selectedOperator));
                 }
             }
@@ -278,7 +272,7 @@ class SunburstChart extends React.Component<Props, State> {
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
                 font: model.chartConfiguration.titleFont,
-                subtitle: "Toggle pipelines by click:",
+                subtitle: "Toggle pipelines or operators by click:",
                 subtitleFontSize: model.chartConfiguration.subtitleFontSize,
             },
 
@@ -298,7 +292,7 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "clickOperator",
                     on: [
-                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', datum.operator, null)" }
+                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', [datum.operator, datum.parent], null)" }
                     ]
                 }
             ],

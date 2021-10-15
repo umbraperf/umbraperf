@@ -337,7 +337,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                         {
                             orient: 'bottom',
                             scale: 'xscale',
-                            labelOverlap: false,
+                            labelOverlap: true,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,
                             titleX: { signal: 'width', mult: 1.01 },
@@ -353,6 +353,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             }, */
                             values: xTicks(),
+                            labelSeparation: model.chartConfiguration.activityHistogramXLabelSeparation,
                             labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize,
                             labelFont: model.chartConfiguration.axisLabelFont
                         },

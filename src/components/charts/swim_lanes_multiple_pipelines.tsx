@@ -299,7 +299,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     orient: "bottom",
                     scale: "x",
                     zindex: 1,
-                    labelOverlap: false,
+                    labelOverlap: true,
                     values: xTicks(),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
@@ -307,6 +307,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFont: model.chartConfiguration.axisLabelFont,
+                    labelSeparation: model.chartConfiguration.areaChartXLabelSeparation,
                 },
                 {
                     orient: "left",

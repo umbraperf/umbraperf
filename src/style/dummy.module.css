@@ -2,6 +2,7 @@
     --outerGridPadding: 7px;
     --gridCellBoxPadding: 3px;
     --gridCellItemPadding: 7px;
+    --chartContainerSmall900StaticWidth: 600px;
     --optionsItemBoxHeight: 75px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
@@ -75,7 +76,7 @@
   @media not all and (min-width: 900px){
 
     .dashboardGridCellChartContainerStaticWidthSmall{
-        max-width: 655px;
+        max-width: var(--chartContainerSmall900StaticWidth);
     }
 
     .dashboardGridCellChartBox{

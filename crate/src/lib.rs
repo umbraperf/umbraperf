@@ -81,6 +81,10 @@ fn get_query_from_cache() -> HashMap<String, RecordBatch> {
     with_state(|s| s.queries.clone())
 }
 
+fn clear_cache() {
+    _with_state_mut(|s| s.queries.clear());
+}
+
 fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
     _with_state_mut(|s| s.queries.insert(restful_string.to_string(), record_batch));
 }
@@ -92,6 +96,8 @@ fn set_record_batches(record_batches: RecordBatch) {
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
     let now = instant::Instant::now();
+
+    clear_cache();
 
     let batches = record_batch_util::init_record_batches(
         file_size,

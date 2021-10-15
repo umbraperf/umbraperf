@@ -50,10 +50,10 @@ export function createRestQuery(query: QueryVariant) {
     const time = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}` : '';
     const timeFilter = time && `/?time="${time}"`;
 
-    const pipelines = (query.data as any).pipelines ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : '';
+    const pipelines = (query.data as any).pipelines && (query.data as any).pipelines.length > 0 ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : ' ';
     const pipelinesFilter = pipelines && `/?pipeline="${pipelines}"`;
 
-    const operators = (query.data as any).operators ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : '';
+    const operators = (query.data as any).operators && (query.data as any).operators.length > 0 ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : ' ';
     const operatorsFilter = operators && `/?operator="${operators}"`;
 
     switch (query.type) {

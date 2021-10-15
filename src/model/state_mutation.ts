@@ -145,6 +145,7 @@ export class AppStateMutation {
                 return {
                     ...state,
                     pipelines: mutation.data,
+                    pipelinesShort: mutation.data.map((elem, index) => (String.fromCharCode(97 + index))),
                 };
             case StateMutationType.SET_OPERATORS:
                 return {
@@ -212,6 +213,7 @@ export class AppStateMutation {
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,
+                    pipelinesShort: undefined,
                     operators: undefined,
                     kpis: undefined,
                     chartIdCounter: 1,

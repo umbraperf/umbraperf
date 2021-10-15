@@ -19,6 +19,7 @@ export interface AppState {
     currentRequest: RestQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
+    pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
@@ -48,6 +49,7 @@ export function createDefaultState(): AppState {
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
+        pipelinesShort: undefined,
         operators: undefined,
         kpis: undefined,
         chartIdCounter: 1,

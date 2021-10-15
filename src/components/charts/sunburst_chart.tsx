@@ -368,7 +368,7 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "colorOperators",
+                fill: "colorOperators", // TODO 
                 title: "Pipelines",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,

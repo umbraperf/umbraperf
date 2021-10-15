@@ -219,14 +219,14 @@ class BarChart extends React.Component<Props, State> {
                     },
                     domain: this.props.operators,
                 },
-                {
+/*                 {
                     name: "colorDisabled",
                     type: "ordinal",
                     range: {
                         scheme: model.chartConfiguration.disabledColorSceme,
                     },
                     domain: this.props.operators,
-                }
+                } */
             ],
 
             axes: [
@@ -284,7 +284,7 @@ class BarChart extends React.Component<Props, State> {
                         update: {
                             fill: [
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
-                                { scale: "colorDisabled", field: "operators" },
+                                { value: this.props.appContext.tertiaryColor },
                             ],
                             fillOpacity: {
                                 value: 1,

@@ -361,25 +361,27 @@ class SunburstChart extends React.Component<Props, State> {
                     }
                 },
                 {
-                    "type": "text",
-                    "from": { "data": "tree" },
-                    "encode": {
-                        "enter": {
+                    type: "text",
+                    from: { data: "tree" },
+                    encode: {
+                        enter: {
                             fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
-                            "x": { "signal": "if(width >= height, width, height) / 2" },
-                            "y": { "signal": "if(width >= height, height, width) / 2" },
-                            "radius": { "signal": "(datum['r0'] + datum['r1'])/2 " },
-                            "theta": { "signal": "(datum['a0'] + datum['a1'])/2" },
-                            "fill": { "value": "#000" },
-                            "align": { "value": "center" },
-                            "baseline": { "value": "middle" },
-                            // "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
-                            "text": { "value": "a" },
-                            "fillOpacity": [
-                                { "test": "(datum['a1'] - datum['a0']) < '0.3'", "value": 0 },
-                                { "test": "datum.parent === 'inner'", "value": 1 },
-                                { "value": 0 }
+                            x: { signal: "if(width >= height, width, height) / 2" },
+                            y: { signal: "if(width >= height, height, width) / 2" },
+                            radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
+                            theta: { signal: "(datum['a0'] + datum['a1'])/2" },
+                            fill: [
+                                { test: "indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: "#fff" },
+                                { value: "#000" },
+                            ],
+                            align: { value: "center" },
+                            baseline: { value: "middle" },
+                            text: { value: "a" }, //TODO map current pipeline array into short form
+                            fillOpacity: [
+                                { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
+                                { test: "datum.parent === 'inner'", value: 1 },
+                                { value: 0 }
                             ]
                         }
                     }

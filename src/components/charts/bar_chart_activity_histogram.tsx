@@ -344,14 +344,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                             titleAlign: "left",
                             titleFontSize: model.chartConfiguration.axisTitleFontSize,
                             titleFont: model.chartConfiguration.axisTitleFont,
-                            /* encode: {
-                                labels: {
-                                    update: {
-                                        angle: { value: -45 },
-                                        align: { value: "right" }
-                                    }
-                                }
-                            }, */
                             values: xTicks(),
                             labelSeparation: model.chartConfiguration.activityHistogramXLabelSeparation,
                             labelFontSize: model.chartConfiguration.activityHistogramXLabelFontSize,

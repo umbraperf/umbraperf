@@ -1,7 +1,7 @@
-import {  ChartDataKeyValue } from "./chart_data_result";
+import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
-import {State as IDashboardState} from "../components/dummy-dashboard"
+import { State as IDashboardState } from "../components/dummy-dashboard"
 
 export interface AppState {
     /// The registered files
@@ -17,8 +17,8 @@ export interface AppState {
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     currentRequest: RestQueryType | undefined;
-    events: Array<string> |undefined;
-    pipelines: Array<string> |undefined;
+    events: Array<string> | undefined;
+    pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;

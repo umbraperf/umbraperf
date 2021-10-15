@@ -82,8 +82,7 @@ class Dashboard extends React.Component<Props, {}> {
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    {/*<DonutChart />*/}
+                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                                     <SunburstChart />
                                 </div>
                             </Box>
@@ -103,7 +102,7 @@ class Dashboard extends React.Component<Props, {}> {
                     <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
+                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                                     <BarChart onDashboard={true} />
                                 </div>
                             </Box>

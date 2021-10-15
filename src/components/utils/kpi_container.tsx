@@ -73,10 +73,11 @@ class KpiContainer extends React.Component<Props, {}> {
                 });
                 return this.createKpiCard(index, elem.title, nFormatter(+elem.value, 1));
             } else if (elem.id === "execTime") {
-                const valueRounded = Math.round(+elem.value * 100) / 100;
-                return this.createKpiCard(index, elem.title, valueRounded);
+                const valueRounded = Math.round(+elem.value) / 1000;
+                const valueString = valueRounded + "s";
+                return this.createKpiCard(index, elem.title, valueString);
             } else if (elem.id === "errRate") {
-                const valueString = isNaN(+elem.value) ? "-" : elem.value;
+                const valueString = isNaN(+elem.value) ? "-" : ((+elem.value * 100) + "%");
                 return this.createKpiCard(index, elem.title, valueString);
             } else {
                 return this.createKpiCard(index, elem.title, elem.value);

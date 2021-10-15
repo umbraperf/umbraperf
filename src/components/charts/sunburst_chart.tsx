@@ -310,7 +310,7 @@ class SunburstChart extends React.Component<Props, State> {
                     domain: this.props.operators,
                     range: { scheme: model.chartConfiguration.operatorColorSceme }
                 },
-                {
+/*                 {
                     name: "colorPipelines",
                     type: "ordinal",
                     domain: this.props.pipelines,
@@ -321,13 +321,13 @@ class SunburstChart extends React.Component<Props, State> {
                     type: "ordinal",
                     domain: this.props.pipelines,
                     range: { scheme: model.chartConfiguration.disabledColorSceme }
-                },
-                {
-                    name: "colorOperatorsDisabled",
-                    type: "ordinal",
-                    domain: this.props.operators,
-                    range: { scheme: model.chartConfiguration.disabledColorSceme }
-                }
+                }, */
+                // {
+                //     name: "colorOperatorsDisabled",
+                //     type: "ordinal",
+                //     domain: this.props.operators,
+                //     range: { scheme: model.chartConfiguration.disabledColorSceme }
+                // }
             ],
 
             marks: [
@@ -353,10 +353,10 @@ class SunburstChart extends React.Component<Props, State> {
                             zindex: { value: 0 },
                             fillOpacity: { value: 1 },
                             fill: [
-                                { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", scale: "colorPipelines", field: "operator" }, // use orange color scale if pipeline is selected
-                                { test: "datum.parent==='inner'", scale: "colorPipelinesDisabled", field: "operator" }, //use grey color scale if pipeline is not selected
+                                { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
+                                { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
-                                { scale: "colorOperatorsDisabled", field: "operator" } //use grey color scale for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
+                                { test: "datum.operator !== 'inner'", value: this.props.appContext.tertiaryColor } //use grey app color for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
                             ],
                         },
                         hover: {
@@ -368,7 +368,7 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "colorPipelines",
+                fill: "colorOperators",
                 title: "Pipelines",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,

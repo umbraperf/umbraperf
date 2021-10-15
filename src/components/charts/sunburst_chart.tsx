@@ -180,7 +180,7 @@ class SunburstChart extends React.Component<Props, State> {
                 if (this.props.currentOperator.includes(selectedOperator)) {
                     this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));
                 } else {
-                    if(!this.props.currentPipeline.includes(selectedOperatorPipeline)){
+                    if (!this.props.currentPipeline.includes(selectedOperatorPipeline)) {
                         this.handleClickPipeline(undefined, selectedOperatorPipeline);
                     }
                     this.props.setCurrentOperator(this.props.currentOperator.concat(selectedOperator));
@@ -304,18 +304,18 @@ class SunburstChart extends React.Component<Props, State> {
                     domain: this.props.operators,
                     range: { scheme: model.chartConfiguration.operatorColorSceme }
                 },
-/*                 {
-                    name: "colorPipelines",
-                    type: "ordinal",
-                    domain: this.props.pipelines,
-                    range: { scheme: model.chartConfiguration.pipelineColorSceme }
-                },
-                {
-                    name: "colorPipelinesDisabled",
-                    type: "ordinal",
-                    domain: this.props.pipelines,
-                    range: { scheme: model.chartConfiguration.disabledColorSceme }
-                }, */
+                /*                 {
+                                    name: "colorPipelines",
+                                    type: "ordinal",
+                                    domain: this.props.pipelines,
+                                    range: { scheme: model.chartConfiguration.pipelineColorSceme }
+                                },
+                                {
+                                    name: "colorPipelinesDisabled",
+                                    type: "ordinal",
+                                    domain: this.props.pipelines,
+                                    range: { scheme: model.chartConfiguration.disabledColorSceme }
+                                }, */
                 // {
                 //     name: "colorOperatorsDisabled",
                 //     type: "ordinal",
@@ -359,6 +359,30 @@ class SunburstChart extends React.Component<Props, State> {
                             },
                         }
                     }
+                },
+                {
+                    "type": "text",
+                    "from": { "data": "tree" },
+                    "encode": {
+                        "enter": {
+                            fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
+                            font: model.chartConfiguration.valueLabelFont,
+                            "x": { "signal": "if(width >= height, width, height) / 2" },
+                            "y": { "signal": "if(width >= height, height, width) / 2" },
+                            "radius": { "signal": "(datum['r0'] + datum['r1'])/2 " },
+                            "theta": { "signal": "(datum['a0'] + datum['a1'])/2" },
+                            "fill": { "value": "#000" },
+                            "align": { "value": "center" },
+                            "baseline": { "value": "middle" },
+                            // "text": { "signal": "if(datum['endAngle'] - datum['startAngle'] < 0.3, '', format(datum['value'] , '.0f'))" },
+                            "text": { "value": "a" },
+                            "fillOpacity": [
+                                { "test": "(datum['a1'] - datum['a0']) < '0.3'", "value": 0 },
+                                { "test": "datum.parent === 'inner'", "value": 1 },
+                                { "value": 0 }
+                            ]
+                        }
+                    }
                 }
             ],
             legends: [
@@ -371,24 +395,24 @@ class SunburstChart extends React.Component<Props, State> {
                 symbolSize: model.chartConfiguration.legendSymbolSize,
                 values: this.props.pipelines,
             }, */
-            {
-                fill: "colorOperators",
-                title: "Operators",
-                orient: "right",
-                direction: "vertical",
-                // columns: 3,
-                labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: this.props.operators,
-                encode: {
-                    labels: {
-                        update: {
-                            text: { signal: "truncate(datum.value, 20)" },
+                {
+                    fill: "colorOperators",
+                    title: "Operators",
+                    orient: "right",
+                    direction: "vertical",
+                    // columns: 3,
+                    labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                    symbolSize: model.chartConfiguration.legendSymbolSize,
+                    values: this.props.operators,
+                    encode: {
+                        labels: {
+                            update: {
+                                text: { signal: "truncate(datum.value, 20)" },
+                            }
                         }
                     }
                 }
-            }
             ],
         } as VisualizationSpec;
 

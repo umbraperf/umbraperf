@@ -17,6 +17,7 @@
 .dashboardGrid{
     padding: var(--outerGridPadding);
     background-color: white;
+    transition: var(--movingTransition);
 }
 
 .dashboardGridCellItem{
@@ -24,21 +25,20 @@
     justify-content: center;
     align-items: center;
     padding: var(--gridCellItemPadding);
-    transition: var(--movingTransition);
 }
 
 .dashboardGridCellOptionsItem{
     composes: dashboardGridCellItem;
     padding: var(--gridCellItemPadding);
     height: auto;
+    transition: var(--movingTransition);
+
 }
 
 .dashboardGridCellBox{
     background-color: var(--gridCellBoxColor);
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
-    transition: var(--movingTransition);
-
 }
 
 .dashboardGridCellChartBox{
@@ -60,6 +60,7 @@
     composes:dashboardGridCellBox;
     width: 100%;
     height: var(--optionsItemBoxHeight);
+    transition: var(--movingTransition);
 }
 
 .dashboardGridCellChartContainer{

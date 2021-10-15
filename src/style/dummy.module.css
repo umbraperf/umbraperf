@@ -74,6 +74,10 @@
 
   @media not all and (min-width: 900px){
 
+    .dashboardGridCellChartContainerStaticWidthSmall{
+        max-width: 655px;
+    }
+
     .dashboardGridCellChartBox{
         composes: dashboardGridCellChartBox;
         max-width: none;

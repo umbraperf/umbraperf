@@ -70,11 +70,11 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             break;
 
         case model.RestQueryType.GET_STATISTICS:
-            const numberSamplesKpi: model.IKpiData = { title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
-            const numberPipelinesKpi: model.IKpiData = { title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
-            const numberOperatorsKpi: model.IKpiData = { title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
-            const executionTimeKpi: model.IKpiData = { title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
-            const errorRateKpi: model.IKpiData = { title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
+            const numberSamplesKpi: model.IKpiData = { id: "noSamples", title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
+            const numberPipelinesKpi: model.IKpiData = { id: "noPipelines",title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
+            const numberOperatorsKpi: model.IKpiData = { id: "noOperators",title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
+            const executionTimeKpi: model.IKpiData = { id: "execTime",title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
+            const errorRateKpi: model.IKpiData = { id: "errRate",title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
             const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi, executionTimeKpi, errorRateKpi);
 
             store.dispatch({

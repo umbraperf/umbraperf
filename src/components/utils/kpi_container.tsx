@@ -53,20 +53,28 @@ class KpiContainer extends React.Component<Props, {}> {
 
     mapKpiArrayToCards() {
         //get array of kpis from redux, map to multiple cards
-        return this.props.kpis!.map((elem, index) => this.createKpiCard(index, elem.title, elem.value));
+        return this.props.kpis!.map((elem, index) => {
+            if(elem.id === "execTime"){
+                const valueRounded = Math.round(+elem.value * 100) / 100;
+                return this.createKpiCard(index, elem.title, valueRounded);
+            }else if(elem.id === "errRate"){
+                const valueString = isNaN(+elem.value) ? "-" : elem.value;
+                return this.createKpiCard(index, elem.title, valueString);
+            }else{
+                return this.createKpiCard(index, elem.title, elem.value);
+            }
+        });
 
     }
 
-    createKpiCard(key: number, title: string, value: string) {
-        const valueRounded = Math.round(+value * 100) / 100;
-        const valueString = Number.isNaN(valueRounded) ? "-" : valueRounded;
-        return <div key={key} className={styles.kpiCard}>
+    createKpiCard(key: number, title: string, value: string | number) {
+        return <div key={key} className={styles.kpiCard} >
             <div>
                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
                 </Typography>
-                <Typography className={styles.kpiCardValue} key={valueString} variant="h5" component="div">
-                    {valueString}
+                <Typography className={styles.kpiCardValue} key={value} variant="h5" component="div">
+                    {value}
                 </Typography>
             </div>
         </div>

@@ -102,7 +102,6 @@
 }
 
 .kpiCard{
-    background: transparent;
     margin-left: 4px;
     margin-right: 4px;
     width: 150px;
@@ -115,6 +114,8 @@
     justify-content: center;
     border-width: 0.5px;
     flex-basis: 100px;
+    border-radius: 70px;
+
 }
 
 .kpiCardLabel{

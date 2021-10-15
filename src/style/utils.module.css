@@ -102,19 +102,17 @@
 }
 
 .kpiCard{
+    background: transparent;
     margin-left: 4px;
     margin-right: 4px;
     width: 150px;
     height: 55px;
-    background-color: white;
     border-radius: 7px;
     padding: 5px 5px 5px 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: black;
-    border-style: solid;
     border-width: 0.5px;
     flex-basis: 100px;
 }
@@ -127,6 +125,7 @@
 .kpiCardValue{
     font-size: 20px;
     animation: fadeIn 2s;
+    font-weight: 400;
 }
 
 .dropdownOptionsContainer{

@@ -367,7 +367,8 @@ class SunburstChart extends React.Component<Props, State> {
                     }
                 }
             ],
-            legends: [{
+            legends: [
+                /* {
                 fill: "colorOperators", // TODO 
                 title: "Pipelines",
                 orient: "right",
@@ -375,13 +376,13 @@ class SunburstChart extends React.Component<Props, State> {
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
                 values: this.props.pipelines,
-            },
+            }, */
             {
                 fill: "colorOperators",
                 title: "Operators",
                 orient: "right",
                 direction: "vertical",
-                columns: 3,
+                // columns: 3,
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
@@ -389,7 +390,7 @@ class SunburstChart extends React.Component<Props, State> {
                 encode: {
                     labels: {
                         update: {
-                            text: { signal: "truncate(datum.value, 9)" },
+                            text: { signal: "truncate(datum.value, 20)" },
                         }
                     }
                 }

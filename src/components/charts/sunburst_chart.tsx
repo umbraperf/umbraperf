@@ -8,7 +8,7 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import _, { values } from "lodash";
+import _, { transform, values } from "lodash";
 import { isFieldPredicate } from 'vega-lite/build/src/predicate';
 
 
@@ -221,54 +221,59 @@ class SunburstChart extends React.Component<Props, State> {
         operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
         pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
 
-        const data = [{
+        const data = [
+            {
+                name: "selectedPipelines",
+                values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline, pipelinesUsedShort: this.props.pipelinesShort },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["pipelinesUsed", "pipelinesUsedShort"]
+                    }
+                ]
+            },
+            {
+                name: "selectedOperators",
+                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operatorsUsed"]
+                    }
+                ]
+            },
+            {
+                name: "tree",
+                values: [
+                    { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
+                ],
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operator", "parent", "pipeOccurrences", "opOccurrences"]
+                    },
+                    {
+                        type: "stratify",
+                        key: "operator",
+                        parentKey: "parent"
+                    },
+                    {
+                        type: "partition",
+                        field: "opOccurrences", //size of leaves -> operators
+                        sort: { "field": "value" },
+                        size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
+                        as: ["a0", "r0", "a1", "r1", "depth", "children"]
+                    },
+                    {
+                        type: "lookup",
+                        from: "selectedPipelines",
+                        key: "pipelinesUsed",
+                        fields: ["operator"],
+                        values: ["pipelinesUsed", "pipelinesUsedShort"],
+                    }
+                ],
 
-            name: "tree",
-            values: [
-                { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
-            ],
-            transform: [
-                {
-                    type: "flatten",
-                    fields: ["operator", "parent", "pipeOccurrences", "opOccurrences"]
-                },
-                {
-                    type: "stratify",
-                    key: "operator",
-                    parentKey: "parent"
-                },
-                {
-                    type: "partition",
-                    field: "opOccurrences", //size of leaves -> operators
-                    sort: { "field": "value" },
-                    // size: [{ "signal": "2 * PI" }, { "signal": "width / 2" }], //determine size of pipeline circles
-                    size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
-                    as: ["a0", "r0", "a1", "r1", "depth", "children"]
-                }
-            ],
-
-        },
-        {
-            name: "selectedPipelines",
-            values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
-            transform: [
-                {
-                    type: "flatten",
-                    fields: ["pipelinesUsed"]
-                }
-            ]
-        },
-        {
-            name: "selectedOperators",
-            values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
-            transform: [
-                {
-                    type: "flatten",
-                    fields: ["operatorsUsed"]
-                }
-            ]
-        }
-
+            },
         ];
 
         return data;

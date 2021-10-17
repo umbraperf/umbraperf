@@ -82,8 +82,8 @@ export let chartConfiguration: ChartConfiguration = {
     barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
-            "{'Pipeline': datum.operator, 'Occurences': datum.pipeOccurrences}" :
-            "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parent}"
+            "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
+            "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
 
     //Color scale:

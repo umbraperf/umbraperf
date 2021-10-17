@@ -215,7 +215,7 @@ class SunburstChart extends React.Component<Props, State> {
         const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operatorOccurrences);
         const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipelineOccurrences);
 
-        //add datum for inner circle only on first rerender
+        //add datum for inner circle at beginning of data only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
         operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
@@ -224,11 +224,21 @@ class SunburstChart extends React.Component<Props, State> {
         const data = [
             {
                 name: "selectedPipelines",
-                values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline, pipelinesUsedShort: this.props.pipelinesShort },
+                values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
                 transform: [
                     {
                         type: "flatten",
-                        fields: ["pipelinesUsed", "pipelinesUsedShort"]
+                        fields: ["pipelinesUsed"]
+                    }
+                ]
+            },
+            {
+                name: "pipelinesShort",
+                values: { pipeline: this.props.pipelines, pipelineShort: this.props.pipelinesShort },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["pipeline", "pipelineShort"]
                     }
                 ]
             },
@@ -266,10 +276,18 @@ class SunburstChart extends React.Component<Props, State> {
                     },
                     {
                         type: "lookup",
-                        from: "selectedPipelines",
-                        key: "pipelinesUsed",
+                        from: "pipelinesShort",
+                        key: "pipeline",
                         fields: ["operator"],
-                        values: ["pipelinesUsed", "pipelinesUsedShort"],
+                        values: ["pipelineShort"],
+                    },
+                    {
+                        type: "lookup",
+                        from: "pipelinesShort",
+                        key: "pipeline",
+                        fields: ["parent"],
+                        values: ["pipelineShort"],
+                        as: ["parentShort"]
                     }
                 ],
 
@@ -310,7 +328,7 @@ class SunburstChart extends React.Component<Props, State> {
                 {
                     name: "clickPipeline",
                     on: [
-                        { events: { marktype: "arc", type: "click" }, update: "if(datum.parent === 'inner', datum.operator, null)" }
+                        { events: [{ marktype: "arc", type: "click" }, { marktype: "text", markname: "labels", type: "click" }], update: "if(datum.parent === 'inner', datum.operator, null)" }
                     ]
                 },
                 {
@@ -386,6 +404,7 @@ class SunburstChart extends React.Component<Props, State> {
                 },
                 {
                     type: "text",
+                    name: "labels",
                     from: { data: "tree" },
                     encode: {
                         enter: {

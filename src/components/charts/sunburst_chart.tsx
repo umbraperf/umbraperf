@@ -300,6 +300,10 @@ class SunburstChart extends React.Component<Props, State> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
+        const pipelinesLegend = () => {
+            return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem ));
+        }
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 50,
@@ -323,7 +327,7 @@ class SunburstChart extends React.Component<Props, State> {
             signals: [
                 {
                     name: "pieSize",
-                    update: "if(width > 140, 75, 50)"
+                    update: "if(width > 160, 75, 50)"
                 },
                 {
                     name: "clickPipeline",
@@ -410,8 +414,8 @@ class SunburstChart extends React.Component<Props, State> {
                         enter: {
                             fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
-                            x: { signal: "if(width >= height, width, height) / 2" },
-                            y: { signal: "if(width >= height, height, width) / 2" },
+                            x: { signal: "width/ 2" },
+                            y: { signal: "height/ 2" },
                             radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
                             theta: { signal: "(datum['a0'] + datum['a1'])/2" },
                             fill: [
@@ -420,7 +424,7 @@ class SunburstChart extends React.Component<Props, State> {
                             ],
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { signal: "datum['pipelineShort']" }, 
+                            text: { signal: "datum['pipelineShort']" },
                             fillOpacity: [
                                 { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
                                 { test: "datum.parent === 'inner'", value: 1 },
@@ -431,21 +435,28 @@ class SunburstChart extends React.Component<Props, State> {
                 }
             ],
             legends: [
-                /* {
-                fill: "colorOperators", // TODO 
-                title: "Pipelines",
-                orient: "right",
-                labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: this.props.pipelines,
-            }, */
+                {
+                    fill: "colorOperators",
+                    title: "Pipelines",
+                    orient: "right",
+                    labelFontSize: model.chartConfiguration.legendLabelFontSize,
+                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                    values: pipelinesLegend(),
+                    encode: {
+                        labels: {
+                            update: {
+                                text: { signal: "truncate(datum.value, 30)" },
+                            }
+                        }
+                    }
+                },
                 {
                     fill: "colorOperators",
                     title: "Operators",
                     orient: "right",
                     direction: "vertical",
                     columns: 3,
+                    columnPadding: 3,
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
                     symbolSize: model.chartConfiguration.legendSymbolSize,
@@ -453,7 +464,7 @@ class SunburstChart extends React.Component<Props, State> {
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: "truncate(datum.value, 20)" },
+                                text: { signal: "truncate(datum.value, 8)" },
                             }
                         }
                     }

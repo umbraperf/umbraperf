@@ -1,0 +1,95 @@
+:root {
+    --outerGridPadding: 7px;
+    --gridCellBoxPadding: 3px;
+    --gridCellItemPadding: 7px;
+    --chartContainerSmall900StaticWidth: 500px;
+    --optionsItemBoxHeight: 75px;
+    --mainVisualizationsHeight: 210px;
+    --activityHistogramHeight: 84px;
+    --backgroundColor: rgb(245, 245, 245);
+    --movingTransition: all .5s ease-in-out;
+}
+
+.dashboardGrid{
+    padding: var(--outerGridPadding);
+    background-color: var(--backgroundColor);
+    transition: var(--movingTransition);
+}
+
+.dashboardGridCellItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--gridCellItemPadding);
+}
+
+.dashboardGridCellOptionsItem{
+    composes: dashboardGridCellItem;
+    padding: var(--gridCellItemPadding);
+    height: auto;
+    transition: var(--movingTransition);
+
+}
+
+.dashboardGridCellBox{
+    background-color: white;
+    border-radius: 10px;
+    padding: var(--gridCellBoxPadding);
+}
+
+.dashboardGridCellChartBox{
+    composes:dashboardGridCellBox;
+    width: 100%;
+}
+
+.dashboardGridCellChartBoxActivityHistogram{
+    composes:dashboardGridCellChartBox;
+    height: var(--activityHistogramHeight);
+}
+
+.dashboardGridCellChartBoxMainVisualizations{
+    composes:dashboardGridCellChartBox;
+    height: var(--mainVisualizationsHeight);
+}
+
+.dashboardGridCellOptionsBox{
+    composes:dashboardGridCellBox;
+    width: 100%;
+    height: var(--optionsItemBoxHeight);
+    transition: var(--movingTransition);
+}
+
+.dashboardGridCellChartContainer{
+    height: 100%;
+    display: block;
+    text-align: center;
+}
+
+@media not all and (min-width: 1200px) {
+    .dashboardGridCellOptionsBox{
+        composes: dashboardGridCellOptionsBox;
+        width: 100%;
+        height: auto;
+    }  
+}
+
+  @media not all and (min-width: 900px){
+
+    .dashboardGridCellChartContainerStaticWidthSmall{
+        max-width: var(--chartContainerSmall900StaticWidth);
+        display:block;
+        margin:0 auto;
+    }
+
+    .dashboardGridCellChartBox{
+        composes: dashboardGridCellChartBox;
+        max-width: none;
+    }
+  }
+
+  @media not all and (min-width: 700px) {
+    .dashboardGridCellOptionsItem{
+        composes: dashboardGridCellOptionsItem;
+        height: auto;
+    }
+  }

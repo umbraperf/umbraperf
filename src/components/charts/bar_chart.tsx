@@ -78,7 +78,7 @@ class BarChart extends React.Component<Props, State> {
             (props.currentEvent !== prevProps.currentEvent ||
                 props.operators !== prevProps.operators ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 props.currentOperator.length !== prevProps.currentOperator.length ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
@@ -219,14 +219,14 @@ class BarChart extends React.Component<Props, State> {
                     },
                     domain: this.props.operators,
                 },
-/*                 {
-                    name: "colorDisabled",
-                    type: "ordinal",
-                    range: {
-                        scheme: model.chartConfiguration.disabledColorSceme,
-                    },
-                    domain: this.props.operators,
-                } */
+                /*                 {
+                                    name: "colorDisabled",
+                                    type: "ordinal",
+                                    range: {
+                                        scheme: model.chartConfiguration.disabledColorSceme,
+                                    },
+                                    domain: this.props.operators,
+                                } */
             ],
 
             axes: [

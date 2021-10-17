@@ -43,7 +43,7 @@ class KpiContainer extends React.Component<Props, {}> {
         if (prevProps.currentEvent !== "Default" &&
             (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.currentPipeline.length !== prevProps.currentPipeline.length ||
+                !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 props.currentEvent !== prevProps.currentEvent)) {
             return true;
         } else {

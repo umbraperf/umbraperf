@@ -1,6 +1,7 @@
 import * as model from '../model';
 import React from 'react';
-import styles from '../style/dummy.module.css';
+//import styles from '../style/dummy.module.css';
+import styles from '../style/dummyReverted.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import EventsButtons from './utils/events_buttons';
@@ -11,8 +12,6 @@ import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple
 import BarChart from '../components/charts/bar_chart';
 import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
-import { TransitionGroup } from 'react-transition-group';
-
 
 
 interface Props {

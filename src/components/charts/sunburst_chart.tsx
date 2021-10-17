@@ -420,7 +420,7 @@ class SunburstChart extends React.Component<Props, State> {
                             ],
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { value: "a" }, //TODO use pipeline map to short array from redux 
+                            text: { signal: "datum['pipelineShort']" }, 
                             fillOpacity: [
                                 { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
                                 { test: "datum.parent === 'inner'", value: 1 },
@@ -445,7 +445,7 @@ class SunburstChart extends React.Component<Props, State> {
                     title: "Operators",
                     orient: "right",
                     direction: "vertical",
-                    // columns: 3,
+                    columns: 3,
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
                     symbolSize: model.chartConfiguration.legendSymbolSize,

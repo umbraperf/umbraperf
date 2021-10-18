@@ -436,16 +436,18 @@ class SunburstChart extends React.Component<Props, State> {
             ],
             legends: [
                 {
-                    fill: "colorOperators",
+                    fill: "colorOperators", //just as dummy
+                    labelOffset: -11,
                     title: "Pipelines",
                     orient: "right",
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
                     values: pipelinesLegend(),
+                    rowPadding: 0,
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: "truncate(datum.value, 30)" },
+                                text: { signal: "truncate(datum.value, 35)" },
                             }
                         }
                     }
@@ -455,6 +457,7 @@ class SunburstChart extends React.Component<Props, State> {
                     title: "Operators",
                     orient: "right",
                     direction: "vertical",
+                    rowPadding: 2,
                     columns: 3,
                     columnPadding: 3,
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,

@@ -275,14 +275,14 @@ class SunburstChart extends React.Component<Props, State> {
                         as: ["a0", "r0", "a1", "r1", "depth", "children"]
                     },
                     {
-                        type: "lookup",
+                        type: "lookup", //join short pipeline names to tree table
                         from: "pipelinesShort",
                         key: "pipeline",
                         fields: ["operator"],
                         values: ["pipelineShort"],
                     },
                     {
-                        type: "lookup",
+                        type: "lookup", //join short parent pipeline names colum 
                         from: "pipelinesShort",
                         key: "pipeline",
                         fields: ["parent"],

@@ -7,7 +7,7 @@ import EventsButtons from './utils/events_buttons';
 import KpiContainer from './utils/kpi_container';
 import DropdownsOptions from './utils/dropdowns_options';
 import SunburstChart from './charts/sunburst_chart';
-import SwimLanesMultiplePipelines from './charts/swim_lanes_multiple_pipelines';
+import SwimLanesCombinedMultiplePipelines from './charts/swim_lanes_combined_multiple_pipelines';
 import BarChartActivityHistogram from './charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
 
@@ -89,7 +89,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesMultiplePipelines />
+                                    <SwimLanesCombinedMultiplePipelines />
                                 </div>
                             </Box>
                         </Grid>

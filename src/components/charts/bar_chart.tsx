@@ -74,12 +74,11 @@ class BarChart extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.operators !== prevProps.operators ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
+        if (this.props.events &&
+            (props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentEvent !== prevProps.currentEvent ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                props.currentOperator.length !== prevProps.currentOperator.length ||
+                !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
         } else {

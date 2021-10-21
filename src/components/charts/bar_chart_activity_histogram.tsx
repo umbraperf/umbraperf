@@ -68,8 +68,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (props.currentEvent != prevProps.currentEvent
-            || props.chartIdCounter != prevProps.chartIdCounter) {
+        if (props.currentEvent !== prevProps.currentEvent
+            || props.chartIdCounter !== prevProps.chartIdCounter) {
             return true;
         } else {
             return false;

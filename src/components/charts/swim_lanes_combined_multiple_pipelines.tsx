@@ -63,7 +63,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
-            if (this, props.absoluteValues) {
+            if (props.absoluteValues) {
                 Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE);
             } else {
                 Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
@@ -72,9 +72,10 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentMultipleEvent !== "Default" &&
-            (props.currentBucketSize !== prevProps.currentBucketSize ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
+        if (this.props.events &&
+            (props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
+                !_.isEqual(props.operators, prevProps.operators) ||
                 !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
                 !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
@@ -290,7 +291,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "bottom",
                     scale: "x",
                     zindex: 1,
-                    labelOverlap: false,
+                    labelOverlap: true,
                     values: xTicks(),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
@@ -298,6 +299,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFont: model.chartConfiguration.axisLabelFont,
+                    labelSeparation: model.chartConfiguration.areaChartXLabelSeparation,
+
                 },
                 {
                     orient: "left",

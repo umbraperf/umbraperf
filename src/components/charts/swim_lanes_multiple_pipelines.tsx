@@ -80,11 +80,12 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.operators !== prevProps.operators ||
+        if (this.props.events &&
+            this.props.operators &&
+            (props.chartIdCounter !== prevProps.chartIdCounter || 
+                props.currentEvent !== prevProps.currentEvent ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.operators, prevProps.operators) ||
                 !_.isEqual(props.currentOperators, prevProps.currentOperators) ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
@@ -184,9 +185,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         }
     }
 
-    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props){
+    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props) {
         //reset max y domain for absolute chart on event and bucketsize change
-        if(props.currentEvent !== prevProps.currentEvent || props.currentBucketSize !== prevProps.currentBucketSize){
+        if (props.currentEvent !== prevProps.currentEvent || props.currentBucketSize !== prevProps.currentBucketSize) {
             this.setState((state, props) => ({
                 ...state,
                 maxYDomainAbsoluteValues: 0,
@@ -196,7 +197,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
 
     createVisualizationData() {
-        
+
         const chartDataElement: model.ISwimlanesData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
             operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
@@ -283,7 +284,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: this.props.absoluteValues  ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
+                    domain: this.props.absoluteValues ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
                 },
                 {
                     name: "color",

@@ -8,7 +8,6 @@ import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import PipelinesSelector from '../utils/pipelines_selector';
 import _ from "lodash";
 
 
@@ -24,6 +23,7 @@ interface Props {
     operators: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
+    currentOperator: Array<string> | "All",
     currentPipeline: Array<string> | "All",
     currentInterpolation: String,
     currentBucketSize: number,
@@ -74,9 +74,9 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (prevProps.currentEvent !== "Default" &&
             (props.currentEvent !== prevProps.currentEvent ||
-                props.operators !== prevProps.operators ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
@@ -140,7 +140,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper}>
+        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
@@ -478,6 +478,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
+    currentOperator: state.currentOperator,
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,

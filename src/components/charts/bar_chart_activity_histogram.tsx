@@ -368,7 +368,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                     width: { scale: 'xscale', band: 1, offset: -1 },
                                     y: { scale: 'yscale', field: 'occurrences' },
                                     y2: { scale: 'yscale', value: 0 },
-                                    fill: { value: this.props.appContext.tertiaryColor },
+                                    fill: { value: this.props.appContext.primaryColor },
                                 },
                                 hover: {
                                     fill: { value: this.props.appContext.secondaryColor },

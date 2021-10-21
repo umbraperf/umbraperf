@@ -2,20 +2,18 @@
     --outerGridPadding: 7px;
     --gridCellBoxPadding: 3px;
     --gridCellItemPadding: 7px;
-    --normalChartsSmallScreenMinWidth: 450px;
-    --activityHistogramSmallScreenMinWidth: 940px;
-    --areaChartSmallScreenMinWidth: 700px;
-    --areaChartSmallScreenMinWidth: 700px;
+    --chartContainerSmall900StaticWidth: 500px;
     --optionsItemBoxHeight: 75px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
-    --gridCellBoxColor: rgb(245, 245, 245);
-    --smallScreenActivityChartAreaChartOffset: 7px;
+    --backgroundColor: rgb(245, 245, 245);
+    --movingTransition: all .5s ease-in-out;
 }
 
 .dashboardGrid{
     padding: var(--outerGridPadding);
-    background-color: white;
+    background-color: var(--backgroundColor);
+    transition: var(--movingTransition);
 }
 
 .dashboardGridCellItem{
@@ -29,10 +27,12 @@
     composes: dashboardGridCellItem;
     padding: var(--gridCellItemPadding);
     height: auto;
+    transition: var(--movingTransition);
+
 }
 
 .dashboardGridCellBox{
-    background-color: var(--gridCellBoxColor);
+    background-color: white;
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
 }
@@ -56,6 +56,7 @@
     composes:dashboardGridCellBox;
     width: 100%;
     height: var(--optionsItemBoxHeight);
+    transition: var(--movingTransition);
 }
 
 .dashboardGridCellChartContainer{
@@ -72,29 +73,19 @@
     }  
 }
 
-@media not all and (min-width: 960px) {
-    /* media query: inverted with min instead of max 960 to simulate > instead of >= */
+  @media not all and (min-width: 900px){
+
+    .dashboardGridCellChartContainerStaticWidthSmall{
+        max-width: var(--chartContainerSmall900StaticWidth);
+        display:block;
+        margin:0 auto;
+    }
+
     .dashboardGridCellChartBox{
         composes: dashboardGridCellChartBox;
-        max-width: var(--normalChartsSmallScreenMinWidth); 
-    }     
-
-    .dashboardGridCellItemActivityHistogramStaticWidthSmallScreen{
-        min-width: calc(var(--activityHistogramSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
+        max-width: none;
     }
-
-    .dashboardGridCellChartBoxActivityHistogramStaticWidthSmallScreen{
-        min-width: var(--activityHistogramSmallScreenMinWidth);
-    }
-
-    .dashboardGridCellItemAreaChartStaticWidthSmallScreen{
-        min-width: calc(var(--areaChartSmallScreenMinWidth) + var(--gridCellItemPadding) + var(--gridCellItemPadding) + var(--smallScreenActivityChartAreaChartOffset));
-    }
-
-    .dashboardGridCellChartBoxAreaChartStaticWidthSmallScreen{
-        min-width: var(--areaChartSmallScreenMinWidth);
-    }
-  } 
+  }
 
   @media not all and (min-width: 700px) {
     .dashboardGridCellOptionsItem{

@@ -1,6 +1,6 @@
 import * as model from '../model';
 import React from 'react';
-import styles from '../style/dummyReverted.module.css';
+import styles from '../style/dummy.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import EventsButtons from './utils/events_buttons';

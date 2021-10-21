@@ -29,7 +29,8 @@ function EventsButtons(props: Props) {
     }
 
     const createEventShortString = (event: string) => {
-        return event.length > 20 ? (event.substr(0, 15) + "...") : event;
+        const eventNoPPP = event.includes(':') ? event.slice(0, event.indexOf(':')) : event;
+        return eventNoPPP.length > 20 ? (eventNoPPP.substr(0, 15) + "...") : eventNoPPP;
     }
 
     const isComponentLoading = () => {

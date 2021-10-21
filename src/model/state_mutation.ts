@@ -23,6 +23,7 @@ export enum StateMutationType {
     RESET_STATE = 'RESET_STATE',
     SET_CURRENTCHART = 'SET_CURRENTCHART',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
+    SET_CURRENTMULTIPLEEVENT = 'SET_CURRENTMULTIPLEEVENT',
     SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
     SET_CURRENTOPERATOR = 'SET_CURRENTOPERATOR',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
@@ -53,6 +54,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
+    | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
@@ -120,6 +122,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     currentEvent: mutation.data,
+                };
+            case StateMutationType.SET_CURRENTMULTIPLEEVENT:
+                return {
+                    ...state,
+                    currentMultipleEvent: mutation.data,
                 };
             case StateMutationType.SET_CURRENTPIPELINE:
                 return {
@@ -208,6 +215,7 @@ export class AppStateMutation {
                     file: undefined,
                     currentChart: "",
                     currentEvent: "Default",
+                    currentMultipleEvent: "Default",
                     currentPipeline: "All",
                     currentOperator: "All",
                     currentRequest: undefined,

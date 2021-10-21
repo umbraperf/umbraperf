@@ -17,7 +17,7 @@ interface Props {
     result: model.Result | undefined;
     csvParsingFinished: boolean;
     currentChart: string;
-    currentEvent: string;
+    currentMultipleEvent: [string, string] | "Default";
     currentRequest: model.RestQueryType | undefined;
     events: Array<string> | undefined;
     operators: Array<string> | undefined;
@@ -63,19 +63,19 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
-            if(this,props.absoluteValues){
+            if (this, props.absoluteValues) {
                 Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE);
-            }else{
+            } else {
                 Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
             }
         }
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.currentBucketSize !== prevProps.currentBucketSize ||
+        if (prevProps.currentMultipleEvent !== "Default" &&
+            (props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
                 !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
@@ -238,17 +238,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
             data: visData.data,
 
-            signals: [
-                {
-                    name: "currentEvent",
-                    value: this.props.currentEvent,
-                },
-                {
-                    name: "upperEvent",
-                    value: this.props.events![0],
-                }
-            ],
-
             scales: [
                 {
                     name: "x",
@@ -314,7 +303,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: this.props.events![0],
+                    title: this.props.currentMultipleEvent[0],
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -328,7 +317,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "yNeg",
                     zindex: 1,
-                    title: this.props.currentEvent,
+                    title: this.props.currentMultipleEvent[1],
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -376,7 +365,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        signal: `{'Event': upperEvent, ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
+                                        signal: `{'Event': ${this.props.currentMultipleEvent[0]}, ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },
@@ -431,7 +420,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        signal: `{'Event': currentEvent, ${model.chartConfiguration.areaChartTooltip}}`,
+                                        signal: `{'Event': ${this.props.currentMultipleEvent[1]}, ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },
@@ -471,7 +460,7 @@ const mapStateToProps = (state: model.AppState) => ({
     result: state.result,
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
-    currentEvent: state.currentEvent,
+    currentMultipleEvent: state.currentMultipleEvent,
     currentRequest: state.currentRequest,
     events: state.events,
     operators: state.operators,

@@ -89,7 +89,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesCombinedMultiplePipelines />
+                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
                                 </div>
                             </Box>
                         </Grid>

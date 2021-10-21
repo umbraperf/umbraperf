@@ -51,6 +51,12 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
                 type: model.StateMutationType.SET_CURRENTEVENT,
                 data: events[0],
             });
+            if (events.length > 1) {
+                events.length > store.dispatch({
+                    type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+                    data: [events[0], events[1]],
+                });
+            }
             break;
 
         case model.RestQueryType.GET_PIPELINES:
@@ -71,10 +77,10 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 
         case model.RestQueryType.GET_STATISTICS:
             const numberSamplesKpi: model.IKpiData = { id: "noSamples", title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
-            const numberPipelinesKpi: model.IKpiData = { id: "noPipelines",title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
-            const numberOperatorsKpi: model.IKpiData = { id: "noOperators",title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
-            const executionTimeKpi: model.IKpiData = { id: "execTime",title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
-            const errorRateKpi: model.IKpiData = { id: "errRate",title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
+            const numberPipelinesKpi: model.IKpiData = { id: "noPipelines", title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
+            const numberOperatorsKpi: model.IKpiData = { id: "noOperators", title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
+            const executionTimeKpi: model.IKpiData = { id: "execTime", title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
+            const errorRateKpi: model.IKpiData = { id: "errRate", title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
             const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi, executionTimeKpi, errorRateKpi);
 
             store.dispatch({

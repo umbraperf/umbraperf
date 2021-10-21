@@ -16,7 +16,7 @@ import VisualizationContainer from './components/visualization_container';
 import TabPanel from './components/utils/tab_panel';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboard';
-import DummyDashboard from './components/dummy-dashboard'
+import DashboardMultipleEvents from './components/dashboard_mltiple_events';
 import BarChart from './components/charts/bar_chart';
 import Dummy from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';
@@ -98,12 +98,6 @@ export const topLevelComponents = [
         icon: () => { return (<DashboardIcon />) },
     },
     {
-        path: '/dummy-dashboard',
-        sidebarName: 'DummyDashboard',
-        component: DummyDashboard,
-        icon: () => { return (<DashboardIcon />) },
-    },
-    {
         path: '/bar-chart',
         sidebarName: 'Bar Chart',
         component: BarChart,
@@ -129,7 +123,7 @@ export const topLevelComponents = [
     },
     {
         path: '/swim-lanes-multiple-pipelines-combined',
-        sidebarName: 'Swim Lanes (Multiple Pipelines Combined Events)',
+        sidebarName: 'Swim Lanes (Multiple Events)',
         component: SwimLanesCombinedMultiplePipelines,
         icon: () => { return (<ViewStreamIcon />) },
     },
@@ -204,8 +198,8 @@ export default function App() {
                                             <Dashboard />
                                         </Route>
 
-                                        <Route exact path="/dummy-dashboard" key="/dummy-dashboard">
-                                            <DummyDashboard />
+                                        <Route exact path="/dashboard-multiple-events" key="/dashboard-multiple-events">
+                                            <DashboardMultipleEvents />
                                         </Route>
 
                                         <Route exact path="/dummy" key="/dummy">

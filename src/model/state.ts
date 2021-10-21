@@ -14,6 +14,7 @@ export interface AppState {
     file: undefined | File;
     currentChart: string;
     currentEvent: string | "Default";
+    currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     currentRequest: RestQueryType | undefined;
@@ -44,6 +45,7 @@ export function createDefaultState(): AppState {
         file: undefined,
         currentChart: "",
         currentEvent: "Default",
+        currentMultipleEvent: "Default",
         currentPipeline: "All",
         currentOperator: "All",
         currentRequest: undefined,

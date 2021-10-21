@@ -3,15 +3,19 @@ import * as Context from '../../app_context';
 import Spinner from './spinner';
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Button, InputLabel } from '@material-ui/core';
+import { Button, Color, InputLabel } from '@material-ui/core';
 import styles from '../../style/utils.module.css';
 
 
 interface Props {
     appContext: Context.IAppContext;
     events: Array<string> | undefined;
-    currentEvent: string;
+    currentEvent: string | "Default";
+    currentMultipleEvent: [string, string] | "Default";
     setCurrentEvent: (newCurrentEvent: string) => void;
+    setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => void;
+
+    multipleEvents?: boolean;
 }
 
 function EventsButtons(props: Props) {
@@ -19,8 +23,13 @@ function EventsButtons(props: Props) {
     const events = props.events;
 
     useEffect(() => {
-        if (events && props.currentEvent === "") {
-            props.setCurrentEvent(events[0]);
+        if (events && events.length > 1) {
+            if (!props.multipleEvents && props.currentEvent === "Default") {
+                props.setCurrentEvent(events[0]);
+            }
+            if (props.multipleEvents && props.currentMultipleEvent === "Default") {
+                props.setCurrentMultipleEvent([events[0], events[1]]);
+            }
         }
     });
 
@@ -41,6 +50,14 @@ function EventsButtons(props: Props) {
         }
     }
 
+    const buttonColor = (event: string) => {
+        if (props.multipleEvents) {
+            return (props.currentMultipleEvent[0] === event || props.currentMultipleEvent[1] === event) ? "primary" : "default";
+        } else {
+            return (props.currentEvent === event) ? "primary" : "default";
+        }
+    }
+
     return (
         <div className={styles.eventButtonsContainer}>
             {isComponentLoading() ?
@@ -51,7 +68,7 @@ function EventsButtons(props: Props) {
                             <Button
                                 className={styles.eventButton}
                                 variant="contained"
-                                color={props.currentEvent === event ? "primary" : "default"}
+                                color={buttonColor(event)}
                                 onClick={() => handleEventButtonClick(event)}
                                 key={index}
                             >
@@ -69,12 +86,17 @@ function EventsButtons(props: Props) {
 const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     currentEvent: state.currentEvent,
+    currentMultipleEvent: state.currentMultipleEvent,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentEvent: (newCurrentEvent: string) => dispatch({
         type: model.StateMutationType.SET_CURRENTEVENT,
         data: newCurrentEvent,
+    }),
+    setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => dispatch({
+        type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+        data: newCurrentMultipleEvent,
     }),
 });
 

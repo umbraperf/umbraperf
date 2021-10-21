@@ -73,11 +73,13 @@ class SunburstChart extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" &&
-            props.pipelines &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.pipelines !== prevProps.pipelines ||
+        if (this.props.events &&
+            this.props.pipelines &&
+            this.props.operators &&
+            (props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentEvent !== prevProps.currentEvent ||
+                !_.isEqual(this.props.pipelines, prevProps.pipelines) ||
+                !_.isEqual(this.props.operators, prevProps.operators) ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
         } else {
@@ -94,6 +96,7 @@ class SunburstChart extends React.Component<Props, State> {
         }));
 
         if (this.props.csvParsingFinished) {
+
             this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
 
             addEventListener('resize', (event) => {

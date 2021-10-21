@@ -34,7 +34,11 @@ function EventsButtons(props: Props) {
     });
 
     const handleEventButtonClick = (event: string) => {
-        props.setCurrentEvent(event);
+        if (props.multipleEvents) {
+            //Also set single current event to first value of tuple for activity histogam!
+        } else {
+            props.setCurrentEvent(event);
+        }
     }
 
     const createEventShortString = (event: string) => {

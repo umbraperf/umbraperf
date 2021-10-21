@@ -83,9 +83,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         if (prevProps.currentEvent !== "Default" &&
             (props.currentEvent !== prevProps.currentEvent ||
                 props.operators !== prevProps.operators ||
-                props.currentOperators.length !== prevProps.currentOperators.length ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
+                !_.isEqual(props.currentOperators, prevProps.currentOperators) ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;

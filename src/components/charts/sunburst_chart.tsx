@@ -154,29 +154,12 @@ class SunburstChart extends React.Component<Props, State> {
         return signalListeners;
     }
 
-    // handleClickPipeline(...args: any[]) {
-    //     if (args[1]) {
-    //         console.log(args[1]);
-    //         const selectedPipeline = args[1];
-    //         if (this.props.currentPipeline === "All") {
-    //             this.props.setCurrentPipeline(new Array<string>(selectedPipeline));
-    //         } else {
-    //             if (this.props.currentPipeline.includes(selectedPipeline)) {
-    //                 this.props.setCurrentPipeline(this.props.currentPipeline.filter(e => e !== selectedPipeline));
-    //             } else {
-    //                 this.props.setCurrentPipeline(this.props.currentPipeline.concat(selectedPipeline));
-    //             }
-    //         }
-    //     }
-    // }
-
     handleClickPipeline(...args: any[]) {
         if (args[1]) {
             console.log(args[1]);
             const selectedPipeline = args[1];
-            if (this.props.currentPipeline === "All") {
-
-                this.props.setCurrentPipeline(this.props.pipelines!.map((elem, index) => (elem === selectedPipeline ? "" : elem)));
+            if (this.props.currentPipeline === "All" || !this.props.currentPipeline.includes("")) {
+                this.props.setCurrentPipeline(this.props.pipelines!.map((elem, index) => (elem === selectedPipeline ? elem : "")));
             } else {
                 const selectedIndexPosition = this.props.pipelines!.indexOf(selectedPipeline);
                 if (this.props.currentPipeline[selectedIndexPosition] === "") {
@@ -188,21 +171,21 @@ class SunburstChart extends React.Component<Props, State> {
         }
     }
 
-
     handleClickOperator(...args: any[]) {
         if (args[1]) {
             const selectedOperator = args[1][0];
             const selectedOperatorPipeline = args[1][1];
-            if (this.props.currentOperator === "All") {
-                this.props.setCurrentOperator(this.props.operators!.filter(e => e !== selectedOperator));
+            if (this.props.currentOperator === "All" || !this.props.currentOperator.includes("")) {
+                this.props.setCurrentOperator(this.props.operators!.map((elem, index) => (elem === selectedOperator ? elem : "")));
             } else {
-                if (this.props.currentOperator.includes(selectedOperator)) {
-                    this.props.setCurrentOperator(this.props.currentOperator.filter(e => e !== selectedOperator));
-                } else {
+                const selectedIndexPosition = this.props.operators!.indexOf(selectedOperator);
+                if (this.props.currentOperator[selectedIndexPosition] === "") {
                     if (!this.props.currentPipeline.includes(selectedOperatorPipeline)) {
                         this.handleClickPipeline(undefined, selectedOperatorPipeline);
                     }
-                    this.props.setCurrentOperator(this.props.currentOperator.concat(selectedOperator));
+                    this.props.setCurrentOperator(this.props.currentOperator.map((elem, index) => (index === selectedIndexPosition ? this.props.operators![index] : elem)));
+                } else {
+                    this.props.setCurrentOperator(this.props.currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)));
                 }
             }
         }
@@ -301,7 +284,7 @@ class SunburstChart extends React.Component<Props, State> {
         const visData = this.createVisualizationData();
 
         const pipelinesLegend = () => {
-            return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem ));
+            return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
         }
 
         const spec: VisualizationSpec = {

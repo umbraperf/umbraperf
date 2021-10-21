@@ -6,14 +6,15 @@
     --optionsItemBoxHeight: 75px;
     --mainVisualizationsHeight: 210px;
     --activityHistogramHeight: 84px;
-    --gridCellBoxColor: rgb(245, 245, 245);
+    --backgroundColor: rgb(245, 245, 245);
     --movingTransition: all .5s ease-in-out;
 }
 
 .dashboardGrid{
     padding: var(--outerGridPadding);
-    background-color: white;
+    background-color: var(--backgroundColor);
     transition: var(--movingTransition);
+    height: calc(100% - 2 * var(--outerGridPadding));
 }
 
 .dashboardGridCellItem{
@@ -32,7 +33,7 @@
 }
 
 .dashboardGridCellBox{
-    background-color: var(--gridCellBoxColor);
+    background-color: white;
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
 }

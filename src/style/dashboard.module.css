@@ -14,6 +14,7 @@
     padding: var(--outerGridPadding);
     background-color: var(--backgroundColor);
     transition: var(--movingTransition);
+    height: calc(100% - 2 * var(--outerGridPadding));
 }
 
 .dashboardGridCellItem{

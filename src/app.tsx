@@ -98,6 +98,12 @@ export const topLevelComponents = [
         icon: () => { return (<DashboardIcon />) },
     },
     {
+        path: '/dashboard-multiple-events',
+        sidebarName: 'Dashboard (Multiple Events)',
+        component: DashboardMultipleEvents,
+        icon: () => { return (<ViewStreamIcon />) },
+    },
+    {
         path: '/bar-chart',
         sidebarName: 'Bar Chart',
         component: BarChart,

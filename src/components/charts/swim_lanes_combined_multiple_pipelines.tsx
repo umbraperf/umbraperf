@@ -189,7 +189,9 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
         ];
 
-        return { data: data, chartDataElementPos: chartDataElementPos, chartDataElementNeg: chartDataElementNeg };
+        const mergedBucketsPosNeg = _.sortBy(_.uniq(_.union(chartDataElementPos.buckets, chartDataElementNeg.buckets)));
+
+        return { data: data, mergedBucketsPosNeg: mergedBucketsPosNeg};
     }
 
     createVisualizationSpec() {
@@ -197,19 +199,20 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
         const xTicks = () => {
 
-            //remove 0 values added to fill up in backend for same sized buckets array as second event to show 
-            const bucketsArrayFiltered = visData.chartDataElementPos.buckets.filter(elem => elem > 0);
-            const bucketsArrayFilteredLength = bucketsArrayFiltered.length;
             const numberOfTicks = 20;
 
-            if (bucketsArrayFilteredLength > numberOfTicks) {
+            //remove 0 values added to fill up in backend for same sized buckets array as second event to show, use longer array to include all buckets
+            // const bucketsArrayPosFiltered = visData.chartDataElementPos.buckets.filter(elem => elem > 0);
+            // const bucketsArrayNegFiltered = visData.chartDataElementNeg.buckets.filter(elem => elem > 0);
+            //const bucketsArrayLength = visData.chartDataElementPos.buckets.length > visData.chartDataElementNeg.buckets.length ? visData.chartDataElementPos.buckets.length : visData.chartDataElementNeg.buckets.length;
+            const mergedBucketsPosNegLength = visData.mergedBucketsPosNeg.length;
 
+
+            if (mergedBucketsPosNegLength > numberOfTicks) {
                 let ticks = [];
-
-                const delta = Math.floor(bucketsArrayFilteredLength / numberOfTicks);
-
-                for (let i = 0; i < bucketsArrayFilteredLength; i = i + delta) {
-                    ticks.push(visData.chartDataElementPos.buckets[i]);
+                const delta = Math.floor(mergedBucketsPosNegLength / numberOfTicks);
+                for (let i = 0; i < mergedBucketsPosNegLength; i = i + delta) {
+                    ticks.push(visData.mergedBucketsPosNeg[i]);
                 }
                 return ticks;
             }
@@ -239,12 +242,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     name: "x",
                     type: "point",
                     range: "width",
-                    domain: {
-                        fields: [
-                            { data: "tablePos", field: "buckets" },
-                            { data: "tableNeg", field: "buckets" }
-                        ]
-                    }
+                    domain: visData.mergedBucketsPosNeg,
                 },
                 {
                     name: "y",

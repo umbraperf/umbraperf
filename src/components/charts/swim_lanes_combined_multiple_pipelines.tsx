@@ -37,6 +37,7 @@ interface Props {
 interface State {
     chartId: number,
     width: number,
+    height: number,
 }
 
 
@@ -49,6 +50,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         this.state = {
             chartId: this.props.chartIdCounter,
             width: 0,
+            height: 0,
         };
         this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -90,6 +92,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         this.setState((state, props) => ({
             ...state,
             width: this.elementWrapper.current!.offsetWidth,
+            height: this.elementWrapper.current!.offsetHeight,
+
         }));
 
         if (this.props.csvParsingFinished) {
@@ -153,30 +157,21 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const chartDataElement: model.ISwimlanesCombinedData = {
+        const chartDataElementPos: model.ISwimlanesData = {
             buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).buckets,
             operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operators,
             frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequency,
-            bucketsNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).bucketsNeg,
-            operatorsNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operatorsNeg,
-            frequencyNeg: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequencyNeg,
         }
 
-        const chartDataPos = {
-            buckets: chartDataElement.buckets,
-            operators: chartDataElement.operators,
-            frequency: chartDataElement.frequency,
-        }
-
-        const chartDataNeg = {
-            buckets: chartDataElement.bucketsNeg,
-            operators: chartDataElement.operatorsNeg,
-            frequency: chartDataElement.frequencyNeg,
+        const chartDataElementNeg: model.ISwimlanesData = {
+            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).bucketsNeg,
+            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operatorsNeg,
+            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequencyNeg,
         }
 
         const data = [{
             name: "tablePos",
-            values: chartDataPos,
+            values: chartDataElementPos,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
@@ -185,7 +180,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         },
         {
             name: "tableNeg",
-            values: chartDataNeg,
+            values: chartDataElementNeg,
             transform: [
                 { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
                 { "type": "collect", "sort": { "field": "operators" } },
@@ -194,7 +189,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
         ];
 
-        return { data: data, chartDataElement: chartDataElement };
+        return { data: data, chartDataElementPos: chartDataElementPos, chartDataElementNeg: chartDataElementNeg };
     }
 
     createVisualizationSpec() {
@@ -203,7 +198,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const xTicks = () => {
 
             //remove 0 values added to fill up in backend for same sized buckets array as second event to show 
-            const bucketsArrayFiltered = visData.chartDataElement.buckets.filter(elem => elem > 0);
+            const bucketsArrayFiltered = visData.chartDataElementPos.buckets.filter(elem => elem > 0);
             const bucketsArrayFilteredLength = bucketsArrayFiltered.length;
             const numberOfTicks = 20;
 
@@ -214,7 +209,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 const delta = Math.floor(bucketsArrayFilteredLength / numberOfTicks);
 
                 for (let i = 0; i < bucketsArrayFilteredLength; i = i + delta) {
-                    ticks.push(visData.chartDataElement.buckets[i]);
+                    ticks.push(visData.chartDataElementPos.buckets[i]);
                 }
                 return ticks;
             }
@@ -224,7 +219,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 60,
-            height: this.state.width / 7,
+            height: this.state.height- 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',

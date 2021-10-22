@@ -35,6 +35,7 @@ export interface ChartConfiguration {
     pipelineColorSceme: string;
     disabledColorSceme: string;
     hoverFillOpacity: number;
+    axisTitleFontSizeYCombined: number;
 
 
 }
@@ -55,6 +56,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartXTitle: 'Time (ms)',
     activityHistogramXTitle: 'Time (ms)',
     axisTitleFontSize: 9,
+    axisTitleFontSizeYCombined: 7,
     activityHistogramXLabelFontSize: 7,
     axisLabelFontSize: 8,
     activityHistogramXLabelSeparation: 2,

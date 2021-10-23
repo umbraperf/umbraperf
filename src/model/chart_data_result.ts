@@ -67,7 +67,8 @@ export interface IBarChartActivityHistogramData {
 
 export interface ISunburstChartData {
     operator: Array<string>;
-    parent: Array<string | null>;
-    operatorOccurrences: Array<number | null>; 
-    pipelineOccurrences: Array<number | null>; 
+    pipeline: Array<string | null>;
+    opOccurrences: Array<number | null>; 
+    pipeOccurrences: Array<number | null>; 
+
 }

@@ -219,15 +219,22 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             signals: [
                 {
                     name: "detailDomainRelease"
+                },
+                { //TODO cursor on selection 
+                    name: "cursor",
+                    value: "default",
+                    on: [
+                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "crosshair" } },
+                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "crosshair" } },
+                        { events: "group:mouseout", update: { value: "default" } }
+                    ]
                 }
             ],
 
             marks: [
                 {
                     type: "group",
-
                     name: "overview",
-
                     encode: {
                         enter: {
                             height: { signal: "height" },
@@ -307,14 +314,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             ]
                         },
-                        // {
-                        //     name: "calcXScale0",
-                        //     init: "scale('xscale'," + selection0 + ")"
-                        // },
-                        // {
-                        //     name: "calcXScale1",
-                        //     init: "scale('xscale'," + selection1 + ")"
-                        // },
                     ],
 
                     scales: [

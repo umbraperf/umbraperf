@@ -225,9 +225,7 @@ class SwimLanes extends React.Component<Props, State> {
             {
                name: "color",
                type: "ordinal",
-               range: {
-                  scheme: model.chartConfiguration.getOperatorColorScheme(model.ChartType.SWIM_LANES),
-               },
+               range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                domain: this.props.operators,
             }
          ],

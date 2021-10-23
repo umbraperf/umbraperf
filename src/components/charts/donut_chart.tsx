@@ -24,6 +24,7 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
     pipelines: Array<string> | undefined;
+    operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
@@ -253,7 +254,7 @@ class DonutChart extends React.Component<Props, State> {
                     "name": "color",
                     "type": "ordinal",
                     "domain": { "data": "table", "field": "pipeline" },
-                    "range": { "scheme": model.chartConfiguration.getOperatorColorScheme(model.ChartType.DONUT_CHART) } //old: category20c
+                    "range": model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                 }
             ],
 
@@ -350,6 +351,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     pipelines: state.pipelines,
+    operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });
 

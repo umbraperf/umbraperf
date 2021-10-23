@@ -19,7 +19,6 @@ interface Props {
    csvParsingFinished: boolean;
    currentChart: string;
    currentEvent: string;
-   currentRequest: model.RestQueryType | undefined;
    events: Array<string> | undefined;
    operators: Array<string> | undefined;
    pipelines: Array<string> | undefined;
@@ -355,7 +354,6 @@ const mapStateToProps = (state: model.AppState) => ({
    csvParsingFinished: state.csvParsingFinished,
    currentChart: state.currentChart,
    currentEvent: state.currentEvent,
-   currentRequest: state.currentRequest,
    events: state.events,
    operators: state.operators,
    pipelines: state.pipelines,

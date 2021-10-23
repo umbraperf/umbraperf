@@ -195,6 +195,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
     column_for_time: usize,
     bucket_size: f64,
     pipelines: Vec<&str>,
+    operators: Vec<&str>,
     events: Vec<&str>) -> RecordBatch {
 
         let mut vec = Vec::new();
@@ -209,7 +210,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
         let mut vec5 = Vec::new();
         let mut vec6 = Vec::new();
 
-        let first_filter_batch = rel_freq_with_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone(), Vec::new());
+        let first_filter_batch = rel_freq_with_pipelines(&f_batch, column_for_operator, column_for_time, bucket_size, pipelines.clone(), operators.clone());
 
         let column1 = first_filter_batch.column(0)
         .as_any()
@@ -240,7 +241,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
         vec.push(events[1]);
 
         let batch = analyze::filter_with(1, vec, &batch);
-        let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, Vec::new());
+        let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, operators);
 
         let column4 = second_filter_batch.column(0)
         .as_any()

@@ -191,7 +191,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
         const mergedBucketsPosNeg = _.sortBy(_.uniq(_.union(chartDataElementPos.buckets, chartDataElementNeg.buckets)));
 
-        return { data: data, mergedBucketsPosNeg: mergedBucketsPosNeg};
+        return { data: data, mergedBucketsPosNeg: mergedBucketsPosNeg };
     }
 
     createVisualizationSpec() {
@@ -222,7 +222,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.state.width - 60,
-            height: this.state.height- 10,
+            height: this.state.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -273,7 +273,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     name: "colorPos",
                     type: "ordinal",
                     range: {
-                        scheme: model.chartConfiguration.getOperatorColorScheme(),
+                        scheme: model.chartConfiguration.getOperatorColorScheme(this.props.absoluteValues ? model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES),
                     },
                     domain: this.props.operators,
                 },
@@ -281,7 +281,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     name: "colorNeg",
                     type: "ordinal",
                     range: {
-                        scheme: model.chartConfiguration.getOperatorColorScheme(20),
+                        scheme: model.chartConfiguration.getOperatorColorScheme(this.props.absoluteValues ? model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, 10),
                     },
                     domain: this.props.operators,
                 }

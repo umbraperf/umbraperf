@@ -334,26 +334,8 @@ class SunburstChart extends React.Component<Props, State> {
                     name: "colorOperators",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: { scheme: model.chartConfiguration.operatorColorSceme }
+                    range: { scheme: model.chartConfiguration.getOperatorColorScheme(model.ChartType.SUNBURST_CHART) }
                 },
-                /*                 {
-                                    name: "colorPipelines",
-                                    type: "ordinal",
-                                    domain: this.props.pipelines,
-                                    range: { scheme: model.chartConfiguration.pipelineColorSceme }
-                                },
-                                {
-                                    name: "colorPipelinesDisabled",
-                                    type: "ordinal",
-                                    domain: this.props.pipelines,
-                                    range: { scheme: model.chartConfiguration.disabledColorSceme }
-                                }, */
-                // {
-                //     name: "colorOperatorsDisabled",
-                //     type: "ordinal",
-                //     domain: this.props.operators,
-                //     range: { scheme: model.chartConfiguration.disabledColorSceme }
-                // }
             ],
 
             marks: [

@@ -1,3 +1,4 @@
+import * as model from "./index";
 
 export interface ChartConfiguration {
     titlePadding: number;
@@ -31,12 +32,9 @@ export interface ChartConfiguration {
     sunburstChartValueLabelFontSize: number;
     barChartValueLabelFontSize: number;
     valueLabelFont: string;
-    operatorColorSceme: string;
-    pipelineColorSceme: string;
-    disabledColorSceme: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (saturationOffset?: number) => Array<string>;
+    getOperatorColorScheme: (chartType: model.ChartType, saturationOffset?: number) => string | Array<string>;
 
 
 }
@@ -90,24 +88,36 @@ export let chartConfiguration: ChartConfiguration = {
     },
 
     //Color scale:
-    operatorColorSceme: "tableau20",
-    pipelineColorSceme: "oranges",
-    disabledColorSceme: "greys",
-    getOperatorColorScheme: (saturationOffset) => {
-        const ajustedSceme = operatorColorSceme.map((elem) => {
-            if (saturationOffset) {
-                elem[1] = (elem[1] as number) - saturationOffset;
-            }
-            if (elem[1] > 100) {
-                elem[1] = 100;
-            } else if (elem[1] < 0) {
-                elem[1] = 0;
-            }
-            elem[1] = `${elem[1]}%`
-            elem[2] = `${elem[2]}%`
-            return `hsl(${elem.join()})`;
-        });
-        return ajustedSceme
+    getOperatorColorScheme: (charttype, saturationOffset) => {
+        switch (charttype) {
+
+            case model.ChartType.BAR_CHART:
+            case model.ChartType.SUNBURST_CHART:
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
+                return "tableau20";
+
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                const ajustedSceme = operatorColorSceme.map((elem) => {
+                    if (saturationOffset) {
+                        elem[1] = (elem[1] as number) - saturationOffset;
+                    }
+                    if (elem[1] > 100) {
+                        elem[1] = 100;
+                    } else if (elem[1] < 0) {
+                        elem[1] = 0;
+                    }
+                    elem[1] = `${elem[1]}%`
+                    elem[2] = `${elem[2]}%`
+                    return `hsl(${elem.join()})`;
+                });
+                return ajustedSceme;
+
+            default:
+                return "tableau20";
+        }
+
     },
 
     //Hover behaviour: 

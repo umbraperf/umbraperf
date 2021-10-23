@@ -18,7 +18,6 @@ interface Props {
     csvParsingFinished: boolean;
     currentChart: string;
     currentMultipleEvent: [string, string] | "Default";
-    currentRequest: model.RestQueryType | undefined;
     events: Array<string> | undefined;
     operators: Array<string> | undefined;
     chartIdCounter: number;
@@ -201,12 +200,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
             const numberOfTicks = 20;
 
-            //remove 0 values added to fill up in backend for same sized buckets array as second event to show, use longer array to include all buckets
-            // const bucketsArrayPosFiltered = visData.chartDataElementPos.buckets.filter(elem => elem > 0);
-            // const bucketsArrayNegFiltered = visData.chartDataElementNeg.buckets.filter(elem => elem > 0);
-            //const bucketsArrayLength = visData.chartDataElementPos.buckets.length > visData.chartDataElementNeg.buckets.length ? visData.chartDataElementPos.buckets.length : visData.chartDataElementNeg.buckets.length;
             const mergedBucketsPosNegLength = visData.mergedBucketsPosNeg.length;
-
 
             if (mergedBucketsPosNegLength > numberOfTicks) {
                 let ticks = [];
@@ -476,7 +470,6 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentMultipleEvent: state.currentMultipleEvent,
-    currentRequest: state.currentRequest,
     events: state.events,
     operators: state.operators,
     chartIdCounter: state.chartIdCounter,

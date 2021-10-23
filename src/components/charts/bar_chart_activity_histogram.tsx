@@ -224,7 +224,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                     name: "cursor",
                     value: "default",
                     on: [
-                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "pointer" } },
+                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "crosshair" } },
+                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "crosshair" } },
                         { events: "group:mouseout", update: { value: "default" } }
                     ]
                 }

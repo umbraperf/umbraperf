@@ -129,7 +129,9 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
 
     let mut pip_builder = Vec::new();
     let mut op_builder = Vec::new();
-    let mut result_builder = Vec::new();
+    let mut pipecount = Vec::new();
+    let mut opcount = Vec::new();
+
 
     for entry in hashmap {
         let mut total = 0.;
@@ -139,7 +141,8 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
             let count = inner.1;
             pip_builder.push(pipeline);
             op_builder.push(operator);
-            result_builder.push(count);
+            pipecount.push(0.);
+            opcount.push(count);
             total += inner.1; 
         }
         let pipeline = "inner";
@@ -147,20 +150,23 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
         let count = total;
         pip_builder.push(pipeline);
         op_builder.push(operator);
-        result_builder.push(count);
+        pipecount.push(count);
+        opcount.push(0.);
     }
 
-    let builder = Float64Array::from(result_builder);
+    let builder_pipe = Float64Array::from(pipecount);
+    let builder_op = Float64Array::from(opcount);
     let pip_arr = StringArray::from(pip_builder);
     let op_arr = StringArray::from(op_builder);
 
     let field1 = Field::new("pipeline", DataType::Utf8, false);
     let field2 = Field::new("operator", DataType::Utf8, false);
-    let result_field = Field::new("count", DataType::Float64, false);
+    let result_field1 = Field::new("pipecount", DataType::Float64, false);
+    let result_field2 = Field::new("opcount", DataType::Float64, false);
 
-    let schema = Schema::new(vec![field1, field2, result_field]);
+    let schema = Schema::new(vec![field1, field2, result_field1, result_field2]);
 
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(pip_arr), Arc::new(op_arr), Arc::new(builder)]).unwrap(); 
+    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(pip_arr), Arc::new(op_arr), Arc::new(builder_pipe), Arc::new(builder_op)]).unwrap(); 
 
     print_to_js_with_obj(&format!("{:?}", batch).into());
 

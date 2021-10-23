@@ -56,6 +56,8 @@ export function createRestQuery(query: QueryVariant) {
     const operators = (query.data as any).operators && (query.data as any).operators.length > 0 ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : ' ';
     const operatorsFilter = operators && `/?operator="${operators}"`;
 
+    console.log(query.type);
+
     switch (query.type) {
         case RestQueryType.GET_EVENTS:
             return 'ev_name/distinct?ev_name/sort?ev_name';
@@ -84,10 +86,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
             return `bucket/absfreq${eventFilter}/absfreq?ev_name,${bucketSize}`;
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
-            // const queryInnerCircle: string = `parent/pipeline/pipeOccurrences/occurrences${eventFilter}${timeFilter}/count?pipeline/sort?pipeline/add_column?"inner",parent/rename?count,pipeOccurrences/add_column?0.0,occurrences`;
-            // const queryOuterCircles: Array<string> = (((query.data as any).allPipelines) as Array<string>).map(elem => (`%%parent/operator/pipeOccurrences/occurrences${eventFilter}${timeFilter}/?pipeline="${elem}"/count?operator/sort?operator/add_column?"${elem}",parent/add_column?0.0,pipeOccurrences/rename?count,occurrences`));
-            // const completeQuery: string = queryInnerCircle + queryOuterCircles.join("");
-            return `pipeline/operator/opcount/pipecount/${eventFilter}${timeFilter}/sunburst?pipeline`;
+            return `pipeline/operator/opcount/pipecount${eventFilter}${timeFilter}/sunburst?pipeline`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

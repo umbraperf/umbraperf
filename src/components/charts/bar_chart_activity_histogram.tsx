@@ -225,9 +225,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             marks: [
                 {
                     type: "group",
-
                     name: "overview",
-
                     encode: {
                         enter: {
                             height: { signal: "height" },
@@ -307,14 +305,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
                                 }
                             ]
                         },
-                        // {
-                        //     name: "calcXScale0",
-                        //     init: "scale('xscale'," + selection0 + ")"
-                        // },
-                        // {
-                        //     name: "calcXScale1",
-                        //     init: "scale('xscale'," + selection1 + ")"
-                        // },
                     ],
 
                     scales: [

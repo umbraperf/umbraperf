@@ -40,7 +40,6 @@ export type QueryVariant =
     | RestQuery<RestQueryType.other, {}>
     ;
 
-    let reqCounter = 0;
 export function createRestQuery(query: QueryVariant) {
 
     const bucketSize = (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
@@ -56,9 +55,6 @@ export function createRestQuery(query: QueryVariant) {
 
     const operators = (query.data as any).operators && (query.data as any).operators.length > 0 ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : ' ';
     const operatorsFilter = operators && `/?operator="${operators}"`;
-
-    console.log(query.type);
-    console.log(reqCounter++);
 
     switch (query.type) {
         case RestQueryType.GET_EVENTS:

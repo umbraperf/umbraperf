@@ -270,10 +270,18 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     }
                 },
                 {
-                    name: "color",
+                    name: "colorPos",
                     type: "ordinal",
                     range: {
-                        scheme: model.chartConfiguration.operatorColorSceme,
+                        scheme: model.chartConfiguration.getOperatorColorScheme(),
+                    },
+                    domain: this.props.operators,
+                },
+                {
+                    name: "colorNeg",
+                    type: "ordinal",
+                    range: {
+                        scheme: model.chartConfiguration.getOperatorColorScheme(20),
                     },
                     domain: this.props.operators,
                 }
@@ -357,7 +365,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "y1"
                                     },
                                     fill: {
-                                        scale: "color",
+                                        scale: "colorPos",
                                         field: "operators"
                                     },
                                     tooltip: {
@@ -412,7 +420,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "y1"
                                     },
                                     fill: {
-                                        scale: "color",
+                                        scale: "colorNeg",
                                         field: "operators"
                                     },
                                     tooltip: {
@@ -436,7 +444,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "color",
+                fill: "colorPos",
                 title: "Operators",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,

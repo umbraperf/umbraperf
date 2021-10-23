@@ -18,7 +18,6 @@ interface Props {
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
-    currentRequest: model.RestQueryType | undefined;
     events: Array<string> | undefined;
     chartIdCounter: number;
     chartData: model.ChartDataKeyValue,
@@ -68,8 +67,9 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (props.currentEvent !== prevProps.currentEvent
-            || props.chartIdCounter !== prevProps.chartIdCounter) {
+        if (this.props.events &&
+            (props.currentEvent !== prevProps.currentEvent
+                || props.chartIdCounter !== prevProps.chartIdCounter)) {
             return true;
         } else {
             return false;
@@ -449,7 +449,6 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,
-    currentRequest: state.currentRequest,
     events: state.events,
     chartIdCounter: state.chartIdCounter,
     chartData: state.chartData,

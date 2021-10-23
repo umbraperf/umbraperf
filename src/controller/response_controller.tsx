@@ -252,10 +252,14 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SUNBURST_CHART,
                     data: {
-                        operator: resultObject.resultTable.getColumn('pipeline').toArray(),
-                        parent: resultObject.resultTable.getColumn('parent').toArray(),
-                        operatorOccurrences: resultObject.resultTable.getColumn('occurrences').toArray(),
-                        pipelineOccurrences: resultObject.resultTable.getColumn('pipeOccurrences').toArray(),
+                        operator: resultObject.resultTable.getColumn('operator').toArray(),
+                        pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
+                        opOccurrences: resultObject.resultTable.getColumn('opcount').toArray(),
+                        pipeOccurrences: resultObject.resultTable.getColumn('pipecount').toArray(),
+                        // operator: resultObject.resultTable.getColumn('pipeline').toArray(),
+                        // parent: resultObject.resultTable.getColumn('parent').toArray(),
+                        // operatorOccurrences: resultObject.resultTable.getColumn('occurrences').toArray(),
+                        // pipelineOccurrences: resultObject.resultTable.getColumn('pipeOccurrences').toArray(),
                     }
                 });
             break;

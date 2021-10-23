@@ -37,7 +37,7 @@ function EventsButtons(props: Props) {
         if (props.multipleEvents) {
             const newMultipleEventsTuple: [string, string] = [props.currentMultipleEvent[1], event];
             props.setCurrentMultipleEvent(newMultipleEventsTuple);
-            props.setCurrentEvent(props.currentMultipleEvent[1]);
+            props.setCurrentEvent(event);
         } else {
             props.setCurrentEvent(event);
         }

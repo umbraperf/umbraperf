@@ -384,6 +384,21 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     ]
                 },
                 {
+                    name: "backgroundNeg",
+                    type: "rect",
+                    encode: {
+                        enter: {
+                            x: { value: 0 },
+                            x2: { signal: "width" },
+                            y: { signal: "height/2" },
+                            y2: { signal: "height" },
+                            fill: { value: "#f0f0f0" },
+                            opacity: { value: 0.5 },
+                            zindex: 0,
+                        }
+                    }
+                },
+                {
                     type: "group",
                     from: {
                         facet: {

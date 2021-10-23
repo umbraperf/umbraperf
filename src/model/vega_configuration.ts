@@ -36,6 +36,7 @@ export interface ChartConfiguration {
     disabledColorSceme: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
+    getOperatorColorScheme: (saturationOffset?: number) => Array<string>;
 
 
 }
@@ -92,8 +93,47 @@ export let chartConfiguration: ChartConfiguration = {
     operatorColorSceme: "tableau20",
     pipelineColorSceme: "oranges",
     disabledColorSceme: "greys",
+    getOperatorColorScheme: (saturationOffset) => {
+        const ajustedSceme = operatorColorSceme.map((elem) => {
+            if (saturationOffset) {
+                elem[1] = (elem[1] as number) - saturationOffset;
+            }
+            if (elem[1] > 100) {
+                elem[1] = 100;
+            } else if (elem[1] < 0) {
+                elem[1] = 0;
+            }
+            elem[1] = `${elem[1]}%`
+            elem[2] = `${elem[2]}%`
+            return `hsl(${elem.join()})`;
+        });
+        return ajustedSceme
+    },
 
     //Hover behaviour: 
     hoverFillOpacity: 0.5,
 
 }
+
+const operatorColorSceme: Array<Array<number | string>> = [
+    [205, 70.6, 41.4],
+    [214, 55.8, 79.6],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+    // [],
+]

@@ -28,6 +28,7 @@ mod exec {
     pub mod basic {
         pub mod analyze;
         pub mod count;
+        pub mod kpis;
     }
     pub mod rest_api;
 }

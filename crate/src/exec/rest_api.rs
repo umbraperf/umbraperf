@@ -2,12 +2,7 @@ use std::usize;
 
 use arrow::record_batch::RecordBatch;
 
-use crate::{
-    exec::freq::rel_freq,
-    get_query_from_cache, insert_query_to_cache,
-    record_batch_util::send_record_batch_to_js,
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::convert},
-};
+use crate::{exec::{basic::kpis, freq::rel_freq}, get_query_from_cache, insert_query_to_cache, record_batch_util::send_record_batch_to_js, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::convert}};
 
 use super::{basic::{analyze, count}, freq::abs_freq::{self, abs_freq_of_event}};
 
@@ -323,6 +318,9 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
         let params = split[1];
 
         match operator {
+            "sunburst" => {
+                record_batch = count::count_rows_over_double(&record_batch, 3,0);
+            }
             "rename" => {
                 record_batch = rename(&record_batch, params);
             }
@@ -336,10 +334,10 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
             "max(time)" => {
                 print_to_js_with_obj(&format!("{:?}", "This").into());
                 record_batch =
-                    count::max_execution_time(&record_batch, find_name("time", &record_batch));
+                    kpis::max_execution_time(&record_batch, find_name("time", &record_batch));
             }
             "relative" => {
-                record_batch = count::relative(
+                record_batch = kpis::relative(
                     &record_batch,
                     find_name("operator", &record_batch),
                     find_name("operator", &record_batch),
@@ -439,6 +437,7 @@ fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     print_to_js_with_obj(&format!("{:?}", restful_string).into());
+
 
     if query_already_calculated(restful_string) {
         return;

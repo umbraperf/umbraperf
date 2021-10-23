@@ -34,9 +34,7 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (chartType: model.ChartType, saturationOffset?: number) => string | Array<string>;
-
-
+    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => object | Array<string>;
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -88,35 +86,35 @@ export let chartConfiguration: ChartConfiguration = {
     },
 
     //Color scale:
-    getOperatorColorScheme: (charttype, saturationOffset) => {
-        switch (charttype) {
+    getOperatorColorScheme: (domainLength, higSaturation) => {
 
-            case model.ChartType.BAR_CHART:
-            case model.ChartType.SUNBURST_CHART:
-            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
-            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                return "tableau20";
+        const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
 
-            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
-            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                const ajustedSceme = operatorColorSceme.map((elem) => {
-                    if (saturationOffset) {
-                        elem[1] = (elem[1] as number) - saturationOffset;
-                    }
-                    if (elem[1] > 100) {
-                        elem[1] = 100;
-                    } else if (elem[1] < 0) {
-                        elem[1] = 0;
-                    }
-                    elem[1] = `${elem[1]}%`
-                    elem[2] = `${elem[2]}%`
-                    return `hsl(${elem.join()})`;
-                });
-                return ajustedSceme;
+        const parsedColorValueRange = colorValueRange.map((elem) => {
+            const parsedElem: [string, string, string] = ["", "", ""];
 
-            default:
-                return "tableau20";
-        }
+            parsedElem[0] = `${elem[0]}`;
+            parsedElem[2] = `${elem[2]}%`;
+
+            if (higSaturation) {
+                const saturationOffset = 20;
+                const originalSaturation = elem[1];
+                let adjustedSaturation = originalSaturation - saturationOffset;
+                if (adjustedSaturation > 100) {
+                    adjustedSaturation = 100;
+                } else if (adjustedSaturation < 0) {
+                    adjustedSaturation = 0;
+                }
+                parsedElem[1] = `${adjustedSaturation}%`;
+
+            } else {
+                parsedElem[1] = `${elem[1]}%`;
+            }
+
+            return `hsl(${parsedElem.join()})`;
+        });
+
+        return parsedColorValueRange;
 
     },
 
@@ -125,25 +123,25 @@ export let chartConfiguration: ChartConfiguration = {
 
 }
 
-const operatorColorSceme: Array<Array<number | string>> = [
-    [205, 70.6, 41.4],
-    [214, 55.8, 79.6],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
-    // [],
+const operatorColorScemeHsl: Array<Array<number>> = [
+    [211, 38, 48],
+    [205, 63, 77],
+    [30, 92, 53],
+    [31, 100, 74],
+    [114, 37, 46],
+    [110, 49, 65],
+    [48, 70, 42],
+    [46, 85, 65],
+    [177, 39, 43],
+    [174, 30, 63],
+    [0, 72, 62],
+    [3, 100, 80],
+    [11, 5, 45],
+    [17, 9, 70],
+    [339, 55, 64],
+    [341, 91, 87],
+    [317, 27, 59],
+    [316, 37, 74],
+    [22, 25, 50],
+    [19, 40, 75],
 ]

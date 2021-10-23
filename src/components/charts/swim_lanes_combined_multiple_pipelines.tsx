@@ -74,6 +74,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
+            this.props.operators &&
             (props.chartIdCounter !== prevProps.chartIdCounter ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 !_.isEqual(props.operators, prevProps.operators) ||

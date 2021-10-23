@@ -137,6 +137,7 @@ fn rel_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> Re
     let end = split_at_and(split[after_excl_mark]);
     let pipeline_vec = split_at_comma(end[0]);
     let event_vec = split_at_comma(end[1]);
+    let operator_vec = split_at_comma(end[2]);
 
     let before_colon = 0;
     let after_colon = 1;
@@ -154,6 +155,7 @@ fn rel_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> Re
         find_name(time, &record_batch),
         bucket_size,
         pipeline_vec,
+        operator_vec,
         event_vec,
     );
 }
@@ -167,6 +169,7 @@ fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> Re
     let end = split_at_and(split[after_excl_mark]);
     let pipeline_vec = split_at_comma(end[0]);
     let event_vec = split_at_comma(end[1]);
+    let operator_vec = split_at_comma(end[2]);
 
     let before_colon = 0;
     let after_colon = 1;
@@ -184,6 +187,7 @@ fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> Re
         find_name(time, &record_batch),
         bucket_size,
         pipeline_vec,
+        operator_vec,
         event_vec,
     );
 }

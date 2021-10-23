@@ -253,7 +253,7 @@ class DonutChart extends React.Component<Props, State> {
                     "name": "color",
                     "type": "ordinal",
                     "domain": { "data": "table", "field": "pipeline" },
-                    "range": { "scheme": model.chartConfiguration.pipelineColorSceme } //old: category20c
+                    "range": { "scheme": model.chartConfiguration.getOperatorColorScheme(model.ChartType.DONUT_CHART) } //old: category20c
                 }
             ],
 

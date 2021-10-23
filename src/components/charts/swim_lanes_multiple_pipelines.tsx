@@ -82,7 +82,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
             this.props.operators &&
-            (props.chartIdCounter !== prevProps.chartIdCounter || 
+            (props.chartIdCounter !== prevProps.chartIdCounter ||
                 props.currentEvent !== prevProps.currentEvent ||
                 props.currentBucketSize !== prevProps.currentBucketSize ||
                 !_.isEqual(props.operators, prevProps.operators) ||
@@ -290,7 +290,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     name: "color",
                     type: "ordinal",
                     range: {
-                        scheme: model.chartConfiguration.operatorColorSceme,
+                        scheme: model.chartConfiguration.getOperatorColorScheme(this.props.absoluteValues ? model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES),
                     },
                     domain: this.props.operators,
                 }

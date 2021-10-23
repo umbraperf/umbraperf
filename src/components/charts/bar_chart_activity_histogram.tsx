@@ -219,6 +219,14 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             signals: [
                 {
                     name: "detailDomainRelease"
+                },
+                { //TODO cursor on selection 
+                    name: "cursor",
+                    value: "default",
+                    on: [
+                        { events: [{ type: "mouseover", marktype: "group" }, { type: "mouseover", markname: "bars" }], update: { value: "pointer" } },
+                        { events: "group:mouseout", update: { value: "default" } }
+                    ]
                 }
             ],
 

@@ -154,10 +154,10 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
         opcount.push(0.);
     }
 
-    let builder_pipe = Float64Array::from(pipecount);
-    let builder_op = Float64Array::from(opcount);
     let pip_arr = StringArray::from(pip_builder);
     let op_arr = StringArray::from(op_builder);
+    let builder_pipe = Float64Array::from(pipecount);
+    let builder_op = Float64Array::from(opcount);
 
     let field1 = Field::new("pipeline", DataType::Utf8, false);
     let field2 = Field::new("operator", DataType::Utf8, false);

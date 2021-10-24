@@ -9,7 +9,7 @@ use arrow::{
 use crate::{exec::{basic::{
         analyze::{find_unique_string, sort_batch},
         filter,
-    }, freq::freq::create_freq_bucket}, utils::print_to_cons::print_to_js_with_obj};
+    }, freq::freq::create_freq_bucket}};
 
 use super::freq;
 

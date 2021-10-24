@@ -1,6 +1,6 @@
 use js_sys::Uint8Array;
 use std::io::Result;
-use std::io::{Read, Seek, SeekFrom};
+use std::io::{Read};
 
 use crate::bindings;
 

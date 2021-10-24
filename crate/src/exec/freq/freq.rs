@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
-use arrow::{array::{Array, Float64Array, GenericStringArray, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Schema}, ipc::Footer, record_batch::RecordBatch};
+use arrow::{array::{Float64Array, GenericStringArray, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Schema}, record_batch::RecordBatch};
 
 use crate::{
     exec::basic::analyze::{find_unique_string, sort_batch},

@@ -1,16 +1,6 @@
-use std::{collections::HashMap, sync::Arc};
-
 use arrow::{
     record_batch::RecordBatch,
 };
-
-use crate::{
-    exec::basic::{
-        analyze::{sort_batch}
-        },
-    get_record_batches,
-};
-
 use super::freq;
 
 pub fn rel_freq_with_pipelines(

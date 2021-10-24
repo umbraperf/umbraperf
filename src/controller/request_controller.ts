@@ -193,6 +193,16 @@ export function requestChartData(controller: RequestController, chartId: number,
                 }), false, chartId);
             break;
 
+        case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+                //TODO 
+            // controller.calculateChartData(
+            //     model.RestQueryType.TODO,
+            //     model.createRestQuery({
+            //         type: model.RestQueryType.TODO,
+            //         data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
+            //     }), false, chartId);
+            break;
+
     }
 
 }

@@ -75,6 +75,6 @@ export interface ISunburstChartData {
 
 export interface IMemoryAccessHeatmapChart {
     buckets: Array<number>,
-    memoryAdressBucket: Array<string>,
+    memoryAdressBuckets: Array<string>,
     occurrences: Array<number>,
 }

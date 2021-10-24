@@ -1,7 +1,5 @@
-import * as model from '../../model';
 import React from 'react';
 import styles from '../../style/dashboard.module.css';
-import { connect } from 'react-redux';
 import DashboardHeader from './dashboard_header';
 import SunburstChart from '../charts/sunburst_chart';
 import SwimLanesCombinedMultiplePipelines from '../charts/swim_lanes_combined_multiple_pipelines';
@@ -60,7 +58,6 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
     }
 
 }
-
 
 export default DashboardMultipleEvents;
 

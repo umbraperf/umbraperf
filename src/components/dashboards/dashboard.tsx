@@ -1,69 +1,27 @@
-import * as model from '../model';
 import React from 'react';
-import styles from '../style/dashboard.module.css';
-import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import EventsButtons from './utils/events_buttons';
-import KpiContainer from './utils/kpi_container';
-import DropdownsOptions from './utils/dropdowns_options';
-import SunburstChart from '../components/charts/sunburst_chart';
-import SwimLanesMultiplePipelines from '../components/charts/swim_lanes_multiple_pipelines';
-import BarChart from '../components/charts/bar_chart';
-import BarChartActivityHistogram from '../components/charts/bar_chart_activity_histogram';
+import styles from '../../style/dashboard.module.css';
+import DashboardHeader from './dashboard_header';
+import SunburstChart from '../charts/sunburst_chart';
+import SwimLanesMultiplePipelines from '../charts/swim_lanes_multiple_pipelines';
+import BarChart from '../charts/bar_chart';
+import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
 
 
-interface Props {
-    csvParsingFinished: boolean;
-    setCurrentChart: (newCurrentChart: string) => void;
-}
 
+class Dashboard extends React.Component<{}, {}> {
 
-class Dashboard extends React.Component<Props, {}> {
-
-
-    constructor(props: Props) {
+    constructor(props: any) {
         super(props);
-    }
-
-    componentDidMount() {
-        this.props.setCurrentChart(model.ChartType.DUMMY);
     }
 
 
     public render() {
 
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
         return <div className={styles.dashboardGrid}>
 
             <div >
-                <Grid container>
-                    <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={5}>
-                            <Box className={styles.dashboardGridCellOptionsBox}>
-                                <EventsButtons />
-                            </Box>
-                        </Grid>
-                    </Box>
-                    <Box clone order={{ xs: 3, lg: 3, xl: 2 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={12} xl={4} >
-                            <Box className={styles.dashboardGridCellOptionsBox}>
-                                <KpiContainer />
-                            </Box>
-                        </Grid>
-                    </Box>
-                    <Box clone order={{ xs: 2, lg: 2, xl: 3 }}>
-                        <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={4} xl={3}>
-                            <Box className={styles.dashboardGridCellOptionsBox}>
-                                <DropdownsOptions />
-                            </Box>
-                        </Grid>
-                    </Box>
-                </Grid>
-
+                <DashboardHeader/>
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
@@ -124,21 +82,8 @@ class Dashboard extends React.Component<Props, {}> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
 
-    csvParsingFinished: state.csvParsingFinished,
-});
-
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-});
-
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default Dashboard;
 
 
 

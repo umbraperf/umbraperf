@@ -58,8 +58,6 @@ pub fn filter_between(
     filter_to: f64,
     batch: &RecordBatch,
 ) -> RecordBatch {
-    print_to_js_with_obj(&format!("{:?}", filter_from).into());
-    print_to_js_with_obj(&format!("{:?}", filter_from < 0.0).into());
 
     if filter_from < 0.0 && filter_to < 0.0 {
         return batch.to_owned();

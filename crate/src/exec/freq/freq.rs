@@ -7,12 +7,13 @@ use crate::{
     get_record_batches,
 };
 
-pub fn create_rel_freq_bucket(
+pub fn create_freq_bucket(
     record_batch: &RecordBatch,
     column_for_operator: usize,
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
     result_builder: Vec<f64>,
+    freq: Freq
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
     let operator_arr = StringArray::from(result_vec_operator);
@@ -24,39 +25,13 @@ pub fn create_rel_freq_bucket(
 
     let field_bucket = Field::new("bucket", DataType::Float64, false);
     let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let result_field = Field::new("relfreq", DataType::Float64, false);
-
-    let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
-
-    RecordBatch::try_new(
-        Arc::new(schema),
-        vec![
-            Arc::new(builder_bucket),
-            Arc::new(operator_arr),
-            Arc::new(builder_result),
-        ],
-    )
-    .unwrap()
-}
-
-pub fn create_abs_freq_bucket(
-    record_batch: &RecordBatch,
-    column_for_operator: usize,
-    result_bucket: Vec<f64>,
-    result_vec_operator: Vec<&str>,
-    result_builder: Vec<f64>,
-) -> RecordBatch {
-    let builder_bucket = Float64Array::from(result_bucket);
-    let operator_arr = StringArray::from(result_vec_operator);
-    let builder_result = Float64Array::from(result_builder);
-
-    // Record Batch
-    let schema = record_batch.schema();
-    let column_for_operator_name = schema.field(column_for_operator).name();
-
-    let field_bucket = Field::new("bucket", DataType::Float64, false);
-    let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let result_field = Field::new("absfreq", DataType::Float64, false);
+    let freq_name;
+    if matches!(freq, Freq::REL) {
+        freq_name = "relfreq";
+    } else {
+        freq_name = "absfreq";
+    }
+    let result_field = Field::new(freq_name, DataType::Float64, false);
 
     let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
 
@@ -218,21 +193,14 @@ pub fn freq_of_pipelines(
 
         column_index += 1;
     }
-    if matches!(freq, Freq::ABS) {
-        return create_abs_freq_bucket(
+
+    return create_freq_bucket(
             &batch,
             column_for_operator,
             result_bucket,
             result_vec_operator,
             result_builder,
-        );
-    } else {
-        return create_rel_freq_bucket(
-            &batch,
-            column_for_operator,
-            result_bucket,
-            result_vec_operator,
-            result_builder,
-        );
-    }
+            freq
+    );
+    
 }

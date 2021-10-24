@@ -1,21 +1,17 @@
 use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
-    array::{Float64Array, StringArray},
-    datatypes::{DataType, Field, Schema},
     record_batch::RecordBatch,
 };
 
 use crate::{
     exec::basic::{
-        analyze::{find_unique_string, sort_batch}
+        analyze::{sort_batch}
         },
     get_record_batches,
 };
 
 use super::freq;
-
-
 
 pub fn rel_freq_with_pipelines(
     batch: &RecordBatch,

@@ -9,7 +9,7 @@ use arrow::{
 use crate::{exec::{basic::{
         analyze::{find_unique_string, sort_batch},
         filter,
-    }, freq::freq::create_abs_freq_bucket}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
+    }, freq::freq::create_freq_bucket}, utils::print_to_cons::print_to_js_with_obj};
 
 use super::freq;
 
@@ -91,15 +91,14 @@ pub fn abs_freq_of_event(
         column_index += 1;
     }
 
-    let batch = create_abs_freq_bucket(
+    let batch = create_freq_bucket(
         &batch,
         column_for_event,
         result_bucket,
         result_vec_event,
         result_builder,
+        freq::Freq::ABS
     );
-
-    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     batch
 }

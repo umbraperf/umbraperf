@@ -16,7 +16,7 @@ import VisualizationContainer from './components/visualization_container';
 import TabPanel from './components/utils/tab_panel';
 import FileUploader from './components/file_uploader';
 import Dashboard from './components/dashboards/dashboard';
-import DashboardMultipleEvents from './components/dashboards/dashboard_mltiple_events';
+import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
 import BarChart from './components/charts/bar_chart';
 import Dummy from './components/testdummy';
 import SwimLanes from './components/charts/swim_lanes';

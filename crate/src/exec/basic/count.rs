@@ -5,11 +5,15 @@ use std::{
 
 use arrow::{
     array::{Array, Float64Array, StringArray},
-    datatypes::{DataType},
+    datatypes::DataType,
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::{analyze::{find_unique_string}, filter::filter_with}, get_record_batches, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch}};
+use crate::{
+    exec::basic::{basic::find_unique_string, filter::filter_with},
+    get_record_batches,
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+};
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let vec = batch
@@ -64,18 +68,15 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
     let unique_batch = find_unique_string(&get_record_batches().unwrap(), column_to_groupby_over);
 
-    // Vector of unique strings
     let vec = unique_batch
         .column(0)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    // For each *unique* string there will be one result, therefore vec.len()
     let mut result_builder = Float64Array::builder(vec.len());
 
     for group in vec {
-        // Filter unique string as filter_str
         let mut filter_str = Vec::new();
         filter_str.push(group.unwrap());
         let group_batch = filter_with(column_to_groupby_over, filter_str, batch);

@@ -1,9 +1,6 @@
 use std::{io::Cursor, sync::Arc};
-
-use arrow::{array::{ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
-
+use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
-
 
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
@@ -94,6 +91,28 @@ pub fn init_record_batches(
     }
 
     vec
+}
+
+fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
+    nested.into_iter().flatten().collect()
+}
+
+pub fn concat_record_batches(vec_batch: Vec<RecordBatch>) -> RecordBatch {
+    let mut vec_fields = Vec::new();
+    let mut vec_columns = Vec::new();
+
+    for batch in vec_batch {
+        vec_fields.push(batch.schema().fields().to_owned());
+        vec_columns.push(batch.columns().to_owned());
+    }
+
+    let fields = flatten::<Field>(vec_fields);
+    let columns = flatten::<Arc<dyn Array>>(vec_columns);
+
+    let schema = Schema::new(fields);
+    let batch = RecordBatch::try_new(Arc::new(schema), columns);
+
+    batch.unwrap()
 }
 
 pub fn create_new_record_batch(field_names: Vec<&str>, data_type: Vec<DataType>, columns_ref: Vec<ArrayRef>) -> RecordBatch {

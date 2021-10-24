@@ -7,7 +7,7 @@ use arrow::{
 };
 
 use crate::{exec::{basic::{
-        analyze::{find_unique_string, sort_batch},
+        basic::{find_unique_string, sort_batch},
         filter,
     }, freq::freq::create_freq_bucket}};
 

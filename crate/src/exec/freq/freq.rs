@@ -3,9 +3,14 @@ use std::{collections::HashMap, sync::Arc};
 use arrow::{array::{Float64Array, GenericStringArray, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Schema}, record_batch::RecordBatch};
 
 use crate::{
-    exec::basic::analyze::{find_unique_string, sort_batch},
+    exec::basic::basic::{find_unique_string, sort_batch},
     get_record_batches,
 };
+
+pub enum Freq {
+    ABS,
+    REL,
+}
 
 pub fn create_freq_bucket(
     record_batch: &RecordBatch,
@@ -44,11 +49,6 @@ pub fn create_freq_bucket(
         ],
     )
     .unwrap()
-}
-
-pub enum Freq {
-    ABS,
-    REL,
 }
 
 pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {

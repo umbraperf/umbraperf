@@ -7,7 +7,7 @@ import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
 
 
-class DashboardMultipleEvents extends React.Component<{}, {}> {
+class DashboardMemoryAccess extends React.Component<{}, {}> {
 
 
     constructor(props: any) {
@@ -19,7 +19,7 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
         return <div className={styles.dashboardGrid}>
 
             <div >
-                <DashboardHeader multipleEvents={true} />
+                <DashboardHeader />
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
@@ -59,7 +59,7 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
 
 }
 
-export default DashboardMultipleEvents;
+export default DashboardMemoryAccess;
 
 
 

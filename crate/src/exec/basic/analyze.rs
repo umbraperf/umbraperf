@@ -7,6 +7,7 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
+use crate::utils::record_batch_util::create_new_record_batch;
 use crate::utils::{record_batch_util::create_record_batch};
 
 fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
@@ -105,41 +106,7 @@ pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
     RecordBatch::try_new(new_schema, record_batch.columns().to_owned()).unwrap()
 }
 
-fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
-    let filter_array = batch
-        .column(column_num)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap()
-        .iter()
-        .map(|value| Some(filter_strs.contains(&value.unwrap())))
-        .collect::<BooleanArray>();
 
-    let mut arrays: Vec<ArrayRef> = Vec::new();
-
-    for idx in 0..batch.num_columns() {
-        let array = batch.column(idx).as_ref();
-
-        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
-
-        arrays.push(filtered);
-    }
-
-    create_record_batch(batch.schema(), arrays)
-}
-
-pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
-    if filter_strs.len() == 1 && filter_strs[0] == "All" {
-        return batch.to_owned();
-    } else if filter_strs.len() == 1 && filter_strs[0] == "Default" {
-        let unique_batch = find_unique_string(batch, 1);
-        let unique_batch = sort_batch(&unique_batch, 0, false);
-        let first_appearance = unique_batch.column(0).as_any().downcast_ref::<StringArray>().unwrap();
-        return filter(column_num, vec![first_appearance.value(0)], batch);
-    } else {
-        return filter(column_num, filter_strs, batch);
-    }
-}
 
 pub fn sort_batch(
     batch: &RecordBatch,
@@ -241,11 +208,7 @@ pub fn add_column_float(
 
     let stri_arr = Float64Array::from(vec_str);
 
-    let result_field = Field::new(name_of_column, DataType::Float64, false);
-
-    let schema = Schema::new(vec![result_field]);
-
-    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
+    let extra_batch = create_new_record_batch(vec![name_of_column], vec![DataType::Float64], vec![Arc::new(stri_arr)]);
 
     concat_record_batches(vec![batch.to_owned(), extra_batch])
 }

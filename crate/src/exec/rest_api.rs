@@ -9,10 +9,7 @@ use crate::{
     utils::{print_to_cons::print_to_js_with_obj, record_batch_util::convert},
 };
 
-use super::{
-    basic::{analyze, count},
-    freq::abs_freq::{self},
-};
+use super::{basic::{analyze, count, filter}, freq::abs_freq::{self}};
 
 fn split_at_excl_mark(params: &str) -> Vec<&str> {
     return params.split_terminator("!").collect::<Vec<&str>>();
@@ -83,7 +80,7 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
             let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
             filter_vec.remove(0);
             return eval_filter(
-                analyze::filter_with(
+                filter::filter_with(
                     find_name(column_str.as_str(), &record_batch),
                     filter_strs,
                     &record_batch,

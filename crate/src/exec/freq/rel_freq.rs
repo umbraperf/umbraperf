@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{array::{Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::{basic::analyze::{self, find_unique_string, sort_batch}}, get_record_batches};
+use crate::{exec::{basic::{analyze::{find_unique_string, sort_batch}, filter}}, get_record_batches};
 
 
 pub fn create_rel_freq_bucket(
@@ -166,7 +166,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
 
         let mut vec = Vec::new();
         vec.push(events[0]);
-        let f_batch = analyze::filter_with(1, vec, batch);
+        let f_batch = filter::filter_with(1, vec, batch);
         
 
         let mut vec1 = Vec::new();
@@ -206,7 +206,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
 
         vec.push(events[1]);
 
-        let batch = analyze::filter_with(1, vec, &batch);
+        let batch = filter::filter_with(1, vec, &batch);
         let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, operators);
 
         let column4 = second_filter_batch.column(0)

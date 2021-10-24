@@ -189,7 +189,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
         }
         ];
 
-        const mergedBucketsPosNeg = _.sortBy(_.uniq(_.union(chartDataElementPos.buckets, chartDataElementNeg.buckets)));
+        const mergedBucketsPosNeg = _.sortBy((_.uniq(_.union(chartDataElementPos.buckets, chartDataElementNeg.buckets))).filter(elem => elem >= 0));
 
         return { data: data, mergedBucketsPosNeg: mergedBucketsPosNeg };
     }

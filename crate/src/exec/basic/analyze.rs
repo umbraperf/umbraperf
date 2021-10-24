@@ -190,6 +190,7 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
     let new_schema = Schema::new(vec![field.to_owned()]);
 
     let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
+    
     return batch;
 }
 

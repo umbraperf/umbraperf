@@ -239,8 +239,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: 500,
-            height: 400,
+            width: 400,
+            height: 300,
             padding: { left: 5, right: 5, top: 10, bottom: 10 },
             autosize: { type: "fit", resize: false },
 

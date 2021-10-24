@@ -15,25 +15,18 @@ import styles from './style/main-app.module.css';
 import VisualizationContainer from './components/visualization_container';
 import TabPanel from './components/utils/tab_panel';
 import FileUploader from './components/file_uploader';
-import Dashboard from './components/dashboard';
-import DashboardMultipleEvents from './components/dashboard_mltiple_events';
-import BarChart from './components/charts/bar_chart';
+import Dashboard from './components/dashboards/dashboard';
+import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
+import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
 import Dummy from './components/testdummy';
-import SwimLanes from './components/charts/swim_lanes';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
-import SwimLanesMultiplePipelines from './components/charts/swim_lanes_multiple_pipelines';
-import SwimLanesCombinedMultiplePipelines from './components/charts/swim_lanes_combined_multiple_pipelines';
-import DonutChart from './components/charts/donut_chart';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
-import BarChartIcon from '@material-ui/icons/BarChart';
 import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
-import MultilineChartIcon from '@material-ui/icons/MultilineChart';
-import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
+import SdStorageIcon from '@material-ui/icons/SdStorage';
 import { StylesProvider, AppBar, createTheme, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -42,10 +35,6 @@ import { Shadows } from '@material-ui/core/styles/shadows';
 const webFileController = new RequestController();
 
 const appColor = {
-    // depreciated blue style:
-    // primary: '#198fb0',
-    // secondary: '#919191',
-
     primary: '#040404',
     secondary: '#d4733e',
     tertiary: '#919191',
@@ -75,13 +64,13 @@ const materialUiTheme = createTheme({
     },
     breakpoints: {
         values: {
-          xs: 0,
-          sm: 600,
-          md: 900,
-          lg: 1200,
-          xl: 1535, //customized from 1536
+            xs: 0,
+            sm: 600,
+            md: 900,
+            lg: 1200,
+            xl: 1535, //customized from 1536
         },
-      },
+    },
 })
 
 export const topLevelComponents = [
@@ -104,41 +93,47 @@ export const topLevelComponents = [
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
-        path: '/bar-chart',
-        sidebarName: 'Bar Chart',
-        component: BarChart,
-        icon: () => { return (<BarChartIcon />) },
+        path: '/dashboard-memory-accesses',
+        sidebarName: 'Dashboard (Memory Accesses)',
+        component: DashboardMemoryAccesses,
+        icon: () => { return (<SdStorageIcon />) },
     },
-    {
-        path: '/swim-lanes',
-        sidebarName: 'Swim Lanes',
-        component: SwimLanes,
-        icon: () => { return (<ViewHeadlineIcon />) },
-    },
+    // {
+    //     path: '/bar-chart',
+    //     sidebarName: 'Bar Chart',
+    //     component: BarChart,
+    //     icon: () => { return (<BarChartIcon />) },
+    // },
+    // {
+    //     path: '/swim-lanes',
+    //     sidebarName: 'Swim Lanes',
+    //     component: SwimLanes,
+    //     icon: () => { return (<ViewHeadlineIcon />) },
+    // },
     {
         path: '/swim-lanes-pipelines',
         sidebarName: 'Swim Lanes (Pipelines)',
         component: SwimLanesPipelines,
         icon: () => { return (<SortIcon />) },
     },
-    {
-        path: '/swim-lanes-multiple-pipelines',
-        sidebarName: 'Swim Lanes (Multiple Pipelines)',
-        component: SwimLanesMultiplePipelines,
-        icon: () => { return (<MultilineChartIcon />) },
-    },
-    {
-        path: '/swim-lanes-multiple-pipelines-combined',
-        sidebarName: 'Swim Lanes (Multiple Events)',
-        component: SwimLanesCombinedMultiplePipelines,
-        icon: () => { return (<ViewStreamIcon />) },
-    },
-    {
-        path: '/donut-chart',
-        sidebarName: 'Donut Chart',
-        component: DonutChart,
-        icon: () => { return (<DonutLargeIcon />) },
-    },
+    // {
+    //     path: '/swim-lanes-multiple-pipelines',
+    //     sidebarName: 'Swim Lanes (Multiple Pipelines)',
+    //     component: SwimLanesMultiplePipelines,
+    //     icon: () => { return (<MultilineChartIcon />) },
+    // },
+    // {
+    //     path: '/swim-lanes-multiple-pipelines-combined',
+    //     sidebarName: 'Swim Lanes (Multiple Events)',
+    //     component: SwimLanesCombinedMultiplePipelines,
+    //     icon: () => { return (<ViewStreamIcon />) },
+    // },
+    // {
+    //     path: '/donut-chart',
+    //     sidebarName: 'Donut Chart',
+    //     component: DonutChart,
+    //     icon: () => { return (<DonutLargeIcon />) },
+    // },
     {
         path: '/dummy',
         sidebarName: 'Dummy',
@@ -206,6 +201,10 @@ export default function App() {
 
                                         <Route exact path="/dashboard-multiple-events" key="/dashboard-multiple-events">
                                             <DashboardMultipleEvents />
+                                        </Route>
+
+                                        <Route exact path="/dashboard-memory-accesses" key="/dashboard-memory-accesses">
+                                            <DashboardMemoryAccesses />
                                         </Route>
 
                                         <Route exact path="/dummy" key="/dummy">

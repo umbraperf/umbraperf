@@ -58,7 +58,13 @@ function EventsButtons(props: Props) {
 
     const buttonColor = (event: string) => {
         if (props.multipleEvents) {
-            return (props.currentMultipleEvent[0] === event || props.currentMultipleEvent[1] === event) ? "primary" : "default";
+            if (props.currentMultipleEvent[1] === event) {
+                return "secondary";
+            } else if (props.currentMultipleEvent[0] === event) {
+                return "primary";
+            } else {
+                return "default";
+            }
         } else {
             return (props.currentEvent === event) ? "primary" : "default";
         }

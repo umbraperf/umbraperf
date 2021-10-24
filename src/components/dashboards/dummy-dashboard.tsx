@@ -1,7 +1,7 @@
-import * as model from '../model';
+import * as model from '../../model';
 import React from "react";
 import _ from "lodash";
-import styles from '../style/dummy-dashboard.module.css';
+import styles from '../../style/dummy-dashboard.module.css';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import QueueIcon from '@material-ui/icons/Queue';

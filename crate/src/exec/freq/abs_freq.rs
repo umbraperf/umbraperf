@@ -256,6 +256,8 @@ pub fn abs_freq_with_pipelines_with_double_events(
     pipelines: Vec<&str>,
     operators: Vec<&str>,
     events: Vec<&str>,
+    from: f64,
+    to: f64
 ) -> RecordBatch {
     let mut vec = Vec::new();
     vec.push(events[0]);
@@ -275,8 +277,8 @@ pub fn abs_freq_with_pipelines_with_double_events(
         bucket_size,
         pipelines.clone(),
         operators.clone(),
-        0.,
-        800.,
+        from,
+        to,
     );
 
     let column1 = first_filter_batch
@@ -318,8 +320,8 @@ pub fn abs_freq_with_pipelines_with_double_events(
         bucket_size,
         pipelines,
         operators,
-        0.,
-        800.,
+        from,
+        to,
     );
 
     let column4 = second_filter_batch

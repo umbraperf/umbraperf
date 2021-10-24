@@ -81,6 +81,7 @@ pub fn rel_freq_with_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>
 ) -> RecordBatch {
+
     let batch = &sort_batch(batch, 2, false);
 
     let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
@@ -113,7 +114,7 @@ pub fn rel_freq_with_pipelines(
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    let mut time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
     time_bucket = f64::trunc(time_bucket );
     let mut column_index = 0;
     

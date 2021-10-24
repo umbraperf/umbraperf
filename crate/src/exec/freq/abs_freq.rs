@@ -143,7 +143,11 @@ pub fn abs_freq_of_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>
 ) -> RecordBatch {
+    print_to_js_with_obj(&format!("{:?}", 1).into());
+
     let batch = &sort_batch(batch, 2, false);
+
+    print_to_js_with_obj(&format!("{:?}", 2).into());
 
     let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
 
@@ -176,7 +180,7 @@ pub fn abs_freq_of_pipelines(
         .unwrap();
 
     
-    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    let mut time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
     time_bucket = f64::trunc(time_bucket );
     let mut column_index = 0;
     

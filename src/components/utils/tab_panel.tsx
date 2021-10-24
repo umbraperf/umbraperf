@@ -43,10 +43,10 @@ function ScrollableTabsButtonForce(props: any) {
             <AppBar position="static" color="default">
                 <Tabs
                     value={props.location.pathname}
-                    variant="scrollable"
                     scrollButtons="on"
-/*                     variant="fullWidth"
- */                    indicatorColor="secondary"
+/*                     variant="scrollable"
+ */                    variant="fullWidth"
+                    indicatorColor="secondary"
                     textColor="secondary"
                     aria-label="scrollable force tabs example"
                     className={csvParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}

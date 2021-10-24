@@ -7,7 +7,7 @@ import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
 
 
-class DashboardMemoryAccess extends React.Component<{}, {}> {
+class DashboardMemoryAccesses extends React.Component<{}, {}> {
 
 
     constructor(props: any) {
@@ -34,18 +34,10 @@ class DashboardMemoryAccess extends React.Component<{}, {}> {
 
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={4} >
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    {/* TODO */}
-                                </div>
-                            </Box>
-                        </Grid>
-                    </Box>
-                    <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
+                                <div className={`${styles.dashboardGridCellChartContainer}`}>
+                                    Heatmaps will be displayed here later...
                                     {/* TODO */}
                                 </div>
                             </Box>
@@ -59,7 +51,7 @@ class DashboardMemoryAccess extends React.Component<{}, {}> {
 
 }
 
-export default DashboardMemoryAccess;
+export default DashboardMemoryAccesses;
 
 
 

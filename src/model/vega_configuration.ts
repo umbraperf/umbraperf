@@ -1,4 +1,3 @@
-import * as model from "./index";
 
 export interface ChartConfiguration {
     titlePadding: number;
@@ -35,6 +34,10 @@ export interface ChartConfiguration {
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
     getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => object | Array<string>;
+    memoryChartYTitle: string,
+    memoryChartXTitle: string,
+    memoryChartYLabelSeparation: number,
+    memoryChartXLabelSeparation: number
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -62,6 +65,10 @@ export let chartConfiguration: ChartConfiguration = {
     barChartYLabelSeparation: 1,
     axisTitleFont: "Segoe UI",
     axisLabelFont: "Arial",
+    memoryChartYTitle: 'Memory Address',
+    memoryChartXTitle: 'Time (ms)',
+    memoryChartYLabelSeparation: 2,
+    memoryChartXLabelSeparation: 2,
 
     //Legend:
     legendTitleFontSize: 9,

@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{array::{Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::{basic::analyze::{self, find_unique_string, sort_batch}, freq::abs_freq::{abs_freq_of_event, abs_freq_of_pipelines}}, get_record_batches};
+use crate::{exec::{basic::analyze::{self, find_unique_string, sort_batch}}, get_record_batches};
 
 
 pub fn create_rel_freq_bucket(
@@ -37,41 +37,6 @@ pub fn create_rel_freq_bucket(
     .unwrap()
 }
 
-pub fn rel_freq_for_each_pipelines(
-    batch: &RecordBatch,
-    column_for_operator: usize,
-    column_for_time: usize,
-    column_for_pipeline: usize,
-    bucket_size: f64,
-) -> Vec<RecordBatch> {
-    let mut vec = Vec::new();
-
-    let unique_pipelines = find_unique_string(batch, column_for_pipeline);
-    let unique_pipelines = sort_batch(&unique_pipelines, 0, false);
-
-    let pipeline_vec = unique_pipelines
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    for pipeline in pipeline_vec {
-        let mut vec_pipeline = Vec::new();
-        vec_pipeline.push(pipeline.unwrap());
-        let output_batch = rel_freq_with_pipelines(
-            &batch,
-            column_for_operator,
-            column_for_time,
-            bucket_size,
-            vec_pipeline,
-            Vec::new()
-        );
-
-        vec.push(output_batch.to_owned());
-    }
-
-    vec
-}
 
 pub fn rel_freq_with_pipelines(
     batch: &RecordBatch,
@@ -133,7 +98,7 @@ pub fn rel_freq_with_pipelines(
             
             for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0));
+                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     if bucket_map.get(operator).unwrap() == &0.0 {
                         let frequenzy = 0.0;
@@ -166,7 +131,7 @@ pub fn rel_freq_with_pipelines(
 
             for operator in vec_operator {
                 let operator = operator.unwrap();
-                result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0) );
+                result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0 );
                 result_vec_operator.push(operator);
                 let frequenzy =
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();

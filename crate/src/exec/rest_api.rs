@@ -68,7 +68,7 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
             filter_vec.remove(0);
 
             return eval_filter(
-                analyze::filter_between(
+                filter::filter_between(
                     find_name(column_str.as_str(), &record_batch),
                     from,
                     to,

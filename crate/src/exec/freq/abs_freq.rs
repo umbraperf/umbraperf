@@ -306,7 +306,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
         vec1.push(column1.value(i));
         vec2.push(column2.value(i));
         vec3.push(column3.value(i));
-        vec4.push(0.0);
+        vec4.push(-1.0);
         vec5.push("");
         vec6.push(0.0);
         i = i + 1;

@@ -122,7 +122,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         //     return false;
         // }
         //TODO remove
-        return this.props.operators ? true : false;
+        return !this.props.operators ? true : false;
     }
 
     public render() {
@@ -135,7 +135,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} spec={this.createVisualizationSpec()} />))}
+                    {this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem)} />))}
                 </div>
             }
         </div>;
@@ -230,7 +230,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         // return data;
     }
 
-    createVisualizationSpec() {
+    createVisualizationSpec(operator: string) {
         //     const visData = this.createVisualizationData();
 
         //     const pipelinesLegend = () => {
@@ -238,84 +238,21 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         //     }
 
         const spec: VisualizationSpec = {
-            "$schema": "https://vega.github.io/schema/vega/v5.json",
-            "description": "A heatmap showing average daily temperatures in Seattle for each hour of the day.",
-            "width": 800,
-            "height": 500,
-            "padding": 5,
+            $schema: "https://vega.github.io/schema/vega/v5.json",
+            width: 500,
+            height: 400,
+            padding: { left: 5, right: 5, top: 10, bottom: 10 },
+            autosize: { type: "fit", resize: false },
 
-            "title": {
-                "text": "Seattle Annual Temperatures",
-                "anchor": "middle",
-                "fontSize": 16,
-                "frame": "group",
-                "offset": 4
+            title: {
+                text: `Memory Access Heatmap: ${operator}`,
+                align: model.chartConfiguration.titleAlign,
+                dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont,
             },
 
-            "signals": [
-                {
-                    "name": "palette", "value": "Viridis",
-                    "bind": {
-                        "input": "select",
-                        "options": [
-                            "Turbo",
-                            "Viridis",
-                            "Magma",
-                            "Inferno",
-                            "Plasma",
-                            "Cividis",
-                            "DarkBlue",
-                            "DarkGold",
-                            "DarkGreen",
-                            "DarkMulti",
-                            "DarkRed",
-                            "LightGreyRed",
-                            "LightGreyTeal",
-                            "LightMulti",
-                            "LightOrange",
-                            "LightTealBlue",
-                            "Blues",
-                            "Browns",
-                            "Greens",
-                            "Greys",
-                            "Oranges",
-                            "Purples",
-                            "Reds",
-                            "TealBlues",
-                            "Teals",
-                            "WarmGreys",
-                            "BlueOrange",
-                            "BrownBlueGreen",
-                            "PurpleGreen",
-                            "PinkYellowGreen",
-                            "PurpleOrange",
-                            "RedBlue",
-                            "RedGrey",
-                            "RedYellowBlue",
-                            "RedYellowGreen",
-                            "BlueGreen",
-                            "BluePurple",
-                            "GoldGreen",
-                            "GoldOrange",
-                            "GoldRed",
-                            "GreenBlue",
-                            "OrangeRed",
-                            "PurpleBlueGreen",
-                            "PurpleBlue",
-                            "PurpleRed",
-                            "RedPurple",
-                            "YellowGreenBlue",
-                            "YellowGreen",
-                            "YellowOrangeBrown",
-                            "YellowOrangeRed"
-                        ]
-                    }
-                },
-                {
-                    "name": "reverse", "value": false, "bind": { "input": "checkbox" }
-                }
-            ],
-
+            // data: visData,
             "data": [
                 {
                     "name": "temperature",
@@ -350,35 +287,38 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "color",
                     "type": "linear",
-                    "range": { "scheme": { "signal": "palette" } },
+                    "range": { "scheme": "Viridis" },
                     "domain": { "data": "temperature", "field": "temperature" },
-                    "reverse": { "signal": "reverse" },
                     "zero": false, "nice": true
                 }
             ],
 
             "axes": [
-                { "orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b" },
                 {
-                    "orient": "left", "scale": "y", "domain": false, "title": "Hour",
-                    "encode": {
-                        "labels": {
-                            "update": {
-                                "text": { "signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 am' : (datum.value - 12) + ':00 pm'" }
-                            }
-                        }
-                    }
-                }
-            ],
-
-            "legends": [
+                    "orient": "bottom",
+                    "scale": "x",
+                    labelOverlap: true,
+                    //values: xTicks(),
+                    title: model.chartConfiguration.memoryChartXTitle,
+                    titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
+                    labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+                },
                 {
-                    "fill": "color",
-                    "type": "gradient",
-                    "title": "Avg. Temp (°C)",
-                    "titleFontSize": 12,
-                    "titlePadding": 4,
-                    "gradientLength": { "signal": "height - 16" }
+                    orient: "left",
+                    scale: "y",
+                    zindex: 1,
+                    title: model.chartConfiguration.memoryChartYTitle,
+                    titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+                    labelOverlap: true,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
                 }
             ],
 
@@ -392,6 +332,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                             "y": { "scale": "y", "field": "hour" },
                             "width": { "value": 5 },
                             "height": { "scale": "y", "band": 1 },
+                            //TODO Tooltip
                             "tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
                         },
                         "update": {
@@ -399,7 +340,18 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                         }
                     }
                 }
-            ]
+            ],
+
+            "legends": [
+                {
+                    "fill": "color",
+                    "type": "gradient",
+                    "title": "Number of Accesses",
+                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                    "titlePadding": 4,
+                    "gradientLength": { "signal": "height - 20" }
+                }
+            ],
         } as VisualizationSpec;
 
         return spec;

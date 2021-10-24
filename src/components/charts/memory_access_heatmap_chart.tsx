@@ -23,8 +23,6 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    pipelines: Array<string> | undefined;
-    pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
@@ -118,7 +116,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
     isComponentLoading(): boolean {
         //TODO enable
-        // if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.pipelines || !this.props.operators) {
+        // if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
         //     return true;
         // } else {
         //     return false;
@@ -422,8 +420,6 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
-    pipelines: state.pipelines,
-    pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });

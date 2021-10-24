@@ -181,7 +181,7 @@ pub fn abs_freq_of_pipelines(
 
     let mut time_bucket;
     if from == -1. {
-        time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
+        time_bucket = 0.;
     } else {
         time_bucket = from;
     }

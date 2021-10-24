@@ -54,7 +54,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             if (events.length > 1) {
                 events.length > store.dispatch({
                     type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
-                    data: [events[0], events[1]],
+                    data: [events[1], events[0]],
                 });
             }
             break;
@@ -256,10 +256,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
                         opOccurrences: resultObject.resultTable.getColumn('opcount').toArray(),
                         pipeOccurrences: resultObject.resultTable.getColumn('pipecount').toArray(),
-                        // operator: resultObject.resultTable.getColumn('pipeline').toArray(),
-                        // parent: resultObject.resultTable.getColumn('parent').toArray(),
-                        // operatorOccurrences: resultObject.resultTable.getColumn('occurrences').toArray(),
-                        // pipelineOccurrences: resultObject.resultTable.getColumn('pipeOccurrences').toArray(),
                     }
                 });
             break;

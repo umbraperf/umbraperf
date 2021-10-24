@@ -7,7 +7,7 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
-use crate::utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch};
+use crate::utils::{record_batch_util::create_record_batch};
 
 fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
     nested.into_iter().flatten().collect()
@@ -248,30 +248,4 @@ pub fn add_column_float(
     let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
 
     concat_record_batches(vec![batch.to_owned(), extra_batch])
-}
-
-pub fn count_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
-    let vec = batch
-        .column(column_index_for_unqiue)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let hash_set = vec
-        .into_iter()
-        .map(|item| item.unwrap())
-        .collect::<HashSet<&str>>()
-        .into_iter()
-        .collect::<Vec<&str>>();
-
-    let array = StringArray::from(hash_set);
-
-    let schema = batch.schema();
-
-    let field = schema.field(column_index_for_unqiue);
-
-    let new_schema = Schema::new(vec![field.to_owned()]);
-
-    let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
-    return batch;
 }

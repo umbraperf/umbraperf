@@ -179,7 +179,7 @@ pub fn abs_freq_of_pipelines(
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let mut time_bucket = 0.;
+    let mut time_bucket;
     if from == -1. {
         time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
     } else {
@@ -229,8 +229,12 @@ pub fn abs_freq_of_pipelines(
                     let operator = operator.unwrap();
                     result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
-                    let frequenzy = bucket_map.get(operator).unwrap();
+                    let bucket = bucket_map.to_owned();
+                    let frequenzy = bucket.get(operator).unwrap();
                     result_builder.push(frequenzy.to_owned());
+                     // reset bucket_map
+                    bucket_map.insert(operator, 0.0);
+                    print_to_js_with_obj(&format!("{:?} {:?} {:?}", operator, time_bucket, frequenzy).into());
                 }
                 time_bucket += bucket_size;
             }

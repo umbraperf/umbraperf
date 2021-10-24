@@ -24,6 +24,7 @@ mod exec {
     pub mod freq {
         pub mod rel_freq;
         pub mod abs_freq;
+        pub mod freq;
     }
     pub mod basic {
         pub mod filter;

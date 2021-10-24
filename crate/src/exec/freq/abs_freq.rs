@@ -346,7 +346,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
 
     let mut i = 0;
     while i < column4.len() {
-        vec1.push(0.0);
+        vec1.push(-1.0);
         vec2.push("");
         vec3.push(0.0);
         vec4.push(column4.value(i));

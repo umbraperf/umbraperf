@@ -14,6 +14,7 @@
     padding: var(--outerGridPadding);
     background-color: var(--backgroundColor);
     transition: var(--movingTransition);
+    overflow-y: auto;
     height: calc(100% - 2 * var(--outerGridPadding));
 }
 
@@ -51,6 +52,11 @@
 .dashboardGridCellChartBoxMainVisualizations{
     composes:dashboardGridCellChartBox;
     height: var(--mainVisualizationsHeight);
+}
+
+.dashboardGridCellChartBoxMemoryChart{
+    composes:dashboardGridCellChartBox;
+    height: auto;
 }
 
 .dashboardGridCellOptionsBox{

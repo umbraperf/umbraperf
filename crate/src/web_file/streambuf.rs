@@ -19,21 +19,6 @@ impl WebFileReader {
     }
 }
 
-impl Seek for WebFileReader {
-    fn seek(&mut self, pos: SeekFrom) -> Result<u64> {
-        self.offset = match pos {
-            SeekFrom::Current(ofs) => self.offset + (self.length - self.offset).min(ofs as u64),
-            SeekFrom::Start(ofs) => self.length.min(ofs as u64),
-            SeekFrom::End(ofs) => self.length - self.length.min(ofs as u64),
-        };
-        Ok(self.offset)
-    }
-
-    fn stream_position(&mut self) -> std::io::Result<u64> {
-        Ok(self.offset)
-    }
-}
-
 // Read implementation for WebFileReader
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {

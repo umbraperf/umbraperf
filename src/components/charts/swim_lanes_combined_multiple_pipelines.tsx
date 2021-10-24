@@ -298,7 +298,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: this.props.currentMultipleEvent[0],
+                    title: this.props.currentMultipleEvent[1],
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -312,7 +312,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                     orient: "left",
                     scale: "yNeg",
                     zindex: 1,
-                    title: this.props.currentMultipleEvent[1],
+                    title: this.props.currentMultipleEvent[0],
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -360,7 +360,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        signal: `{'Event': '${this.props.currentMultipleEvent[0]}', ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
+                                        signal: `{'Event': '${this.props.currentMultipleEvent[1]}', ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },
@@ -430,7 +430,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
                                         field: "operators"
                                     },
                                     tooltip: {
-                                        signal: `{'Event': '${this.props.currentMultipleEvent[1]}', ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
+                                        signal: `{'Event': '${this.props.currentMultipleEvent[0]}', ${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
                                     },
 
                                 },

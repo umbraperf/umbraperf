@@ -25,7 +25,6 @@ export interface AppState {
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
-    multipleChartDataLength: number;
     //TODO remove:
     dashboardState: IDashboardState | undefined;
     currentInterpolation: String;
@@ -56,7 +55,6 @@ export function createDefaultState(): AppState {
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},
-        multipleChartDataLength: -1,
         dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,

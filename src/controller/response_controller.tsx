@@ -141,13 +141,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             }
             dataArray.push(data);
 
-            let multipleChartDataLength = store.getState().multipleChartDataLength + 1;
-
-            store.dispatch({
-                type: model.StateMutationType.SET_MULTIPLECHARTDATALENGTH,
-                data: multipleChartDataLength,
-            });
-
             chartDataElem = model.createChartDataObject(
                 requestId,
                 {
@@ -269,7 +262,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         //             chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
         //             data: {
         //                 buckets: resultObject.resultTable.getColumn('TODO').toArray(),
-        //                 memoryAdressBuckets: resultObject.resultTable.getColumn('TODO').toArray(),
+        //                 memoryAdress: resultObject.resultTable.getColumn('TODO').toArray(),
         //                 occurrences: resultObject.resultTable.getColumn('TODO').toArray(),
 
         //             }

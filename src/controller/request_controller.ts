@@ -218,9 +218,4 @@ export function resetChartDataInStore(chartId: number) {
         type: model.StateMutationType.SET_CHARTDATA,
         data: newChartData,
     });
-    store.dispatch({
-        type: model.StateMutationType.SET_MULTIPLECHARTDATALENGTH,
-        data: -1,
-    });
-
 }

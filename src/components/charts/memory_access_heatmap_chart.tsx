@@ -23,8 +23,6 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    pipelines: Array<string> | undefined;
-    pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
@@ -67,11 +65,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         //TODO 
         if (this.props.events &&
-            this.props.pipelines &&
             this.props.operators &&
             (props.chartIdCounter !== prevProps.chartIdCounter ||
                 props.currentEvent !== prevProps.currentEvent ||
-                !_.isEqual(this.props.pipelines, prevProps.pipelines) ||
                 !_.isEqual(this.props.operators, prevProps.operators) ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
@@ -119,11 +115,14 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.pipelines || !this.props.operators) {
-            return true;
-        } else {
-            return false;
-        }
+        //TODO enable
+        // if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+        //TODO remove
+        return this.props.operators ? true : false;
     }
 
     public render() {
@@ -136,7 +135,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {/* <Vega spec={this.createVisualizationSpec()} /> */}
+                    {this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} spec={this.createVisualizationSpec()} />))}
                 </div>
             }
         </div>;
@@ -231,167 +230,179 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         // return data;
     }
 
-     createVisualizationSpec() {
-    //     const visData = this.createVisualizationData();
+    createVisualizationSpec() {
+        //     const visData = this.createVisualizationData();
 
-    //     const pipelinesLegend = () => {
-    //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
-    //     }
+        //     const pipelinesLegend = () => {
+        //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
+        //     }
 
-    //     const spec: VisualizationSpec = {
-    //         $schema: "https://vega.github.io/schema/vega/v5.json",
-    //         width: this.state.width - 50,
-    //         height: this.state.height - 10,
-    //         padding: { left: 5, right: 5, top: 5, bottom: 5 },
-    //         autosize: { type: "fit", resize: false },
+        const spec: VisualizationSpec = {
+            "$schema": "https://vega.github.io/schema/vega/v5.json",
+            "description": "A heatmap showing average daily temperatures in Seattle for each hour of the day.",
+            "width": 800,
+            "height": 500,
+            "padding": 5,
 
+            "title": {
+                "text": "Seattle Annual Temperatures",
+                "anchor": "middle",
+                "fontSize": 16,
+                "frame": "group",
+                "offset": 4
+            },
 
-    //         title: {
-    //             text: "Shares of Pipelines and Operators",
-    //             align: model.chartConfiguration.titleAlign,
-    //             dy: model.chartConfiguration.titlePadding,
-    //             fontSize: model.chartConfiguration.titleFontSize,
-    //             font: model.chartConfiguration.titleFont,
-    //             subtitle: "Toggle pipelines or operators by click:",
-    //             subtitleFontSize: model.chartConfiguration.subtitleFontSize,
-    //         },
+            "signals": [
+                {
+                    "name": "palette", "value": "Viridis",
+                    "bind": {
+                        "input": "select",
+                        "options": [
+                            "Turbo",
+                            "Viridis",
+                            "Magma",
+                            "Inferno",
+                            "Plasma",
+                            "Cividis",
+                            "DarkBlue",
+                            "DarkGold",
+                            "DarkGreen",
+                            "DarkMulti",
+                            "DarkRed",
+                            "LightGreyRed",
+                            "LightGreyTeal",
+                            "LightMulti",
+                            "LightOrange",
+                            "LightTealBlue",
+                            "Blues",
+                            "Browns",
+                            "Greens",
+                            "Greys",
+                            "Oranges",
+                            "Purples",
+                            "Reds",
+                            "TealBlues",
+                            "Teals",
+                            "WarmGreys",
+                            "BlueOrange",
+                            "BrownBlueGreen",
+                            "PurpleGreen",
+                            "PinkYellowGreen",
+                            "PurpleOrange",
+                            "RedBlue",
+                            "RedGrey",
+                            "RedYellowBlue",
+                            "RedYellowGreen",
+                            "BlueGreen",
+                            "BluePurple",
+                            "GoldGreen",
+                            "GoldOrange",
+                            "GoldRed",
+                            "GreenBlue",
+                            "OrangeRed",
+                            "PurpleBlueGreen",
+                            "PurpleBlue",
+                            "PurpleRed",
+                            "RedPurple",
+                            "YellowGreenBlue",
+                            "YellowGreen",
+                            "YellowOrangeBrown",
+                            "YellowOrangeRed"
+                        ]
+                    }
+                },
+                {
+                    "name": "reverse", "value": false, "bind": { "input": "checkbox" }
+                }
+            ],
 
-    //         data: visData,
+            "data": [
+                {
+                    "name": "temperature",
+                    "url": "data/seattle-weather-hourly-normals.csv",
+                    "format": { "type": "csv", "parse": { "temperature": "number", "date": "date" } },
+                    "transform": [
+                        { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
+                        {
+                            "type": "formula", "as": "day",
+                            "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
+                        }
+                    ]
+                }
+            ],
 
-    //         signals: [
-    //             {
-    //                 name: "pieSize",
-    //                 update: "if(width > 160, 75, 50)"
-    //             },
-    //             {
-    //                 name: "clickPipeline",
-    //                 on: [
-    //                     { events: [{ marktype: "arc", type: "click" }, { marktype: "text", markname: "labels", type: "click" }], update: "if(datum.parent === 'inner', datum.operator, null)" }
-    //                 ]
-    //             },
-    //             {
-    //                 name: "clickOperator",
-    //                 on: [
-    //                     { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', [datum.operator, datum.parent], null)" }
-    //                 ]
-    //             }
-    //         ],
+            "scales": [
+                {
+                    "name": "x",
+                    "type": "time",
+                    "domain": { "data": "temperature", "field": "day" },
+                    "range": "width"
+                },
+                {
+                    "name": "y",
+                    "type": "band",
+                    "domain": [
+                        6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                        0, 1, 2, 3, 4, 5
+                    ],
+                    "range": "height"
+                },
+                {
+                    "name": "color",
+                    "type": "linear",
+                    "range": { "scheme": { "signal": "palette" } },
+                    "domain": { "data": "temperature", "field": "temperature" },
+                    "reverse": { "signal": "reverse" },
+                    "zero": false, "nice": true
+                }
+            ],
 
-    //         scales: [
-    //             {
-    //                 name: "colorOperators",
-    //                 type: "ordinal",
-    //                 domain: this.props.operators,
-    //                 range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-    //             },
-    //         ],
+            "axes": [
+                { "orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b" },
+                {
+                    "orient": "left", "scale": "y", "domain": false, "title": "Hour",
+                    "encode": {
+                        "labels": {
+                            "update": {
+                                "text": { "signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 am' : (datum.value - 12) + ':00 pm'" }
+                            }
+                        }
+                    }
+                }
+            ],
 
-    //         marks: [
-    //             {
-    //                 type: "arc",
-    //                 from: { "data": "tree" },
-    //                 encode: {
-    //                     enter: {
-    //                         x: { signal: "width / 2" },
-    //                         y: { signal: "height / 2" },
-    //                         tooltip: [
-    //                             { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
-    //                             { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
-    //                         ],
-    //                     },
-    //                     update: {
-    //                         startAngle: { field: "a0" },
-    //                         endAngle: { field: "a1" },
-    //                         innerRadius: { field: "r0" },
-    //                         outerRadius: { field: "r1" },
-    //                         stroke: { value: "white" },
-    //                         strokeWidth: { value: 0.5 },
-    //                         zindex: { value: 0 },
-    //                         fillOpacity: { value: 1 },
-    //                         fill: [
-    //                             { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
-    //                             { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
-    //                             { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
-    //                             { test: "datum.operator !== 'inner'", value: this.props.appContext.tertiaryColor } //use grey app color for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
-    //                         ],
-    //                     },
-    //                     hover: {
-    //                         fillOpacity: {
-    //                             value: model.chartConfiguration.hoverFillOpacity,
-    //                         },
-    //                     }
-    //                 }
-    //             },
-    //             {
-    //                 type: "text",
-    //                 name: "labels",
-    //                 from: { data: "tree" },
-    //                 encode: {
-    //                     enter: {
-    //                         fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
-    //                         font: model.chartConfiguration.valueLabelFont,
-    //                         x: { signal: "width/ 2" },
-    //                         y: { signal: "height/ 2" },
-    //                         radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
-    //                         theta: { signal: "(datum['a0'] + datum['a1'])/2" },
-    //                         fill: [
-    //                             { test: "indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: "#fff" },
-    //                             { value: "#000" },
-    //                         ],
-    //                         align: { value: "center" },
-    //                         baseline: { value: "middle" },
-    //                         text: { signal: "datum['pipelineShort']" },
-    //                         fillOpacity: [
-    //                             { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
-    //                             { test: "datum.parent === 'inner'", value: 1 },
-    //                             { value: 0 }
-    //                         ]
-    //                     }
-    //                 }
-    //             }
-    //         ],
-    //         legends: [
-    //             {
-    //                 fill: "colorOperators", //just as dummy
-    //                 labelOffset: -11,
-    //                 title: "Pipelines",
-    //                 orient: "right",
-    //                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
-    //                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
-    //                 values: pipelinesLegend(),
-    //                 rowPadding: 0,
-    //                 encode: {
-    //                     labels: {
-    //                         update: {
-    //                             text: { signal: "truncate(datum.value, 35)" },
-    //                         }
-    //                     }
-    //                 }
-    //             },
-    //             {
-    //                 fill: "colorOperators",
-    //                 title: "Operators",
-    //                 orient: "right",
-    //                 direction: "vertical",
-    //                 rowPadding: 2,
-    //                 columns: 3,
-    //                 columnPadding: 3,
-    //                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
-    //                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
-    //                 symbolSize: model.chartConfiguration.legendSymbolSize,
-    //                 values: this.props.operators,
-    //                 encode: {
-    //                     labels: {
-    //                         update: {
-    //                             text: { signal: "truncate(datum.value, 8)" },
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         ],
-    //     } as VisualizationSpec;
+            "legends": [
+                {
+                    "fill": "color",
+                    "type": "gradient",
+                    "title": "Avg. Temp (°C)",
+                    "titleFontSize": 12,
+                    "titlePadding": 4,
+                    "gradientLength": { "signal": "height - 16" }
+                }
+            ],
 
-    //     return spec;
+            "marks": [
+                {
+                    "type": "rect",
+                    "from": { "data": "temperature" },
+                    "encode": {
+                        "enter": {
+                            "x": { "scale": "x", "field": "day" },
+                            "y": { "scale": "y", "field": "hour" },
+                            "width": { "value": 5 },
+                            "height": { "scale": "y", "band": 1 },
+                            "tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
+                        },
+                        "update": {
+                            "fill": { "scale": "color", "field": "temperature" }
+                        }
+                    }
+                }
+            ]
+        } as VisualizationSpec;
+
+        return spec;
     }
 
 
@@ -409,8 +420,6 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
-    pipelines: state.pipelines,
-    pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
 });

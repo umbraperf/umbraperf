@@ -33,7 +33,6 @@ export enum StateMutationType {
     SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
-    SET_MULTIPLECHARTDATALENGTH = 'SET_MULTIPLECHARTDATALENGTH',
     SET_DASHBOARDSTATE = 'SET_DASHBOARDSTATE',
     SET_CURRENTINTERPOLATION = 'SET_CURRENTINTERPOLATION',
     SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
@@ -64,7 +63,6 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
-    | StateMutation<StateMutationType.SET_MULTIPLECHARTDATALENGTH, number>
     | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
     | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
@@ -174,11 +172,6 @@ export class AppStateMutation {
                     ...state,
                     chartData: mutation.data,
                 };
-            case StateMutationType.SET_MULTIPLECHARTDATALENGTH:
-                return {
-                    ...state,
-                    multipleChartDataLength: mutation.data,
-                }
             case StateMutationType.SET_DASHBOARDSTATE:
                 return {
                     ...state,
@@ -226,7 +219,6 @@ export class AppStateMutation {
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},
-                    multipleChartDataLength: -1,
                     dashboardState: undefined,
                     currentInterpolation: "basis",
                     currentBucketSize: 1,

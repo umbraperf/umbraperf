@@ -1,8 +1,7 @@
 import React from 'react';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
-import SunburstChart from '../charts/sunburst_chart';
-import SwimLanesCombinedMultiplePipelines from '../charts/swim_lanes_combined_multiple_pipelines';
+import MemoryAccessHeatmapChart from '../charts/memory_access_heatmap_chart';
 import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
 
@@ -37,8 +36,7 @@ class DashboardMemoryAccesses extends React.Component<{}, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer}`}>
-                                    Heatmaps will be displayed here later...
-                                    {/* TODO */}
+                                    <MemoryAccessHeatmapChart />
                                 </div>
                             </Box>
                         </Grid>

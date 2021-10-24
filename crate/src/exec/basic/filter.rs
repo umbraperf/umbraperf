@@ -1,6 +1,12 @@
-use arrow::{array::{ArrayRef, BooleanArray, Float64Array, StringArray}, record_batch::RecordBatch};
+use arrow::{
+    array::{ArrayRef, BooleanArray, Float64Array, StringArray},
+    record_batch::RecordBatch,
+};
 
-use crate::{exec::basic::analyze::{find_unique_string, sort_batch}, utils::record_batch_util::create_record_batch};
+use crate::{
+    exec::basic::basic::{find_unique_string, sort_batch},
+    utils::record_batch_util::create_record_batch,
+};
 
 fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
@@ -31,7 +37,11 @@ pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatc
     } else if filter_strs.len() == 1 && filter_strs[0] == "Default" {
         let unique_batch = find_unique_string(batch, 1);
         let unique_batch = sort_batch(&unique_batch, 0, false);
-        let first_appearance = unique_batch.column(0).as_any().downcast_ref::<StringArray>().unwrap();
+        let first_appearance = unique_batch
+            .column(0)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
         return filter(column_num, vec![first_appearance.value(0)], batch);
     } else {
         return filter(column_num, filter_strs, batch);
@@ -44,7 +54,6 @@ pub fn filter_between(
     filter_to: f64,
     batch: &RecordBatch,
 ) -> RecordBatch {
-
     if filter_from < 0.0 && filter_to < 0.0 {
         return batch.to_owned();
     }

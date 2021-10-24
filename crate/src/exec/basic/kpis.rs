@@ -1,8 +1,12 @@
 use std::sync::Arc;
 
-use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
+use arrow::{
+    array::{Array, Float64Array, StringArray},
+    datatypes::DataType,
+    record_batch::RecordBatch,
+};
 
-use crate::exec::basic::{filter};
+use crate::{exec::basic::filter, utils::record_batch_util::create_new_record_batch};
 
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
     let vec = batch
@@ -20,11 +24,11 @@ pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> R
     });
     let result_builder = result_builder.finish();
 
-    let result_field = Field::new("count", DataType::Float64, false);
-
-    let schema = Schema::new(vec![result_field]);
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(result_builder)]).unwrap();
+    let batch = create_new_record_batch(
+        vec!["count"],
+        vec![DataType::Float64],
+        vec![Arc::new(result_builder)],
+    );
 
     batch
 }
@@ -62,11 +66,11 @@ pub fn relative(
 
     let result_builder = result_builder.finish();
 
-    let result_field = Field::new("count", DataType::Float64, false);
-
-    let schema = Schema::new(vec![result_field]);
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(result_builder)]).unwrap();
+    let batch = create_new_record_batch(
+        vec!["count"],
+        vec![DataType::Float64],
+        vec![Arc::new(result_builder)],
+    );
 
     batch
 }

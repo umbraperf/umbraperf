@@ -7,30 +7,8 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
-use crate::utils::record_batch_util::create_new_record_batch;
-use crate::utils::{record_batch_util::create_record_batch};
-
-fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
-    nested.into_iter().flatten().collect()
-}
-
-pub fn concat_record_batches(vec_batch: Vec<RecordBatch>) -> RecordBatch {
-    let mut vec_fields = Vec::new();
-    let mut vec_columns = Vec::new();
-
-    for batch in vec_batch {
-        vec_fields.push(batch.schema().fields().to_owned());
-        vec_columns.push(batch.columns().to_owned());
-    }
-
-    let fields = flatten::<Field>(vec_fields);
-    let columns = flatten::<Arc<dyn Array>>(vec_columns);
-
-    let schema = Schema::new(fields);
-    let batch = RecordBatch::try_new(Arc::new(schema), columns);
-
-    batch.unwrap()
-}
+use crate::utils::record_batch_util::{concat_record_batches, create_new_record_batch};
+use crate::utils::record_batch_util::create_record_batch;
 
 pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
@@ -73,8 +51,6 @@ pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
     RecordBatch::try_new(new_schema, record_batch.columns().to_owned()).unwrap()
 }
 
-
-
 pub fn sort_batch(
     batch: &RecordBatch,
     column_index_to_sort: usize,
@@ -116,13 +92,9 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
     let array = StringArray::from(hash_set);
 
     let schema = batch.schema();
-
     let field = schema.field(column_index_for_unqiue);
+    let batch = create_new_record_batch(vec![field.name()], vec![field.data_type().to_owned()], vec![Arc::new(array)]);
 
-    let new_schema = Schema::new(vec![field.to_owned()]);
-
-    let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
-    
     return batch;
 }
 
@@ -175,7 +147,11 @@ pub fn add_column_float(
 
     let stri_arr = Float64Array::from(vec_str);
 
-    let extra_batch = create_new_record_batch(vec![name_of_column], vec![DataType::Float64], vec![Arc::new(stri_arr)]);
+    let extra_batch = create_new_record_batch(
+        vec![name_of_column],
+        vec![DataType::Float64],
+        vec![Arc::new(stri_arr)],
+    );
 
     concat_record_batches(vec![batch.to_owned(), extra_batch])
 }

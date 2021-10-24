@@ -1,9 +1,7 @@
 use js_sys::Uint8Array;
 use std::io::Result;
 use std::io::{Read};
-
 use crate::bindings;
-
 
 pub struct WebFileReader {
     offset: u64,

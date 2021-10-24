@@ -1,5 +1,6 @@
 // Wasm Bindgen
 extern crate wasm_bindgen;
+use exec::rest::rest_api::eval_query;
 use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
 
@@ -28,21 +29,23 @@ mod exec {
     }
     pub mod basic {
         pub mod filter;
-        pub mod analyze;
+        pub mod basic;
         pub mod count;
         pub mod kpis;
     }
-    pub mod rest_api;
+    pub mod rest {
+        pub mod rest_api;
+        pub mod rest_api_pars;
+    }
 }
-use exec::rest_api;
 
 // Utils
 mod utils {
     pub mod bindings;
     pub mod record_batch_util;
     pub mod print_to_cons;
+    pub mod string_util;
 }
-
 use utils::bindings;
 use utils::record_batch_util;
 use crate::utils::bindings::notify_js_finished_reading;
@@ -120,6 +123,6 @@ pub fn analyze_file(file_size: i32) {
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
-    rest_api::eval_query(get_record_batches().unwrap(), rest_query);
+    eval_query(get_record_batches().unwrap(), rest_query);
 }
 

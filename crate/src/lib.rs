@@ -26,6 +26,7 @@ mod exec {
         pub mod abs_freq;
     }
     pub mod basic {
+        pub mod filter;
         pub mod analyze;
         pub mod count;
         pub mod kpis;

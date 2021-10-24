@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::analyze::{self, find_unique_string, sort_batch}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
+use crate::{exec::basic::{analyze::{find_unique_string, sort_batch}, filter}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
 
 pub fn create_abs_freq_bucket(
     record_batch: &RecordBatch,
@@ -143,7 +143,11 @@ pub fn abs_freq_of_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>
 ) -> RecordBatch {
+    print_to_js_with_obj(&format!("{:?}", 1).into());
+
     let batch = &sort_batch(batch, 2, false);
+
+    print_to_js_with_obj(&format!("{:?}", 2).into());
 
     let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
 
@@ -176,7 +180,7 @@ pub fn abs_freq_of_pipelines(
         .unwrap();
 
     
-    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    let mut time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
     time_bucket = f64::trunc(time_bucket );
     let mut column_index = 0;
     
@@ -244,7 +248,7 @@ pub fn abs_freq_with_pipelines_with_double_events (
 
         let mut vec = Vec::new();
         vec.push(events[0]);
-        let f_batch = analyze::filter_with(1, vec, batch);
+        let f_batch = filter::filter_with(1, vec, batch);
         
         let mut vec1 = Vec::new();
         let mut vec2 = Vec::new();
@@ -283,7 +287,7 @@ pub fn abs_freq_with_pipelines_with_double_events (
 
         vec.push(events[1]);
 
-        let batch = analyze::filter_with(1, vec, &batch);
+        let batch = filter::filter_with(1, vec, &batch);
         let second_filter_batch = abs_freq_of_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, operators);
 
         let column4 = second_filter_batch.column(0)

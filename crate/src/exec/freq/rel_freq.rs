@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{array::{Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::{exec::{basic::analyze::{self, find_unique_string, sort_batch}, freq::abs_freq::{abs_freq_of_event, abs_freq_of_pipelines}}, get_record_batches};
+use crate::{exec::{basic::{analyze::{find_unique_string, sort_batch}, filter}}, get_record_batches};
 
 
 pub fn create_rel_freq_bucket(
@@ -37,41 +37,6 @@ pub fn create_rel_freq_bucket(
     .unwrap()
 }
 
-pub fn rel_freq_for_each_pipelines(
-    batch: &RecordBatch,
-    column_for_operator: usize,
-    column_for_time: usize,
-    column_for_pipeline: usize,
-    bucket_size: f64,
-) -> Vec<RecordBatch> {
-    let mut vec = Vec::new();
-
-    let unique_pipelines = find_unique_string(batch, column_for_pipeline);
-    let unique_pipelines = sort_batch(&unique_pipelines, 0, false);
-
-    let pipeline_vec = unique_pipelines
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    for pipeline in pipeline_vec {
-        let mut vec_pipeline = Vec::new();
-        vec_pipeline.push(pipeline.unwrap());
-        let output_batch = rel_freq_with_pipelines(
-            &batch,
-            column_for_operator,
-            column_for_time,
-            bucket_size,
-            vec_pipeline,
-            Vec::new()
-        );
-
-        vec.push(output_batch.to_owned());
-    }
-
-    vec
-}
 
 pub fn rel_freq_with_pipelines(
     batch: &RecordBatch,
@@ -81,6 +46,7 @@ pub fn rel_freq_with_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>
 ) -> RecordBatch {
+
     let batch = &sort_batch(batch, 2, false);
 
     let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
@@ -113,7 +79,7 @@ pub fn rel_freq_with_pipelines(
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let mut time_bucket = arrow::compute::min(time_column).unwrap();
+    let mut time_bucket = arrow::compute::min(time_column).unwrap_or(0.);
     time_bucket = f64::trunc(time_bucket );
     let mut column_index = 0;
     
@@ -132,7 +98,7 @@ pub fn rel_freq_with_pipelines(
             
             for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0));
+                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
                     if bucket_map.get(operator).unwrap() == &0.0 {
                         let frequenzy = 0.0;
@@ -165,7 +131,7 @@ pub fn rel_freq_with_pipelines(
 
             for operator in vec_operator {
                 let operator = operator.unwrap();
-                result_bucket.push((f64::trunc((time_bucket) * 100.0) / 100.0) );
+                result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0 );
                 result_vec_operator.push(operator);
                 let frequenzy =
                     bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
@@ -200,7 +166,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
 
         let mut vec = Vec::new();
         vec.push(events[0]);
-        let f_batch = analyze::filter_with(1, vec, batch);
+        let f_batch = filter::filter_with(1, vec, batch);
         
 
         let mut vec1 = Vec::new();
@@ -240,7 +206,7 @@ pub fn rel_freq_with_pipelines_with_double_events (
 
         vec.push(events[1]);
 
-        let batch = analyze::filter_with(1, vec, &batch);
+        let batch = filter::filter_with(1, vec, &batch);
         let second_filter_batch = rel_freq_with_pipelines(&batch, column_for_operator, column_for_time, bucket_size, pipelines, operators);
 
         let column4 = second_filter_batch.column(0)

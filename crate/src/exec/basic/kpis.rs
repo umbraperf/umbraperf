@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use arrow::{array::{Array, Float64Array, StringArray}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 
-use crate::exec::basic::analyze;
+use crate::exec::basic::{filter};
 
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
     let vec = batch
@@ -42,7 +42,7 @@ pub fn relative(
 
     let denominator = vec_de.len();
 
-    let batch = analyze::filter_with(column_index_for_numerator, vec!["No Operator"], batch);
+    let batch = filter::filter_with(column_index_for_numerator, vec!["No Operator"], batch);
 
     let vec_nom = batch
         .column(column_index_for_numerator)

@@ -1,13 +1,14 @@
 use arrow::error::Result as ArrowResult;
 use arrow::{
-    array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray},
+    array::{Array, ArrayRef, Float64Array, StringArray},
     compute::{sort_to_indices, take},
     datatypes::{DataType, Field, Schema},
     record_batch::RecordBatch,
 };
 use std::{collections::HashSet, sync::Arc};
 
-use crate::utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_record_batch};
+use crate::utils::record_batch_util::create_new_record_batch;
+use crate::utils::{record_batch_util::create_record_batch};
 
 fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
     nested.into_iter().flatten().collect()
@@ -52,41 +53,6 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
     create_record_batch(Arc::new(new_schema), vec)
 }
 
-pub fn filter_between(
-    column_num: usize,
-    filter_from: f64,
-    filter_to: f64,
-    batch: &RecordBatch,
-) -> RecordBatch {
-    print_to_js_with_obj(&format!("{:?}", filter_from).into());
-    print_to_js_with_obj(&format!("{:?}", filter_from < 0.0).into());
-
-    if filter_from < 0.0 && filter_to < 0.0 {
-        return batch.to_owned();
-    }
-
-    let filter_array = batch
-        .column(column_num)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap()
-        .iter()
-        .map(|value| Some(value.unwrap() >= filter_from && value.unwrap() <= filter_to))
-        .collect::<BooleanArray>();
-
-    let mut arrays: Vec<ArrayRef> = Vec::new();
-
-    for idx in 0..batch.num_columns() {
-        let array = batch.column(idx).as_ref();
-
-        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
-
-        arrays.push(filtered);
-    }
-
-    create_record_batch(batch.schema(), arrays)
-}
-
 pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
     let schema = record_batch.schema();
     let fields = schema.fields();
@@ -107,41 +73,7 @@ pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
     RecordBatch::try_new(new_schema, record_batch.columns().to_owned()).unwrap()
 }
 
-fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
-    let filter_array = batch
-        .column(column_num)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap()
-        .iter()
-        .map(|value| Some(filter_strs.contains(&value.unwrap())))
-        .collect::<BooleanArray>();
 
-    let mut arrays: Vec<ArrayRef> = Vec::new();
-
-    for idx in 0..batch.num_columns() {
-        let array = batch.column(idx).as_ref();
-
-        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
-
-        arrays.push(filtered);
-    }
-
-    create_record_batch(batch.schema(), arrays)
-}
-
-pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
-    if filter_strs.len() == 1 && filter_strs[0] == "All" {
-        return batch.to_owned();
-    } else if filter_strs.len() == 1 && filter_strs[0] == "Default" {
-        let unique_batch = find_unique_string(batch, 1);
-        let unique_batch = sort_batch(&unique_batch, 0, false);
-        let first_appearance = unique_batch.column(0).as_any().downcast_ref::<StringArray>().unwrap();
-        return filter(column_num, vec![first_appearance.value(0)], batch);
-    } else {
-        return filter(column_num, filter_strs, batch);
-    }
-}
 
 pub fn sort_batch(
     batch: &RecordBatch,
@@ -190,6 +122,7 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
     let new_schema = Schema::new(vec![field.to_owned()]);
 
     let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
+    
     return batch;
 }
 
@@ -242,37 +175,7 @@ pub fn add_column_float(
 
     let stri_arr = Float64Array::from(vec_str);
 
-    let result_field = Field::new(name_of_column, DataType::Float64, false);
-
-    let schema = Schema::new(vec![result_field]);
-
-    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
+    let extra_batch = create_new_record_batch(vec![name_of_column], vec![DataType::Float64], vec![Arc::new(stri_arr)]);
 
     concat_record_batches(vec![batch.to_owned(), extra_batch])
-}
-
-pub fn count_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
-    let vec = batch
-        .column(column_index_for_unqiue)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let hash_set = vec
-        .into_iter()
-        .map(|item| item.unwrap())
-        .collect::<HashSet<&str>>()
-        .into_iter()
-        .collect::<Vec<&str>>();
-
-    let array = StringArray::from(hash_set);
-
-    let schema = batch.schema();
-
-    let field = schema.field(column_index_for_unqiue);
-
-    let new_schema = Schema::new(vec![field.to_owned()]);
-
-    let batch = RecordBatch::try_new(Arc::new(new_schema), vec![Arc::new(array)]).unwrap();
-    return batch;
 }

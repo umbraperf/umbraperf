@@ -19,7 +19,7 @@
     top: 76px;
     bottom: 0px;
     width: 100%;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 .appHeaderTitle{

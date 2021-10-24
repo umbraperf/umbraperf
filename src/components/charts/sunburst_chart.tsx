@@ -8,8 +8,7 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import _, { transform, values } from "lodash";
-import { isFieldPredicate } from 'vega-lite/build/src/predicate';
+import _ from "lodash";
 
 
 interface Props {

@@ -24,7 +24,6 @@ interface Props {
    pipelines: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
-   multipleChartDataLength: number;
    currentInterpolation: String,
    currentBucketSize: number;
    currentPipeline: Array<string> | "All";
@@ -65,7 +64,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
       // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
-      if (this.props.chartData[this.state.chartId] && this.props.multipleChartDataLength > prevProps.multipleChartDataLength) {
+      if (this.props.chartData[this.state.chartId] && (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData[]).length > (prevProps.chartData[this.state.chartId].chartData.data as model.ISwimlanesData[]).length) {
          this.setState((state, props) => {
             const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
 
@@ -359,7 +358,6 @@ const mapStateToProps = (state: model.AppState) => ({
    pipelines: state.pipelines,
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
-   multipleChartDataLength: state.multipleChartDataLength,
    currentInterpolation: state.currentInterpolation,
    currentBucketSize: state.currentBucketSize,
    currentPipeline: state.currentPipeline,

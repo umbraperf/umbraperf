@@ -34,8 +34,8 @@ class DashboardMemoryAccesses extends React.Component<{}, {}> {
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={`${styles.dashboardGridCellChartContainer}`}>
+                            <Box className={styles.dashboardGridCellChartBoxMemoryChart}>
+                                <div className={styles.dashboardGridCellChartContainer}>
                                     <MemoryAccessHeatmapChart />
                                 </div>
                             </Box>

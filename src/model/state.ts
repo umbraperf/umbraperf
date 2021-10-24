@@ -1,7 +1,7 @@
 import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
-import { State as IDashboardState } from "../components/dummy-dashboard"
+import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 
 export interface AppState {
     /// The registered files

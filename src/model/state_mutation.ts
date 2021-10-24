@@ -2,7 +2,7 @@ import { AppState } from './state';
 import { IKpiData, Result } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
-import { State as IDashboardState } from "../components/dummy-dashboard"
+import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 
 
 /// A mutation

@@ -1,6 +1,6 @@
 use std::{io::Cursor, sync::Arc};
 
-use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use arrow::{array::{ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 
 use crate::{bindings::notify_js_query_result, web_file::streambuf::WebFileReader};
 
@@ -94,6 +94,22 @@ pub fn init_record_batches(
     }
 
     vec
+}
+
+pub fn create_new_record_batch(field_names: Vec<&str>, data_type: Vec<DataType>, columns_ref: Vec<ArrayRef>) -> RecordBatch {
+
+    let mut fields = Vec::new();
+    let to = field_names.len();
+    for i in 0..to {
+        let field = Field::new(field_names[i], data_type.get(i).unwrap().to_owned(), false);
+        fields.push(field);
+    }
+
+    let schema = Schema::new(fields);
+
+    let batch = RecordBatch::try_new(Arc::new(schema), columns_ref).unwrap();
+    return batch;
+
 }
 
 // Converts Vec<RecordBatch> to one whole RecordBatch

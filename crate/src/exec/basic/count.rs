@@ -1,14 +1,19 @@
-use std::{collections::{HashMap, HashSet, hash_map}, sync::Arc};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 
-use arrow::{array::{Array, Float64Array, LargeStringArray, StringArray}, datatypes::{DataType, Field, Schema}, ipc::{LargeUtf8Builder, Utf8, Utf8Builder}, record_batch::RecordBatch};
+use arrow::{
+    array::{Array, Float64Array, StringArray},
+    datatypes::{DataType},
+    record_batch::RecordBatch,
+};
 
 use crate::{
     exec::basic::analyze::{filter_with, find_unique_string},
     get_record_batches,
-    utils::print_to_cons::print_to_js_with_obj,
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
-
-use super::analyze;
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let vec = batch
@@ -24,17 +29,18 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
 
     let builder = result_builder.finish();
 
-    let result_field = Field::new("count", DataType::Float64, false);
+    let batch = create_new_record_batch(
+        vec!["count"],
+        vec![DataType::Float64],
+        vec![Arc::new(builder)],
+    );
 
-    let schema = Schema::new(vec![result_field]);
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
     return batch;
 }
 
-pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: usize) -> RecordBatch {
+pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) -> RecordBatch {
     let vec = batch
-        .column(column_index_for_unqiue)
+        .column(*column_index_for_unqiue)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap();
@@ -50,11 +56,12 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: usize) -
     let _result_builder = result_builder.append_value(hash_set.len() as f64);
     let builder = result_builder.finish();
 
-    let result_field = Field::new("count", DataType::Float64, false);
+    let batch = create_new_record_batch(
+        vec!["count"],
+        vec![DataType::Float64],
+        vec![Arc::new(builder)],
+    );
 
-    let schema = Schema::new(vec![result_field]);
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(builder)]).unwrap();
     return batch;
 }
 
@@ -84,21 +91,20 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
 
     let builder = result_builder.finish();
 
-    let schema = batch.schema();
-    let column_to_group_over_name = schema.field(column_to_groupby_over).name();
-    let field = Field::new(column_to_group_over_name, DataType::Utf8, false);
-    let result_field = Field::new("count", DataType::Float64, false);
+    let batch = create_new_record_batch(
+        vec![batch.schema().field(column_to_groupby_over).name(), "count"],
+        vec![DataType::Utf8, DataType::Float64],
+        vec![unique_batch.column(0).to_owned(), Arc::new(builder)],
+    );
 
-    let schema = Schema::new(vec![field, result_field]);
-
-    let vec = unique_batch.column(0).to_owned();
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![vec, Arc::new(builder)]).unwrap();
     return batch;
 }
 
-pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, column_operator: usize) -> RecordBatch {
-
+pub fn count_rows_over_double(
+    batch: &RecordBatch,
+    column_pipeline: usize,
+    column_operator: usize,
+) -> RecordBatch {
     let vec_pipe = batch
         .column(column_pipeline)
         .as_any()
@@ -111,7 +117,7 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let mut hashmap: HashMap<&str,HashMap<&str,f64>> = HashMap::new();
+    let mut hashmap: HashMap<&str, HashMap<&str, f64>> = HashMap::new();
 
     print_to_js_with_obj(&format!("{:?}", hashmap).into());
 
@@ -132,7 +138,6 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
     let mut pipecount = Vec::new();
     let mut opcount = Vec::new();
 
-
     for entry in hashmap {
         let mut total = 0.;
         for inner in entry.1 {
@@ -143,7 +148,7 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
             op_builder.push(operator);
             pipecount.push(0.);
             opcount.push(count);
-            total += inner.1; 
+            total += inner.1;
         }
         let pipeline = "inner";
         let operator = entry.0;
@@ -159,18 +164,21 @@ pub fn count_rows_over_double(batch: &RecordBatch, column_pipeline: usize, colum
     let builder_pipe = Float64Array::from(pipecount);
     let builder_op = Float64Array::from(opcount);
 
-    let field1 = Field::new("pipeline", DataType::Utf8, false);
-    let field2 = Field::new("operator", DataType::Utf8, false);
-    let result_field1 = Field::new("pipecount", DataType::Float64, false);
-    let result_field2 = Field::new("opcount", DataType::Float64, false);
-
-    let schema = Schema::new(vec![field1, field2, result_field1, result_field2]);
-
-    let batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(pip_arr), Arc::new(op_arr), Arc::new(builder_pipe), Arc::new(builder_op)]).unwrap(); 
-
-    print_to_js_with_obj(&format!("{:?}", batch).into());
+    let batch = create_new_record_batch(
+        vec!["pipeline", "operator", "pipecount", "opcount"],
+        vec![
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Float64,
+            DataType::Float64,
+        ],
+        vec![
+            Arc::new(pip_arr),
+            Arc::new(op_arr),
+            Arc::new(builder_pipe),
+            Arc::new(builder_op),
+        ],
+    );
 
     return batch;
-
 }
-

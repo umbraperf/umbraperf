@@ -1,5 +1,4 @@
 use std::usize;
-
 use arrow::record_batch::RecordBatch;
 
 use crate::{
@@ -136,41 +135,6 @@ fn abs_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
     }
 }
 
-fn rel_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> RecordBatch {
-    let split = split_at_excl_mark(params);
-
-    let before_excl_mark = 0;
-    let after_excl_mark = 1;
-    let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
-    let end = split_at_and(split[after_excl_mark]);
-    let pipeline_vec = split_at_comma(end[0]);
-    let event_vec = split_at_comma(end[1]);
-    let operator_vec = split_at_comma(end[2]);
-    let range = split_at_to(end[3]);
-
-    let before_colon = 0;
-    let after_colon = 1;
-    let field_vec = split_at_comma(split_fields_bucket_size[before_colon]);
-
-    let _pipeline = field_vec[before_colon];
-    let time = field_vec[after_colon];
-    let bucket_size = split_fields_bucket_size[after_colon]
-        .parse::<f64>()
-        .unwrap();
-
-    return rel_freq::rel_freq_with_pipelines_with_double_events(
-        &record_batch,
-        find_name("operator", &record_batch),
-        find_name(time, &record_batch),
-        bucket_size,
-        pipeline_vec,
-        operator_vec,
-        event_vec,
-        range[0].parse::<f64>().unwrap(),
-        range[1].parse::<f64>().unwrap()
-    );
-}
-
 fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -> RecordBatch {
     let split = split_at_excl_mark(params);
 
@@ -244,11 +208,8 @@ fn rel_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
     let split_fields_bucket_size = split_at_colon(params);
     let _fields = split_fields_bucket_size[0];
 
-    if params.contains("&") {
-        return rel_freq_double_event_pipeline(record_batch, params);
-    } else {
-        return rel_freq_specific_pipelines(record_batch, params);
-    }
+    return rel_freq_specific_pipelines(record_batch, params);
+    
 }
 
 fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {

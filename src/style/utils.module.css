@@ -73,14 +73,8 @@
     justify-content: center;
 }
 
-.eventsButtonsLabel{
-    composes: optionsLables;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
 .eventButton{
+    animation: fadeIn 1s;
     width: 135px;
     border-radius: 70px;
     margin: 7px;
@@ -119,6 +113,7 @@
 }
 
 .kpiCardLabel{
+    max-width: 80px;
     font-size: var(--labelFonSize);
     animation: fadeIn 1s;
 }

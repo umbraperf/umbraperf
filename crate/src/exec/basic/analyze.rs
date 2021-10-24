@@ -1,6 +1,6 @@
 use arrow::error::Result as ArrowResult;
 use arrow::{
-    array::{Array, ArrayRef, BooleanArray, Float64Array, StringArray},
+    array::{Array, ArrayRef, Float64Array, StringArray},
     compute::{sort_to_indices, take},
     datatypes::{DataType, Field, Schema},
     record_batch::RecordBatch,
@@ -51,39 +51,6 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
     let new_schema = Schema::new(fields);
 
     create_record_batch(Arc::new(new_schema), vec)
-}
-
-pub fn filter_between(
-    column_num: usize,
-    filter_from: f64,
-    filter_to: f64,
-    batch: &RecordBatch,
-) -> RecordBatch {
-
-    if filter_from < 0.0 && filter_to < 0.0 {
-        return batch.to_owned();
-    }
-
-    let filter_array = batch
-        .column(column_num)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap()
-        .iter()
-        .map(|value| Some(value.unwrap() >= filter_from && value.unwrap() <= filter_to))
-        .collect::<BooleanArray>();
-
-    let mut arrays: Vec<ArrayRef> = Vec::new();
-
-    for idx in 0..batch.num_columns() {
-        let array = batch.column(idx).as_ref();
-
-        let filtered = arrow::compute::filter(array, &filter_array).unwrap();
-
-        arrays.push(filtered);
-    }
-
-    create_record_batch(batch.schema(), arrays)
 }
 
 pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {

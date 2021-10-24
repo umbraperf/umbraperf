@@ -1,9 +1,9 @@
-import * as model from '../model';
+import * as model from '../../model';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
-import styles from '../style/upload.module.css';
-import { IAppContext, withAppContext } from '../app_context';
+import styles from '../../style/upload.module.css';
+import { IAppContext, withAppContext } from '../../app_context';
 import { LinearProgress } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 

@@ -14,7 +14,7 @@ import styles from './style/main-app.module.css';
 
 import VisualizationContainer from './components/visualization_container';
 import TabPanel from './components/utils/tab_panel';
-import FileUploader from './components/file_uploader';
+import FileUploader from './components/utils/file_uploader';
 import Dashboard from './components/dashboards/dashboard';
 import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';

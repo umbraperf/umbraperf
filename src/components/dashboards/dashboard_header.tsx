@@ -11,6 +11,7 @@ import { Grid, Box } from '@material-ui/core';
 
 interface Props {
     csvParsingFinished: boolean;
+    multipleEvents?: boolean;
     setCurrentChart: (newCurrentChart: string) => void;
 }
 
@@ -37,7 +38,7 @@ class DashboardHeader extends React.Component<Props, {}> {
             <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
                 <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={5}>
                     <Box className={styles.dashboardGridCellOptionsBox}>
-                        <EventsButtons />
+                        <EventsButtons multipleEvents={this.props.multipleEvents} />
                     </Box>
                 </Grid>
             </Box>

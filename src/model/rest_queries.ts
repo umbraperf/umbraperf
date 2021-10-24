@@ -48,6 +48,7 @@ export function createRestQuery(query: QueryVariant) {
     const eventFilter = event && `/?ev_name="${event}"`;
 
     const time = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}` : '';
+    const time2 = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]},${(query.data as any).timeBucketFrame[1]}` : '';
     const timeFilter = time && `/?time="${time}"`;
 
     const pipelines = (query.data as any).pipelines && (query.data as any).pipelines.length > 0 ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : ' ';
@@ -72,9 +73,9 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
             return `bucket/operator/relfreq${eventFilter}/relfreq?pipeline,${bucketSize}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}!${operators}!${timeFilter}`;
+            return `bucket/operator/relfreq${eventFilter}${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}!${operators}!${time2}`;
         case RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}!${operators}!${timeFilter}`;
+            return `bucket/operator/absfreq${eventFilter}${timeFilter}/absfreq?pipeline,${bucketSize}!${pipelines}!${operators}!${time2}`;
         case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
             return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter}/relfreq?pipeline,${bucketSize}!${pipelines}&${query.data.event1},${query.data.event0}&${operators}`;
         case RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:

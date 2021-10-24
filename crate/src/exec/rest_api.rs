@@ -35,6 +35,10 @@ fn split_at_double_percent(params: &str) -> Vec<&str> {
     return params.split_terminator("%%").collect::<Vec<&str>>();
 }
 
+fn split_at_to(params: &str) -> Vec<&str> {
+    return params.split_terminator("to").collect::<Vec<&str>>();
+}
+
 // Find name in Record Batch
 // Panic if error, else usize of column
 fn find_name(name: &str, batch: &RecordBatch) -> usize {
@@ -115,7 +119,7 @@ fn abs_freq(record_batch: RecordBatch, params: &str) -> RecordBatch {
 
             let pipeline_vec = split_at_comma(split[1]);
             let operator_vec = split_at_comma(split[2]);
-            let range = split_at_comma(split[3]);
+            let range = split_at_to(split[3]);
 
 
             return abs_freq::abs_freq_of_pipelines(
@@ -204,7 +208,7 @@ fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> Recor
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
     let pipeline_vec = split_at_comma(split[after_excl_mark]);
     let operator_vec = split_at_comma(split[2]);
-    let range = split_at_comma(split[3]);
+    let range = split_at_to(split[3]);
 
     let before_colon = 0;
     let after_colon = 1;

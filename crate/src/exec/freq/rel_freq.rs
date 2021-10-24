@@ -97,7 +97,6 @@ pub fn rel_freq_with_pipelines(
 
     let mut column_index = 0;
 
-
     let mut bucket_map = HashMap::new();
     for operator in vec_operator {
         bucket_map.insert(operator.unwrap(), 0.0);
@@ -147,16 +146,22 @@ pub fn rel_freq_with_pipelines(
 
         if i == time_column.len() - 1 {
             while time_bucket < to {
-            for operator in vec_operator {
-                let operator = operator.unwrap();
-                result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
-                result_vec_operator.push(operator);
-                let frequenzy = bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                result_builder.push(frequenzy_rounded);
+                for operator in vec_operator {
+                    let operator = operator.unwrap();
+                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                    result_vec_operator.push(operator);
+                    if bucket_map.get(operator).unwrap() == &0.0 {
+                        let frequenzy = 0.0;
+                        result_builder.push(frequenzy);
+                    } else {
+                        let frequenzy =
+                            bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                        result_builder.push(frequenzy_rounded);
+                    }
+                }
+                time_bucket += bucket_size;
             }
-            }
-            time_bucket += bucket_size;
         }
 
         column_index += 1;
@@ -199,7 +204,7 @@ pub fn rel_freq_with_pipelines_with_double_events(
         pipelines.clone(),
         operators.clone(),
         0.,
-        800.
+        800.,
     );
 
     let column1 = first_filter_batch
@@ -242,7 +247,7 @@ pub fn rel_freq_with_pipelines_with_double_events(
         pipelines,
         operators,
         0.,
-        800.
+        800.,
     );
 
     let column4 = second_filter_batch

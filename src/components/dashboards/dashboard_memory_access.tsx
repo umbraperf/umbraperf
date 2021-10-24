@@ -37,7 +37,7 @@ class DashboardMemoryAccess extends React.Component<{}, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <SunburstChart />
+                                    {/* TODO */}
                                 </div>
                             </Box>
                         </Grid>
@@ -46,7 +46,7 @@ class DashboardMemoryAccess extends React.Component<{}, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
+                                    {/* TODO */}
                                 </div>
                             </Box>
                         </Grid>

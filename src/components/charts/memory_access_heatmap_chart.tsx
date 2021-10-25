@@ -85,9 +85,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     componentDidMount() {
 
         if (this.props.csvParsingFinished) {
-
             this.props.setCurrentChart(model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
-
         }
     }
 
@@ -147,10 +145,17 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         );
 
         const domains = {
-            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
-            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+            bucketDomain: Math.max(...bucketsArray),
+            memDomain: _.sortBy(memoryAdressArray),
             occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+            // memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
         }
+
+        // const domains = {
+        //     bucketDomain: bucketsArray,
+        //     memDomain: memoryAdressArray,
+        //     occurrencesDomain: occurrencesArray,
+        // }
 
         return { dataFlattend, domains }
     }
@@ -161,7 +166,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {
                 name: "table",
                 values: dataFlattendFiltered,
-            }
+            },
         ]
         return data;
     }
@@ -194,21 +199,32 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "x",
                     "type": "linear",
-                    "domain": domains.bucketDomain,
-                    "range": "width"
+                    "domain": [0, domains.bucketDomain],
+                    "range": "width",
+                    // "zero": true,
+                    // "nice": true,
+                    // "round": true,
                 },
                 {
                     "name": "y",
                     "type": "band",
-                    "domain": domains.memoryDomain,
+                    "domain": domains.memDomain,
                     "range": "height",
+                    "zero": true,
+                    "nice": true,
+                    "round": true,
+                    reverse: true,
                 },
                 {
                     "name": "color",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    "domain": domains.occurrencesDomain,
-                    "zero": true, "nice": true
+                    domain: {
+                        data: "table",
+                        field: "occurrences"
+                    },
+                    // "domain": domains.occurrencesDomain,
+                    "zero": true,
                 }
             ],
 
@@ -244,6 +260,18 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             "marks": [
                 {
                     "type": "rect",
+                    "encode": {
+                        "enter": {
+                            "x": { "value": 0 },
+                            "y": { "value": 0 },
+                            "width": { "signal": "width" },
+                            "height": { "signal": "height" },
+                            "fill": { "scale": "color", "value": "0" }
+                        }
+                    }
+                },
+                {
+                    "type": "rect",
                     "from": { "data": "table" },
                     "encode": {
                         "enter": {
@@ -276,6 +304,187 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
         return spec;
     }
+
+    // createVisualizationData(dataFlattendFiltered: any) {
+
+    //     const occurrencesFlattend: Array<{ bucket: number, memAdr: number }> = [];
+    //     dataFlattendFiltered.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
+    //         for (let i = 0; i < elem.occurrences; i++) {
+    //             occurrencesFlattend.push({
+    //                 bucket: elem.bucket,
+    //                 memAdr: elem.memAdr,
+    //             });
+    //         }
+    //     });
+
+    //     const data = [
+    //         {
+    //             name: "table",
+    //             values: occurrencesFlattend,
+    //         },
+    //         {
+    //             name: "density",
+    //             source: "table",
+    //             transform: [
+    //                 {
+    //                     type: "kde2d",
+    //                     size: [{ signal: "width" }, { signal: "height" }],
+    //                     x: { "expr": "scale('x', datum.bucket)" },
+    //                     y: { "expr": "scale('y', datum.memAdr)" },
+    //                     as: "grid",
+    //                 },
+    //                 {
+    //                     type: "heatmap",
+    //                     field: "grid",
+    //                     color: { "expr": "scale('density', datum.$value / datum.$max)" },
+    //                     opacity: 1
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    //     return data;
+    // }
+
+    // createVisualizationSpec(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+    //     const visData = this.createVisualizationData(dataFlattendFiltered);
+
+    //     console.log(domains);
+    //     console.log(visData);
+
+    //     const spec: VisualizationSpec = {
+    //         $schema: "https://vega.github.io/schema/vega/v5.json",
+    //         width: 400,
+    //         height: 300,
+    //         padding: { left: 5, right: 5, top: 10, bottom: 10 },
+    //         autosize: { type: "fit", resize: false },
+
+    //         title: {
+    //             text: `Memory Access Heatmap: ${operator}`,
+    //             align: model.chartConfiguration.titleAlign,
+    //             dy: model.chartConfiguration.titlePadding,
+    //             fontSize: model.chartConfiguration.titleFontSize,
+    //             font: model.chartConfiguration.titleFont,
+    //         },
+
+    //         // data: visData,
+    //         data: visData,
+
+    //         "scales": [
+    //             {
+    //                 "name": "x",
+    //                 "type": "linear",
+    //                 "domain": domains.bucketDomain,
+    //                 "range": "width",
+    //                 "zero": true,
+    //                 "nice": true,
+    //                 "round": true,
+    //             },
+    //             {
+    //                 "name": "y",
+    //                 "type": "linear",
+    //                 "domain": domains.memDomain,
+    //                 "range": "height",
+    //                 "zero": true,
+    //                 "nice": true,
+    //                 "round": true,
+    //             },
+    //             {
+    //                 "name": "density",
+    //                 "type": "linear",
+    //                 "range": { "scheme": "Viridis" },
+    //                 "domain": [0,1],
+    //                 //  "domain": domains.occurrencesDomain,
+
+    //                 "zero": true,
+    //             }
+    //         ],
+
+    //         "axes": [
+    //             {
+    //                 "orient": "bottom",
+    //                 "scale": "x",
+    //                 labelOverlap: true,
+    //                 //values: xTicks(),
+    //                 title: model.chartConfiguration.memoryChartXTitle,
+    //                 titlePadding: model.chartConfiguration.axisPadding,
+    //                 labelFontSize: model.chartConfiguration.axisLabelFontSize,
+    //                 titleFontSize: model.chartConfiguration.axisTitleFontSize,
+    //                 titleFont: model.chartConfiguration.axisTitleFont,
+    //                 labelFont: model.chartConfiguration.axisLabelFont,
+    //                 labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+    //             },
+    //             {
+    //                 orient: "left",
+    //                 scale: "y",
+    //                 zindex: 1,
+    //                 title: model.chartConfiguration.memoryChartYTitle,
+    //                 titlePadding: model.chartConfiguration.axisPadding,
+    //                 labelFontSize: model.chartConfiguration.axisLabelFontSize,
+    //                 labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+    //                 labelOverlap: true,
+    //                 titleFontSize: model.chartConfiguration.axisTitleFontSize,
+    //                 titleFont: model.chartConfiguration.axisTitleFont,
+    //                 labelFont: model.chartConfiguration.axisLabelFont,
+    //             }
+    //         ],
+
+    //         // "marks": [
+    //         //     {
+    //         //         "type": "rect",
+    //         //         "from": { "data": "table" },
+    //         //         "encode": {
+    //         //             "enter": {
+    //         //                 "x": { "scale": "x", "field": "bucket" },
+    //         //                 "y": { "scale": "y", "field": "memAdr" },
+    //         //                 "width": { "value": 5 },
+    //         //                 "height": { "scale": "y", "band": 1 },
+    //         //                 tooltip: {
+    //         //                     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+    //         //                 },
+    //         //             },
+    //         //             "update": {
+    //         //                 "fill": { "scale": "color", "field": "occurrences" }
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // ],
+    //         "marks": [
+    //             {
+    //                 "type": "image",
+    //                 "from": { "data": "density" },
+    //                 "encode": {
+    //                     "enter": {
+    //                         // tooltip: {
+    //                         //     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+    //                         // },
+    //                     },
+    //                     "update": {
+    //                         "x": { "value": 0 },
+    //                         "y": { "value": 0 },
+    //                         "image": { "field": "image" },
+    //                         "width": { "signal": "width" },
+    //                         "height": { "signal": "height" },
+    //                         "aspect": { "value": false },
+    //                         "smooth": { "value": true }
+    //                     }
+    //                 }
+    //             }
+    //         ],
+
+    //         "legends": [
+    //             {
+    //                 "fill": "density",
+    //                 "type": "gradient",
+    //                 "title": "Number of Accesses",
+    //                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
+    //                 "titlePadding": 4,
+    //                 "gradientLength": { "signal": "height - 20" }
+    //             }
+    //         ],
+    //     } as VisualizationSpec;
+
+    //     return spec;
+    // }
 
 
 

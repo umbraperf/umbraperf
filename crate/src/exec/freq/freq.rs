@@ -259,7 +259,7 @@ pub fn freq_of_memory(
 
     print_to_js_with_obj(&format!("{:?}", "In Memory").into());
 
-    let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
+    //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
 
     let batch = &sort_batch(batch, 2, false);
 

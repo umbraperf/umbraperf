@@ -8,7 +8,7 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import _ from "lodash";
+import _, { reverse } from "lodash";
 
 
 interface Props {
@@ -24,15 +24,15 @@ interface Props {
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
+    currentBucketSize: number,
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 interface State {
     chartId: number,
-    width: number,
-    height: number,
 }
 
 class MemoryAccessHeatmapChart extends React.Component<Props, State> {
@@ -43,8 +43,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         super(props);
         this.state = {
             chartId: this.props.chartIdCounter,
-            width: 0,
-            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -52,8 +50,16 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-
+        this.setDefaultEventToMemLoads(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
+    }
+
+    setDefaultEventToMemLoads(props: Props, prevProps: Props) {
+        console.log(prevProps.chartData[this.state.chartId]);
+        //only set bevore first time data requestes and if available memloads are in events and events available
+        if (props.events && props.events.includes("mem_inst_retired.all_loads") && !prevProps.chartData[this.state.chartId]) {
+            props.setCurrentEvent("mem_inst_retired.all_loads");
+        }
     }
 
     requestNewChartData(props: Props, prevProps: Props): void {
@@ -63,12 +69,13 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            this.props.operators &&
+        if (props.events &&
+            props.operators &&
             (props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.currentEvent !== prevProps.currentEvent ||
-                !_.isEqual(this.props.operators, prevProps.operators) ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+                !_.isEqual(props.operators, prevProps.operators) ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
         } else {
             return false;
@@ -77,41 +84,13 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.offsetHeight,
-        }));
-
         if (this.props.csvParsingFinished) {
 
             this.props.setCurrentChart(model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
 
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
         }
     }
 
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            child.style.display = 'block';
-        }
-
-
-    }
 
     isComponentLoading(): boolean {
         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
@@ -145,11 +124,10 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
         //flatten arrays and filter for needed operator:
-        const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurences: number }> = [];
+        const dataFlattend: Array<{ bucket: number, memAdr: number, occurences: number }> = [];
         operatorArray.forEach((op, index) => {
             if (operator === op) {
                 dataFlattend.push({
-                    operator: op,
                     bucket: bucketsArray[index],
                     memAdr: memoryAdressArray[index],
                     occurences: occurrencesArray[index],
@@ -167,7 +145,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
         ]
 
-        return data;
+        return { data, bucketsDomain: bucketsArray, memoryDomain: memoryAdressArray, colorDomain: occurrencesArray };
     }
 
     createVisualizationSpec(operator: string) {
@@ -193,7 +171,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             },
 
             // data: visData,
-            data: visData,
+            data: visData.data,
 
             // [
             //     {
@@ -213,25 +191,22 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             "scales": [
                 {
                     "name": "x",
-                    "type": "time",
-                    "domain": { "data": "temperature", "field": "day" },
+                    "type": "point",
+                    "domain": visData.bucketsDomain,
                     "range": "width"
                 },
                 {
                     "name": "y",
                     "type": "band",
-                    "domain": [
-                        6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-                        0, 1, 2, 3, 4, 5
-                    ],
-                    "range": "height"
+                    "domain": visData.memoryDomain,
+                    "range": "height",
                 },
                 {
                     "name": "color",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    "domain": { "data": "temperature", "field": "temperature" },
-                    "zero": false, "nice": true
+                    "domain": visData.colorDomain,
+                    "zero": true, "nice": true
                 }
             ],
 
@@ -267,18 +242,18 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             "marks": [
                 {
                     "type": "rect",
-                    "from": { "data": "temperature" },
+                    "from": { "data": "table" },
                     "encode": {
                         "enter": {
-                            "x": { "scale": "x", "field": "day" },
-                            "y": { "scale": "y", "field": "hour" },
+                            "x": { "scale": "x", "field": "bucket" },
+                            "y": { "scale": "y", "field": "memAdr" },
                             "width": { "value": 5 },
                             "height": { "scale": "y", "band": 1 },
                             //TODO Tooltip
-                            "tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
+                            //"tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
                         },
                         "update": {
-                            "fill": { "scale": "color", "field": "temperature" }
+                            "fill": { "scale": "color", "field": "occurences" }
                         }
                     }
                 }
@@ -316,6 +291,8 @@ const mapStateToProps = (state: model.AppState) => ({
     currentOperator: state.currentOperator,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentBucketSize: state.currentBucketSize,
+
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -326,6 +303,10 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
+    }),
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
     })
 });
 

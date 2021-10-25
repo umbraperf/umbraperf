@@ -37,7 +37,8 @@ export interface ChartConfiguration {
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
-    memoryChartXLabelSeparation: number
+    memoryChartXLabelSeparation: number,
+    memoryChartTooltip: string,
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -91,6 +92,7 @@ export let chartConfiguration: ChartConfiguration = {
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
             "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
+    memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 
     //Color scale:
     getOperatorColorScheme: (domainLength, higSaturation) => {

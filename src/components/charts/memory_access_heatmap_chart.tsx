@@ -110,50 +110,67 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem)} />))}
+                    {this.renderChartPerOperator()}
                 </div>
             }
         </div>;
     }
 
-    createVisualizationData(operator: string) {
+    renderChartPerOperator() {
+        const preparedData = this.prepareData();
+        const domains = preparedData.domains;
+        const dataFlattend = preparedData.dataFlattend;
 
+        const dataFlattendFiltered = (curOp: string) => {
+            const filteredData = dataFlattend.filter(elem => (elem.operator === curOp));
+            return filteredData;
+        }
+
+        return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem, domains, dataFlattendFiltered(elem))} />));
+    }
+
+    prepareData() {
         const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
         const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
-        //flatten arrays and filter for needed operator:
-        const dataFlattend: Array<{ bucket: number, memAdr: number, occurences: number }> = [];
+        const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
         operatorArray.forEach((op, index) => {
-            if (operator === op) {
-                dataFlattend.push({
-                    bucket: bucketsArray[index],
-                    memAdr: memoryAdressArray[index],
-                    occurences: occurrencesArray[index],
-                });
-            }
-        });
+            dataFlattend.push({
+                operator: op,
+                bucket: bucketsArray[index],
+                memAdr: memoryAdressArray[index],
+                occurrences: occurrencesArray[index],
+            });
+        }
+        );
 
-        console.log(dataFlattend);
+        const domains = {
+            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
+            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+            occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+        }
+
+        return { dataFlattend, domains }
+    }
+
+    createVisualizationData(dataFlattendFiltered: any) {
 
         const data = [
             {
                 name: "table",
-                values: dataFlattend,
+                values: dataFlattendFiltered,
             }
-
         ]
-
-        return { data, bucketsDomain: bucketsArray, memoryDomain: memoryAdressArray, colorDomain: occurrencesArray };
+        return data;
     }
 
-    createVisualizationSpec(operator: string) {
-        const visData = this.createVisualizationData(operator);
+    createVisualizationSpec(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+        const visData = this.createVisualizationData(dataFlattendFiltered);
 
-        //     const pipelinesLegend = () => {
-        //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
-        //     }
+        console.log(domains);
+        console.log(visData);
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -171,41 +188,26 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             },
 
             // data: visData,
-            data: visData.data,
-
-            // [
-            //     {
-            //         "name": "temperature",
-            //         "url": "data/seattle-weather-hourly-normals.csv",
-            //         "format": { "type": "csv", "parse": { "temperature": "number", "date": "date" } },
-            //         "transform": [
-            //             { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
-            //             {
-            //                 "type": "formula", "as": "day",
-            //                 "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
-            //             }
-            //         ]
-            //     }
-            // ],
+            data: visData,
 
             "scales": [
                 {
                     "name": "x",
-                    "type": "point",
-                    "domain": visData.bucketsDomain,
+                    "type": "linear",
+                    "domain": domains.bucketDomain,
                     "range": "width"
                 },
                 {
                     "name": "y",
                     "type": "band",
-                    "domain": visData.memoryDomain,
+                    "domain": domains.memoryDomain,
                     "range": "height",
                 },
                 {
                     "name": "color",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    "domain": visData.colorDomain,
+                    "domain": domains.occurrencesDomain,
                     "zero": true, "nice": true
                 }
             ],
@@ -249,11 +251,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                             "y": { "scale": "y", "field": "memAdr" },
                             "width": { "value": 5 },
                             "height": { "scale": "y", "band": 1 },
-                            //TODO Tooltip
-                            //"tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
+                            tooltip: {
+                                signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+                            },
                         },
                         "update": {
-                            "fill": { "scale": "color", "field": "occurences" }
+                            "fill": { "scale": "color", "field": "occurrences" }
                         }
                     }
                 }

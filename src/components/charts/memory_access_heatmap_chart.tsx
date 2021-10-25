@@ -137,100 +137,41 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         </div>;
     }
 
-    createVisualizationData() {
+    createVisualizationData(operator: string) {
 
-        console.log(this.props.chartData[this.state.chartId]);
-        console.log(Array.from((this.props.chartData[this.state.chartId].chartData.data as any).memoryAdress));
+        const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
+        const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
+        const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
+        const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
-        // const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
-        // const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeline;
-        // const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).opOccurrences);
-        // const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeOccurrences);
+        //flatten arrays and filter for needed operator:
+        const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurences: number }> = [];
+        operatorArray.forEach((op, index) => {
+            if (operator === op) {
+                dataFlattend.push({
+                    operator: op,
+                    bucket: bucketsArray[index],
+                    memAdr: memoryAdressArray[index],
+                    occurences: occurrencesArray[index],
+                });
+            }
+        });
 
-        // //add datum for inner circle at beginning of data only on first rerender
-        // operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
-        // parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-        // operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
-        // pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
+        console.log(dataFlattend);
 
-        // const data = [
-        //     {
-        //         name: "selectedPipelines",
-        //         values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["pipelinesUsed"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "pipelinesShort",
-        //         values: { pipeline: this.props.pipelines, pipelineShort: this.props.pipelinesShort },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["pipeline", "pipelineShort"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "selectedOperators",
-        //         values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["operatorsUsed"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "tree",
-        //         values: [
-        //             { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
-        //         ],
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["operator", "parent", "pipeOccurrences", "opOccurrences"]
-        //             },
-        //             {
-        //                 type: "stratify",
-        //                 key: "operator",
-        //                 parentKey: "parent"
-        //             },
-        //             {
-        //                 type: "partition",
-        //                 field: "opOccurrences", //size of leaves -> operators
-        //                 sort: { "field": "value" },
-        //                 size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
-        //                 as: ["a0", "r0", "a1", "r1", "depth", "children"]
-        //             },
-        //             {
-        //                 type: "lookup", //join short pipeline names to tree table
-        //                 from: "pipelinesShort",
-        //                 key: "pipeline",
-        //                 fields: ["operator"],
-        //                 values: ["pipelineShort"],
-        //             },
-        //             {
-        //                 type: "lookup", //join short parent pipeline names colum 
-        //                 from: "pipelinesShort",
-        //                 key: "pipeline",
-        //                 fields: ["parent"],
-        //                 values: ["pipelineShort"],
-        //                 as: ["parentShort"]
-        //             }
-        //         ],
+        const data = [
+            {
+                name: "table",
+                values: dataFlattend,
+            }
 
-        //     },
-        // ];
+        ]
 
-        // return data;
+        return data;
     }
 
     createVisualizationSpec(operator: string) {
-        const visData = this.createVisualizationData();
+        const visData = this.createVisualizationData(operator);
 
         //     const pipelinesLegend = () => {
         //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
@@ -252,20 +193,22 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             },
 
             // data: visData,
-            "data": [
-                {
-                    "name": "temperature",
-                    "url": "data/seattle-weather-hourly-normals.csv",
-                    "format": { "type": "csv", "parse": { "temperature": "number", "date": "date" } },
-                    "transform": [
-                        { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
-                        {
-                            "type": "formula", "as": "day",
-                            "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
-                        }
-                    ]
-                }
-            ],
+            data: visData,
+
+            // [
+            //     {
+            //         "name": "temperature",
+            //         "url": "data/seattle-weather-hourly-normals.csv",
+            //         "format": { "type": "csv", "parse": { "temperature": "number", "date": "date" } },
+            //         "transform": [
+            //             { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
+            //             {
+            //                 "type": "formula", "as": "day",
+            //                 "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
+            //             }
+            //         ]
+            //     }
+            // ],
 
             "scales": [
                 {

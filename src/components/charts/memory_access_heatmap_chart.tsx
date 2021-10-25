@@ -63,7 +63,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        //TODO 
         if (this.props.events &&
             this.props.operators &&
             (props.chartIdCounter !== prevProps.chartIdCounter ||
@@ -115,14 +114,11 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     isComponentLoading(): boolean {
-        //TODO enable
-        // if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
-        //TODO remove
-        return !this.props.operators ? true : false;
+        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public render() {
@@ -142,6 +138,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
+
+        console.log(this.props.chartData[this.state.chartId]);
+        console.log(Array.from((this.props.chartData[this.state.chartId].chartData.data as any).memoryAdress));
 
         // const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
         // const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeline;
@@ -231,7 +230,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     createVisualizationSpec(operator: string) {
-        //     const visData = this.createVisualizationData();
+        const visData = this.createVisualizationData();
 
         //     const pipelinesLegend = () => {
         //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));

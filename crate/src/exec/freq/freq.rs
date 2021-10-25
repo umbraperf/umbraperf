@@ -1,6 +1,6 @@
-use std::{collections::HashMap, ops::Rem, sync::Arc};
+use std::{collections::HashMap, convert::TryInto, ops::Rem, sync::Arc};
 
-use arrow::{array::{Float64Array, GenericStringArray, Int64Array, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema}, record_batch::RecordBatch};
+use arrow::{array::{Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema}, record_batch::RecordBatch};
 
 use crate::{exec::basic::{basic::{find_unique_string, sort_batch}, filter::filter_with}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
 
@@ -53,12 +53,12 @@ pub fn create_mem_bucket(
     column_for_operator: usize,
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
-    result_vec_memory: Vec<i64>,
+    result_vec_memory: Vec<i32>,
     result_builder: Vec<f64>
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
     let operator_arr = StringArray::from(result_vec_operator);
-    let memory_arr = Int64Array::from(result_vec_memory);
+    let memory_arr = Int32Array::from(result_vec_memory);
     let builder_result = Float64Array::from(result_builder);
 
     // Record Batch
@@ -67,7 +67,7 @@ pub fn create_mem_bucket(
 
     let field_bucket = Field::new("bucket", DataType::Float64, false);
     let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let mem_field = Field::new("mem", DataType::Int64, false);
+    let mem_field = Field::new("mem", DataType::Int32, false);
     let result_field = Field::new("freq", DataType::Float64, false);
 
     let schema = Schema::new(vec![field_bucket, field_operator, mem_field, result_field]);
@@ -270,7 +270,7 @@ pub fn freq_of_memory(
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
-    let mut result_mem_operator = Vec::new();
+    let mut result_mem_operator: Vec<i32> = Vec::new();
     let mut result_builder = Vec::new();
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
@@ -303,7 +303,7 @@ pub fn freq_of_memory(
                 for item in frequenzy {
                     result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                     result_vec_operator.push(operator);
-                    result_mem_operator.push(item.0.to_owned());
+                    result_mem_operator.push(item.0.to_owned().try_into().unwrap());
                     result_builder.push(item.1.to_owned());
                 }
                 // reset bucket_map
@@ -325,7 +325,7 @@ pub fn freq_of_memory(
                     for item in frequenzy {
                         result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(item.0.to_owned());
+                        result_mem_operator.push(item.0.to_owned().try_into().unwrap());
                         result_builder.push(item.1.to_owned());
                     }
                     // reset bucket_map

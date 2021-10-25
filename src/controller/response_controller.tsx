@@ -253,21 +253,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 });
             break;
 
-        //TODO 
-        // case model.RestQueryType.TODO:
+        case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
-        //     chartDataElem = model.createChartDataObject(
-        //         requestId,
-        //         {
-        //             chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
-        //             data: {
-        //                 buckets: resultObject.resultTable.getColumn('TODO').toArray(),
-        //                 memoryAdress: resultObject.resultTable.getColumn('TODO').toArray(),
-        //                 occurrences: resultObject.resultTable.getColumn('TODO').toArray(),
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
+                    data: {
+                        operator: resultObject.resultTable.getColumn('operator').toArray(),
+                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                        memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
+                        occurrences: resultObject.resultTable.getColumn('freq').toArray(),
 
-        //             }
-        //         });
-        //     break;
+                    }
+                });
+            break;
 
     }
 

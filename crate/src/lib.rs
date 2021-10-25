@@ -109,7 +109,7 @@ pub fn analyze_file(file_size: i32) {
         file_size,
         59, // Code for semicolon
         true,
-        vec![0, 5, 13, 20],
+        vec![0, 5, 13, 20, 22],
     );
 
     let elapsed = now.elapsed();

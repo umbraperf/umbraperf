@@ -1,8 +1,21 @@
 use std::{collections::HashMap, convert::TryInto, ops::Rem, sync::Arc};
 
-use arrow::{array::{Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema}, record_batch::RecordBatch};
+use arrow::{
+    array::{
+        Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray,
+    },
+    datatypes::{DataType, Field, Float64Type, Int64Type, Schema},
+    record_batch::RecordBatch,
+};
 
-use crate::{exec::basic::{basic::{find_unique_string, sort_batch}, filter::filter_with}, get_record_batches, utils::print_to_cons::print_to_js_with_obj};
+use crate::{
+    exec::basic::{
+        basic::{find_unique_string, sort_batch},
+        filter::filter_with,
+    },
+    get_record_batches,
+    utils::print_to_cons::print_to_js_with_obj,
+};
 
 pub enum Freq {
     ABS,
@@ -15,7 +28,7 @@ pub fn create_freq_bucket(
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
     result_builder: Vec<f64>,
-    freq: Freq
+    freq: Freq,
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
     let operator_arr = StringArray::from(result_vec_operator);
@@ -54,7 +67,7 @@ pub fn create_mem_bucket(
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
     result_vec_memory: Vec<i32>,
-    result_builder: Vec<f64>
+    result_builder: Vec<f64>,
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
     let operator_arr = StringArray::from(result_vec_operator);
@@ -110,7 +123,6 @@ pub fn get_int_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int
         .unwrap();
     return column;
 }
-
 
 pub fn freq_of_pipelines(
     batch: &RecordBatch,
@@ -181,7 +193,7 @@ pub fn freq_of_pipelines(
                     }
                 }
                 // reset bucket_map
-                bucket_map.insert(operator, 0.0);  
+                bucket_map.insert(operator, 0.0);
             }
             if matches!(freq, Freq::REL) {
                 bucket_map.insert("sum", 0.0);
@@ -238,14 +250,13 @@ pub fn freq_of_pipelines(
     }
 
     return create_freq_bucket(
-            &batch,
-            column_for_operator,
-            result_bucket,
-            result_vec_operator,
-            result_builder,
-            freq
+        &batch,
+        column_for_operator,
+        result_bucket,
+        result_vec_operator,
+        result_builder,
+        freq,
     );
-    
 }
 
 pub fn freq_of_memory(
@@ -256,7 +267,6 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
     print_to_js_with_obj(&format!("{:?}", "In Memory").into());
 
     //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
@@ -298,19 +308,19 @@ pub fn freq_of_memory(
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
-              
+
                 let frequenzy = bucket_map.get(operator).unwrap();
                 for item in frequenzy {
-                    let times = item.0.to_owned().try_into().unwrap(); 
-                    for i in 0..times{
+                    let times = item.0.to_owned().try_into().unwrap();
+                    for i in 0..times {
                         result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(1);
+                        result_mem_operator.push(current_memory.try_into().unwrap());
                         result_builder.push(item.1.to_owned());
                     }
                 }
                 // reset bucket_map
-                bucket_map.insert(operator, HashMap::new());  
+                bucket_map.insert(operator, HashMap::new());
             }
             time_bucket += bucket_size;
         }
@@ -323,19 +333,19 @@ pub fn freq_of_memory(
             while time_bucket < to {
                 for operator in vec_operator {
                     let operator = operator.unwrap();
-                  
+
                     let frequenzy = bucket_map.get(operator).unwrap();
                     for item in frequenzy {
-                        let times = item.0.to_owned().try_into().unwrap(); 
-                        for i in 0..times{
+                        let times = item.0.to_owned().try_into().unwrap();
+                        for i in 0..times {
                             result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                             result_vec_operator.push(operator);
-                            result_mem_operator.push(1);
+                            result_mem_operator.push(current_memory.try_into().unwrap());
                             result_builder.push(item.1.to_owned());
                         }
                     }
                     // reset bucket_map
-                    bucket_map.insert(operator, HashMap::new()); 
+                    bucket_map.insert(operator, HashMap::new());
                 }
                 time_bucket += bucket_size;
             }
@@ -349,19 +359,16 @@ pub fn freq_of_memory(
     print_to_js_with_obj(&format!("{:?}", result_mem_operator).into());
     print_to_js_with_obj(&format!("{:?}", result_builder).into());
 
-
     let batch = create_mem_bucket(
-            &batch,
-            column_for_operator,
-            result_bucket,
-            result_vec_operator,
-            result_mem_operator,
-            result_builder,
+        &batch,
+        column_for_operator,
+        result_bucket,
+        result_vec_operator,
+        result_mem_operator,
+        result_builder,
     );
 
     print_to_js_with_obj(&format!("{:?}", batch).into());
 
-
     batch
-    
 }

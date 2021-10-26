@@ -508,7 +508,15 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             return filteredData;
         }
 
-        return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmapRelative-${elem}`} key={index} spec={this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))} />));
+        const specs = this.props.operators!.map((elem) => (this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))));
+        const vegaElements: any = [];
+        this.props.operators!.forEach((elem, index) => {
+            if(specs[index]){
+                vegaElements.push(<Vega className={`vegaMemoryHeatmapRelative-${elem}`} key={index} spec={specs[index] as VisualizationSpec} />)
+            }
+        });
+
+        return vegaElements;
     }
 
     flattenDataRelative() {
@@ -517,7 +525,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
-        console.log(occurrencesArray);
         const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
         operatorArray.forEach((op, index) => {
             dataFlattend.push({
@@ -580,7 +587,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     createVisualizationSpecRelative(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+
         const visData = this.createVisualizationDataRelative(dataFlattendFiltered);
+
+        if(visData[0].values && visData[0].values.length === 0) {
+            return null;
+        };
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -675,9 +687,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                             "image": [
                                 {"test": "extent[1] > 0", "field": "image"},
                             ],
-                            "fill": [
-                                {"test": "!(extent[1] > 0)", "value": "#fff"},
-                            ],
                             "width": { "signal": "width" },
                             "height": { "signal": "height" },
                             "aspect": { "value": false },
@@ -713,12 +722,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
-
-        console.log(operatorArray);
-        console.log(bucketsArray);
-        console.log(memoryAdressArray);
-        console.log(occurrencesArray);
-
 
         const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
         operatorArray.forEach((op, index) => {

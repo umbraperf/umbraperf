@@ -487,7 +487,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>

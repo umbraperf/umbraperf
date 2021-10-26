@@ -402,7 +402,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
-        this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.createVisualizationSpecAbsolute = this.createVisualizationSpecAbsolute.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -491,20 +491,33 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {<Vega className={`vegaMemoryHeatmap`} spec={this.createVisualizationSpec()} />}
+                    {this.renderChartPerOperatorRelative()}
+                    {<Vega className={`vegaMemoryHeatmap`} spec={this.createVisualizationSpecAbsolute()} />}
                 </div>
             }
         </div>;
     }
 
+    renderChartPerOperatorRelative() {
+        const preparedData = this.flattenDataRelative();
+        const domains = preparedData.domains;
+        const dataFlattend = preparedData.dataFlattend;
 
-    createVisualizationData() {
+        const dataFlattendFiltered = (curOp: string) => {
+            const filteredData = dataFlattend.filter(elem => (elem.operator === curOp));
+            return filteredData;
+        }
 
+        return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))} />));
+    }
+
+    flattenDataRelative() {
         const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
         const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
+        console.log(occurrencesArray);
         const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
         operatorArray.forEach((op, index) => {
             dataFlattend.push({
@@ -519,15 +532,19 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         const domains = {
             bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
             memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
-            occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+            //occurrencesDomain: [0, Math.max(...occurrencesArray)],
         }
 
-        //TODO: in backend:
-        const occurrencesFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
-        dataFlattend.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
+        return { dataFlattend, domains }
+    }
+
+    createVisualizationDataRelative(dataFlattendFiltered: any) {
+
+        const occurrencesFlattend: Array<{ bucket: number, memAdr: number }> = [];
+        //TODO Backend:
+        dataFlattendFiltered.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
             for (let i = 0; i < elem.occurrences; i++) {
                 occurrencesFlattend.push({
-                    operator: elem.operator,
                     bucket: elem.bucket,
                     memAdr: elem.memAdr,
                 });
@@ -538,6 +555,204 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             {
                 name: "table",
                 values: occurrencesFlattend,
+                transform: [
+                    {
+                        type: "extent",
+                        field: "occurrences", 
+                        signal: "extent"
+                    }
+                ]
+            },
+            {
+                name: "density",
+                source: "table",
+                transform: [
+                    {
+                        type: "kde2d",
+                        size: [{ signal: "width" }, { signal: "height" }],
+                        x: { "expr": "scale('x', datum.bucket)" },
+                        y: { "expr": "scale('y', datum.memAdr)" },
+                        bandwidth: { "signal": "[-1, -1]" },
+                        as: "grid",
+                    },
+                    {
+                        type: "heatmap",
+                        field: "grid",
+                        resolve: "shared",
+                        //TODO times extend signal
+                        color: { "expr": `scale('density', (datum.$value/datum.$max))` },
+                        opacity: 1
+                    }
+                ]
+            }
+        ]
+        return data;
+    }
+
+    createVisualizationSpecRelative(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+        const visData = this.createVisualizationDataRelative(dataFlattendFiltered);
+
+        const spec: VisualizationSpec = {
+            $schema: "https://vega.github.io/schema/vega/v5.json",
+            width: 400,
+            height: 300,
+            padding: { left: 5, right: 5, top: 10, bottom: 10 },
+            autosize: { type: "pad", resize: false },
+
+
+            title: {
+                text: `Memory Access Heatmap: ${operator}`,
+                align: model.chartConfiguration.titleAlign,
+                dy: model.chartConfiguration.titlePadding,
+                fontSize: model.chartConfiguration.titleFontSize,
+                font: model.chartConfiguration.titleFont,
+            },
+
+            // data: visData,
+            data: visData,
+
+            "scales": [
+                {
+                    "name": "x",
+                    "type": "linear",
+                    "domain": domains.bucketDomain,
+                    "range": "width",
+                    "zero": true,
+                    "nice": true,
+                    "round": true,
+                },
+                {
+                    "name": "y",
+                    "type": "linear",
+                    "domain": domains.memDomain,
+                    "range": "height",
+                    "zero": true,
+                    "nice": true,
+                    "round": true,
+                },
+                {
+                    "name": "density",
+                    "type": "linear",
+                    "range": { "scheme": "Viridis" },
+                    //"domain": [0, 1],
+                    "domain": [0, {signal: "extend"}],
+                    "zero": true,
+                }
+            ],
+
+            "axes": [
+                {
+                    "orient": "bottom",
+                    "scale": "x",
+                    labelOverlap: true,
+                    //values: xTicks(),
+                    title: model.chartConfiguration.memoryChartXTitle,
+                    titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
+                    labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+                },
+                {
+                    orient: "left",
+                    scale: "y",
+                    zindex: 1,
+                    title: model.chartConfiguration.memoryChartYTitle,
+                    titlePadding: model.chartConfiguration.axisPadding,
+                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                    labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+                    labelOverlap: true,
+                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                    titleFont: model.chartConfiguration.axisTitleFont,
+                    labelFont: model.chartConfiguration.axisLabelFont,
+                }
+            ],
+
+            "marks": [
+                {
+                    "type": "image",
+                    "from": { "data": "density" },
+                    "encode": {
+                        "enter": {
+                            // tooltip: {
+                            //     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+                            // },
+                        },
+                        "update": {
+                            "x": { "value": 0 },
+                            "y": { "value": 0 },
+                            "image": { "field": "image" },
+                            "width": { "signal": "width" },
+                            "height": { "signal": "height" },
+                            "aspect": { "value": false },
+                            "smooth": { "value": true }
+                        }
+                    }
+                }
+            ],
+
+            "legends": [
+                {
+                    "fill": "density",
+                    "type": "gradient",
+                    "title": "Number of Accesses",
+                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                    "titlePadding": 4,
+                    "gradientLength": { "signal": "height - 20" }
+                }
+            ],
+        } as VisualizationSpec;
+
+        return spec;
+    }
+
+
+    createVisualizationDataAbsolute() {
+
+        const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
+        const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
+        const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
+        const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
+
+        console.log(operatorArray);
+        console.log(bucketsArray);
+        console.log(memoryAdressArray);
+        console.log(occurrencesArray);
+
+
+        const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
+        operatorArray.forEach((op, index) => {
+            dataFlattend.push({
+                operator: op,
+                bucket: bucketsArray[index],
+                memAdr: memoryAdressArray[index],
+            });
+        }
+        );
+
+        const domains = {
+            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
+            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+            occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+        }
+
+        // //TODO: in backend:
+        // const occurrencesFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
+        // dataFlattend.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
+        //     for (let i = 0; i < elem.occurrences; i++) {
+        //         occurrencesFlattend.push({
+        //             operator: elem.operator,
+        //             bucket: elem.bucket,
+        //             memAdr: elem.memAdr,
+        //         });
+        //     }
+        // });
+
+        const data = [
+            {
+                name: "table",
+                values: dataFlattend,
             },
             {
                 name: "density",
@@ -565,8 +780,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         return { data, domains };
     }
 
-    createVisualizationSpec() {
-        const visData = this.createVisualizationData();
+    createVisualizationSpecAbsolute() {
+        const visData = this.createVisualizationDataAbsolute();
 
         const getColumns = () => {
             if (this.state.width < 800) {

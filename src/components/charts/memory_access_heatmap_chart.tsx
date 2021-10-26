@@ -492,7 +492,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     {this.renderChartPerOperatorRelative()}
-                    {<Vega className={`vegaMemoryHeatmap`} spec={this.createVisualizationSpecAbsolute()} />}
+                    {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />}
                 </div>
             }
         </div>;
@@ -508,7 +508,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             return filteredData;
         }
 
-        return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))} />));
+        return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmapRelative-${elem}`} key={index} spec={this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))} />));
     }
 
     flattenDataRelative() {

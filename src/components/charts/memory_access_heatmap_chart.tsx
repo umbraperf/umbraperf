@@ -1,3 +1,356 @@
+// import * as model from '../../model';
+// import * as Controller from '../../controller/request_controller';
+// import * as Context from '../../app_context';
+// import Spinner from '../utils/spinner';
+// import React from 'react';
+// import { connect } from 'react-redux';
+// import { SignalListeners, Vega } from 'react-vega';
+// import { VisualizationSpec } from "react-vega/src";
+// import { Redirect } from 'react-router-dom';
+// import { createRef } from 'react';
+// import _, { reverse } from "lodash";
+
+
+// interface Props {
+//     appContext: Context.IAppContext;
+//     resultLoading: model.ResultLoading;
+//     result: model.Result | undefined;
+//     csvParsingFinished: boolean;
+//     currentChart: string;
+//     currentEvent: string;
+//     events: Array<string> | undefined;
+//     chartIdCounter: number;
+//     chartData: model.ChartDataKeyValue,
+//     currentPipeline: Array<string> | "All";
+//     currentOperator: Array<string> | "All";
+//     operators: Array<string> | undefined;
+//     currentBucketSize: number,
+//     currentTimeBucketSelectionTuple: [number, number],
+//     setCurrentChart: (newCurrentChart: string) => void;
+//     setChartIdCounter: (newChartIdCounter: number) => void;
+//     setCurrentEvent: (newCurrentEvent: string) => void;
+// }
+
+// interface State {
+//     chartId: number,
+// }
+
+// class MemoryAccessHeatmapChart extends React.Component<Props, State> {
+
+//     elementWrapper = createRef<HTMLDivElement>();
+
+//     constructor(props: Props) {
+//         super(props);
+//         this.state = {
+//             chartId: this.props.chartIdCounter,
+//         };
+//         this.props.setChartIdCounter((this.state.chartId) + 1);
+
+//         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+//     }
+
+//     componentDidUpdate(prevProps: Props): void {
+//         this.setDefaultEventToMemLoads(this.props, prevProps);
+//         this.requestNewChartData(this.props, prevProps);
+//     }
+
+//     setDefaultEventToMemLoads(props: Props, prevProps: Props) {
+//         console.log(prevProps.chartData[this.state.chartId]);
+//         //only set bevore first time data requestes and if available memloads are in events and events available
+//         if (props.events && props.events.includes("mem_inst_retired.all_loads") && !prevProps.chartData[this.state.chartId]) {
+//             props.setCurrentEvent("mem_inst_retired.all_loads");
+//         }
+//     }
+
+//     requestNewChartData(props: Props, prevProps: Props): void {
+//         if (this.newChartDataNeeded(props, prevProps)) {
+//             Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
+//         }
+//     }
+
+//     newChartDataNeeded(props: Props, prevProps: Props): boolean {
+//         if (props.events &&
+//             props.operators &&
+//             (props.chartIdCounter !== prevProps.chartIdCounter ||
+//                 props.currentBucketSize !== prevProps.currentBucketSize ||
+//                 props.currentEvent !== prevProps.currentEvent ||
+//                 !_.isEqual(props.operators, prevProps.operators) ||
+//                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+
+//     componentDidMount() {
+
+//         if (this.props.csvParsingFinished) {
+//             this.props.setCurrentChart(model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
+//         }
+//     }
+
+
+//     isComponentLoading(): boolean {
+//         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+
+//     public render() {
+
+//         if (!this.props.csvParsingFinished) {
+//             return <Redirect to={"/upload"} />
+//         }
+
+//         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+//             {this.isComponentLoading()
+//                 ? <Spinner />
+//                 : <div className={"vegaContainer"}>
+//                     {this.renderChartPerOperator()}
+//                 </div>
+//             }
+//         </div>;
+//     }
+
+//     renderChartPerOperator() {
+//         const preparedData = this.prepareData();
+//         const domains = preparedData.domains;
+//         const dataFlattend = preparedData.dataFlattend;
+
+//         const dataFlattendFiltered = (curOp: string) => {
+//             const filteredData = dataFlattend.filter(elem => (elem.operator === curOp));
+//             return filteredData;
+//         }
+
+//         return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem, domains, dataFlattendFiltered(elem))} />));
+//     }
+
+//     prepareData() {
+//         const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
+//         const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
+//         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
+//         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
+
+//         const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
+//         operatorArray.forEach((op, index) => {
+//             dataFlattend.push({
+//                 operator: op,
+//                 bucket: bucketsArray[index],
+//                 memAdr: memoryAdressArray[index],
+//                 occurrences: occurrencesArray[index],
+//             });
+//         }
+//         );
+
+//         const domains = {
+//             bucketDomain: Math.max(...bucketsArray),
+//             memDomain: _.sortBy(memoryAdressArray),
+//             occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+//             // memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+//         }
+
+//         // const domains = {
+//         //     bucketDomain: bucketsArray,
+//         //     memDomain: memoryAdressArray,
+//         //     occurrencesDomain: occurrencesArray,
+//         // }
+
+//         return { dataFlattend, domains }
+//     }
+
+//     createVisualizationData(dataFlattendFiltered: any) {
+
+//         const data = [
+//             {
+//                 name: "table",
+//                 values: dataFlattendFiltered,
+//             },
+//         ]
+//         return data;
+//     }
+
+//     createVisualizationSpec(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+//         const visData = this.createVisualizationData(dataFlattendFiltered);
+
+//         console.log(domains);
+//         console.log(visData);
+
+//         const spec: VisualizationSpec = {
+//             $schema: "https://vega.github.io/schema/vega/v5.json",
+//             width: 400,
+//             height: 300,
+//             padding: { left: 5, right: 5, top: 10, bottom: 10 },
+//             autosize: { type: "fit", resize: false },
+
+//             title: {
+//                 text: `Memory Access Heatmap: ${operator}`,
+//                 align: model.chartConfiguration.titleAlign,
+//                 dy: model.chartConfiguration.titlePadding,
+//                 fontSize: model.chartConfiguration.titleFontSize,
+//                 font: model.chartConfiguration.titleFont,
+//             },
+
+//             // data: visData,
+//             data: visData,
+
+//             "scales": [
+//                 {
+//                     "name": "x",
+//                     "type": "linear",
+//                     "domain": [0, domains.bucketDomain],
+//                     "range": "width",
+//                     // "zero": true,
+//                     // "nice": true,
+//                     // "round": true,
+//                 },
+//                 {
+//                     "name": "y",
+//                     "type": "band",
+//                     "domain": domains.memDomain,
+//                     "range": "height",
+//                     "zero": true,
+//                     "nice": true,
+//                     "round": true,
+//                     reverse: true,
+//                 },
+//                 {
+//                     "name": "color",
+//                     "type": "linear",
+//                     "range": { "scheme": "Viridis" },
+//                     domain: {
+//                         data: "table",
+//                         field: "occurrences"
+//                     },
+//                     // "domain": domains.occurrencesDomain,
+//                     "zero": true,
+//                 }
+//             ],
+
+//             "axes": [
+//                 {
+//                     "orient": "bottom",
+//                     "scale": "x",
+//                     labelOverlap: true,
+//                     //values: xTicks(),
+//                     title: model.chartConfiguration.memoryChartXTitle,
+//                     titlePadding: model.chartConfiguration.axisPadding,
+//                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+//                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+//                     titleFont: model.chartConfiguration.axisTitleFont,
+//                     labelFont: model.chartConfiguration.axisLabelFont,
+//                     labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+//                 },
+//                 {
+//                     orient: "left",
+//                     scale: "y",
+//                     zindex: 1,
+//                     title: model.chartConfiguration.memoryChartYTitle,
+//                     titlePadding: model.chartConfiguration.axisPadding,
+//                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+//                     labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+//                     labelOverlap: true,
+//                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+//                     titleFont: model.chartConfiguration.axisTitleFont,
+//                     labelFont: model.chartConfiguration.axisLabelFont,
+//                 }
+//             ],
+
+//             "marks": [
+//                 {
+//                     "type": "rect",
+//                     "encode": {
+//                         "enter": {
+//                             "x": { "value": 0 },
+//                             "y": { "value": 0 },
+//                             "width": { "signal": "width" },
+//                             "height": { "signal": "height" },
+//                             "fill": { "scale": "color", "value": "0" }
+//                         }
+//                     }
+//                 },
+//                 {
+//                     "type": "rect",
+//                     "from": { "data": "table" },
+//                     "encode": {
+//                         "enter": {
+//                             "x": { "scale": "x", "field": "bucket" },
+//                             "y": { "scale": "y", "field": "memAdr" },
+//                             "width": { "value": 5 },
+//                             "height": { "scale": "y", "band": 1 },
+//                             tooltip: {
+//                                 signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+//                             },
+//                         },
+//                         "update": {
+//                             "fill": { "scale": "color", "field": "occurrences" }
+//                         }
+//                     }
+//                 }
+//             ],
+
+//             "legends": [
+//                 {
+//                     "fill": "color",
+//                     "type": "gradient",
+//                     "title": "Number of Accesses",
+//                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
+//                     "titlePadding": 4,
+//                     "gradientLength": { "signal": "height - 20" }
+//                 }
+//             ],
+//         } as VisualizationSpec;
+
+//         return spec;
+//     }
+
+// }
+
+// const mapStateToProps = (state: model.AppState) => ({
+//     resultLoading: state.resultLoading,
+//     result: state.result,
+//     csvParsingFinished: state.csvParsingFinished,
+//     currentChart: state.currentChart,
+//     currentEvent: state.currentEvent,
+//     events: state.events,
+//     chartIdCounter: state.chartIdCounter,
+//     chartData: state.chartData,
+//     currentPipeline: state.currentPipeline,
+//     currentOperator: state.currentOperator,
+//     operators: state.operators,
+//     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+//     currentBucketSize: state.currentBucketSize,
+
+// });
+
+// const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+//     setCurrentChart: (newCurrentChart: string) => dispatch({
+//         type: model.StateMutationType.SET_CURRENTCHART,
+//         data: newCurrentChart,
+//     }),
+//     setChartIdCounter: (newChartIdCounter: number) => dispatch({
+//         type: model.StateMutationType.SET_CHARTIDCOUNTER,
+//         data: newChartIdCounter,
+//     }),
+//     setCurrentEvent: (newCurrentEvent: string) => dispatch({
+//         type: model.StateMutationType.SET_CURRENTEVENT,
+//         data: newCurrentEvent,
+//     })
+// });
+
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(MemoryAccessHeatmapChart));
+
+
+
+
+
+
+
+
+
+//image version absolute among all graphs:
 import * as model from '../../model';
 import * as Controller from '../../controller/request_controller';
 import * as Context from '../../app_context';
@@ -8,7 +361,8 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
-import _ from "lodash";
+import _, { reverse } from "lodash";
+import { $CombinedState } from 'redux';
 
 
 interface Props {
@@ -24,15 +378,16 @@ interface Props {
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
+    currentBucketSize: number,
     currentTimeBucketSelectionTuple: [number, number],
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 interface State {
     chartId: number,
     width: number,
-    height: number,
 }
 
 class MemoryAccessHeatmapChart extends React.Component<Props, State> {
@@ -44,7 +399,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         this.state = {
             chartId: this.props.chartIdCounter,
             width: 0,
-            height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
@@ -52,9 +406,16 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-
+        // this.setDefaultEventToMemLoads(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
     }
+
+    // setDefaultEventToMemLoads(props: Props, prevProps: Props) {
+    //     //only set bevore first time data requestes and if available memloads are in events and events available
+    //     if (props.events && props.events.includes("mem_inst_retired.all_loads") && !props.chartData[this.state.chartId]) {
+    //         props.setCurrentEvent("mem_inst_retired.all_loads");
+    //     }
+    // }
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
@@ -63,12 +424,13 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            this.props.operators &&
+        if (props.events &&
+            props.operators &&
             (props.chartIdCounter !== prevProps.chartIdCounter ||
+                props.currentBucketSize !== prevProps.currentBucketSize ||
                 props.currentEvent !== prevProps.currentEvent ||
-                !_.isEqual(this.props.operators, prevProps.operators) ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+                !_.isEqual(props.operators, prevProps.operators) ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
             return true;
         } else {
             return false;
@@ -77,13 +439,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.offsetHeight,
-        }));
-
         if (this.props.csvParsingFinished) {
+
+            this.setState((state, props) => ({
+                ...state,
+                width: this.elementWrapper.current!.offsetWidth,
+            }));
 
             this.props.setCurrentChart(model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
 
@@ -109,9 +470,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
             child.style.display = 'block';
         }
-
-
     }
+
 
     isComponentLoading(): boolean {
         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
@@ -127,124 +487,117 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem)} />))}
+                    {<Vega className={`vegaMemoryHeatmap`} spec={this.createVisualizationSpec()} />}
                 </div>
             }
         </div>;
     }
 
+
     createVisualizationData() {
 
-        console.log(this.props.chartData[this.state.chartId]);
-        console.log(Array.from((this.props.chartData[this.state.chartId].chartData.data as any).memoryAdress));
+        const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
+        const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
+        const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
+        const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
 
-        // const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
-        // const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeline;
-        // const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).opOccurrences);
-        // const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeOccurrences);
+        const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
+        operatorArray.forEach((op, index) => {
+            dataFlattend.push({
+                operator: op,
+                bucket: bucketsArray[index],
+                memAdr: memoryAdressArray[index],
+                occurrences: occurrencesArray[index],
+            });
+        }
+        );
 
-        // //add datum for inner circle at beginning of data only on first rerender
-        // operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
-        // parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-        // operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
-        // pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
+        const domains = {
+            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
+            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+            occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+        }
 
-        // const data = [
-        //     {
-        //         name: "selectedPipelines",
-        //         values: { pipelinesUsed: this.props.currentPipeline === "All" ? this.props.pipelines : this.props.currentPipeline },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["pipelinesUsed"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "pipelinesShort",
-        //         values: { pipeline: this.props.pipelines, pipelineShort: this.props.pipelinesShort },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["pipeline", "pipelineShort"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "selectedOperators",
-        //         values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["operatorsUsed"]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         name: "tree",
-        //         values: [
-        //             { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
-        //         ],
-        //         transform: [
-        //             {
-        //                 type: "flatten",
-        //                 fields: ["operator", "parent", "pipeOccurrences", "opOccurrences"]
-        //             },
-        //             {
-        //                 type: "stratify",
-        //                 key: "operator",
-        //                 parentKey: "parent"
-        //             },
-        //             {
-        //                 type: "partition",
-        //                 field: "opOccurrences", //size of leaves -> operators
-        //                 sort: { "field": "value" },
-        //                 size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
-        //                 as: ["a0", "r0", "a1", "r1", "depth", "children"]
-        //             },
-        //             {
-        //                 type: "lookup", //join short pipeline names to tree table
-        //                 from: "pipelinesShort",
-        //                 key: "pipeline",
-        //                 fields: ["operator"],
-        //                 values: ["pipelineShort"],
-        //             },
-        //             {
-        //                 type: "lookup", //join short parent pipeline names colum 
-        //                 from: "pipelinesShort",
-        //                 key: "pipeline",
-        //                 fields: ["parent"],
-        //                 values: ["pipelineShort"],
-        //                 as: ["parentShort"]
-        //             }
-        //         ],
+        //TODO: in backend:
+        const occurrencesFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
+        dataFlattend.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
+            for (let i = 0; i < elem.occurrences; i++) {
+                occurrencesFlattend.push({
+                    operator: elem.operator,
+                    bucket: elem.bucket,
+                    memAdr: elem.memAdr,
+                });
+            }
+        });
 
-        //     },
-        // ];
-
-        // return data;
+        const data = [
+            {
+                name: "table",
+                values: occurrencesFlattend,
+            },
+            {
+                name: "density",
+                source: "table",
+                transform: [
+                    {
+                        type: "kde2d",
+                        groupby: ["operator"],
+                        size: [{ signal: "width" }, { signal: "height" }],
+                        x: { "expr": "scale('x', datum.bucket)" },
+                        y: { "expr": "scale('y', datum.memAdr)" },
+                        bandwidth: { "signal": "[-1, -1]" },
+                        as: "grid",
+                    },
+                    {
+                        type: "heatmap",
+                        field: "grid",
+                        resolve: "shared",
+                        color: { "expr": `scale('density', (datum.$value/datum.$max)*${domains.occurrencesDomain[1]})` },
+                        opacity: 1
+                    }
+                ]
+            }
+        ]
+        return { data, domains };
     }
 
-    createVisualizationSpec(operator: string) {
+    createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        //     const pipelinesLegend = () => {
-        //         return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
-        //     }
+        const getColumns = () => {
+            if (this.state.width < 800) {
+                return 1;
+            } else if (this.state.width < 1200) {
+                return 2;
+            } else if (this.state.width < 1520) {
+                return 3;
+            } else {
+                return 4;
+            }
+        }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: 400,
-            height: 300,
+            width: 300,
+            height: 200,
             padding: { left: 5, right: 5, top: 10, bottom: 10 },
-            autosize: { type: "fit", resize: false },
+            autosize: { type: "pad", resize: false },
+
+            layout: {
+
+                padding: 20,
+                columns: getColumns(),
+                align: "all",
+                bounds: "full",
+                center: { "row": true, "column": true },
+            },
 
             title: {
-                text: `Memory Access Heatmap: ${operator}`,
+                text: `Memory Access Heatmap (Absolute)`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
@@ -252,113 +605,139 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             },
 
             // data: visData,
-            "data": [
-                {
-                    "name": "temperature",
-                    "url": "data/seattle-weather-hourly-normals.csv",
-                    "format": { "type": "csv", "parse": { "temperature": "number", "date": "date" } },
-                    "transform": [
-                        { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
-                        {
-                            "type": "formula", "as": "day",
-                            "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
-                        }
-                    ]
-                }
-            ],
+            data: visData.data,
 
             "scales": [
                 {
                     "name": "x",
-                    "type": "time",
-                    "domain": { "data": "temperature", "field": "day" },
-                    "range": "width"
+                    "type": "linear",
+                    "domain": visData.domains.bucketDomain,
+                    "range": "width",
+                    "zero": true,
+                    "nice": true,
+                    "round": true,
                 },
                 {
                     "name": "y",
-                    "type": "band",
-                    "domain": [
-                        6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-                        0, 1, 2, 3, 4, 5
-                    ],
-                    "range": "height"
+                    "type": "linear",
+                    "domain": visData.domains.memDomain,
+                    "range": "height",
+                    "zero": true,
+                    "nice": true,
+                    "round": true,
                 },
                 {
-                    "name": "color",
+                    "name": "density",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    "domain": { "data": "temperature", "field": "temperature" },
-                    "zero": false, "nice": true
-                }
-            ],
+                    //"domain": [0, 1],
+                    "domain": visData.domains.occurrencesDomain,
 
-            "axes": [
-                {
-                    "orient": "bottom",
-                    "scale": "x",
-                    labelOverlap: true,
-                    //values: xTicks(),
-                    title: model.chartConfiguration.memoryChartXTitle,
-                    titlePadding: model.chartConfiguration.axisPadding,
-                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
-                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
-                    titleFont: model.chartConfiguration.axisTitleFont,
-                    labelFont: model.chartConfiguration.axisLabelFont,
-                    labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
-                },
-                {
-                    orient: "left",
-                    scale: "y",
-                    zindex: 1,
-                    title: model.chartConfiguration.memoryChartYTitle,
-                    titlePadding: model.chartConfiguration.axisPadding,
-                    labelFontSize: model.chartConfiguration.axisLabelFontSize,
-                    labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
-                    labelOverlap: true,
-                    titleFontSize: model.chartConfiguration.axisTitleFontSize,
-                    titleFont: model.chartConfiguration.axisTitleFont,
-                    labelFont: model.chartConfiguration.axisLabelFont,
+                    "zero": true,
                 }
             ],
 
             "marks": [
                 {
-                    "type": "rect",
-                    "from": { "data": "temperature" },
-                    "encode": {
-                        "enter": {
-                            "x": { "scale": "x", "field": "day" },
-                            "y": { "scale": "y", "field": "hour" },
-                            "width": { "value": 5 },
-                            "height": { "scale": "y", "band": 1 },
-                            //TODO Tooltip
-                            "tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'" }
-                        },
-                        "update": {
-                            "fill": { "scale": "color", "field": "temperature" }
+                    "type": "group",
+                    "from": {
+                        "facet": {
+                            "name": "facet",
+                            "data": "density",
+                            "groupby": "operator"
                         }
-                    }
+                    },
+
+                    //"sort": { "field": "datum.Origin", "order": "ascending" },
+
+                    "title": {
+                        "text": { "signal": "parent.operator" },
+                        "frame": "group",
+                        fontSize: model.chartConfiguration.titleFontSize,
+                        font: model.chartConfiguration.titleFont,
+                    },
+
+                    "encode": {
+                        "update": {
+                            "width": { "signal": "width" },
+                            "height": { "signal": "height" }
+                        }
+                    },
+
+                    "axes": [
+                        {
+                            "orient": "bottom",
+                            "scale": "x",
+                            labelOverlap: true,
+                            //values: xTicks(),
+                            title: model.chartConfiguration.memoryChartXTitle,
+                            titlePadding: model.chartConfiguration.axisPadding,
+                            labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                            titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                            titleFont: model.chartConfiguration.axisTitleFont,
+                            labelFont: model.chartConfiguration.axisLabelFont,
+                            labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+                        },
+                        {
+                            orient: "left",
+                            scale: "y",
+                            zindex: 1,
+                            title: model.chartConfiguration.memoryChartYTitle,
+                            titlePadding: model.chartConfiguration.axisPadding,
+                            labelFontSize: model.chartConfiguration.axisLabelFontSize,
+                            labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+                            labelOverlap: true,
+                            titleFontSize: model.chartConfiguration.axisTitleFontSize,
+                            titleFont: model.chartConfiguration.axisTitleFont,
+                            labelFont: model.chartConfiguration.axisLabelFont,
+                        }
+                    ],
+
+                    "marks": [
+                        {
+                            "type": "image",
+                            "from": { "data": "facet" },
+                            "encode": {
+                                "enter": {
+                                    // tooltip: {
+                                    //     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+                                    // },
+                                },
+                                "update": {
+                                    "x": { "value": 0 },
+                                    "y": { "value": 0 },
+                                    "image": { "field": "image" },
+                                    "width": { "signal": "width" },
+                                    "height": { "signal": "height" },
+                                    "aspect": { "value": false },
+                                    "smooth": { "value": true }
+                                }
+                            }
+                        }
+                    ],
+                    "legends": [
+                        {
+                            "fill": "density",
+                            "type": "gradient",
+                            "title": "# Accesses",
+                            titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                            "titlePadding": 4,
+                            "gradientLength": { "signal": "height - 20" },
+                            direction: "vertical",
+                            orient: "right",
+
+                        }
+                    ],
                 }
             ],
 
-            "legends": [
-                {
-                    "fill": "color",
-                    "type": "gradient",
-                    "title": "Number of Accesses",
-                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                    "titlePadding": 4,
-                    "gradientLength": { "signal": "height - 20" }
-                }
-            ],
         } as VisualizationSpec;
 
         return spec;
     }
 
-
-
 }
+
 
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
@@ -373,6 +752,8 @@ const mapStateToProps = (state: model.AppState) => ({
     currentOperator: state.currentOperator,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentBucketSize: state.currentBucketSize,
+
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -383,8 +764,372 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
+    }),
+    setCurrentEvent: (newCurrentEvent: string) => dispatch({
+        type: model.StateMutationType.SET_CURRENTEVENT,
+        data: newCurrentEvent,
     })
 });
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(MemoryAccessHeatmapChart));
+
+
+
+
+
+// //image version relative per each graph:
+// import * as model from '../../model';
+// import * as Controller from '../../controller/request_controller';
+// import * as Context from '../../app_context';
+// import Spinner from '../utils/spinner';
+// import React from 'react';
+// import { connect } from 'react-redux';
+// import { SignalListeners, Vega } from 'react-vega';
+// import { VisualizationSpec } from "react-vega/src";
+// import { Redirect } from 'react-router-dom';
+// import { createRef } from 'react';
+// import _, { reverse } from "lodash";
+
+
+// interface Props {
+//     appContext: Context.IAppContext;
+//     resultLoading: model.ResultLoading;
+//     result: model.Result | undefined;
+//     csvParsingFinished: boolean;
+//     currentChart: string;
+//     currentEvent: string;
+//     events: Array<string> | undefined;
+//     chartIdCounter: number;
+//     chartData: model.ChartDataKeyValue,
+//     currentPipeline: Array<string> | "All";
+//     currentOperator: Array<string> | "All";
+//     operators: Array<string> | undefined;
+//     currentBucketSize: number,
+//     currentTimeBucketSelectionTuple: [number, number],
+//     setCurrentChart: (newCurrentChart: string) => void;
+//     setChartIdCounter: (newChartIdCounter: number) => void;
+//     setCurrentEvent: (newCurrentEvent: string) => void;
+// }
+
+// interface State {
+//     chartId: number,
+// }
+
+// class MemoryAccessHeatmapChart extends React.Component<Props, State> {
+
+//     elementWrapper = createRef<HTMLDivElement>();
+
+//     constructor(props: Props) {
+//         super(props);
+//         this.state = {
+//             chartId: this.props.chartIdCounter,
+//         };
+//         this.props.setChartIdCounter((this.state.chartId) + 1);
+
+//         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+//     }
+
+//     componentDidUpdate(prevProps: Props): void {
+//         this.setDefaultEventToMemLoads(this.props, prevProps);
+//         this.requestNewChartData(this.props, prevProps);
+//     }
+
+//     setDefaultEventToMemLoads(props: Props, prevProps: Props) {
+//         //only set bevore first time data requestes and if available memloads are in events and events available
+//         if (props.events && props.events.includes("mem_inst_retired.all_loads") && !prevProps.chartData[this.state.chartId]) {
+//             props.setCurrentEvent("mem_inst_retired.all_loads");
+//         }
+//     }
+
+//     requestNewChartData(props: Props, prevProps: Props): void {
+//         if (this.newChartDataNeeded(props, prevProps)) {
+//             Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
+//         }
+//     }
+
+//     newChartDataNeeded(props: Props, prevProps: Props): boolean {
+//         if (props.events &&
+//             props.operators &&
+//             (props.chartIdCounter !== prevProps.chartIdCounter ||
+//                 props.currentBucketSize !== prevProps.currentBucketSize ||
+//                 props.currentEvent !== prevProps.currentEvent ||
+//                 !_.isEqual(props.operators, prevProps.operators) ||
+//                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+
+//     componentDidMount() {
+
+//         if (this.props.csvParsingFinished) {
+//             this.props.setCurrentChart(model.ChartType.MEMORY_ACCESS_HEATMAP_CHART);
+//         }
+//     }
+
+
+//     isComponentLoading(): boolean {
+//         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+
+//     public render() {
+
+//         if (!this.props.csvParsingFinished) {
+//             return <Redirect to={"/upload"} />
+//         }
+
+//         return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+//             {this.isComponentLoading()
+//                 ? <Spinner />
+//                 : <div className={"vegaContainer"}>
+//                     {this.renderChartPerOperator()}
+//                 </div>
+//             }
+//         </div>;
+//     }
+
+//     renderChartPerOperator() {
+//         const preparedData = this.flattenData();
+//         const domains = preparedData.domains;
+//         const dataFlattend = preparedData.dataFlattend;
+
+//         const dataFlattendFiltered = (curOp: string) => {
+//             const filteredData = dataFlattend.filter(elem => (elem.operator === curOp));
+//             return filteredData;
+//         }
+
+//         return this.props.operators!.map((elem, index) => (<Vega className={`vegaMemoryHeatmap-${elem}`} key={index} spec={this.createVisualizationSpec(elem, domains, dataFlattendFiltered(elem))} />));
+//     }
+
+//     flattenData() {
+//         const operatorArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).operator;
+//         const bucketsArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).buckets);
+//         const memoryAdressArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).memoryAdress);
+//         const occurrencesArray = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChart).occurrences);
+
+//         console.log(occurrencesArray);
+//         const dataFlattend: Array<{ operator: string, bucket: number, memAdr: number, occurrences: number }> = [];
+//         operatorArray.forEach((op, index) => {
+//             dataFlattend.push({
+//                 operator: op,
+//                 bucket: bucketsArray[index],
+//                 memAdr: memoryAdressArray[index],
+//                 occurrences: occurrencesArray[index],
+//             });
+//         }
+//         );
+
+//         const domains = {
+//             bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
+//             memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+//             occurrencesDomain: [0,1],
+//         }
+
+//         return { dataFlattend, domains }
+//     }
+
+//     createVisualizationData(dataFlattendFiltered: any, domains: any) {
+
+//         const occurrencesFlattend: Array<{ bucket: number, memAdr: number }> = [];
+//         dataFlattendFiltered.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
+//             for (let i = 0; i < elem.occurrences; i++) {
+//                 occurrencesFlattend.push({
+//                     bucket: elem.bucket,
+//                     memAdr: elem.memAdr,
+//                 });
+//             }
+//         });
+
+//         const data = [
+//             {
+//                 name: "table",
+//                 values: occurrencesFlattend,
+//             },
+//             {
+//                 name: "density",
+//                 source: "table",
+//                 transform: [
+//                     {
+//                         type: "kde2d",
+//                         size: [{ signal: "width" }, { signal: "height" }],
+//                         x: { "expr": "scale('x', datum.bucket)" },
+//                         y: { "expr": "scale('y', datum.memAdr)" },
+//                         bandwidth: { "signal": "[-1, -1]" },
+//                         as: "grid",
+//                     },
+//                     {
+//                         type: "heatmap",
+//                         field: "grid",
+//                         resolve: "shared",
+//                         color: { "expr": `scale('density', (datum.$value/datum.$max))` },
+//                         opacity: 1
+//                     }
+//                 ]
+//             }
+//         ]
+//         return data;
+//     }
+
+//     createVisualizationSpec(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+//         const visData = this.createVisualizationData(dataFlattendFiltered, domains);
+
+//         const spec: VisualizationSpec = {
+//             $schema: "https://vega.github.io/schema/vega/v5.json",
+//             width: 400,
+//             height: 300,
+//             padding: { left: 5, right: 5, top: 10, bottom: 10 },
+//             autosize: { type: "pad", resize: false },
+
+
+//             title: {
+//                 text: `Memory Access Heatmap: ${operator}`,
+//                 align: model.chartConfiguration.titleAlign,
+//                 dy: model.chartConfiguration.titlePadding,
+//                 fontSize: model.chartConfiguration.titleFontSize,
+//                 font: model.chartConfiguration.titleFont,
+//             },
+
+//             // data: visData,
+//             data: visData,
+
+//             "scales": [
+//                 {
+//                     "name": "x",
+//                     "type": "linear",
+//                     "domain": domains.bucketDomain,
+//                     "range": "width",
+//                     "zero": true,
+//                     "nice": true,
+//                     "round": true,
+//                 },
+//                 {
+//                     "name": "y",
+//                     "type": "linear",
+//                     "domain": domains.memDomain,
+//                     "range": "height",
+//                     "zero": true,
+//                     "nice": true,
+//                     "round": true,
+//                 },
+//                 {
+//                     "name": "density",
+//                     "type": "linear",
+//                     "range": { "scheme": "Viridis" },
+//                     //"domain": [0, 1],
+//                     "domain": domains.occurrencesDomain,
+
+//                     "zero": true,
+//                 }
+//             ],
+
+//             "axes": [
+//                 {
+//                     "orient": "bottom",
+//                     "scale": "x",
+//                     labelOverlap: true,
+//                     //values: xTicks(),
+//                     title: model.chartConfiguration.memoryChartXTitle,
+//                     titlePadding: model.chartConfiguration.axisPadding,
+//                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+//                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+//                     titleFont: model.chartConfiguration.axisTitleFont,
+//                     labelFont: model.chartConfiguration.axisLabelFont,
+//                     labelSeparation: model.chartConfiguration.memoryChartXLabelSeparation,
+//                 },
+//                 {
+//                     orient: "left",
+//                     scale: "y",
+//                     zindex: 1,
+//                     title: model.chartConfiguration.memoryChartYTitle,
+//                     titlePadding: model.chartConfiguration.axisPadding,
+//                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
+//                     labelSeparation: model.chartConfiguration.memoryChartYLabelSeparation,
+//                     labelOverlap: true,
+//                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
+//                     titleFont: model.chartConfiguration.axisTitleFont,
+//                     labelFont: model.chartConfiguration.axisLabelFont,
+//                 }
+//             ],
+
+//             "marks": [
+//                 {
+//                     "type": "image",
+//                     "from": { "data": "density" },
+//                     "encode": {
+//                         "enter": {
+//                             // tooltip: {
+//                             //     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
+//                             // },
+//                         },
+//                         "update": {
+//                             "x": { "value": 0 },
+//                             "y": { "value": 0 },
+//                             "image": { "field": "image" },
+//                             "width": { "signal": "width" },
+//                             "height": { "signal": "height" },
+//                             "aspect": { "value": false },
+//                             "smooth": { "value": true }
+//                         }
+//                     }
+//                 }
+//             ],
+
+//             "legends": [
+//                 {
+//                     "fill": "density",
+//                     "type": "gradient",
+//                     "title": "Number of Accesses",
+//                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
+//                     "titlePadding": 4,
+//                     "gradientLength": { "signal": "height - 20" }
+//                 }
+//             ],
+//         } as VisualizationSpec;
+
+//         return spec;
+//     }
+
+
+
+// }
+
+// const mapStateToProps = (state: model.AppState) => ({
+//     resultLoading: state.resultLoading,
+//     result: state.result,
+//     csvParsingFinished: state.csvParsingFinished,
+//     currentChart: state.currentChart,
+//     currentEvent: state.currentEvent,
+//     events: state.events,
+//     chartIdCounter: state.chartIdCounter,
+//     chartData: state.chartData,
+//     currentPipeline: state.currentPipeline,
+//     currentOperator: state.currentOperator,
+//     operators: state.operators,
+//     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+//     currentBucketSize: state.currentBucketSize,
+
+// });
+
+// const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+//     setCurrentChart: (newCurrentChart: string) => dispatch({
+//         type: model.StateMutationType.SET_CURRENTCHART,
+//         data: newCurrentChart,
+//     }),
+//     setChartIdCounter: (newChartIdCounter: number) => dispatch({
+//         type: model.StateMutationType.SET_CHARTIDCOUNTER,
+//         data: newChartIdCounter,
+//     }),
+//     setCurrentEvent: (newCurrentEvent: string) => dispatch({
+//         type: model.StateMutationType.SET_CURRENTEVENT,
+//         data: newCurrentEvent,
+//     })
+// });
+
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(MemoryAccessHeatmapChart));

@@ -511,7 +511,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         const specs = this.props.operators!.map((elem) => (this.createVisualizationSpecRelative(elem, domains, dataFlattendFiltered(elem))));
         const vegaElements: any = [];
         this.props.operators!.forEach((elem, index) => {
-            if (specs[index]) {
+            if(specs[index]){
                 vegaElements.push(<Vega className={`vegaMemoryHeatmapRelative-${elem}`} key={index} spec={specs[index] as VisualizationSpec} />)
             }
         });
@@ -590,7 +590,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
         const visData = this.createVisualizationDataRelative(dataFlattendFiltered);
 
-        if (visData[0].values && visData[0].values.length === 0) {
+        if(visData[0].values && visData[0].values.length === 0) {
             return null;
         };
 
@@ -617,6 +617,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "x",
                     "type": "linear",
+                    domain: domains.bucketDomain,
                     domainMin: domains.bucketDomain[0],
                     domainMax: domains.bucketDomain[1],
                     "range": "width",
@@ -627,6 +628,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "y",
                     "type": "linear",
+                    domain: domains.memDomain,
                     domainMin: domains.memDomain[0],
                     domainMax: domains.memDomain[1],
                     "range": "height",
@@ -687,7 +689,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                             "x": { "value": 0 },
                             "y": { "value": 0 },
                             "image": [
-                                { "test": "extent[1] > 0", "field": "image" },
+                                {"test": "extent[1] > 0", "field": "image"},
                             ],
                             "width": { "signal": "width" },
                             "height": { "signal": "height" },
@@ -707,9 +709,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                     "titlePadding": 4,
                     "gradientLength": { "signal": "height - 20" },
                     "labelOpacity": [
-                        { "test": "extent[1] > 0", "value": 1 },
-                        { "value": 0 }
-                    ]
+                        {"test": "extent[1] > 0", "value": 1},
+                        {"value": 0}
+                      ]
                 }
             ],
         } as VisualizationSpec;
@@ -818,6 +820,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "x",
                     "type": "linear",
+                    "domain": visData.domains.bucketDomain,                    
                     domainMin: visData.domains.bucketDomain[0],
                     domainMax: visData.domains.bucketDomain[1],
                     "range": "width",
@@ -828,6 +831,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 {
                     "name": "y",
                     "type": "linear",
+                    "domain": visData.domains.memDomain,                    
                     domainMin: visData.domains.memDomain[0],
                     domainMax: visData.domains.memDomain[1],
                     "range": "height",

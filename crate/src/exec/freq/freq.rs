@@ -311,13 +311,13 @@ pub fn freq_of_memory(
 
                 let frequenzy = bucket_map.get(operator).unwrap();
                 for item in frequenzy {
-                    //let times = item.0.to_owned().try_into().unwrap();
-                    //for i in 0..times {
+                    let times = *item.1 as i32;
+                    for i in 0..times {
                         result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                         result_vec_operator.push(operator);
                         result_mem_operator.push(current_memory.try_into().unwrap());
                         result_builder.push(item.1.to_owned());
-                    //}
+                    }
                 }
                 // reset bucket_map
                 bucket_map.insert(operator, HashMap::new());
@@ -336,13 +336,13 @@ pub fn freq_of_memory(
 
                     let frequenzy = bucket_map.get(operator).unwrap();
                     for item in frequenzy {
-                        //let times = item.0.to_owned().try_into().unwrap();
-                        //for i in 0..times {
+                        let times = *item.1 as i32;
+                        for i in 0..times {
                             result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                             result_vec_operator.push(operator);
                             result_mem_operator.push(current_memory.try_into().unwrap());
                             result_builder.push(item.1.to_owned());
-                        //}
+                        }
                     }
                     // reset bucket_map
                     bucket_map.insert(operator, HashMap::new());

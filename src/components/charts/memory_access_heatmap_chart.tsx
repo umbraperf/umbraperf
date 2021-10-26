@@ -406,16 +406,16 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        this.setDefaultEventToMemLoads(this.props, prevProps);
+        // this.setDefaultEventToMemLoads(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
     }
 
-    setDefaultEventToMemLoads(props: Props, prevProps: Props) {
-        //only set bevore first time data requestes and if available memloads are in events and events available
-        if (props.events && props.events.includes("mem_inst_retired.all_loads") && !prevProps.chartData[this.state.chartId]) {
-            props.setCurrentEvent("mem_inst_retired.all_loads");
-        }
-    }
+    // setDefaultEventToMemLoads(props: Props, prevProps: Props) {
+    //     //only set bevore first time data requestes and if available memloads are in events and events available
+    //     if (props.events && props.events.includes("mem_inst_retired.all_loads") && !props.chartData[this.state.chartId]) {
+    //         props.setCurrentEvent("mem_inst_retired.all_loads");
+    //     }
+    // }
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {

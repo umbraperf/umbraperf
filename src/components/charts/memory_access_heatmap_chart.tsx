@@ -492,7 +492,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     {this.renderChartPerOperatorRelative()}
-                    {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />}
+                    {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />} 
                 </div>
             }
         </div>;
@@ -529,6 +529,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         }
         );
 
+
         const domains = {
             bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
             memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
@@ -540,25 +541,14 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
     createVisualizationDataRelative(dataFlattendFiltered: any) {
 
-        const occurrencesFlattend: Array<{ bucket: number, memAdr: number }> = [];
-        //TODO Backend:
-        dataFlattendFiltered.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
-            for (let i = 0; i < elem.occurrences; i++) {
-                occurrencesFlattend.push({
-                    bucket: elem.bucket,
-                    memAdr: elem.memAdr,
-                });
-            }
-        });
-
         const data = [
             {
                 name: "table",
-                values: occurrencesFlattend,
+                values: dataFlattendFiltered,
                 transform: [
                     {
                         type: "extent",
-                        field: "occurrences", 
+                        field: "occurrences",
                         signal: "extent"
                     }
                 ]
@@ -580,7 +570,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                         field: "grid",
                         resolve: "shared",
                         //TODO times extend signal
-                        color: { "expr": `scale('density', (datum.$value/datum.$max))` },
+                        color: { "expr": `scale('density', (datum.$value/datum.$max) * extent[1])` },
                         opacity: 1
                     }
                 ]
@@ -634,8 +624,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                     "name": "density",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    //"domain": [0, 1],
-                    "domain": [0, {signal: "extend"}],
+                    // "domain": [0, 1],
+                    "domain": [0, { "signal": "extent[1]" }],
+                    // "domain": [0, { signal: "extent" }],
                     "zero": true,
                 }
             ],
@@ -645,7 +636,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                     "orient": "bottom",
                     "scale": "x",
                     labelOverlap: true,
-                    //values: xTicks(),
                     title: model.chartConfiguration.memoryChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
@@ -736,18 +726,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
             memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
             occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
         }
-
-        // //TODO: in backend:
-        // const occurrencesFlattend: Array<{ operator: string, bucket: number, memAdr: number }> = [];
-        // dataFlattend.forEach((elem: { operator: string, bucket: number, memAdr: number, occurrences: number }) => {
-        //     for (let i = 0; i < elem.occurrences; i++) {
-        //         occurrencesFlattend.push({
-        //             operator: elem.operator,
-        //             bucket: elem.bucket,
-        //             memAdr: elem.memAdr,
-        //         });
-        //     }
-        // });
 
         const data = [
             {
@@ -845,9 +823,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                     "name": "density",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    //"domain": [0, 1],
                     "domain": visData.domains.occurrencesDomain,
-
                     "zero": true,
                 }
             ],

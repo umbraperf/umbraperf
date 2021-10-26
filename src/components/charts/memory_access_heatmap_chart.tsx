@@ -492,7 +492,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
                     {this.renderChartPerOperatorRelative()}
-                    {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />} 
+                    {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />}
                 </div>
             }
         </div>;
@@ -672,7 +672,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                         "update": {
                             "x": { "value": 0 },
                             "y": { "value": 0 },
-                            "image": { "field": "image" },
+                            "image": [
+                                {"test": "extent[1] > 0", "field": "image"},
+                            ],
+                            "fill": [
+                                {"test": "!(extent[1] > 0)", "value": "#fff"},
+                            ],
                             "width": { "signal": "width" },
                             "height": { "signal": "height" },
                             "aspect": { "value": false },
@@ -689,7 +694,11 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                     "title": "Number of Accesses",
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
                     "titlePadding": 4,
-                    "gradientLength": { "signal": "height - 20" }
+                    "gradientLength": { "signal": "height - 20" },
+                    "labelOpacity": [
+                        {"test": "extent[1] > 0", "value": 1},
+                        {"value": 0}
+                      ]
                 }
             ],
         } as VisualizationSpec;
@@ -916,7 +925,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
                             "gradientLength": { "signal": "height - 20" },
                             direction: "vertical",
                             orient: "right",
-
                         }
                     ],
                 }

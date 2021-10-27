@@ -6,10 +6,16 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{basic::{
-        basic::{find_unique_string, sort_batch},
-        filter,
-    }, freq::freq::create_freq_bucket}};
+use crate::{
+    exec::{
+        basic::{
+            basic::{find_unique_string, sort_batch},
+            filter,
+        },
+        freq::freq::create_freq_bucket,
+    },
+    utils::record_batch_util::create_new_record_batch,
+};
 
 use super::freq;
 
@@ -97,7 +103,7 @@ pub fn abs_freq_of_event(
         result_bucket,
         result_vec_event,
         result_builder,
-        freq::Freq::ABS
+        freq::Freq::ABS,
     );
 
     batch
@@ -113,8 +119,17 @@ pub fn abs_freq_of_pipelines(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
-    freq::freq_of_pipelines(batch, freq::Freq::ABS, column_for_operator, column_for_time, bucket_size, pipelines, operators, from, to)
+    freq::freq_of_pipelines(
+        batch,
+        freq::Freq::ABS,
+        column_for_operator,
+        column_for_time,
+        bucket_size,
+        pipelines,
+        operators,
+        from,
+        to,
+    )
 }
 
 pub fn abs_freq_with_pipelines_with_double_events(
@@ -126,7 +141,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
     operators: Vec<&str>,
     events: Vec<&str>,
     from: f64,
-    to: f64
+    to: f64,
 ) -> RecordBatch {
     let mut vec = Vec::new();
     vec.push(events[0]);
@@ -219,34 +234,31 @@ pub fn abs_freq_with_pipelines_with_double_events(
         vec6.push(column6.value(i));
         i = i + 1;
     }
-
-    let field1 = Field::new("bucket", DataType::Float64, false);
-    let field2 = Field::new("operator", DataType::Utf8, false);
-    let field3 = Field::new("absfreq", DataType::Float64, false);
-    let field4 = Field::new("bucketNEG", DataType::Float64, false);
-    let field5 = Field::new("operatorNEG", DataType::Utf8, false);
-    let field6 = Field::new("absfreqNEG", DataType::Float64, false);
-
-    let schema = Schema::new(vec![field1, field2, field3, field4, field5, field6]);
-
-    let vec1 = Float64Array::from(vec1);
-    let vec2 = StringArray::from(vec2);
-    let vec3 = Float64Array::from(vec3);
-    let vec4 = Float64Array::from(vec4);
-    let vec5 = StringArray::from(vec5);
-    let vec6 = Float64Array::from(vec6);
-
-    let batch = RecordBatch::try_new(
-        Arc::new(schema),
+  
+    create_new_record_batch(
         vec![
-            Arc::new(vec1),
-            Arc::new(vec2),
-            Arc::new(vec3),
-            Arc::new(vec4),
-            Arc::new(vec5),
-            Arc::new(vec6),
+            "bucket",
+            "operator",
+            "absfreq",
+            "bucketNEG",
+            "operatorNEG",
+            "absfreqNEG",
         ],
-    );
-
-    batch.unwrap()
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
+        vec![
+            Arc::new(Float64Array::from(vec1)),
+            Arc::new(StringArray::from(vec2)),
+            Arc::new(Float64Array::from(vec3)),
+            Arc::new(Float64Array::from(vec4)),
+            Arc::new(StringArray::from(vec5)),
+            Arc::new(Float64Array::from(vec6)),
+        ],
+    )
 }

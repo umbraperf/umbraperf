@@ -538,8 +538,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
 
         const domains = {
-            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
-            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
+            bucketDomain: [_.min(bucketsArray), _.max(bucketsArray)],
+            memDomain: [_.min(memoryAdressArray), _.max(memoryAdressArray)],
             //occurrencesDomain: [0, Math.max(...occurrencesArray)],
         }
 
@@ -738,9 +738,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         );
 
         const domains = {
-            bucketDomain: [Math.min(...bucketsArray), Math.max(...bucketsArray)],
-            memDomain: [Math.min(...memoryAdressArray), Math.max(...memoryAdressArray)],
-            occurrencesDomain: [Math.min(...occurrencesArray), Math.max(...occurrencesArray)],
+            bucketDomain: [_.min(bucketsArray), _.max(bucketsArray)],
+            memDomain: [_.min(memoryAdressArray), _.max(memoryAdressArray)],
+            occurrencesDomain: [_.min(occurrencesArray), _.max(occurrencesArray)],
         }
 
         const data = [

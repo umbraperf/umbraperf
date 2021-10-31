@@ -1,6 +1,7 @@
 use std::{io::Cursor, sync::Arc};
 use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
 use crate::{bindings::notify_js_query_result, utils::print_to_cons::print_to_js_with_obj, web_file::streambuf::WebFileReader};
+use parquet::file::serialized_reader::SerializedFileReader;
 
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
@@ -80,8 +81,8 @@ pub fn init_record_batches(
 
     let reader = SerializedFileReader::new(parquet).unwrap();
 
+    //let dict = zip.by_name("samples.parquet").unwrap(); 
 
-    print_to_js_with_obj(&format!("{:?}",parquet).into());
 
 
     let mut vec = Vec::new();

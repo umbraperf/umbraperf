@@ -53,6 +53,7 @@ boolvec = "0.2.6"
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
 serde = { version = "^1.0.129", features = [ "derive" ] }
 sqlparser = "0.10.0"
+zip = { version = "0.5.13",  default-features = false, features = [ "deflate" ] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12"

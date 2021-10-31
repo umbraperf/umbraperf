@@ -88,7 +88,7 @@ class FileUploader extends React.Component<Props, State> {
             </div>}
             
             <Dropzone
-                accept={['.parquet', '.csv']}
+                accept={['.parquet', '.csv', '.umbraPerf']}
                 multiple={false}
                 onDrop={(acceptedFiles) => this.receiveFileOnDrop(acceptedFiles)}>
                 {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, fileRejections }: DropzoneState): any => {

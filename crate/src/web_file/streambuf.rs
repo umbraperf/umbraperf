@@ -1,5 +1,5 @@
 use js_sys::Uint8Array;
-use std::io::Result;
+use std::io::{Result, Seek, SeekFrom};
 use std::io::{Read};
 use crate::bindings;
 
@@ -15,6 +15,17 @@ impl WebFileReader {
             length: file_size as u64,
         }
     }
+}
+
+impl Seek for WebFileReader {
+    
+    fn seek(&mut self, pos: std::io::SeekFrom) -> Result<u64> {
+        self.offset = match pos {
+            SeekFrom::Current(ofs) => self.offset + (self.length - self.offset).min(ofs as u64),
+            SeekFrom::Start(ofs) => self.length.min(ofs as u64),
+            SeekFrom::End(ofs) => self.length - self.length.min(ofs as u64),
+        };
+        Ok(self.offset)    }
 }
 
 // Read implementation for WebFileReader

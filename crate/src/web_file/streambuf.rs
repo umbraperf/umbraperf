@@ -15,6 +15,13 @@ impl WebFileReader {
             length: file_size as u64,
         }
     }
+
+    pub fn set_offset(self, offset: i32) -> Self {
+        Self {
+            offset: offset as u64,
+            length: self.length,
+        }
+    }
 }
 
 impl Seek for WebFileReader {

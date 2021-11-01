@@ -88,8 +88,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
             "relative" => {
                 record_batch = kpis::relative(
                     &record_batch,
-                    find_name("operator", &record_batch),
-                    find_name("operator", &record_batch),
+                    find_name("Operator", &record_batch),
+                    find_name("Operator", &record_batch),
                 );
             }
             "count(distinct)" => {

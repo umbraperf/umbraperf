@@ -1,22 +1,23 @@
 use std::io::{Read, Seek, SeekFrom};
 
+
 use std::io::Result;
 
 use super::streambuf::WebFileReader;
 
-pub struct CompleteFile {
+pub struct Json_File {
     offset: u64,
     length: u64
 }
 
 static mut ARRAY: Vec<u8> = Vec::new();
 
-impl CompleteFile {
+impl Json_File {
 
     pub fn  read_whole_file(file_size: u64) -> Self {
 
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
-        let mut reader = zip.by_name("samples.parquet").unwrap(); 
+        let mut reader = zip.by_name("dictionary_compression.json").unwrap(); 
         let length = reader.size();
         let start_offset = reader.data_start();
         let web_file_reader = WebFileReader::new_from_file(file_size as i32);
@@ -39,22 +40,9 @@ impl CompleteFile {
         }
     }
 
-    pub fn set_offset(offset: u64) -> Self {
-        Self {
-            offset: offset,
-            length: 0
-        }
-    }
-
-    pub fn set_length(self, length: u64) -> Self {
-        Self {
-            offset: self.offset,
-            length
-        }
-    }
 }
 
-impl Read for CompleteFile {
+impl Read for Json_File {
 
 
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
@@ -69,4 +57,16 @@ impl Read for CompleteFile {
 
         Ok(read_size)
     }
+}
+
+
+impl Seek for Json_File {
+    
+    fn seek(&mut self, pos: std::io::SeekFrom) -> Result<u64> {
+        self.offset = match pos {
+            SeekFrom::Current(ofs) => self.offset + (self.length - self.offset).min(ofs as u64),
+            SeekFrom::Start(ofs) => self.length.min(ofs as u64),
+            SeekFrom::End(ofs) => self.length - self.length.min(ofs as u64),
+        };
+        Ok(self.offset)    }
 }

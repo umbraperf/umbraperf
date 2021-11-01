@@ -18,6 +18,10 @@ use arrow::{
 // Stream Buff
 mod web_file {
     pub mod streambuf;
+    pub mod web_file_chunkreader;
+    pub mod whole_file;
+    pub mod serde_reader;
+    pub mod json_file;
 }
 
 // Analyze
@@ -106,10 +110,7 @@ pub fn analyze_file(file_size: i32) {
     clear_cache();
 
     let batches = record_batch_util::init_record_batches(
-        file_size,
-        59, // Code for semicolon
-        true,
-        vec![0, 5, 13, 20, 22],
+        file_size
     );
 
     let elapsed = now.elapsed();

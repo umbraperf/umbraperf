@@ -3,8 +3,7 @@ use std::io::{Read};
 use super::streambuf::WebFileReader;
 
 pub struct CompleteFile {
-    offset: u64,
-    length: u64
+    offset: u64
 }
 
 static mut ARRAY: Vec<u8> = Vec::new();
@@ -32,22 +31,19 @@ impl CompleteFile {
         }
 
         Self {
-            offset: 0,
-            length: 0
+            offset: 0
         }
     }
 
     pub fn set_offset(offset: u64) -> Self {
         Self {
-            offset: offset,
-            length: 0
+            offset: offset
         }
     }
 
     pub fn set_length(self, length: u64) -> Self {
         Self {
-            offset: self.offset,
-            length
+            offset: self.offset
         }
     }
 }

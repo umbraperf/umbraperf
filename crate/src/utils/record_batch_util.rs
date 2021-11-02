@@ -1,7 +1,8 @@
 use std::{io::Cursor, sync::Arc};
-use arrow::{array::{Array, ArrayRef}, csv::Reader, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
-use crate::{bindings::notify_js_query_result, utils::print_to_cons::print_to_js_with_obj, web_file::{serde_reader::read_dict, streambuf::WebFileReader, web_file_chunkreader::WebFileChunkReader}};
+use arrow::{array::{Array, ArrayRef}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use crate::{bindings::notify_js_query_result, web_file::web_file_chunkreader::WebFileChunkReader};
 use parquet::{arrow::{ArrowReader, ParquetFileArrowReader}, file::serialized_reader::SerializedFileReader};
+use crate::web_file::serde_reader::SerdeDict;
 
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
@@ -22,11 +23,6 @@ pub fn init_record_batches(
     while let Some(record) = record_reader.next() {
         vec.push(record.unwrap());
     }
-
-    read_dict(file_size as u64);
-
-    //let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
-    //let mut reader = zip.by_name("dictionary_compression.json").unwrap(); 
 
     vec
 }

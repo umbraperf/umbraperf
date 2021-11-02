@@ -3,6 +3,7 @@ extern crate wasm_bindgen;
 use exec::rest::rest_api::eval_query;
 use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
+use web_file::serde_reader;
 
 // Aux
 extern crate console_error_panic_hook;
@@ -52,18 +53,21 @@ mod utils {
 use utils::bindings;
 use utils::record_batch_util;
 use crate::utils::bindings::notify_js_finished_reading;
+use crate::web_file::serde_reader::SerdeDict;
 
 
 //STATE
 pub struct State {
     pub record_batches: Option<RecordBatch>,
-    pub queries: HashMap<String, RecordBatch>
+    pub queries: HashMap<String, RecordBatch>,
+    pub dict: Option<SerdeDict>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
         record_batches: None,
-        queries: HashMap::new()
+        queries: HashMap::new(),
+        dict: None
     });
 }
 
@@ -102,6 +106,15 @@ fn set_record_batches(record_batches: RecordBatch) {
     _with_state_mut(|s| s.record_batches = Some(record_batches));
 }
 
+fn get_serde_dict() -> Option<SerdeDict> {
+    with_state(|s| s.dict.clone())
+}
+
+fn set_serde_dict(serde_dict: SerdeDict) {
+    _with_state_mut(|s| s.dict = Some(serde_dict));
+}
+
+
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
     let now = instant::Instant::now();
@@ -111,6 +124,9 @@ pub fn analyze_file(file_size: i32) {
     let batches = record_batch_util::init_record_batches(
         file_size
     );
+
+    let serde_reader = SerdeDict::read_dict(file_size as u64);
+    set_serde_dict(serde_reader);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into());

@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
     array::{Float64Array, StringArray},
-    datatypes::{DataType, Field, Schema},
+    datatypes::{DataType},
     record_batch::RecordBatch,
 };
 

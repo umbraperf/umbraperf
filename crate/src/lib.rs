@@ -3,7 +3,6 @@ extern crate wasm_bindgen;
 use exec::rest::rest_api::eval_query;
 use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
-use web_file::serde_reader;
 
 // Aux
 extern crate console_error_panic_hook;

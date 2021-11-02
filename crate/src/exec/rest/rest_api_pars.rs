@@ -157,7 +157,7 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
     let range = split_at_to(split[1]);
 
-    let before_colon = 0;
+    let _before_colon = 0;
     let after_colon = 1;
     let bucket_size = split_fields_bucket_size[after_colon]
         .parse::<f64>()

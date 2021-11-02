@@ -87,8 +87,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
             "relative" => {
                 record_batch = kpis::relative(
                     &record_batch,
-                    find_name("Operator", &record_batch),
-                    find_name("Operator", &record_batch),
+                    find_name("operator", &record_batch),
+                    find_name("operator", &record_batch),
                 );
             }
             "count(distinct)" => {
@@ -174,7 +174,7 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
 }
 
 fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
-    if true {
+    if false {
         print_to_js_with_obj(&format!("{:?}", restful_string).into());
         print_to_js_with_obj(&format!("{:?}", record_batch).into());
     }
@@ -183,8 +183,6 @@ fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
-    // print_to_js_with_obj(&format!("{:?}", restful_string).into());
-
 
     if query_already_calculated(restful_string) {
         return;

@@ -267,7 +267,6 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-    print_to_js_with_obj(&format!("{:?}", "In Memory").into());
 
     //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
 
@@ -354,11 +353,6 @@ pub fn freq_of_memory(
         column_index += 1;
     }
 
-    print_to_js_with_obj(&format!("{:?}", result_bucket).into());
-    print_to_js_with_obj(&format!("{:?}", result_vec_operator).into());
-    print_to_js_with_obj(&format!("{:?}", result_mem_operator).into());
-    print_to_js_with_obj(&format!("{:?}", result_builder).into());
-
     let batch = create_mem_bucket(
         &batch,
         column_for_operator,
@@ -368,7 +362,6 @@ pub fn freq_of_memory(
         result_builder,
     );
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     batch
 }

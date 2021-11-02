@@ -33,7 +33,7 @@ pub fn abs_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
 
             return abs_freq::abs_freq_of_pipelines(
                 &record_batch,
-                find_name("Operator", &record_batch),
+                find_name("operator", &record_batch),
                 find_name("time", &record_batch),
                 bucket_size,
                 pipeline_vec,
@@ -70,7 +70,7 @@ pub fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -
 
     return abs_freq::abs_freq_with_pipelines_with_double_events(
         &record_batch,
-        find_name("Operator", &record_batch),
+        find_name("operator", &record_batch),
         find_name(time, &record_batch),
         bucket_size,
         pipeline_vec,
@@ -164,7 +164,7 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
         .unwrap();
 
     return freq_of_memory(  &record_batch,
-        find_name("Operator", &record_batch),
+        find_name("operator", &record_batch),
         find_name("time", &record_batch),
         bucket_size,
         range[0].parse::<f64>().unwrap(),

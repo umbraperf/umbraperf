@@ -1,5 +1,12 @@
-use crate::{bindings::notify_js_query_result, get_serde_dict, web_file::web_file_chunkreader::WebFileChunkReader};
-use arrow::{array::{Array, ArrayRef, Int64Array, StringArray}, datatypes::{DataType, Field, Schema, SchemaRef}, record_batch::RecordBatch};
+use crate::{
+    bindings::notify_js_query_result, get_serde_dict,
+    web_file::web_file_chunkreader::WebFileChunkReader,
+};
+use arrow::{
+    array::{Array, ArrayRef, Int64Array, StringArray},
+    datatypes::{DataType, Field, Schema, SchemaRef},
+    record_batch::RecordBatch,
+};
 use parquet::{
     arrow::{ArrowReader, ParquetFileArrowReader},
     file::serialized_reader::SerializedFileReader,
@@ -107,10 +114,9 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
     for value in operator_col {
         let value = &(value.unwrap() as u64);
         let dict_key = hash_map.get(value);
-        
+
         operator_vec.push(dict_key.unwrap().as_str());
     }
-
 
     let event_nam = batch
         .column(3)
@@ -125,8 +131,7 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
         event_vec.push(dict_key.unwrap().as_str());
     }
 
-    let time = batch
-        .column(2).to_owned();
+    let time = batch.column(2).to_owned();
 
     let pipeline = batch
         .column(1)
@@ -141,8 +146,7 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let phy_addr = batch
-        .column(4).to_owned();
+    let phy_addr = batch.column(4).to_owned();
 
     create_new_record_batch(
         vec!["operator", "ev_name", "time", "pipeline", "phys_addr"],
@@ -154,12 +158,12 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
             DataType::Int64,
         ],
         vec![
-             Arc::new(StringArray::from(operator_vec)),
-            Arc::new(StringArray::from(event_vec)), 
+            Arc::new(StringArray::from(operator_vec)),
+            Arc::new(StringArray::from(event_vec)),
             time,
-             Arc::new(StringArray::from(pipeline_vec)),
-             phy_addr
-        ]
+            Arc::new(StringArray::from(pipeline_vec)),
+            phy_addr,
+        ],
     )
 }
 

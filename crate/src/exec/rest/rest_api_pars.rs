@@ -1,6 +1,14 @@
 use arrow::record_batch::RecordBatch;
 
-use crate::{exec::{basic::basic, freq::{abs_freq, freq::freq_of_memory, rel_freq}}, utils::string_util::{split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_to}};
+use crate::{
+    exec::{
+        basic::basic,
+        freq::{abs_freq, freq::freq_of_memory, rel_freq},
+    },
+    utils::string_util::{
+        split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_to,
+    },
+};
 
 use super::rest_api::find_name;
 
@@ -30,7 +38,6 @@ pub fn abs_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
             let operator_vec = split_at_comma(split[2]);
             let range = split_at_to(split[3]);
 
-
             return abs_freq::abs_freq_of_pipelines(
                 &record_batch,
                 find_name("operator", &record_batch),
@@ -39,7 +46,7 @@ pub fn abs_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
                 pipeline_vec,
                 operator_vec,
                 range[0].parse::<f64>().unwrap(),
-                range[1].parse::<f64>().unwrap()
+                range[1].parse::<f64>().unwrap(),
             );
         }
     }
@@ -56,7 +63,6 @@ pub fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -
     let event_vec = split_at_comma(end[1]);
     let operator_vec = split_at_comma(end[2]);
     let range = split_at_to(end[3]);
-
 
     let before_colon = 0;
     let after_colon = 1;
@@ -110,10 +116,8 @@ pub fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> R
         pipeline_vec,
         operator_vec,
         range[0].parse::<f64>().unwrap(),
-        range[1].parse::<f64>().unwrap()
+        range[1].parse::<f64>().unwrap(),
     );
-
-    
 }
 
 pub fn rel_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
@@ -121,7 +125,6 @@ pub fn rel_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
     let _fields = split_fields_bucket_size[0];
 
     return rel_freq_specific_pipelines(record_batch, params);
-    
 }
 
 pub fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
@@ -163,11 +166,12 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
         .parse::<f64>()
         .unwrap();
 
-    return freq_of_memory(  &record_batch,
+    return freq_of_memory(
+        &record_batch,
         find_name("operator", &record_batch),
         find_name("time", &record_batch),
         bucket_size,
         range[0].parse::<f64>().unwrap(),
-        range[1].parse::<f64>().unwrap());
-    
+        range[1].parse::<f64>().unwrap(),
+    );
 }

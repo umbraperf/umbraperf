@@ -7,8 +7,8 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
-use crate::utils::record_batch_util::{concat_record_batches, create_new_record_batch};
 use crate::utils::record_batch_util::create_record_batch;
+use crate::utils::record_batch_util::{concat_record_batches, create_new_record_batch};
 
 pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
@@ -93,7 +93,11 @@ pub fn find_unique_string(batch: &RecordBatch, column_index_for_unqiue: usize) -
 
     let schema = batch.schema();
     let field = schema.field(column_index_for_unqiue);
-    let batch = create_new_record_batch(vec![field.name()], vec![field.data_type().to_owned()], vec![Arc::new(array)]);
+    let batch = create_new_record_batch(
+        vec![field.name()],
+        vec![field.data_type().to_owned()],
+        vec![Arc::new(array)],
+    );
 
     return batch;
 }

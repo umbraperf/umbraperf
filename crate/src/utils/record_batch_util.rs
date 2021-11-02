@@ -72,23 +72,19 @@ pub fn init_record_batches(
 ) -> Vec<RecordBatch> {
     let schema = init_schema();
 
-    let mut reader = Reader::new(
-        WebFileReader::new_from_file(file_size),
-        Arc::new(schema),
-        with_header,
-        Some(with_delimiter),
-        1024,
-        None,
-        Some(with_projection),
-    );
+    let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size)).unwrap();
+
+    let names = zip.file_names();
+
+    let parquet = zip.by_name("samples.parquet").unwrap(); 
+
+    let reader = SerializedFileReader::new(parquet).unwrap();
+
+
+    print_to_js_with_obj(&format!("{:?}",parquet).into());
+
 
     let mut vec = Vec::new();
-
-    while let Some(item) = reader.next() {
-        let batch = item.unwrap();
-        print_to_js_with_obj(&format!("{:?}", batch).into());
-        vec.push(batch);
-    }
 
     vec
 }

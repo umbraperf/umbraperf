@@ -148,7 +148,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                    data: {  event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                    data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 
@@ -179,7 +179,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent, bucketSize: 10 },
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
                 }), false, chartId);
             break;
 
@@ -198,7 +198,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                 model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT,
                 model.createRestQuery({
                     type: model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple},
+                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
 

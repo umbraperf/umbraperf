@@ -10,7 +10,7 @@ static mut ARRAY: Vec<u8> = Vec::new();
 
 impl ParquetReader {
 
-    pub fn  read_whole_file(file_size: u64) -> Self {
+    pub fn  read_parquet(file_size: u64) -> Self {
 
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
         let reader = zip.by_name("samples.parquet").unwrap(); 

@@ -130,11 +130,11 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{position: "relative", display: "flex", height: "100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
-                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -5, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
+                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
                     <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
                 </div>
             }

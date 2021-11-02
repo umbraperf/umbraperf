@@ -81,7 +81,6 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                     basic::find_unique_string(&record_batch, find_name(params, &record_batch));
             }
             "max(time)" => {
-                print_to_js_with_obj(&format!("{:?}", "This").into());
                 record_batch =
                     kpis::max_execution_time(&record_batch, find_name("time", &record_batch));
             }

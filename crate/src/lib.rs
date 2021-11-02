@@ -121,12 +121,12 @@ pub fn analyze_file(file_size: i32) {
 
     clear_cache();
 
+    let serde_reader = SerdeDict::read_dict(file_size as u64);
+    set_serde_dict(serde_reader);
+
     let batches = record_batch_util::init_record_batches(
         file_size
     );
-
-    let serde_reader = SerdeDict::read_dict(file_size as u64);
-    set_serde_dict(serde_reader);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into());

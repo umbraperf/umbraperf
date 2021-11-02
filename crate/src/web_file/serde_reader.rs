@@ -18,7 +18,7 @@ struct Dictionary {
 
 #[derive(Clone)]
 pub struct SerdeDict {
-    pub dict: HashMap<String, HashMap<String, u64>>,
+    pub dict: HashMap<String, HashMap<u64, String>>,
 }
 
 impl SerdeDict {
@@ -35,7 +35,25 @@ impl SerdeDict {
             let string = operator.0;
             if let Number(x) = operator.1 {
                 let num = x.as_u64().unwrap();
-                inner_hash_map.insert(string, num);
+                inner_hash_map.insert(num, string);
+            }
+        }
+
+        for pipeline in d.pipelines {
+            let inner_hash_map = hash_map.entry("pipeline".to_string()).or_insert(HashMap::new());
+            let string = pipeline.0;
+            if let Number(x) = pipeline.1 {
+                let num = x.as_u64().unwrap();
+                inner_hash_map.insert(num, string);
+            }
+        }
+
+        for event in d.events {
+            let inner_hash_map = hash_map.entry("event".to_string()).or_insert(HashMap::new());
+            let string = event.0;
+            if let Number(x) = event.1 {
+                let num = x.as_u64().unwrap();
+                inner_hash_map.insert(num, string);
             }
         }
 

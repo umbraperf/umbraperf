@@ -1,5 +1,5 @@
 import * as model from "../model";
-import { store } from '../app';
+import { store } from '../app_config';
 import { WorkerAPI } from "../worker_api";
 
 

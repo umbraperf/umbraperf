@@ -1,8 +1,7 @@
 import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as model from "../model";
-import { store } from '../app';
+import { store, appContext } from '../app_config';
 import * as RequestController from "./request_controller";
-import { appContext } from "../app";
 
 
 export function setCsvReadingFinished() {

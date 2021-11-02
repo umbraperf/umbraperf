@@ -1,21 +1,18 @@
-use arrow::{
-    array::{ArrayRef, BooleanArray, Float64Array, StringArray},
-    record_batch::RecordBatch,
-};
+use arrow::{array::{ArrayRef, BooleanArray, Float64Array, Int64Array, StringArray}, record_batch::RecordBatch};
 
 use crate::{
     exec::basic::basic::{find_unique_string, sort_batch},
     utils::record_batch_util::create_record_batch,
 };
 
-fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
+fn filter(column_num: usize, filter_value: Vec<i64>, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
         .column(column_num)
         .as_any()
-        .downcast_ref::<StringArray>()
+        .downcast_ref::<Int64Array>()
         .unwrap()
         .iter()
-        .map(|value| Some(filter_strs.contains(&value.unwrap())))
+        .map(|value| Some(filter_value.contains(&value.unwrap())))
         .collect::<BooleanArray>();
 
     let mut arrays: Vec<ArrayRef> = Vec::new();

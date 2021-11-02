@@ -6,7 +6,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::basic::filter, utils::record_batch_util::create_new_record_batch};
+use crate::{exec::basic::filter, get_serde_dict, utils::record_batch_util::create_new_record_batch};
 
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
     let vec = batch

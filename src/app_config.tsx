@@ -15,17 +15,17 @@ import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import SdStorageIcon from '@material-ui/icons/SdStorage';
-import {createTheme } from '@material-ui/core';
+import { createTheme } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
 export const webFileController = new RequestController();
 
 export const appColor = {
-    primary: '#040404',
+    primary: '#f5f3bb',
     secondary: '#d4733e',
     tertiary: '#919191',
-    accent: '#F5F3BB',
+    accentBlack: '#040404',
 }
 
 export const appContext: IAppContext = {
@@ -33,12 +33,40 @@ export const appContext: IAppContext = {
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
     tertiaryColor: appColor.tertiary,
+    accentBlack: appColor.accentBlack,
 };
 
 //Create Redux stroe
 //TODO change to prod store
 //export const store = createProdStore();
 export const store = createDevStore();
+
+//module augmentation to add accent color to material ui color palette
+// declare module '@material-ui/core/styles/createPalette' {
+//     interface Palette {
+//         accent: Palette['primary'];
+//     }
+//     interface PaletteOptions {
+//         accent: PaletteOptions['primary'];
+//     }
+// }
+// declare module '@material-ui/core/Button/Button' {
+//     interface ButtonPropsColorOverrides  {
+//         accent: true;
+//     }
+// }
+// declare module '@material-ui/core/styles/createTheme' {
+//     interface Theme {
+//         accentColor: {
+//             accent: React.CSSProperties['color'],
+//         }
+//     }
+//     interface ThemeOptions {
+//         accentColor: {
+//             accent: React.CSSProperties['color']
+//         }
+//     }
+// }
 
 export const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
@@ -48,7 +76,10 @@ export const materialUiTheme = createTheme({
         },
         secondary: {
             main: appColor.secondary
-        }
+        },
+        // accent: {
+        //     main: appColor.secondary,
+        // },
     },
     breakpoints: {
         values: {
@@ -58,8 +89,10 @@ export const materialUiTheme = createTheme({
             lg: 1200,
             xl: 1535, //customized from 1536
         },
-    },
+    }
 });
+
+console.log(materialUiTheme);
 
 export const topLevelComponents = [
     {

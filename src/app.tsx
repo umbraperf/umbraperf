@@ -40,12 +40,13 @@ export default function App() {
             <ReduxProvider store={Config.store}>
                 <StylesProvider injectFirst={true}>
                     <MuiThemeProvider theme={Config.materialUiTheme}>
+                        {console.log(Config.materialUiTheme)}
                         <BrowserRouter>
 
                             <div className={`app ${styles.app}`}>
 
                                 <div className={styles.appHeader}>
-                                    <AppBar position="static" >
+                                    <AppBar position="static" style={{ color: "white", background: Config.appContext.accentBlack }} >
                                         <Toolbar style={{ minHeight: '38px' }}>
                                             <Typography variant="h6" className={styles.appHeaderTitle}>
                                                 Umbra-Profiler

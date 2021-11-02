@@ -12,7 +12,7 @@ use arrow::{
 use crate::{
     exec::basic::{basic::find_unique_string, filter::filter_with},
     get_record_batches,
-    utils::{record_batch_util::create_new_record_batch},
+    utils::record_batch_util::create_new_record_batch,
 };
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {

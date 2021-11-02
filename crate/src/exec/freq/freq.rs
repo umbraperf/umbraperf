@@ -9,9 +9,7 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{
-        basic::{find_unique_string, sort_batch},
-    },
+    exec::basic::basic::{find_unique_string, sort_batch},
     get_record_batches,
 };
 
@@ -265,7 +263,6 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
     //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
 
     let batch = &sort_batch(batch, 2, false);
@@ -359,7 +356,6 @@ pub fn freq_of_memory(
         result_mem_operator,
         result_builder,
     );
-
 
     batch
 }

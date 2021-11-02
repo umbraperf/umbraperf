@@ -1,7 +1,5 @@
-use arrow::{
-    record_batch::RecordBatch,
-};
 use super::freq;
+use arrow::record_batch::RecordBatch;
 
 pub fn rel_freq_with_pipelines(
     batch: &RecordBatch,
@@ -13,8 +11,15 @@ pub fn rel_freq_with_pipelines(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
-    freq::freq_of_pipelines(batch, freq::Freq::REL, column_for_operator, column_for_time, bucket_size, pipelines, operators, from, to)
-
+    freq::freq_of_pipelines(
+        batch,
+        freq::Freq::REL,
+        column_for_operator,
+        column_for_time,
+        bucket_size,
+        pipelines,
+        operators,
+        from,
+        to,
+    )
 }
-

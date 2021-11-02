@@ -21,7 +21,6 @@ mod web_file {
     pub mod web_file_chunkreader;
     pub mod whole_file;
     pub mod serde_reader;
-    pub mod json_file;
 }
 
 // Analyze

@@ -1,6 +1,4 @@
-use std::io::{Read, Seek, SeekFrom};
-
-use std::io::Result;
+use std::io::{Read};
 
 use super::streambuf::WebFileReader;
 
@@ -16,7 +14,7 @@ impl CompleteFile {
     pub fn  read_whole_file(file_size: u64) -> Self {
 
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
-        let mut reader = zip.by_name("samples.parquet").unwrap(); 
+        let reader = zip.by_name("samples.parquet").unwrap(); 
         let length = reader.size();
         let start_offset = reader.data_start();
         let web_file_reader = WebFileReader::new_from_file(file_size as i32);
@@ -26,7 +24,7 @@ impl CompleteFile {
         while offset != length {
             let readsize = (8 * 1024).min(length - offset) as usize;
             let mut vec = vec![0;readsize];
-            let result = reader.read(&mut vec);
+            let _result = reader.read(&mut vec);
             unsafe { 
                 ARRAY.append(&mut vec);
             }

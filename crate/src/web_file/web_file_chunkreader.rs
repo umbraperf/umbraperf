@@ -3,7 +3,7 @@ use parquet::file::reader::Length;
 use parquet::errors::Result;
 
 use super::streambuf::WebFileReader;
-use super::whole_file::CompleteFile;
+use super::parquet_reader::ParquetReader;
 
 
 pub struct WebFileChunkReader {
@@ -13,7 +13,7 @@ pub struct WebFileChunkReader {
 impl WebFileChunkReader {
     pub fn new(file_size: i32) -> Self {
         
-        CompleteFile::read_whole_file(file_size as u64);
+        ParquetReader::read_whole_file(file_size as u64);
         Self {
             length: file_size as u64
         }
@@ -21,11 +21,11 @@ impl WebFileChunkReader {
 }
 
 impl ChunkReader for WebFileChunkReader {
-    type T = CompleteFile;
+    type T = ParquetReader;
 
-    fn get_read(&self, start: u64, length: usize) -> Result<CompleteFile> {
+    fn get_read(&self, start: u64, length: usize) -> Result<ParquetReader> {
 
-        let buf_read = CompleteFile::set_offset(start);
+        let buf_read = ParquetReader::set_offset(start);
         Ok(buf_read)
     }
 }

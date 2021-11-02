@@ -2,13 +2,13 @@ use std::io::{Read};
 
 use super::streambuf::WebFileReader;
 
-pub struct CompleteFile {
+pub struct ParquetReader {
     offset: u64
 }
 
 static mut ARRAY: Vec<u8> = Vec::new();
 
-impl CompleteFile {
+impl ParquetReader {
 
     pub fn  read_whole_file(file_size: u64) -> Self {
 
@@ -48,7 +48,7 @@ impl CompleteFile {
     }
 }
 
-impl Read for CompleteFile {
+impl Read for ParquetReader {
 
 
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {

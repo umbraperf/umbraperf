@@ -1,4 +1,4 @@
-use std::{collections::HashMap, convert::TryInto, ops::Rem, sync::Arc};
+use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
 use arrow::{
     array::{
@@ -11,10 +11,8 @@ use arrow::{
 use crate::{
     exec::basic::{
         basic::{find_unique_string, sort_batch},
-        filter::filter_with,
     },
     get_record_batches,
-    utils::print_to_cons::print_to_js_with_obj,
 };
 
 pub enum Freq {
@@ -311,7 +309,7 @@ pub fn freq_of_memory(
                 let frequenzy = bucket_map.get(operator).unwrap();
                 for item in frequenzy {
                     let times = *item.1 as i32;
-                    for i in 0..times {
+                    for _i in 0..times {
                         result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                         result_vec_operator.push(operator);
                         result_mem_operator.push(current_memory.try_into().unwrap());
@@ -336,7 +334,7 @@ pub fn freq_of_memory(
                     let frequenzy = bucket_map.get(operator).unwrap();
                     for item in frequenzy {
                         let times = *item.1 as i32;
-                        for i in 0..times {
+                        for _i in 0..times {
                             result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                             result_vec_operator.push(operator);
                             result_mem_operator.push(current_memory.try_into().unwrap());

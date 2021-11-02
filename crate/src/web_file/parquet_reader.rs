@@ -40,12 +40,6 @@ impl ParquetReader {
             offset: offset
         }
     }
-
-    pub fn set_length(self, length: u64) -> Self {
-        Self {
-            offset: self.offset
-        }
-    }
 }
 
 impl Read for ParquetReader {

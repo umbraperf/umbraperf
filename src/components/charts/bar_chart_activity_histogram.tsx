@@ -23,6 +23,7 @@ interface Props {
     chartData: model.ChartDataKeyValue,
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
+    currentBucketSize: number;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => void;
@@ -69,7 +70,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
             (props.currentEvent !== prevProps.currentEvent
-                || props.chartIdCounter !== prevProps.chartIdCounter)) {
+                || props.chartIdCounter !== prevProps.chartIdCounter
+                || props.currentBucketSize !== prevProps.currentBucketSize)) {
             return true;
         } else {
             return false;
@@ -455,6 +457,7 @@ const mapStateToProps = (state: model.AppState) => ({
     chartData: state.chartData,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
+    currentBucketSize: state.currentBucketSize,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

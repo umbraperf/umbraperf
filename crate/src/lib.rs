@@ -20,7 +20,7 @@ use arrow::{
 mod web_file {
     pub mod streambuf;
     pub mod web_file_chunkreader;
-    pub mod whole_file;
+    pub mod parquet_reader;
     pub mod serde_reader;
 }
 

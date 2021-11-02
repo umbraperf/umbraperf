@@ -116,8 +116,6 @@ pub fn count_rows_over_double(
 
     let mut hashmap: HashMap<&str, HashMap<&str, f64>> = HashMap::new();
 
-    print_to_js_with_obj(&format!("{:?}", hashmap).into());
-
     let mut i = 0;
     while i < batch.column(0).len() {
         let current_pipe = vec_pipe.value(i);

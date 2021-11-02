@@ -60,9 +60,3 @@ p{
 .acceptedFilesList{
     list-style-type: none;
 }
-
-.fileUploaderLinearProgressContainer{
-    position: fixed;
-    top: 0px;
-    width: 100%;
-}

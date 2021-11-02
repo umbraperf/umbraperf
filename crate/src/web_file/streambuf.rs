@@ -35,7 +35,6 @@ impl Seek for WebFileReader {
         Ok(self.offset)    }
 }
 
-// Read implementation for WebFileReader
 impl Read for WebFileReader {
     fn read(&mut self, out: &mut [u8]) -> Result<usize> {
         let array_length = out.len() as u64;

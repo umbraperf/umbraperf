@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
     array::{Float64Array, StringArray},
-    datatypes::{DataType, Field, Schema},
+    datatypes::DataType,
     record_batch::RecordBatch,
 };
 
@@ -234,7 +234,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
         vec6.push(column6.value(i));
         i = i + 1;
     }
-  
+
     create_new_record_batch(
         vec![
             "bucket",

@@ -190,6 +190,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         const visData = this.createVisualizationData();
 
         const xTicks = () => {
+            console.log(visData.bucketsArray);
             if (visData.bucketsArray.length > 50) {
                 return Array.from(visData.bucketsArray.filter(bucket => bucket % 20 === 0));
             }

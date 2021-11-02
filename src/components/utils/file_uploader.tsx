@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
 import styles from '../../style/upload.module.css';
+import Spinner from './spinner';
 import { IAppContext, withAppContext } from '../../app_context';
-import { LinearProgress } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 
 interface Props {
@@ -77,16 +77,53 @@ class FileUploader extends React.Component<Props, State> {
         }
     }
 
+    createDropzoneInnerContent(acceptedFiles: any, fileRejections: any) {
+
+        const upperLine = () => {
+            let innerText;
+            if (!this.props.csvParsingFinished && !this.props.fileLoading) {
+                innerText = <p> Drag your umbraPerf file here!
+                    <br></br>
+                    (or click to select files)
+                </p>
+            }else if(!this.props.csvParsingFinished && this.props.fileLoading && acceptedFiles.length != 0){
+                innerText = <Spinner />
+            }
+
+            return innerText;
+        }
+
+        const lowerLine = () => {
+            let innerText;
+            if (fileRejections.length != 0) {
+                innerText = <p>File not valid!</p>;
+                return innerText;
+            } else if (acceptedFiles.length != 0) {
+                innerText = <p>Loading File: {this.listAcceptedFiles(acceptedFiles)}</p>;
+                return innerText;
+            } else {
+                innerText = <p>No files selected.</p>;
+                return innerText;
+            }
+        }
+
+
+        const innerDiv =
+            <div className={styles.dropzoneInnerText}>
+                {upperLine()}
+                {lowerLine()}
+            </div>
+
+        return innerDiv;
+
+    }
+
     public render() {
         return <div className={styles.dropzoneContainer}>
             {this.state.allowRedirect && <Redirect to={"/dashboard-memory-accesses"} />}
-{/*             {this.state.allowRedirect && <Redirect to={"/dashboard"} />}
+            {/*             {this.state.allowRedirect && <Redirect to={"/dashboard"} />}
  */}
 
-            {(!this.props.csvParsingFinished && undefined !== this.props.file) && <div className={styles.fileUploaderLinearProgressContainer}>
-                <LinearProgress color="secondary" />
-            </div>}
-            
             <Dropzone
                 accept={['.parquet', '.csv', '.umbraPerf']}
                 multiple={false}
@@ -99,15 +136,7 @@ class FileUploader extends React.Component<Props, State> {
                         <section className={styles[dropzoneStyle]}>
                             <div className={styles.dropzoneInner} {...getRootProps()} style={{ width: "100%", height: "100%" }}>
                                 <input {...getInputProps()} />
-                                <div className={styles.dropzoneInnerText}>
-                                    <p> Drag files here, or click to select files.
-                                        <br></br>
-                                        Only csv files are allowed.
-                                    </p>
-                                    {acceptedFiles.length != 0 ?
-                                        <p>Selected file (valid): {this.listAcceptedFiles(acceptedFiles)}</p> :
-                                        (fileRejections.length != 0 ? <p>File not valid!</p> : <p>No files selected.</p>)}
-                                </div>
+                                {this.createDropzoneInnerContent(acceptedFiles, fileRejections)}
                             </div>
                         </section>)
                 }}

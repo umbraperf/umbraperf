@@ -3,38 +3,35 @@ extern crate wasm_bindgen;
 use exec::rest::rest_api::eval_query;
 use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
-use web_file::serde_reader;
 
 // Aux
 extern crate console_error_panic_hook;
+use std::cell::RefCell;
 use std::collections::HashMap;
-use std::{cell::RefCell};
 
 // Arrow
 extern crate arrow;
-use arrow::{
-    record_batch::RecordBatch,
-};
+use arrow::record_batch::RecordBatch;
 
 // Stream Buff
 mod web_file {
+    pub mod parquet_reader;
+    pub mod serde_reader;
     pub mod streambuf;
     pub mod web_file_chunkreader;
-    pub mod whole_file;
-    pub mod serde_reader;
 }
 
 // Analyze
 mod exec {
     pub mod freq {
-        pub mod rel_freq;
         pub mod abs_freq;
         pub mod freq;
+        pub mod rel_freq;
     }
     pub mod basic {
-        pub mod filter;
         pub mod basic;
         pub mod count;
+        pub mod filter;
         pub mod kpis;
     }
     pub mod rest {
@@ -46,21 +43,20 @@ mod exec {
 // Utils
 mod utils {
     pub mod bindings;
-    pub mod record_batch_util;
     pub mod print_to_cons;
+    pub mod record_batch_util;
     pub mod string_util;
 }
-use utils::bindings;
-use utils::record_batch_util;
 use crate::utils::bindings::notify_js_finished_reading;
 use crate::web_file::serde_reader::SerdeDict;
-
+use utils::bindings;
+use utils::record_batch_util;
 
 //STATE
 pub struct State {
     pub record_batches: Option<RecordBatch>,
     pub queries: HashMap<String, RecordBatch>,
-    pub dict: Option<SerdeDict>
+    pub dict: Option<SerdeDict>,
 }
 
 thread_local! {
@@ -114,7 +110,6 @@ fn set_serde_dict(serde_dict: SerdeDict) {
     _with_state_mut(|s| s.dict = Some(serde_dict));
 }
 
-
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
     let now = instant::Instant::now();
@@ -124,9 +119,7 @@ pub fn analyze_file(file_size: i32) {
     let serde_reader = SerdeDict::read_dict(file_size as u64);
     set_serde_dict(serde_reader);
 
-    let batches = record_batch_util::init_record_batches(
-        file_size
-    );
+    let batches = record_batch_util::init_record_batches(file_size);
 
     let elapsed = now.elapsed();
     print_to_js_with_obj(&format!("{:?}", elapsed).into());
@@ -141,4 +134,3 @@ pub fn analyze_file(file_size: i32) {
 pub fn request_chart_data(rest_query: &str) {
     eval_query(get_record_batches().unwrap(), rest_query);
 }
-

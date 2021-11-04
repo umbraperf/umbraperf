@@ -27,6 +27,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
     | ChartData<ChartType.SUNBURST_CHART, ISunburstChartData>
     | ChartData<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChart>
+    | ChartData<ChartType.QUERY_PLAN, IQueryPlanData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
@@ -78,4 +79,8 @@ export interface IMemoryAccessHeatmapChart {
     buckets: Array<number>,
     memoryAdress: Array<number>,
     occurrences: Array<number>,
+}
+
+export interface IQueryPlanData {
+    // TODO 
 }

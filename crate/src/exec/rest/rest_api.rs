@@ -15,8 +15,6 @@ use super::rest_api_pars::{abs_freq_pars, add_column, freq_mem, rel_freq_pars, r
 // Find name in Record Batch
 // Panic if error, else usize of column
 pub fn find_name(name: &str, batch: &RecordBatch) -> usize {
-    print_to_js_with_obj(&format!("{:?}", name).into());
-
     let schema = batch.schema();
     let fields = schema.fields();
     for (i, field) in fields.iter().enumerate() {

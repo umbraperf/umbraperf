@@ -23,6 +23,7 @@ interface Props {
    chartData: model.ChartDataKeyValue,
    currentInterpolation: String,
    currentBucketSize: number,
+   currentView: model.ViewType;
    setCurrentChart: (newCurrentChart: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -70,9 +71,9 @@ class SwimLanes extends React.Component<Props, State> {
    newChartDataNeeded(props: Props, prevProps: Props): boolean {
       if (prevProps.currentEvent !== "Default" &&
          (props.currentEvent !== prevProps.currentEvent ||
+            props.currentView !== prevProps.currentView ||
             props.operators !== prevProps.operators ||
-            props.currentBucketSize !== prevProps.currentBucketSize ||
-            props.chartIdCounter !== prevProps.chartIdCounter)) {
+            props.currentBucketSize !== prevProps.currentBucketSize)) {
          return true;
       } else {
          return false;
@@ -332,6 +333,7 @@ const mapStateToProps = (state: model.AppState) => ({
    chartData: state.chartData,
    currentInterpolation: state.currentInterpolation,
    currentBucketSize: state.currentBucketSize,
+   currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

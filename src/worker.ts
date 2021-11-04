@@ -2,6 +2,7 @@
 
 import * as profiler_core from '../crate/pkg/shell';
 import * as RestApi from './model/rest_queries';
+// import JsZip from 'jszip';
 
 
 export enum WorkerRequestType {
@@ -31,7 +32,7 @@ export type WorkerResponse<T, P> = {
   readonly restQueryType: RestApi.RestQueryType | undefined;
 };
 
-export interface ICalculateChartDataRequestData{
+export interface ICalculateChartDataRequestData {
   queryMetadata: string,
   restQuery: string,
   requestId: number,
@@ -39,9 +40,9 @@ export interface ICalculateChartDataRequestData{
   restQueryType: RestApi.RestQueryType,
 }
 
-export interface IStoreResultResponseData{
+export interface IStoreResultResponseData {
   messageId: number;
-  requestId: number|undefined;
+  requestId: number | undefined;
   type: WorkerResponseType;
   data: any;
 }
@@ -71,7 +72,7 @@ interface IGlobalFileDictionary {
 let globalFileIdCounter = 0;
 let globalMetaRequest: boolean;
 let globalFileDictionary: IGlobalFileDictionary = {}
-let globalRequestId: number|undefined = undefined;
+let globalRequestId: number | undefined = undefined;
 let globalRestQueryType: RestApi.RestQueryType | undefined = undefined;
 
 const worker: IRequestWorker = self as any;
@@ -105,8 +106,18 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
-function extractQueryPlanFromZip(file: File){
+function extractQueryPlanFromZip(file: File) {
   console.log(file);
+  // const jsZip = require('jszip');
+  // console.log(JsZip.version);
+  // JsZip.loadAsync(file).then(function (zip: any) {
+  // Object.keys(zip.files).forEach(function (filename) {
+  //   zip.files[filename].async('string').then(function (fileData: any) {
+  //     console.log(fileData) // These are your file contents      
+  //   })
+  // })
+  // })
+
 
 }
 

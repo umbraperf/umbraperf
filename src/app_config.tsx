@@ -2,12 +2,13 @@ import * as React from 'react';
 import createDevStore from './model/store_dev';
 import { IAppContext } from './app_context';
 
+import * as model from './model';
+
 import FileUploader from './components/utils/file_uploader';
 import Dashboard from './components/dashboards/dashboard';
 import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
 import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
-import Dummy from './components/testdummy';
 
 import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
@@ -97,67 +98,43 @@ export const topLevelComponents = [
         path: '/upload',
         sidebarName: 'Upload File',
         component: FileUploader,
+        view: model.ViewType.UPLOAD,
         icon: () => { return (<BackupIcon />) },
     },
     {
         path: '/dashboard',
         sidebarName: 'Dashboard',
         component: Dashboard,
+        view: model.ViewType.DASHBOARD,
         icon: () => { return (<DashboardIcon />) },
     },
     {
         path: '/dashboard-multiple-events',
         sidebarName: 'Dashboard (Multiple Events)',
         component: DashboardMultipleEvents,
+        view: model.ViewType.DASHBOARD_MULTIPLE_EVENTS,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
         path: '/dashboard-memory-accesses',
         sidebarName: 'Dashboard (Memory Accesses)',
         component: DashboardMemoryAccesses,
+        view: model.ViewType.DASHBOARD_MEMORY,
         icon: () => { return (<SdStorageIcon />) },
     },
-    // {
-    //     path: '/bar-chart',
-    //     sidebarName: 'Bar Chart',
-    //     component: BarChart,
-    //     icon: () => { return (<BarChartIcon />) },
-    // },
-    // {
-    //     path: '/swim-lanes',
-    //     sidebarName: 'Swim Lanes',
-    //     component: SwimLanes,
-    //     icon: () => { return (<ViewHeadlineIcon />) },
-    // },
     {
         path: '/swim-lanes-pipelines',
         sidebarName: 'Swim Lanes (Pipelines)',
         component: SwimLanesPipelines,
+        view: model.ViewType.PIPELINES,
         icon: () => { return (<SortIcon />) },
     },
     // {
-    //     path: '/swim-lanes-multiple-pipelines',
-    //     sidebarName: 'Swim Lanes (Multiple Pipelines)',
-    //     component: SwimLanesMultiplePipelines,
-    //     icon: () => { return (<MultilineChartIcon />) },
+    //     path: '/dummy',
+    //     sidebarName: 'Dummy',
+    //     component: Dummy,
+    //     view: model.ViewType.DUMMY,
+    //     icon: () => { return (<HelpIcon />) },
     // },
-    // {
-    //     path: '/swim-lanes-multiple-pipelines-combined',
-    //     sidebarName: 'Swim Lanes (Multiple Events)',
-    //     component: SwimLanesCombinedMultiplePipelines,
-    //     icon: () => { return (<ViewStreamIcon />) },
-    // },
-    // {
-    //     path: '/donut-chart',
-    //     sidebarName: 'Donut Chart',
-    //     component: DonutChart,
-    //     icon: () => { return (<DonutLargeIcon />) },
-    // },
-    {
-        path: '/dummy',
-        sidebarName: 'Dummy',
-        component: Dummy,
-        icon: () => { return (<HelpIcon />) },
-    },
 
 ];

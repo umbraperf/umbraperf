@@ -10,13 +10,13 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import IconButton from "@material-ui/core/IconButton";
+import _ from 'lodash';
 
 interface Props {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
     result: model.Result | undefined;
     csvParsingFinished: boolean;
-    currentChart: string;
     currentEvent: string;
     events: Array<string> | undefined;
     chartIdCounter: number;
@@ -24,6 +24,7 @@ interface Props {
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
     currentBucketSize: number;
+    currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => void;
@@ -55,6 +56,14 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         this.resetCurrentSelectionTuples = this.resetCurrentSelectionTuples.bind(this);
     }
 
+    // shouldComponentUpdate(nextProps: Props, nextState: State) {
+    //     if (this.props.chartData[this.state.chartId] === undefined || _.isEqual(this.props.chartData[this.state.chartId].chartData.data, nextProps.chartData[this.state.chartId].chartData.data)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   }
+
     componentDidUpdate(prevProps: Props): void {
 
         this.requestNewChartData(this.props, prevProps);
@@ -70,15 +79,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
             (props.currentEvent !== prevProps.currentEvent
-                || props.chartIdCounter !== prevProps.chartIdCounter
+                || props.currentView !== prevProps.currentView
                 || props.currentBucketSize !== prevProps.currentBucketSize)) {
             return true;
         } else {
             return false;
         }
     }
-
-
 
     componentDidMount() {
 
@@ -127,12 +134,13 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     public render() {
+        console.log("rerender");
 
         if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{position: "relative", display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ position: "relative", display: "flex", height: "100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"} >
@@ -170,6 +178,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
+        console.log("here");
+
 
         const timeBucketsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).timeBucket;
         const occurrencesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).occurrences;
@@ -449,7 +459,6 @@ const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     result: state.result,
     csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
     currentEvent: state.currentEvent,
     events: state.events,
     chartIdCounter: state.chartIdCounter,
@@ -457,6 +466,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
     currentBucketSize: state.currentBucketSize,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

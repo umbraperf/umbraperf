@@ -27,6 +27,7 @@ interface Props {
     pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentTimeBucketSelectionTuple: [number, number],
+    currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
@@ -74,8 +75,8 @@ class SunburstChart extends React.Component<Props, State> {
         if (this.props.events &&
             this.props.pipelines &&
             this.props.operators &&
-            (props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.currentEvent !== prevProps.currentEvent ||
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.currentView !== prevProps.currentView ||
                 !_.isEqual(this.props.pipelines, prevProps.pipelines) ||
                 !_.isEqual(this.props.operators, prevProps.operators) ||
                 !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
@@ -462,6 +463,7 @@ const mapStateToProps = (state: model.AppState) => ({
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

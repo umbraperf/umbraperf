@@ -3,6 +3,7 @@ import { IKpiData, Result } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
+import { ViewType } from './chart_types';
 
 
 /// A mutation
@@ -38,6 +39,7 @@ export enum StateMutationType {
     SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
     SET_CURRENTTIMEBUCKETSELECTIONTUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
     SET_CURRENTTIMEPOSITIONSELECTIONTUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
+    SET_CURRENTVIEW = 'SET_CURRENTVIEW',
     OTHER = 'OTHER',
 }
 
@@ -68,6 +70,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
     ;
 
 // The action dispatch
@@ -197,6 +200,11 @@ export class AppStateMutation {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
+            case StateMutationType.SET_CURRENTVIEW:
+                return {
+                    ...state,
+                    currentView: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -224,6 +232,7 @@ export class AppStateMutation {
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
+                    currentView: ViewType.UPLOAD,
                 }
         }
     }

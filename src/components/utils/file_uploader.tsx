@@ -16,6 +16,7 @@ interface Props {
     setFile: (newFile: File) => void;
     setCsvParsingFinished: (newCsvParsingFinished: boolean) => void;
     setFileLoading: (newFileLoading: boolean) => void;
+    setCurrentView: (newCurrentView: model.ViewType) => void;
     setResetState: () => void;
 }
 
@@ -64,6 +65,7 @@ class FileUploader extends React.Component<Props, State> {
 
     componentDidMount(): void {
         this.props.setResetState();
+        this.props.setCurrentView(model.ViewType.UPLOAD);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -86,7 +88,7 @@ class FileUploader extends React.Component<Props, State> {
                     <br></br>
                     (or click to select files)
                 </p>
-            }else if(!this.props.csvParsingFinished && this.props.fileLoading && acceptedFiles.length != 0){
+            } else if (!this.props.csvParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
                 innerText = <Spinner />
             }
 
@@ -166,6 +168,11 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         dispatch({
             type: model.StateMutationType.SET_FILELOADING,
             data: newFileLoading,
+        }),
+    setCurrentView: (newCurrentView: model.ViewType) =>
+        dispatch({
+            type: model.StateMutationType.SET_CURRENTVIEW,
+            data: newCurrentView,
         }),
     setResetState: () =>
         dispatch({

@@ -27,6 +27,7 @@ interface Props {
     currentInterpolation: String,
     currentBucketSize: number,
     currentTimeBucketSelectionTuple: [number, number],
+    currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -75,8 +76,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
             this.props.operators &&
-            (props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.currentBucketSize !== prevProps.currentBucketSize ||
+            (props.currentBucketSize !== prevProps.currentBucketSize ||
+                props.currentView !== prevProps.currentView ||
                 !_.isEqual(props.operators, prevProps.operators) ||
                 !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
                 !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
@@ -480,6 +481,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

@@ -25,6 +25,7 @@ interface Props {
     currentPipeline: Array<string> | "All",
     currentOperator: Array<string> | "All",
     currentTimeBucketSelectionTuple: [number, number],
+    currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
 
@@ -74,8 +75,8 @@ class BarChart extends React.Component<Props, State> {
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.events &&
-            (props.chartIdCounter !== prevProps.chartIdCounter ||
-                props.currentEvent !== prevProps.currentEvent ||
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.currentView !== prevProps.currentView ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                 !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
@@ -330,6 +331,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

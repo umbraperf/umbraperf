@@ -135,6 +135,9 @@ export function configure(params) {
                 filename: './static/css/[id].[contenthash].css',
                 chunkFilename: './static/css/[id].[contenthash].css',
             }),
+            // new webpack.ProvidePlugin({ 
+            //     JSZip: 'jszip', 
+            // }), 
         ],
         experiments: {
             asyncWebAssembly: true,

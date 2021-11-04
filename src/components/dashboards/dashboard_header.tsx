@@ -12,7 +12,6 @@ import { Grid, Box } from '@material-ui/core';
 interface Props {
     csvParsingFinished: boolean;
     multipleEvents?: boolean;
-    setCurrentChart: (newCurrentChart: string) => void;
 }
 
 
@@ -22,11 +21,6 @@ class DashboardHeader extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
     }
-
-    componentDidMount() {
-        this.props.setCurrentChart(model.ChartType.DASHBOARD);
-    }
-
 
     public render() {
 
@@ -66,16 +60,9 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-});
 
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardHeader);
+export default connect(mapStateToProps)(DashboardHeader);
 
 
 

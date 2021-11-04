@@ -1,9 +1,9 @@
 import * as model from '../../model';
 import * as Context from '../../app_context';
 import Spinner from './spinner';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Button, Color, InputLabel } from '@material-ui/core';
+import { Button, useTheme } from '@material-ui/core';
 import styles from '../../style/utils.module.css';
 
 
@@ -66,9 +66,10 @@ function EventsButtons(props: Props) {
                 return "default";
             }
         } else {
-            return (props.currentEvent === event) ? "primary" : "default";
+            return (props.currentEvent === event) ? "secondary" : "default";
         }
     }
+
 
     return (
         <div className={styles.eventButtonsContainer}>
@@ -81,7 +82,7 @@ function EventsButtons(props: Props) {
                                 className={styles.eventButton}
                                 variant="contained"
                                 color={buttonColor(event)}
-                                onClick={() => handleEventButtonClick(event)}
+                                 onClick={() => handleEventButtonClick(event)}
                                 key={index}
                             >
                                 {createEventShortString(event)}

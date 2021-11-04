@@ -27,6 +27,7 @@ function InterpolationDropdown(props: Props) {
         <div className={styles.interpolationDropdownSelectorContainer}>
             <InputLabel className={styles.interpolationDropdownSelectorLabel} style={{ color: props.appContext.tertiaryColor }} id="interpolation-selector-label">Interpolation:</InputLabel>
             <Select className={styles.interpolationDropdownSelector}
+                color="secondary"
                 labelId="interpolation-selector-label"
                 id="interpolation-selector"
                 value={props.currentInterpolation}

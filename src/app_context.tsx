@@ -6,6 +6,7 @@ export interface IAppContext {
     primaryColor: string,
     secondaryColor: string,
     tertiaryColor: string,
+    accentBlack: string
 }
 
 export const ctx = React.createContext<IAppContext | null>(null);

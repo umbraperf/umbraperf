@@ -1,8 +1,8 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import path from 'path';
 import { fileURLToPath } from 'url';
+import path from 'path';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -10,18 +10,19 @@ export function configure(params) {
     return {
         target: 'web',
         entry: {
-            app: ['./src/app.tsx'],
+            app: ['./src/index.tsx'],
         },
         output: {
             path: params.buildDir,
-            filename: 'static/js/[name].[contenthash].js',
+            filename: '[name].js',
             chunkFilename: 'static/js/[name].[contenthash].js',
             assetModuleFilename: 'static/assets/[name].[contenthash].[ext]',
             webassemblyModuleFilename: 'static/wasm/[hash].wasm',
             clean: true,
+            publicPath: '/',
         },
         resolve: {
-            extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm'],
+            extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm', '.mjs'],
         },
         module: {
             rules: [
@@ -99,6 +100,12 @@ export function configure(params) {
                     options: {
                         name: 'static/[name].[contenthash].[ext]',
                     },
+                },
+                {
+                    test: /\.m?js/,
+                    resolve: {
+                        fullySpecified: false
+                    }
                 },
             ],
         },

@@ -1,36 +1,136 @@
-use js_sys::Uint8Array;
+// Wasm Bindgen
+extern crate wasm_bindgen;
+use exec::rest::rest_api::eval_query;
+use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
-use std::sync::Arc;
-use std::sync::{Mutex, MutexGuard};
 
-struct State {
-    pub counter: u64,
+// Aux
+extern crate console_error_panic_hook;
+use std::cell::RefCell;
+use std::collections::HashMap;
+
+// Arrow
+extern crate arrow;
+use arrow::record_batch::RecordBatch;
+
+// Stream Buff
+mod web_file {
+    pub mod parquet_reader;
+    pub mod serde_reader;
+    pub mod streambuf;
+    pub mod web_file_chunkreader;
+}
+
+// Analyze
+mod exec {
+    pub mod freq {
+        pub mod abs_freq;
+        pub mod freq;
+        pub mod rel_freq;
+    }
+    pub mod basic {
+        pub mod basic;
+        pub mod count;
+        pub mod filter;
+        pub mod kpis;
+    }
+    pub mod rest {
+        pub mod rest_api;
+        pub mod rest_api_pars;
+    }
+}
+
+// Utils
+mod utils {
+    pub mod bindings;
+    pub mod print_to_cons;
+    pub mod record_batch_util;
+    pub mod string_util;
+}
+use crate::utils::bindings::notify_js_finished_reading;
+use crate::web_file::serde_reader::SerdeDict;
+use utils::bindings;
+use utils::record_batch_util;
+
+//STATE
+pub struct State {
+    pub record_batches: Option<RecordBatch>,
+    pub queries: HashMap<String, RecordBatch>,
+    pub dict: Option<SerdeDict>,
 }
 
 thread_local! {
-    static STATE: Arc<Mutex<State>> = Arc::new(Mutex::new(State {
-        counter: 0,
-    }));
-}
-
-
-#[wasm_bindgen(js_name = "printSomething")]
-pub fn print_something(something: &str) {
-    web_sys::console::log_1(&something.into());
-}
-
-
-#[wasm_bindgen(js_name = "consumeChunk")]
-pub fn consume_chunk(chunk: &Uint8Array) {
-    let buffer = chunk.to_vec();
-    STATE.with(|s| {
-        let mut sg = s.lock().unwrap();
-        sg.counter += 1;
-        web_sys::console::log_1(&format!("received chunk: {}", sg.counter).into());
+    static STATE: RefCell<State> = RefCell::new(State {
+        record_batches: None,
+        queries: HashMap::new(),
+        dict: None
     });
 }
 
-#[wasm_bindgen(start)]
-pub fn main() {
-    //console_error_panic_hook::set_once();
+// STATE ACCESS
+fn with_state<Callback, ReturnType>(cb: Callback) -> ReturnType
+where
+    Callback: FnOnce(&State) -> ReturnType,
+{
+    STATE.with(|s| cb(&s.borrow()))
+}
+
+fn _with_state_mut<Callback, ReturnType>(cb: Callback) -> ReturnType
+where
+    Callback: FnOnce(&mut State) -> ReturnType,
+{
+    STATE.with(|s| cb(&mut s.borrow_mut()))
+}
+
+fn get_record_batches() -> Option<RecordBatch> {
+    with_state(|s| s.record_batches.clone())
+}
+
+fn get_query_from_cache() -> HashMap<String, RecordBatch> {
+    with_state(|s| s.queries.clone())
+}
+
+fn clear_cache() {
+    _with_state_mut(|s| s.queries.clear());
+}
+
+fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
+    _with_state_mut(|s| s.queries.insert(restful_string.to_string(), record_batch));
+}
+
+fn set_record_batches(record_batches: RecordBatch) {
+    _with_state_mut(|s| s.record_batches = Some(record_batches));
+}
+
+fn get_serde_dict() -> Option<SerdeDict> {
+    with_state(|s| s.dict.clone())
+}
+
+fn set_serde_dict(serde_dict: SerdeDict) {
+    _with_state_mut(|s| s.dict = Some(serde_dict));
+}
+
+#[wasm_bindgen(js_name = "analyzeFile")]
+pub fn analyze_file(file_size: i32) {
+    let now = instant::Instant::now();
+
+    clear_cache();
+
+    let serde_reader = SerdeDict::read_dict(file_size as u64);
+    set_serde_dict(serde_reader);
+
+    let batches = record_batch_util::init_record_batches(file_size);
+
+    let elapsed = now.elapsed();
+    print_to_js_with_obj(&format!("{:?}", elapsed).into());
+
+    let record_batch = record_batch_util::convert(batches);
+    set_record_batches(record_batch);
+
+    notify_js_finished_reading(0);
+}
+
+#[wasm_bindgen(js_name = "requestChartData")]
+pub fn request_chart_data(rest_query: &str) {
+    eval_query(get_record_batches().unwrap(), rest_query);
 }

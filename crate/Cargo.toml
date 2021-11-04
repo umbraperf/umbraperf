@@ -7,8 +7,13 @@ publish = false
 
 workspace = "../"
 
+[target.'cfg(target_arch = "wasm32")'.features]
+default = ["ed25519-dalek/nightly", "rand/wasm-bindgen", "js-sys"]
+
 [lib]
 crate-type = ["cdylib", "rlib"]
+
+
 
 [dependencies.web-sys]
 version = "0.3.51"
@@ -26,17 +31,29 @@ features = [
   'HtmlCanvasElement',
   'WebSocket',
   'Performance',
-]
+  'Worker',
+  'EventTarget',
+  'EventListener'
+  ]
 
 [dependencies]
 console_error_panic_hook = "0.1.6"
-wasm-bindgen = "0.2.74"
+wasm-bindgen = { version = "0.2.74", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.24"
+log = "0.4.14"
 chrono = "0.4.19"
 js-sys = "0.3.51"
 lazy_static = "1.4.0"
 encode_unicode = "0.3.6"
 unicode-width = "0.1.8"
+arrow = {version = "5.5", default-features = false, features = ["js","csv", "ipc"] }
+futures = {version = "0.3.1", features = ["thread-pool"]}
+boolvec = "0.2.6"
+instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
+serde = { version = "^1.0.129", features = [ "derive" ] }
+serde_json = "1.0.64"
+zip = { version = "0.5.13",  default-features = false, features = [ "deflate" ] }
+parquet = { path = "parquet", version = "5.5.0", default_features=false, features=["arrow", "snap", "base64"]}
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12"

@@ -2,6 +2,7 @@ import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
+import { ViewType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
@@ -31,6 +32,7 @@ export interface AppState {
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
+    currentView: ViewType;
 }
 
 export function createDefaultState(): AppState {
@@ -59,7 +61,7 @@ export function createDefaultState(): AppState {
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],
-        currentTimePositionSelectionTuple: [-1, -1]
-
+        currentTimePositionSelectionTuple: [-1, -1],
+        currentView: ViewType.UPLOAD,
     };
 }

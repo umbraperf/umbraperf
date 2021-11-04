@@ -10,7 +10,14 @@ export enum ChartType {
     BAR_CHART_ACTIVITY_HISTOGRAM = "bar_chart_activity_histogram",
     SUNBURST_CHART = "sunburst_chart",
     MEMORY_ACCESS_HEATMAP_CHART = "memory-access-heatmap-chart",
-    QUERY_PLAN = "query-plan",
+    QUERY_PLAN = "query-plan"
+}
+
+export enum ViewType {
     DASHBOARD = "dashboard",
+    DASHBOARD_MULTIPLE_EVENTS = "dashboard_multiple_events",
+    DASHBOARD_MEMORY = "dashboard_memory",
+    UPLOAD = "upload",
+    PIPELINES = "pipelines",
     DUMMY = "dummy",
 }

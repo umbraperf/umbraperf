@@ -1,4 +1,5 @@
 import React from 'react';
+import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
 import SunburstChart from '../charts/sunburst_chart';
@@ -6,15 +7,21 @@ import SwimLanesMultiplePipelines from '../charts/swim_lanes_multiple_pipelines'
 import BarChart from '../charts/bar_chart';
 import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
+import { connect } from 'react-redux';
 
+interface Props {
+    setCurrentView: (newCurrentView: model.ViewType) => void;
+}
 
-
-class Dashboard extends React.Component<{}, {}> {
+class Dashboard extends React.Component<Props, {}> {
 
     constructor(props: any) {
         super(props);
     }
 
+    componentDidMount(): void {
+        this.props.setCurrentView(model.ViewType.DASHBOARD);
+    }
 
     public render() {
 
@@ -78,12 +85,17 @@ class Dashboard extends React.Component<{}, {}> {
             </div>
         </div >;
     }
-
-
 }
 
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentView: (newCurrentView: model.ViewType) =>
+        dispatch({
+            type: model.StateMutationType.SET_CURRENTVIEW,
+            data: newCurrentView,
+        }),
+});
 
-export default Dashboard;
+export default connect(undefined, mapDispatchToProps)(Dashboard);
 
 
 

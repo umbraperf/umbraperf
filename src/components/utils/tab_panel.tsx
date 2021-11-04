@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-
 function ScrollableTabsButtonForce(props: any) {
 
     const classes = useStyles();
@@ -54,7 +53,13 @@ function ScrollableTabsButtonForce(props: any) {
                     {topLevelComponents.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
-                                <Tab classes={{ root: classes.tabRoot }} value={prop.path} to={prop.path} icon={prop.icon()} component={Link} key={key} />
+                                <Tab
+                                    classes={{ root: classes.tabRoot }}
+                                    value={prop.path}
+                                    to={prop.path}
+                                    icon={prop.icon()}
+                                    component={Link} key={key}
+                                />
                             );
                         }
                     })}

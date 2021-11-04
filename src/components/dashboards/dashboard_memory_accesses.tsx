@@ -1,16 +1,25 @@
 import React from 'react';
+import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
 import MemoryAccessHeatmapChart from '../charts/memory_access_heatmap_chart';
 import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import { Grid, Box } from '@material-ui/core';
+import { connect } from 'react-redux';
 
+interface Props {
+    setCurrentView: (newCurrentView: model.ViewType) => void;
+}
 
-class DashboardMemoryAccesses extends React.Component<{}, {}> {
+class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
 
     constructor(props: any) {
         super(props);
+    }
+
+    componentDidMount(): void {
+        this.props.setCurrentView(model.ViewType.DASHBOARD_MEMORY);
     }
 
     public render() {
@@ -49,7 +58,15 @@ class DashboardMemoryAccesses extends React.Component<{}, {}> {
 
 }
 
-export default DashboardMemoryAccesses;
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setCurrentView: (newCurrentView: model.ViewType) =>
+        dispatch({
+            type: model.StateMutationType.SET_CURRENTVIEW,
+            data: newCurrentView,
+        }),
+});
+
+export default connect(undefined, mapDispatchToProps)(DashboardMemoryAccesses);
 
 
 

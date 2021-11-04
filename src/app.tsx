@@ -16,7 +16,6 @@ import FileUploader from './components/utils/file_uploader';
 import Dashboard from './components/dashboards/dashboard';
 import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
-import Dummy from './components/testdummy';
 
 
 function NoMatch() {
@@ -82,10 +81,10 @@ export default function App() {
                                         <Route exact path="/dashboard-memory-accesses" key="/dashboard-memory-accesses">
                                             <DashboardMemoryAccesses />
                                         </Route>
-
+{/* 
                                         <Route exact path="/dummy" key="/dummy">
                                             <Dummy />
-                                        </Route>
+                                        </Route> */}
 
                                         {Config.topLevelComponents.map((route: any) => {
                                             return <Route exact path={route.path} key={route.path}>

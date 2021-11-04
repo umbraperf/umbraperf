@@ -7,7 +7,7 @@ import styles from "../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 
-interface Props{
+interface Props {
     appContext: Context.IAppContext;
     currentBucketSize: number;
     setCurrentBucketSize: (newCurrentBucketSize: number) => void;
@@ -24,8 +24,9 @@ function BucketsizeDropdwn(props: Props) {
 
     return (
         <div className={styles.bucketsizeDropdownSelectorContainer}>
-            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} style={{color: props.appContext.tertiaryColor}} id="bucketsize-selector-label">Bucket-Size:</InputLabel>
+            <InputLabel className={styles.bucketsizeDropdownSelectorLabel} style={{ color: props.appContext.tertiaryColor }} id="bucketsize-selector-label">Bucket-Size:</InputLabel>
             <Select className={styles.bucketsizeDropdownSelector}
+                color="secondary"
                 labelId="bucketsize-selector-label"
                 id="bucketsize-selector"
                 value={props.currentBucketSize}
@@ -41,13 +42,13 @@ function BucketsizeDropdwn(props: Props) {
 
 const mapStateToProps = (state: model.AppState) => ({
     currentBucketSize: state.currentBucketSize,
- });
- 
- const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+});
+
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentBucketSize: (newCurrentBucketSize: number) => dispatch({
-       type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
-       data: newCurrentBucketSize,
+        type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
+        data: newCurrentBucketSize,
     }),
- });
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(BucketsizeDropdwn));

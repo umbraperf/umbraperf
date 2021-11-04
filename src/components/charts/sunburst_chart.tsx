@@ -157,7 +157,6 @@ class SunburstChart extends React.Component<Props, State> {
 
     handleClickPipeline(...args: any[]) {
         if (args[1]) {
-            console.log(args[1]);
             const selectedPipeline = args[1];
             if (this.props.currentPipeline === "All" || !this.props.currentPipeline.includes("")) {
                 this.props.setCurrentPipeline(this.props.pipelines!.map((elem, index) => (elem === selectedPipeline ? elem : "")));

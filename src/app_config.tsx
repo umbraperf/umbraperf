@@ -92,8 +92,6 @@ export const materialUiTheme = createTheme({
     }
 });
 
-console.log(materialUiTheme);
-
 export const topLevelComponents = [
     {
         path: '/upload',

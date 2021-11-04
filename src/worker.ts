@@ -105,6 +105,11 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
+function extractQueryPlanFromZip(file: File){
+  console.log(file);
+
+}
+
 
 export function notifyJsFinishedReading(requestId: number) {
   worker.postMessage({
@@ -147,6 +152,7 @@ worker.onmessage = (message) => {
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
+      extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter]);
       globalFileIdCounter++;
       break;
 

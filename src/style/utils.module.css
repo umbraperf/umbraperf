@@ -1,0 +1,162 @@
+:root {
+    --labelFonSize: 11px;
+}
+
+.optionsLables{
+    font-size: var(--labelFonSize);
+}
+
+.dropdownSelector{
+    width: 150px;
+    text-align: left;
+}
+
+.dropdownSelectorLabel{
+    composes: optionsLables;
+    padding-left: 1px;
+}
+
+.dropdownSelectorContainer{
+    margin: 10px;
+} 
+
+.interpolationDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.interpolationDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.interpolationDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
+} 
+
+.bucketsizeDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.bucketsizeDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.bucketsizeDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
+}
+
+
+.pipelinesSelectorArea{
+    display: block;
+    margin: 10px;
+}
+
+.pipelinesSelectorFormControlLabel{
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+
+.optionsContainer{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eventButtonsContainer{
+    composes: optionsContainer;
+    flex-direction: column;
+}
+.eventButtonsArea{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.eventButton{
+    animation: fadeIn 1s;
+    width: 135px;
+    border-radius: 70px;
+    margin: 7px;
+    font-size: 10px;
+}
+
+.kpiContainer{
+    composes: optionsContainer;
+    text-align: center;
+    flex-direction: row;
+}
+
+.kpiCardsArea{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.kpiCard{
+    margin-left: 4px;
+    margin-right: 4px;
+    width: 150px;
+    height: 55px;
+    border-radius: 7px;
+    padding: 5px 5px 5px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-width: 0.5px;
+    flex-basis: 100px;
+    border-radius: 70px;
+
+}
+
+.kpiCardLabel{
+    max-width: 80px;
+    font-size: var(--labelFonSize);
+    animation: fadeIn 1s;
+}
+
+.kpiCardValue{
+    font-size: 20px;
+    animation: fadeIn 2s;
+    font-weight: 400;
+}
+
+.dropdownOptionsContainer{
+    composes: optionsContainer;
+    flex-direction: row;
+
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@media not all and (min-width: 900px) {
+    .kpiCardsArea{
+        composes: kpiCardsArea;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .kpiCard{
+        composes: kpiCard;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}
+
+
+@media not all and (min-width: 650px) {
+    .eventButtonsArea{
+        composes: eventButtonsArea;
+        width: 300px;
+    } 
+
+}
+

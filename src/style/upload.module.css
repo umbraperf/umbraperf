@@ -1,0 +1,62 @@
+.dropzoneContainer{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.dropzoneBase{
+    display: flex;
+    align-items: center;
+    margin: 20px 60px 20px 60px;
+    min-height: 250px;
+    height: 70%;
+    flex: 1;
+    border-width: thick;
+    border-radius: 2;
+    border-color: #adadad;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border .24s ease-in-out;
+    transition: background-color .24s ease-in-out;
+    align-items: center;
+    text-align: center;
+}
+
+.dropzoneActive{
+    composes: dropzoneBase;
+    border-color:#2196f3;
+    background-color: #bdddf7;
+
+}
+
+.dropzoneAccept{
+    composes: dropzoneBase;
+    border-color:#00e676;
+    background-color: #d5ebdf;
+
+
+}
+
+.dropzoneReject{
+    composes: dropzoneBase;
+    border-color:#ff1744;
+    background-color: #ebc5cc;
+}
+
+p{
+    font-size: large;
+}
+
+.dropzoneInnerText{
+    margin: 0;
+    position: relative;
+    top: 45%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.acceptedFilesList{
+    list-style-type: none;
+}

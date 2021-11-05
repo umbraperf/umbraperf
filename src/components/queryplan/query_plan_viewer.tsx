@@ -6,11 +6,14 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from 'lodash';
+import WarningIcon from '@material-ui/icons/Warning';
+import Typography from '@material-ui/core/Typography';
+
 
 interface Props {
     appContext: Context.IAppContext;
     csvParsingFinished: boolean;
-    queryPlan: object |undefined;
+    queryPlan: object | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
 }
 
@@ -29,7 +32,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
         this.state = {
             width: 0,
         };
-        
+
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -89,21 +92,41 @@ class QueryPlanViewer extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ position: "relative", display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ position: "relative", display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"queryplanContainer"} >
-                    
-                    <p>queryplan will be here: </p>
                     {this.createDagreQueryPlan()}
                 </div>
             }
         </div>;
     }
 
-    createDagreQueryPlan(){
+    createDagreQueryPlan() {
+
         const queryPlanJson = this.props.queryPlan;
-        return JSON.stringify(queryPlanJson);
+
+        if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
+            const noQueryplanWarning = this.createNoQueryPlanWarning();
+            return noQueryplanWarning;
+        } else {
+            return JSON.stringify(queryPlanJson);
+        }
+    }
+
+    createNoQueryPlanWarning() {
+        return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <WarningIcon
+                fontSize="large"
+                color="secondary"
+            />
+            <Typography
+                style={{color: this.props.appContext.tertiaryColor}}
+                variant="caption"
+            >
+                A Problem occured reading the query plan.
+            </Typography>
+        </div>
     }
 }
 

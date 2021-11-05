@@ -15,7 +15,6 @@ import { $CombinedState } from 'redux';
 interface Props {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
-    result: model.Result | undefined;
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
@@ -53,17 +52,21 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
         this.createVisualizationSpecAbsolute = this.createVisualizationSpecAbsolute.bind(this);
     }
 
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+
+        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
+            return true;
+        }
+        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
+            return false;
+        }
+        return true;
+    }
+
     componentDidUpdate(prevProps: Props): void {
         // this.setDefaultEventToMemLoads(this.props, prevProps);
         this.requestNewChartData(this.props, prevProps);
     }
-
-    // setDefaultEventToMemLoads(props: Props, prevProps: Props) {
-    //     //only set bevore first time data requestes and if available memloads are in events and events available
-    //     if (props.events && props.events.includes("mem_inst_retired.all_loads") && !props.chartData[this.state.chartId]) {
-    //         props.setCurrentEvent("mem_inst_retired.all_loads");
-    //     }
-    // }
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
@@ -596,10 +599,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, State> {
 
 }
 
-
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
-    result: state.result,
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,

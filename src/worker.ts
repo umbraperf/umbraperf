@@ -103,16 +103,25 @@ function extractQueryPlanFromZip(file: File) {
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     console.log(umbraperfArchiv.files);
     const queryPlanFile = umbraperfArchiv.files["QueryPlanMinimal.json"];
-    queryPlanFile.async('string').then(function (queryPlanFileData: any) {
-      // console.log(queryPlanFileData);
-      const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-      // console.log(queryPlanFileDataJson);
+    if (undefined === queryPlanFile) {
       worker.postMessage({
         messageId: 201,
         type: WorkerResponseType.STORE_QUERYPLAN,
-        data: queryPlanFileDataJson,
+        data: { "error": "no queryplan" },
       });
-    })
+    } else {
+      queryPlanFile.async('string').then(
+        function (queryPlanFileData: any) {
+          const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
+          worker.postMessage({
+            messageId: 201,
+            type: WorkerResponseType.STORE_QUERYPLAN,
+            data: queryPlanFileDataJson,
+          });
+        },
+      )
+    }
+
     // console.log(queryPlanFile);
     // Object.keys(umbraperfArchiv.files).forEach(function (filename) {
     //   umbraperfArchiv.files[filename].async('string').then(function (fileData: any) {

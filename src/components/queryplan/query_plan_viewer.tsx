@@ -93,8 +93,9 @@ class QueryPlanViewer extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"queryplanContainer"} >
+                    
+                    <p>queryplan will be here: </p>
                     {this.createDagreQueryPlan()}
-                    <p>queryplan will be here</p>
                 </div>
             }
         </div>;
@@ -102,7 +103,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
     createDagreQueryPlan(){
         const queryPlanJson = this.props.queryPlan;
-        return queryPlanJson;
+        return JSON.stringify(queryPlanJson);
     }
 }
 

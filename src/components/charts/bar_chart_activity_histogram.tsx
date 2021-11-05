@@ -15,7 +15,6 @@ import _ from 'lodash';
 interface Props {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
-    result: model.Result | undefined;
     csvParsingFinished: boolean;
     currentEvent: string;
     events: Array<string> | undefined;
@@ -49,6 +48,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             chartId: this.props.chartIdCounter,
             width: 0,
         };
+        
         this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
@@ -56,13 +56,16 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         this.resetCurrentSelectionTuples = this.resetCurrentSelectionTuples.bind(this);
     }
 
-    // shouldComponentUpdate(nextProps: Props, nextState: State) {
-    //     if (this.props.chartData[this.state.chartId] === undefined || _.isEqual(this.props.chartData[this.state.chartId].chartData.data, nextProps.chartData[this.state.chartId].chartData.data)) {
-    //       return false;
-    //     } else {
-    //       return true;
-    //     }
-    //   }
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+
+        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
+            return true;
+        }
+        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
+            return false;
+        }
+        return true;
+    }
 
     componentDidUpdate(prevProps: Props): void {
 
@@ -134,7 +137,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     public render() {
-        console.log("rerender");
 
         if (!this.props.csvParsingFinished) {
             return <Redirect to={"/upload"} />
@@ -178,8 +180,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     createVisualizationData() {
-        console.log("here");
-
 
         const timeBucketsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).timeBucket;
         const occurrencesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).occurrences;
@@ -201,7 +201,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
         const visData = this.createVisualizationData();
 
         const xTicks = () => {
-            console.log(visData.bucketsArray);
             if (visData.bucketsArray.length > 50) {
                 return Array.from(visData.bucketsArray.filter(bucket => bucket % 20 === 0));
             }
@@ -457,7 +456,6 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
-    result: state.result,
     csvParsingFinished: state.csvParsingFinished,
     currentEvent: state.currentEvent,
     events: state.events,

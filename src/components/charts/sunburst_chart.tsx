@@ -14,7 +14,6 @@ import _ from "lodash";
 interface Props {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
-    result: model.Result | undefined;
     csvParsingFinished: boolean;
     currentChart: string;
     currentEvent: string;
@@ -58,6 +57,17 @@ class SunburstChart extends React.Component<Props, State> {
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleClickPipeline = this.handleClickPipeline.bind(this);
         this.handleClickOperator = this.handleClickOperator.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+
+        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
+            return true;
+        }
+        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
+            return false;
+        }
+        return true;
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -443,14 +453,10 @@ class SunburstChart extends React.Component<Props, State> {
 
         return spec;
     }
-
-
-
 }
 
 const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
-    result: state.result,
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
     currentEvent: state.currentEvent,

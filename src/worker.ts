@@ -28,7 +28,7 @@ export interface IStoreResultResponseData {
 export type WorkerResponseVariant =
   WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, number> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
-  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, JSON>
+  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, Object>
   ;
 
 
@@ -100,22 +100,20 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 function extractQueryPlanFromZip(file: File) {
-  console.log(file);
-  console.log(JSZip.version);
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     console.log(umbraperfArchiv.files);
     const queryPlanFile = umbraperfArchiv.files["QueryPlanMinimal.json"];
     queryPlanFile.async('string').then(function (queryPlanFileData: any) {
-      console.log(queryPlanFileData);
+      // console.log(queryPlanFileData);
       const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-      console.log(queryPlanFileDataJson);
+      // console.log(queryPlanFileDataJson);
       worker.postMessage({
         messageId: 201,
         type: WorkerResponseType.STORE_QUERYPLAN,
         data: queryPlanFileDataJson,
       });
     })
-    console.log(queryPlanFile);
+    // console.log(queryPlanFile);
     // Object.keys(umbraperfArchiv.files).forEach(function (filename) {
     //   umbraperfArchiv.files[filename].async('string').then(function (fileData: any) {
     //     console.log(fileData) // These are your file contents      

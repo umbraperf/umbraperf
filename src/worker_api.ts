@@ -25,12 +25,12 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(metadata: string, restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.RestQueryType){
+    public calculateChartData(metadata: string, restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.RestQueryType) {
         const requestData: ICalculateChartDataRequestData = {
             queryMetadata: metadata,
             restQuery: restQuery,
-            requestId: requestId,
             metaRequest: metaRequest,
+            requestId: requestId,
             restQueryType: restQueryType,
         }
 
@@ -50,7 +50,6 @@ worker.addEventListener('message', message => {
     const messageType = message.data.type;
     const messageData = message.data.data;
 
-
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:
@@ -58,8 +57,12 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
-            const arrowResultTable = ArrowTable.Table.from(messageData);
-            Controller.storeResultFromRust(message.data.requestId, arrowResultTable, message.data.metaRequest, message.data.restQueryType);
+            const requestId = messageData.requestId;
+            const resultChartData = messageData.chartData;
+            const restQueryType = messageData.restQueryType;
+            const arrowResultTable = ArrowTable.Table.from(resultChartData);
+            const metaRequest = messageData.metaRequest;
+            Controller.storeResultFromRust(requestId, arrowResultTable, metaRequest, restQueryType);
             break;
 
         default:

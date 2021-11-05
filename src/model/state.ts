@@ -33,6 +33,7 @@ export interface AppState {
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
     currentView: ViewType;
+    queryPlan: object | undefined;
 }
 
 export function createDefaultState(): AppState {
@@ -63,5 +64,6 @@ export function createDefaultState(): AppState {
         currentTimeBucketSelectionTuple: [-1, -1],
         currentTimePositionSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
+        queryPlan: undefined,
     };
 }

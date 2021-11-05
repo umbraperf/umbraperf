@@ -40,6 +40,7 @@ export enum StateMutationType {
     SET_CURRENTTIMEBUCKETSELECTIONTUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
     SET_CURRENTTIMEPOSITIONSELECTIONTUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
     SET_CURRENTVIEW = 'SET_CURRENTVIEW',
+    SET_QUERYPLAN = 'SET_QUERYPLAN',
     OTHER = 'OTHER',
 }
 
@@ -71,6 +72,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
+    | StateMutation<StateMutationType.SET_QUERYPLAN, object>
     ;
 
 // The action dispatch
@@ -205,6 +207,11 @@ export class AppStateMutation {
                     ...state,
                     currentView: mutation.data,
                 }
+            case StateMutationType.SET_QUERYPLAN:
+                return {
+                    ...state,
+                    queryPlan: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileName: undefined,
@@ -233,6 +240,7 @@ export class AppStateMutation {
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
+                    queryPlan: undefined,
                 }
         }
     }

@@ -14,6 +14,17 @@ export function setCsvReadingFinished() {
     RequestController.requestMetadata(appContext.controller);
 }
 
+export function storeQueryPlan(queryPlanJson: object) {
+
+    if (queryPlanJson) {
+        store.dispatch({
+            type: model.StateMutationType.SET_QUERYPLAN,
+            data: queryPlanJson,
+        });
+    }
+    console.log(store.getState().queryPlan);
+}
+
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {
 
     //store result of current request in redux store result variable 
@@ -35,7 +46,7 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
     }
 }
 
-//extract events and pipelines from result table, store them to app state, set current event and current pipelines
+//extract events, statistics and pipelines from result table, store them to app state, set current event and current pipelines
 function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 
     switch (restQueryType) {

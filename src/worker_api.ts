@@ -66,9 +66,7 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_QUERYPLAN:
-            const jsonQueryPlan: Object = messageData;
-            console.log(jsonQueryPlan);
-            // TODO: call function in controller that stores queryplan json in redux store 
+            Controller.storeQueryPlan(messageData);
 
         default:
             console.log("Unknown message type from worker.");

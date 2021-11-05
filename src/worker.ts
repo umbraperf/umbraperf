@@ -102,7 +102,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
 function extractQueryPlanFromZip(file: File) {
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     console.log(umbraperfArchiv.files);
-    const queryPlanFile = umbraperfArchiv.files["QueryPlanMinimal.json"];
+    const queryPlanFile = umbraperfArchiv.files["query_plan.json"];
     if (undefined === queryPlanFile) {
       worker.postMessage({
         messageId: 201,

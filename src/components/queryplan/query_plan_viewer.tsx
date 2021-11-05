@@ -8,6 +8,7 @@ import { createRef } from 'react';
 import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
+import DagreGraph from 'dagre-d3-react'
 
 
 interface Props {
@@ -96,13 +97,13 @@ class QueryPlanViewer extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"queryplanContainer"} >
-                    {this.createDagreQueryPlan()}
+                    {this.createQueryPlan()}
                 </div>
             }
         </div>;
     }
 
-    createDagreQueryPlan() {
+    createQueryPlan() {
 
         const queryPlanJson = this.props.queryPlan;
 
@@ -110,8 +111,33 @@ class QueryPlanViewer extends React.Component<Props, State> {
             const noQueryplanWarning = this.createNoQueryPlanWarning();
             return noQueryplanWarning;
         } else {
+            const queryplan = this.createDagrePlan(queryPlanJson);
             return JSON.stringify(queryPlanJson);
         }
+    }
+
+    createDagrePlan(queryplanJson: object) {
+
+        let dagreData = {
+            nodes: [{ label: 'a', id: 'a', class: 'a' }, { label: 'b', id: 'b', class: 'b' }],
+            links: [{ source: 'a', target: 'b' }]
+        }
+
+        return <DagreGraph
+            nodes={dagreData.nodes}
+            links={dagreData.links}
+            config={{
+                rankdir: 'LR',
+                align: 'UL',
+                ranker: 'tight-tree'
+            }}
+            animate={1000}
+            shape='circle'
+            fitBoundaries={true}
+            zoomable={true}
+        // onNodeClick={e => console.log(e)}
+        // onRelationshipClick={e => console.log(e)}
+        />
     }
 
     createNoQueryPlanWarning() {
@@ -121,7 +147,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
                 color="secondary"
             />
             <Typography
-                style={{color: this.props.appContext.tertiaryColor}}
+                style={{ color: this.props.appContext.tertiaryColor }}
                 variant="caption"
             >
                 A Problem occured reading the query plan.

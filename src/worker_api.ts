@@ -67,6 +67,7 @@ worker.addEventListener('message', message => {
 
         case model.WorkerResponseType.STORE_QUERYPLAN:
             Controller.storeQueryPlan(messageData);
+            break;
 
         default:
             console.log("Unknown message type from worker.");

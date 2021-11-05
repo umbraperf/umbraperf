@@ -77,8 +77,12 @@
 @media not all and (min-width: 1200px) {
     .dashboardGridCellOptionsBox{
         composes: dashboardGridCellOptionsBox;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: auto;
+        min-height: var(--optionsItemBoxHeight);
     }  
 }
 

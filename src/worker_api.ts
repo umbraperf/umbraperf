@@ -65,6 +65,12 @@ worker.addEventListener('message', message => {
             Controller.storeResultFromRust(requestId, arrowResultTable, metaRequest, restQueryType);
             break;
 
+        case model.WorkerResponseType.STORE_QUERYPLAN:
+            console.log("main thread received data for a query plan!")
+            const jsonQueryPlan: Object = messageData;
+            console.log(jsonQueryPlan);
+            // TODO: call function in controller that stores queryplan json in redux store
+
         default:
             console.log("Unknown message type from worker.");
 

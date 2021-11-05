@@ -1,12 +1,6 @@
 use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
-use arrow::{
-    array::{
-        Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray,
-    },
-    datatypes::{DataType, Field, Float64Type, Int64Type, Schema},
-    record_batch::RecordBatch,
-};
+use arrow::{array::{Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema, UInt64Type}, record_batch::RecordBatch};
 
 use crate::{
     exec::basic::basic::{find_unique_string, sort_batch},
@@ -116,6 +110,15 @@ pub fn get_int_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int
         .column(column)
         .as_any()
         .downcast_ref::<Int64Array>()
+        .unwrap();
+    return column;
+}
+
+pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UInt64Type> {
+    let column = batch
+        .column(column)
+        .as_any()
+        .downcast_ref::<UInt64Array>()
         .unwrap();
     return column;
 }
@@ -279,7 +282,7 @@ pub fn freq_of_memory(
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
     let time_column = get_floatarray_column(batch, column_for_time);
-    let memory_column = get_int_column(batch, 4);
+    let memory_column = get_uint_column(batch, 4);
 
     let mut time_bucket;
     if from == -1. {
@@ -293,14 +296,14 @@ pub fn freq_of_memory(
 
     let mut bucket_map = HashMap::new();
     for operator in vec_operator {
-        bucket_map.insert(operator.unwrap(), HashMap::<i64, f64>::new());
+        bucket_map.insert(operator.unwrap(), HashMap::<i32, f64>::new());
     }
 
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
-        let current_memory = memory_column.value(column_index as usize) / 100000000;
+        let current_memory = (memory_column.value(column_index as usize) / 10000000000) as i32;
         while time_bucket < time.unwrap() {
-            for operator in vec_operator {
+            for operator in vec_operator    {
                 let operator = operator.unwrap();
 
                 let frequenzy = bucket_map.get(operator).unwrap();

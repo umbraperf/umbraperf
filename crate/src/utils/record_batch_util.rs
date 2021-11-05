@@ -1,7 +1,4 @@
-use crate::{
-    bindings::notify_js_query_result, get_serde_dict,
-    web_file::web_file_chunkreader::WebFileChunkReader,
-};
+use crate::{bindings::notify_js_query_result, get_serde_dict, utils::print_to_cons::print_to_js_with_obj, web_file::web_file_chunkreader::WebFileChunkReader};
 use arrow::{
     array::{Array, ArrayRef, Int64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},
@@ -23,7 +20,7 @@ pub fn init_record_batches(file_size: i32) -> Vec<RecordBatch> {
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
     let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
     let mut record_reader = reader
-        .get_record_reader_by_columns(vec![0, 1, 2, 3, 11].into_iter(), 1024 * 8)
+        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10].into_iter(), 1024 * 8)
         .unwrap();
 
     let mut vec = Vec::new();
@@ -97,6 +94,7 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     }
 
     let batch = create_record_batch(batches[0].schema(), columns);
+
     convert_to_str(batch)
 }
 
@@ -146,23 +144,23 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let phy_addr = batch.column(4).to_owned();
+    let addr = batch.column(4).to_owned();
 
     create_new_record_batch(
-        vec!["operator", "ev_name", "time", "pipeline", "phys_addr"],
+        vec!["operator", "ev_name", "time", "pipeline", "addr"],
         vec![
             DataType::Utf8,
             DataType::Utf8,
             DataType::Float64,
             DataType::Utf8,
-            DataType::Int64,
+            DataType::UInt64,
         ],
         vec![
             Arc::new(StringArray::from(operator_vec)),
             Arc::new(StringArray::from(event_vec)),
             time,
             Arc::new(StringArray::from(pipeline_vec)),
-            phy_addr,
+            addr,
         ],
     )
 }

@@ -60,6 +60,16 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                             </Box>
                         </Grid>
                     </Box>
+
+                    <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12}>
+                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                <div className={styles.dashboardGridCellChartContainer}>
+                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
                 </Grid>
 
             </div>

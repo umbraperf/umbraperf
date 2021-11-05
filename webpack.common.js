@@ -142,5 +142,10 @@ export function configure(params) {
         experiments: {
             asyncWebAssembly: true,
         },
+        // externals: [
+        //     {
+        //         './jszip': 'jszip'
+        //     }
+        // ]
     };
 }

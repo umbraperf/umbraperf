@@ -3,6 +3,7 @@
 import * as profiler_core from '../crate/pkg/shell';
 import * as RestApi from './model/rest_queries';
 // import JsZip from 'jszip';
+import * as JSZip from '../node_modules/jszip/';
 
 
 export enum WorkerRequestType {
@@ -108,16 +109,22 @@ export function readFileChunk(offset: number, chunkSize: number) {
 
 function extractQueryPlanFromZip(file: File) {
   console.log(file);
-  // const jsZip = require('jszip');
-  // console.log(JsZip.version);
-  // JsZip.loadAsync(file).then(function (zip: any) {
-  // Object.keys(zip.files).forEach(function (filename) {
-  //   zip.files[filename].async('string').then(function (fileData: any) {
-  //     console.log(fileData) // These are your file contents      
-  //   })
-  // })
-  // })
-
+  console.log(JSZip.version);
+  JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
+    console.log(umbraperfArchiv.files);
+    const queryPlanFile = umbraperfArchiv.files["QueryPlanMinimal.json"];
+    queryPlanFile.async('string').then(function (queryPlanFileData: any) {
+          console.log(queryPlanFileData);
+          const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
+          console.log(queryPlanFileDataJson);     
+        })
+    console.log(queryPlanFile);
+    // Object.keys(umbraperfArchiv.files).forEach(function (filename) {
+    //   umbraperfArchiv.files[filename].async('string').then(function (fileData: any) {
+    //     console.log(fileData) // These are your file contents      
+    //   })
+    // })
+  })
 
 }
 

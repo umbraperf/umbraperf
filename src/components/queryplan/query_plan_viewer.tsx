@@ -152,14 +152,6 @@ class QueryPlanViewer extends React.Component<Props, State> {
         }
         const dagreData = this.createDagreNodesLinks(rootNode);
 
-        let dagreDatatest = {
-            nodes: [{ label: 'a', id: '1', class: styles.dagreNode, parent: "test" }, { label: 'b', id: '2', class: styles.dagreNode, parent: "test2" }],
-            links: [{
-                source: '1', target: '2', class: styles.dagreEdge, config: {
-                    arrowheadStyle: 'display: none',
-                }
-            }]
-        }
 
         return <DagreGraph
             className={styles.dagreGraph}
@@ -167,7 +159,6 @@ class QueryPlanViewer extends React.Component<Props, State> {
             links={dagreData.links}
             config={{
                 rankdir: 'LR',
-                align: 'UL',
                 ranker: 'network-simplex'
             }}
             animate={500}

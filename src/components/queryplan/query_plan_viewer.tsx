@@ -178,13 +178,13 @@ class QueryPlanViewer extends React.Component<Props, State> {
             config={{
                 rankdir: 'LR',
                 ranker: 'network-simplex',
-                height: "100px",
-                width: "500px",
+                // height: "100px",
+                // width: "500px",
             }}
             animate={500}
-            shape='circle'
-            fitBoundaries={false}
-            // zoomable={true}
+            shape='rect'
+            fitBoundaries={true}
+            zoomable={true}
             onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.handleNodeClick(event)}
         // onRelationshipClick={e => console.log(e)}
         />
@@ -220,7 +220,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
             }
         }
 
-        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: styles.dagreRootNode, config: {style: `fill: ${this.props.appContext.accentBlack}`} })
+        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: `${styles.dagreNode} ${styles.dagreRootNode}`, config: {style: `fill: ${this.props.appContext.accentBlack}`} })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {

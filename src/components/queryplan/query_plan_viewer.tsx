@@ -9,7 +9,7 @@ import { createRef } from 'react';
 import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
-import DagreGraph from 'dagre-d3-react'
+import DagreGraph from 'dagre-d3-react';
 
 
 interface Props {
@@ -26,6 +26,21 @@ interface State {
     width: number,
     loading: boolean,
     renderedDagrePlan: JSX.Element | undefined,
+}
+
+interface GraphProps {
+    nodes: DagreNode[];
+    links: DagreEdge[];
+    zoomable?: boolean;
+    fitBoundaries?: boolean;
+    height?: string;
+    width?: string;
+    config?: 'html' | 'svg' | 'string';
+    animate?: number;
+    className?: string;
+    shape?: 'rect' | 'circle' | 'ellipse';
+    onNodeClick?: Function;
+    onRelationshipClick?: Function;
 }
 
 type DagreNode = {
@@ -155,6 +170,16 @@ class QueryPlanViewer extends React.Component<Props, State> {
         }
         const dagreData = this.createDagreNodesLinks(rootNode);
 
+        const graphProps: GraphProps = {
+            nodes: dagreData.nodes, 
+            links: dagreData.links
+        }
+       
+        const g = React.createElement(DagreGraph, graphProps);
+
+        console.log(g);
+        return g;
+
 
         return <DagreGraph
             className={styles.dagreGraph}
@@ -162,11 +187,13 @@ class QueryPlanViewer extends React.Component<Props, State> {
             links={dagreData.links}
             config={{
                 rankdir: 'LR',
-                ranker: 'network-simplex'
+                ranker: 'network-simplex',
+                height: "100px",
+                width: "500px",
             }}
             animate={500}
             shape='circle'
-            fitBoundaries={true}
+            fitBoundaries={false}
             // zoomable={true}
             onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.handleNodeClick(event)}
         // onRelationshipClick={e => console.log(e)}

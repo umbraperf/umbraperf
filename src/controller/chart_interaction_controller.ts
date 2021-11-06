@@ -7,7 +7,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
     const currentPipeline = store.getState().currentPipeline;
     const operators = store.getState().operators;
 
-
     if (currentOperator === "All" || !currentOperator.includes("")) {
         store.dispatch({
             type: model.StateMutationType.SET_CURRENTOPERATOR,

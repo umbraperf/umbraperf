@@ -29,10 +29,6 @@ interface Props {
     currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentPipeline: (newCurrentPipeline: Array<string>) => void;
-    setCurrentOperator: (newCurrentOperator: Array<string>) => void;
-
-
 }
 
 interface State {
@@ -174,21 +170,7 @@ class SunburstChart extends React.Component<Props, State> {
 
     handleClickOperator(...args: any[]) {
         if (args[1]) {
-            const selectedOperator = args[1][0];
-            const selectedOperatorPipeline = args[1][1];
-            if (this.props.currentOperator === "All" || !this.props.currentOperator.includes("")) {
-                this.props.setCurrentOperator(this.props.operators!.map((elem, index) => (elem === selectedOperator ? elem : "")));
-            } else {
-                const selectedIndexPosition = this.props.operators!.indexOf(selectedOperator);
-                if (this.props.currentOperator[selectedIndexPosition] === "") {
-                    if (!this.props.currentPipeline.includes(selectedOperatorPipeline)) {
-                        this.handleClickPipeline(undefined, selectedOperatorPipeline);
-                    }
-                    this.props.setCurrentOperator(this.props.currentOperator.map((elem, index) => (index === selectedIndexPosition ? this.props.operators![index] : elem)));
-                } else {
-                    this.props.setCurrentOperator(this.props.currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)));
-                }
-            }
+            Controller.handleOperatorSelection(args[1], args[1][1]);
         }
     }
 
@@ -470,15 +452,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
-    }),
-    setCurrentPipeline: (newCurrentPipeline: Array<string>) => dispatch({
-        type: model.StateMutationType.SET_CURRENTPIPELINE,
-        data: newCurrentPipeline,
-    }),
-    setCurrentOperator: (newCurrentOperator: Array<string>) => dispatch({
-        type: model.StateMutationType.SET_CURRENTOPERATOR,
-        data: newCurrentOperator,
-    }),
+    })
 });
 
 

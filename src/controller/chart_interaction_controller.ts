@@ -1,13 +1,40 @@
 import * as model from "../model";
 import { store } from '../app_config';
 
-export function handleOperatorSelection(operator: string){
+export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline: string) {
+
+    const currentOperator = store.getState().currentOperator;
+    const currentPipeline = store.getState().currentPipeline;
+    const operators = store.getState().operators;
+
+
+    if (currentOperator === "All" || !currentOperator.includes("")) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENTOPERATOR,
+            data: operators!.map((elem, index) => (elem === selectedOperator ? elem : "")),
+        });
+    } else {
+        const selectedIndexPosition = operators!.indexOf(selectedOperator);
+        if (currentOperator[selectedIndexPosition] === "") {
+            if (currentPipeline.includes(selectedOperatorPipeline)) {
+                handlePipelineSelection(selectedOperatorPipeline);
+            }
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENTOPERATOR,
+                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
+            });
+        } else {
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENTOPERATOR,
+                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
+            });
+        }
+    }
 
 }
 
-export function handlePipelineSelection(pipeline: string){
+export function handlePipelineSelection(selectedPipeline: string) {
 
-    const selectedPipeline = pipeline;
     const currentPipeline = store.getState().currentPipeline;
     const pipelines = store.getState().pipelines;
     if (currentPipeline === "All" || !currentPipeline.includes("")) {
@@ -32,6 +59,6 @@ export function handlePipelineSelection(pipeline: string){
 
 }
 
-export function timeBucketSelection(from: number, to: number){
+export function timeBucketSelection(from: number, to: number) {
 
 }

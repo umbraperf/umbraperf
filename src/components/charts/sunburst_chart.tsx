@@ -1,5 +1,5 @@
 import * as model from '../../model';
-import * as Controller from '../../controller/request_controller';
+import * as Controller from '../../controller/';
 import * as Context from '../../app_context';
 import Spinner from '../utils/spinner';
 import React from 'react';
@@ -168,17 +168,7 @@ class SunburstChart extends React.Component<Props, State> {
 
     handleClickPipeline(...args: any[]) {
         if (args[1]) {
-            const selectedPipeline = args[1];
-            if (this.props.currentPipeline === "All" || !this.props.currentPipeline.includes("")) {
-                this.props.setCurrentPipeline(this.props.pipelines!.map((elem, index) => (elem === selectedPipeline ? elem : "")));
-            } else {
-                const selectedIndexPosition = this.props.pipelines!.indexOf(selectedPipeline);
-                if (this.props.currentPipeline[selectedIndexPosition] === "") {
-                    this.props.setCurrentPipeline(this.props.currentPipeline.map((elem, index) => (index === selectedIndexPosition ? this.props.pipelines![index] : elem)));
-                } else {
-                    this.props.setCurrentPipeline(this.props.currentPipeline.map((elem, index) => (index === selectedIndexPosition ? "" : elem)));
-                }
-            }
+            Controller.handlePipelineSelection(args[1]);
         }
     }
 

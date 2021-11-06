@@ -170,7 +170,7 @@ class SunburstChart extends React.Component<Props, State> {
 
     handleClickOperator(...args: any[]) {
         if (args[1]) {
-            Controller.handleOperatorSelection(args[1], args[1][1]);
+            Controller.handleOperatorSelection(args[1][0], args[1][1]);
         }
     }
 

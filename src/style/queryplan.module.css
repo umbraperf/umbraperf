@@ -45,6 +45,7 @@
     cursor: pointer;
     border: solid;
     border-color: black;
+    font-size: small;
 }
 
 .dagreInactiveNode text{

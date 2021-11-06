@@ -44,7 +44,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
 
 
                     <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={4} >
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                                     <SunburstChart />
@@ -53,10 +53,10 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
+                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
+                                    <QueryPlanViewer />
                                 </div>
                             </Box>
                         </Grid>
@@ -66,11 +66,12 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <QueryPlanViewer />
+                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
                                 </div>
                             </Box>
                         </Grid>
                     </Box>
+
                 </Grid>
 
             </div>

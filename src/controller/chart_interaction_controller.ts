@@ -58,6 +58,14 @@ export function handlePipelineSelection(selectedPipeline: string) {
 
 }
 
-export function timeBucketSelection(from: number, to: number) {
+export function handleTimeBucketSelection(selectedTimeBuckets: [number, number], selectedPosition: [number, number]) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE,
+        data: selectedTimeBuckets,
+    });
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
+        data: selectedPosition,
+    });
 
 }

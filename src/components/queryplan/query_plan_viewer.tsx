@@ -47,14 +47,15 @@ type DagreNode = {
     label: string
     id: string,
     parent: string,
-    class: string
+    class: string,
+    config?: object,
 }
 
 type DagreEdge = {
     source: string,
     target: string,
     class: string,
-    config: object
+    config: object,
 }
 
 
@@ -205,18 +206,26 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
         const nodeClass = (nodeId: string) => {
             if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
-                return styles.dagreActiveNode;
+                return `${styles.dagreNode} ${styles.dagreActiveNode}`;
             } else {
-                return styles.dagreInactiveNode;
+                return `${styles.dagreNode} ${styles.dagreActiveNode}`;
             }
         }
 
-        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: styles.dagreRootNode })
+        const nodeColor = (nodeId: string) => {
+            if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
+                return this.props.appContext.secondaryColor;
+            } else {
+                return this.props.appContext.tertiaryColor;
+            }
+        }
+
+        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: styles.dagreRootNode, config: {style: `fill: ${this.props.appContext.accentBlack}`} })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator) });
+            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: {style: `fill: ${nodeColor(currentPlanElement.operator)}`} });
             dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {

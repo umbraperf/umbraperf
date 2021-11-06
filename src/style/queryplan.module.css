@@ -11,9 +11,10 @@
 }
 
 .queryplanContainer{
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,10 +28,17 @@
 }
 
 .dagreGraph{
-    cursor: move;
+    cursor: grab;
     padding: var(--dagreGraphPadding);
-    height: calc(100% - 2* var(--dagreGraphPadding));
-    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%; 
+/*     height: calc(100% - 2* var(--dagreGraphPadding));
+    width: 100%; */
+}
+
+.dagreGraph:active{
+    cursor: grabbing;
 }
 
 .dagreNode{

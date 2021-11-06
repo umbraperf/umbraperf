@@ -22,45 +22,53 @@ interface Props {
 }
 
 interface State {
+    height: number,
     width: number,
     loading: boolean,
-    queryplan: JSX.Element | undefined,
+    renderedDagrePlan: JSX.Element | undefined,
 }
 
 type DagreNode = {
-     label: string
-     id: string, 
-     parent: string, 
-     class: string 
+    label: string
+    id: string,
+    parent: string,
+    class: string
 }
 
 type DagreEdge = {
-    source: string, 
-    target: string, 
-    class: string, 
-    config: object 
+    source: string,
+    target: string,
+    class: string,
+    config: object
 }
 
 
 class QueryPlanViewer extends React.Component<Props, State> {
 
-    elementWrapper = createRef<HTMLDivElement>();
+    graphContainer = createRef<HTMLDivElement>();
 
 
     constructor(props: Props) {
         super(props);
         this.state = {
+            height: 0,
             width: 0,
             loading: true,
-            queryplan: undefined,
+            renderedDagrePlan: undefined,
         };
 
     }
 
-    componentDidUpdate(prevProps: Props): void {
-        if (this.props.queryPlan !== prevProps.queryPlan ||
+    componentDidUpdate(prevProps: Props, prevState: State): void {
+        if (this.state.width !== prevState.width ||
+            this.props.queryPlan !== prevProps.queryPlan ||
             this.props.currentView !== prevProps.currentView ||
             !_.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
+            this.setState((state, props) => ({
+                ...state,
+                renderedDagrePlan: undefined,
+            }));
+            console.log(this.state)
             this.createQueryPlan();
         }
     }
@@ -70,7 +78,8 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
         this.setState((state, props) => ({
             ...state,
-            width: this.elementWrapper.current!.offsetWidth,
+            width: this.graphContainer.current!.offsetWidth,
+            height: this.graphContainer.current!.offsetHeight,
         }));
 
         if (this.props.csvParsingFinished) {
@@ -83,9 +92,9 @@ class QueryPlanViewer extends React.Component<Props, State> {
     }
 
     resizeListener() {
-        if (!this.elementWrapper) return;
+        if (!this.graphContainer) return;
 
-        const child = this.elementWrapper.current;
+        const child = this.graphContainer.current;
         if (child) {
             const newWidth = child.offsetWidth;
 
@@ -111,20 +120,18 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
     public render() {
 
-        return <div ref={this.elementWrapper} className={styles.elementWrapper}>
+        return <div ref={this.graphContainer} className={styles.elementWrapper}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={styles.queryplanContainer}>
-                    {this.state.queryplan}
+                    {this.state.renderedDagrePlan}
                 </div>
             }
         </div>;
     }
 
     createQueryPlan() {
-
         const queryPlanJson = this.props.queryPlan;
-
         let queryplanContent: JSX.Element;
 
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
@@ -132,18 +139,14 @@ class QueryPlanViewer extends React.Component<Props, State> {
         } else {
             queryplanContent = this.createDagrePlan(queryPlanJson);
         }
-
         this.setState((state, props) => ({
             ...state,
             loading: false,
-            queryplan: queryplanContent,
+            renderedDagrePlan: queryplanContent,
         }));
     }
 
     createDagrePlan(queryplanJson: object) {
-
-        console.log(queryplanJson)
-
 
         const rootNode = {
             label: "RESULT",
@@ -164,19 +167,19 @@ class QueryPlanViewer extends React.Component<Props, State> {
             animate={500}
             shape='circle'
             fitBoundaries={true}
-            zoomable={true}
-            onNodeClick={(event: {d3norde: object, original: DagreNode}) => this.handleNodeClick(event)}
+            // zoomable={true}
+            onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.handleNodeClick(event)}
         // onRelationshipClick={e => console.log(e)}
         />
     }
 
-    handleNodeClick(event: {d3norde: object, original: DagreNode}){
+    handleNodeClick(event: { d3norde: object, original: DagreNode }) {
         //TODO add pipeline, make pipeline in function in controller obliq
         Controller.handleOperatorSelection(event.original.id);
-        
+
     }
 
-    createDagreNodesLinks(root: Partial<DagreNode> & { child: object}) {
+    createDagreNodesLinks(root: Partial<DagreNode> & { child: object }) {
 
 
         let dagreData = {
@@ -185,9 +188,9 @@ class QueryPlanViewer extends React.Component<Props, State> {
         }
 
         const nodeClass = (nodeId: string) => {
-            if(this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)){
+            if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
                 return styles.dagreActiveNode;
-            }else{
+            } else {
                 return styles.dagreInactiveNode;
             }
         }
@@ -207,7 +210,6 @@ class QueryPlanViewer extends React.Component<Props, State> {
             });
         }
 
-        console.log(dagreData);
         return dagreData;
 
     }

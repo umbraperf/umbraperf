@@ -55,7 +55,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
+                            <div className={styles.dashboardGridCellChartContainer}>
                                     <QueryPlanViewer />
                                 </div>
                             </Box>

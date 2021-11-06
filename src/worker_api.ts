@@ -1,4 +1,4 @@
-import * as Controller from './controller/response_controller';
+import * as Controller from './controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 import { ICalculateChartDataRequestData } from './worker';

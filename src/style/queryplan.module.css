@@ -34,9 +34,27 @@
 }
 
 .dagreNode{
-    fill: grey;
+    cursor: pointer;
     border: solid;
     border-color: black;
+}
+
+.dagreInactiveNode{
+    composes:dagreNode;
+    fill: grey;
+
+
+}
+
+.dagreActiveNode{
+    composes:dagreNode;
+    fill: orange;
+
+}
+
+.dagreRootNode{
+    composes:dagreNode;
+    fill: black;
 }
 
 .dagreEdge{

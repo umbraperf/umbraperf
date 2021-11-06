@@ -50,19 +50,28 @@
 .dagreInactiveNode{
     composes:dagreNode;
     fill: grey;
+}
 
-
+.dagreInactiveNode text{
+    fill: black;
 }
 
 .dagreActiveNode{
     composes:dagreNode;
     fill: orange;
+}
 
+.dagreActiveNode text{
+    fill: white;
 }
 
 .dagreRootNode{
     composes:dagreNode;
     fill: black;
+}
+
+.dagreRootNode text{
+    fill: white;
 }
 
 .dagreEdge{

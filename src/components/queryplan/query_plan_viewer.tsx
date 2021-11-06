@@ -170,17 +170,6 @@ class QueryPlanViewer extends React.Component<Props, State> {
         }
         const dagreData = this.createDagreNodesLinks(rootNode);
 
-        const graphProps: GraphProps = {
-            nodes: dagreData.nodes, 
-            links: dagreData.links
-        }
-       
-        const g = React.createElement(DagreGraph, graphProps);
-
-        console.log(g);
-        return g;
-
-
         return <DagreGraph
             className={styles.dagreGraph}
             nodes={dagreData.nodes}

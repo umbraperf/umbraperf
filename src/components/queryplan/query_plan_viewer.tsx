@@ -158,7 +158,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
                 align: 'UL',
                 ranker: 'network-simplex'
             }}
-            animate={1000}
+            animate={500}
             shape='circle'
             fitBoundaries={true}
             zoomable={true}
@@ -172,16 +172,16 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
         let dagreData = {
             nodes: new Array<{ label: string, id: string, parent: string, class: string }>(),
-            links: new Array<{ source: string, target: string, class: string }>()
+            links: new Array<{ source: string, target: string, class: string, config: object }>()
         }
 
-        dagreData.nodes.push({ label: root.label, id: root.id, parent: "", class: styles.dagreNode})
+        dagreData.nodes.push({ label: root.label, id: root.id, parent: "", class: styles.dagreNode })
         fillGraph(root.child, root.id)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
             dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: styles.dagreNode });
-            dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge});
+            dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {

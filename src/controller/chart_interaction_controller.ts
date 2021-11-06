@@ -1,7 +1,7 @@
 import * as model from "../model";
 import { store } from '../app_config';
 
-export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline: string) {
+export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
     const currentOperator = store.getState().currentOperator;
     const currentPipeline = store.getState().currentPipeline;
@@ -15,7 +15,7 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
     } else {
         const selectedIndexPosition = operators!.indexOf(selectedOperator);
         if (currentOperator[selectedIndexPosition] === "") {
-            if (currentPipeline.includes(selectedOperatorPipeline)) {
+            if (selectedOperatorPipeline && currentPipeline.includes(selectedOperatorPipeline)) {
                 handlePipelineSelection(selectedOperatorPipeline);
             }
             store.dispatch({

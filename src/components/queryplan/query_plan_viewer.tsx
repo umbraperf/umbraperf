@@ -1,4 +1,5 @@
 import * as model from '../../model';
+import * as Controller from '../../controller';
 import * as Context from '../../app_context';
 import styles from '../../style/queryplan.module.css';
 import Spinner from '../utils/spinner';
@@ -9,7 +10,6 @@ import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import DagreGraph from 'dagre-d3-react'
-import { type } from 'os';
 
 
 interface Props {
@@ -171,7 +171,9 @@ class QueryPlanViewer extends React.Component<Props, State> {
     }
 
     handleNodeClick(event: {d3norde: object, original: DagreNode}){
-        console.log(event.original.id);
+        //TODO add pipeline, make pipeline in function in controller obliq
+        Controller.handleOperatorSelection(event.original.id);
+        
     }
 
     createDagreNodesLinks(root: Partial<DagreNode> & { child: object}) {

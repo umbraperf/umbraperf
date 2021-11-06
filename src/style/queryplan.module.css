@@ -34,7 +34,9 @@
 }
 
 .dagreNode{
-    fill: aqua;
+    fill: grey;
+    border: solid;
+    border-color: black;
 }
 
 .dagreEdge{

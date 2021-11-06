@@ -16,6 +16,7 @@ interface Props {
     appContext: Context.IAppContext;
     csvParsingFinished: boolean;
     queryPlan: object | undefined;
+    currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
 }
 
@@ -46,7 +47,8 @@ class QueryPlanViewer extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (this.props.queryPlan !== prevProps.queryPlan) {
+        if (this.props.queryPlan !== prevProps.queryPlan ||
+            this.props.currentView !== prevProps.currentView) {
             this.createQueryPlan();
         }
     }
@@ -139,7 +141,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
         const dagreData = this.createDagreNodesLinks(rootNode);
 
         let dagreDatatest = {
-            nodes: [{ label: 'a', id: '1', class: styles.dagreNode }, { label: 'b', id: '2', class: styles.dagreNode }],
+            nodes: [{ label: 'a', id: '1', class: styles.dagreNode, parent: "test" }, { label: 'b', id: '2', class: styles.dagreNode, parent: "test2" }],
             links: [{
                 source: '1', target: '2', class: styles.dagreEdge, config: {
                     arrowheadStyle: 'display: none',
@@ -149,12 +151,12 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
         return <DagreGraph
             className={styles.dagreGraph}
-            nodes={dagreDatatest.nodes}
-            links={dagreDatatest.links}
+            nodes={dagreData.nodes}
+            links={dagreData.links}
             config={{
                 rankdir: 'LR',
                 align: 'UL',
-                ranker: 'tight-tree'
+                ranker: 'network-simplex'
             }}
             animate={1000}
             shape='circle'
@@ -165,16 +167,32 @@ class QueryPlanViewer extends React.Component<Props, State> {
         />
     }
 
-    createDagreNodesLinks(planElement: object) {
+    createDagreNodesLinks(root: { label: string, id: string, child: object }) {
 
-    }
 
-    createNode(label: string, id: string, children: "input" | "left" | "right") {
-        return {
-            label,
-            id,
-            children,
+        let dagreData = {
+            nodes: new Array<{ label: string, id: string, parent: string, class: string }>(),
+            links: new Array<{ source: string, target: string, class: string }>()
         }
+
+        dagreData.nodes.push({ label: root.label, id: root.id, parent: "", class: styles.dagreNode})
+        fillGraph(root.child, root.id)
+
+        function fillGraph(currentPlanElement: any, parent: string) {
+
+            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: styles.dagreNode });
+            dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge});
+
+            ["input", "left", "right"].forEach(childType => {
+                if (currentPlanElement.hasOwnProperty(childType)) {
+                    fillGraph(currentPlanElement[childType], currentPlanElement.operator);
+                }
+            });
+        }
+
+        console.log(dagreData);
+        return dagreData;
+
     }
 
     createNoQueryPlanWarning() {
@@ -197,6 +215,7 @@ class QueryPlanViewer extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
     queryPlan: state.queryPlan,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

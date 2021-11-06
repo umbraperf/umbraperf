@@ -4,12 +4,12 @@ import styles from '../../style/queryplan.module.css';
 import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import DagreGraph from 'dagre-d3-react'
+import { type } from 'os';
 
 
 interface Props {
@@ -17,6 +17,7 @@ interface Props {
     csvParsingFinished: boolean;
     queryPlan: object | undefined;
     currentView: model.ViewType;
+    currentOperator: Array<string> | "All";
     setCurrentChart: (newCurrentChart: string) => void;
 }
 
@@ -24,6 +25,20 @@ interface State {
     width: number,
     loading: boolean,
     queryplan: JSX.Element | undefined,
+}
+
+type DagreNode = {
+     label: string
+     id: string, 
+     parent: string, 
+     class: string 
+}
+
+type DagreEdge = {
+    source: string, 
+    target: string, 
+    class: string, 
+    config: object 
 }
 
 
@@ -42,13 +57,10 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return true;
-    }
-
     componentDidUpdate(prevProps: Props): void {
         if (this.props.queryPlan !== prevProps.queryPlan ||
-            this.props.currentView !== prevProps.currentView) {
+            this.props.currentView !== prevProps.currentView ||
+            !_.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
             this.createQueryPlan();
         }
     }
@@ -162,25 +174,37 @@ class QueryPlanViewer extends React.Component<Props, State> {
             shape='circle'
             fitBoundaries={true}
             zoomable={true}
-        // onNodeClick={e => console.log(e)}
+            onNodeClick={(event: {d3norde: object, original: DagreNode}) => this.handleNodeClick(event)}
         // onRelationshipClick={e => console.log(e)}
         />
     }
 
-    createDagreNodesLinks(root: { label: string, id: string, child: object }) {
+    handleNodeClick(event: {d3norde: object, original: DagreNode}){
+        console.log(event.original.id);
+    }
+
+    createDagreNodesLinks(root: Partial<DagreNode> & { child: object}) {
 
 
         let dagreData = {
-            nodes: new Array<{ label: string, id: string, parent: string, class: string }>(),
-            links: new Array<{ source: string, target: string, class: string, config: object }>()
+            nodes: new Array<DagreNode>(),
+            links: new Array<DagreEdge>()
         }
 
-        dagreData.nodes.push({ label: root.label, id: root.id, parent: "", class: styles.dagreNode })
-        fillGraph(root.child, root.id)
+        const nodeClass = (nodeId: string) => {
+            if(this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)){
+                return styles.dagreActiveNode;
+            }else{
+                return styles.dagreInactiveNode;
+            }
+        }
+
+        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: styles.dagreRootNode })
+        fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: styles.dagreNode });
+            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator) });
             dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {
@@ -216,6 +240,7 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
     queryPlan: state.queryPlan,
     currentView: state.currentView,
+    currentOperator: state.currentOperator,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

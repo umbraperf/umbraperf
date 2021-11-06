@@ -1,5 +1,5 @@
 import * as model from '../../model';
-import * as Controller from '../../controller/request_controller';
+import * as Controller from '../../controller';
 import * as Context from '../../app_context';
 import Spinner from './spinner';
 import styles from '../../style/utils.module.css';

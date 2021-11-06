@@ -1,5 +1,6 @@
 import * as model from '../../model';
 import * as Context from '../../app_context';
+import styles from '../../style/queryplan.module.css';
 import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -20,6 +21,8 @@ interface Props {
 
 interface State {
     width: number,
+    loading: boolean,
+    queryplan: JSX.Element | undefined,
 }
 
 
@@ -32,6 +35,8 @@ class QueryPlanViewer extends React.Component<Props, State> {
         super(props);
         this.state = {
             width: 0,
+            loading: true,
+            queryplan: undefined,
         };
 
     }
@@ -41,6 +46,9 @@ class QueryPlanViewer extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
+        if (this.props.queryPlan !== prevProps.queryPlan) {
+            this.createQueryPlan();
+        }
     }
 
 
@@ -89,15 +97,11 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
     public render() {
 
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div ref={this.elementWrapper} style={{ position: "relative", display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
+        return <div ref={this.elementWrapper} className={styles.elementWrapper}>
             {this.isComponentLoading()
                 ? <Spinner />
-                : <div className={"queryplanContainer"} >
-                    {this.createQueryPlan()}
+                : <div className={styles.queryplanContainer}>
+                    {this.state.queryplan}
                 </div>
             }
         </div>;
@@ -107,25 +111,46 @@ class QueryPlanViewer extends React.Component<Props, State> {
 
         const queryPlanJson = this.props.queryPlan;
 
+        let queryplanContent: JSX.Element;
+
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
-            const noQueryplanWarning = this.createNoQueryPlanWarning();
-            return noQueryplanWarning;
+            queryplanContent = this.createNoQueryPlanWarning();
         } else {
-            const queryplan = this.createDagrePlan(queryPlanJson);
-            return JSON.stringify(queryPlanJson);
+            queryplanContent = this.createDagrePlan(queryPlanJson);
         }
+
+        this.setState((state, props) => ({
+            ...state,
+            loading: false,
+            queryplan: queryplanContent,
+        }));
     }
 
     createDagrePlan(queryplanJson: object) {
 
-        let dagreData = {
-            nodes: [{ label: 'a', id: 'a', class: 'a' }, { label: 'b', id: 'b', class: 'b' }],
-            links: [{ source: 'a', target: 'b' }]
+        console.log(queryplanJson)
+
+
+        const rootNode = {
+            label: "RESULT",
+            id: "root",
+            child: queryplanJson,
+        }
+        const dagreData = this.createDagreNodesLinks(rootNode);
+
+        let dagreDatatest = {
+            nodes: [{ label: 'a', id: '1', class: styles.dagreNode }, { label: 'b', id: '2', class: styles.dagreNode }],
+            links: [{
+                source: '1', target: '2', class: styles.dagreEdge, config: {
+                    arrowheadStyle: 'display: none',
+                }
+            }]
         }
 
         return <DagreGraph
-            nodes={dagreData.nodes}
-            links={dagreData.links}
+            className={styles.dagreGraph}
+            nodes={dagreDatatest.nodes}
+            links={dagreDatatest.links}
             config={{
                 rankdir: 'LR',
                 align: 'UL',
@@ -140,8 +165,20 @@ class QueryPlanViewer extends React.Component<Props, State> {
         />
     }
 
+    createDagreNodesLinks(planElement: object) {
+
+    }
+
+    createNode(label: string, id: string, children: "input" | "left" | "right") {
+        return {
+            label,
+            id,
+            children,
+        }
+    }
+
     createNoQueryPlanWarning() {
-        return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        return <div className={styles.warningContainer}>
             <WarningIcon
                 fontSize="large"
                 color="secondary"

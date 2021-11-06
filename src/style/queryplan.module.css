@@ -1,0 +1,43 @@
+:root {
+    --dagreGraphPadding: 5px;
+}
+
+.elementWrapper{
+    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.queryplanContainer{
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.warningContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.dagreGraph{
+    cursor: move;
+    padding: var(--dagreGraphPadding);
+    height: calc(100% - 2* var(--dagreGraphPadding));
+    width: 100%;
+}
+
+.dagreNode{
+    fill: aqua;
+}
+
+.dagreEdge{
+    stroke: black;
+    size: 1px;
+}

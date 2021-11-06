@@ -26,8 +26,6 @@ interface Props {
     currentView: model.ViewType;
     setCurrentChart: (newCurrentChart: string) => void;
     setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => void;
-    setCurrentTimePositionSelectionTuple: (newCurrentTimePositionSelectionTuple: [number, number]) => void;
 
 }
 
@@ -154,8 +152,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
     }
 
     resetCurrentSelectionTuples() {
-        this.props.setCurrentTimeBucketSelectionTuple([-1, -1]);
-        this.props.setCurrentTimePositionSelectionTuple([-1, -1]);
+        Controller.handleTimeBucketSelection([-1, -1], [-1, -1]);
     }
 
     createVegaSignalListeners() {
@@ -174,8 +171,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
             const selectedPosition = args[1][1]
             const timeBucketsFromTo: [number, number] = [selectedTimeBuckets[0], selectedTimeBuckets.at(-1)];
             const positionFromTo: [number, number] = [selectedPosition[0], selectedPosition.at(-1)];
-            this.props.setCurrentTimeBucketSelectionTuple(timeBucketsFromTo);
-            this.props.setCurrentTimePositionSelectionTuple(positionFromTo);
+            Controller.handleTimeBucketSelection(timeBucketsFromTo, positionFromTo);
         }
     }
 
@@ -476,14 +472,6 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
     }),
-    setCurrentTimeBucketSelectionTuple: (newCurrentTimeBucketSelectionTuple: [number, number]) => dispatch({
-        type: model.StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE,
-        data: newCurrentTimeBucketSelectionTuple,
-    }),
-    setCurrentTimePositionSelectionTuple: (newCurrentTimePositionSelectionTuple: [number, number]) => dispatch({
-        type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
-        data: newCurrentTimePositionSelectionTuple,
-    })
 });
 
 

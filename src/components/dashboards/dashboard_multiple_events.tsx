@@ -5,7 +5,7 @@ import DashboardHeader from './dashboard_header';
 import SunburstChart from '../charts/sunburst_chart';
 import SwimLanesCombinedMultiplePipelines from '../charts/swim_lanes_combined_multiple_pipelines';
 import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
-import QueryPlanViewer from '../queryplan/query_plan_viewer';
+import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 
@@ -56,7 +56,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                             <div className={styles.dashboardGridCellChartContainer}>
-                                    <QueryPlanViewer />
+                                    <QueryPlanWrapper />
                                 </div>
                             </Box>
                         </Grid>

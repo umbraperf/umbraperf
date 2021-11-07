@@ -9,7 +9,6 @@ import { createRef } from 'react';
 import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
-import DagreGraph from 'dagre-d3-react';
 import QueryPlanViewer from './query_plan_viewer';
 
 

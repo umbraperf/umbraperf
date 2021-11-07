@@ -49,6 +49,10 @@
     font-size: small;
 }
 
+.dagreRootNode{
+    cursor: default;
+}
+
 .dagreInactiveNode text{
     fill: black;
 }

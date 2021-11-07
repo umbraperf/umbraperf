@@ -10,6 +10,7 @@ import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
+import { unmountComponentAtNode } from 'react-dom';
 
 
 interface Props {
@@ -26,6 +27,7 @@ interface State {
     width: number,
     loading: boolean,
     renderedDagrePlan: JSX.Element | undefined,
+    renderDagrePlan: boolean,
 }
 
 export type DagreNode = {
@@ -56,21 +58,31 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             width: 0,
             loading: true,
             renderedDagrePlan: undefined,
+            renderDagrePlan: true,
         };
 
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
-        if (this.state.width !== prevState.width ||
-            this.props.queryPlan !== prevProps.queryPlan ||
+        if (this.props.queryPlan !== prevProps.queryPlan ||
             this.props.currentView !== prevProps.currentView ||
+            // this.state.width !== prevState.width ||
             !_.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
             this.setState((state, props) => ({
                 ...state,
                 renderedDagrePlan: undefined,
             }));
-            console.log(this.state)
             this.createQueryPlan();
+        }
+
+        if (this.state.width !== prevState.width && prevState.width !== 0) {
+            setTimeout(() => {
+                this.setState((state, props) => ({
+                    ...state,
+                    renderedDagrePlan: undefined,
+                }));
+                this.createQueryPlan();
+            }, 1000);
         }
     }
 
@@ -83,18 +95,19 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: this.graphContainer.current!.offsetHeight,
         }));
 
-        if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
+        this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
 
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
+        addEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+
+
     }
 
     resizeListener() {
         if (!this.graphContainer) return;
 
+        console.log(this.graphContainer)
         const child = this.graphContainer.current;
         if (child) {
             const newWidth = child.offsetWidth;
@@ -104,6 +117,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth,
+                //  renderedDagrePlan: undefined,
             }));
 
             child.style.display = 'block';
@@ -124,7 +138,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         return <div ref={this.graphContainer} className={styles.elementWrapper}>
             {this.isComponentLoading()
                 ? <Spinner />
-                : <div className={styles.queryplanContainer}>
+                : <div id="queryplanContainer" className={styles.queryplanContainer}>
                     {this.state.renderedDagrePlan}
                 </div>
             }
@@ -196,12 +210,12 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: `${styles.dagreNode} ${styles.dagreRootNode}`, config: {style: `fill: ${this.props.appContext.accentBlack}`} })
+        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: `${styles.dagreNode} ${styles.dagreRootNode}`, config: { style: `fill: ${this.props.appContext.accentBlack}` } })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: {style: `fill: ${nodeColor(currentPlanElement.operator)}`} });
+            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}` } });
             dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {

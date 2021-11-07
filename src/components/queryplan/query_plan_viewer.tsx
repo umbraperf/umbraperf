@@ -31,8 +31,8 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                 // height: "100px",
                 // width: "500px",
             }}
-            height={"" + this.props.height}
-            width={"" + this.props.width}
+            // height={"" + this.props.height}
+            // width={"" + this.props.width}
             animate={500}
             shape='rect'
             fitBoundaries={true}

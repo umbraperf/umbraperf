@@ -10,7 +10,6 @@ import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
-import { unmountComponentAtNode } from 'react-dom';
 
 
 interface Props {
@@ -49,7 +48,6 @@ export type DagreEdge = {
 class QueryPlanWrapper extends React.Component<Props, State> {
 
     graphContainer = createRef<HTMLDivElement>();
-
 
     constructor(props: Props) {
         super(props);
@@ -147,6 +145,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div id="queryplanContainer" className={styles.queryplanContainer}>
+                    <div className={styles.queryplanContainerTitle}>Query Plan</div>
                     {this.state.renderedDagrePlan}
                 </div>
             }

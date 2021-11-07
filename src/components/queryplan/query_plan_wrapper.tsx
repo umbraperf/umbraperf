@@ -66,7 +66,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State): void {
         if (this.props.queryPlan !== prevProps.queryPlan ||
             this.props.currentView !== prevProps.currentView ||
-            // this.state.width !== prevState.width ||
+            this.state.width !== prevState.width ||
             !_.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
             this.setState((state, props) => ({
                 ...state,
@@ -75,15 +75,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             this.createQueryPlan();
         }
 
-        if (this.state.width !== prevState.width && prevState.width !== 0) {
-            setTimeout(() => {
-                this.setState((state, props) => ({
-                    ...state,
-                    renderedDagrePlan: undefined,
-                }));
-                this.createQueryPlan();
-            }, 1000);
-        }
+        // if (this.state.width !== prevState.width && prevState.width !== 0) {
+        //     this.setState((state, props) => ({
+        //         ...state,
+        //         renderedDagrePlan: undefined,
+        //     }));
+        //     this.createQueryPlan();
+        // }
     }
 
 
@@ -114,11 +112,21 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             child.style.display = 'none';
 
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-                //  renderedDagrePlan: undefined,
-            }));
+            let resizingTimeoutId = undefined;
+            clearTimeout(resizingTimeoutId);
+            resizingTimeoutId = setTimeout(() => {
+                this.setState((state, props) => ({
+                    ...state,
+                    width: newWidth,
+                    //  renderedDagrePlan: undefined,
+                }));
+            }, 500);
+
+            // this.setState((state, props) => ({
+            //     ...state,
+            //     width: newWidth,
+            //     //  renderedDagrePlan: undefined,
+            // }));
 
             child.style.display = 'block';
         }

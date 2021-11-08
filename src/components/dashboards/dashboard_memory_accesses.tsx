@@ -34,8 +34,8 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} >
                             <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <BarChartActivityHistogram />
-                                </div>
+{/*                                     <BarChartActivityHistogram />
+ */}                                </div>
                             </Box>
                         </Grid>
                     </Box>

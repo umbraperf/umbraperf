@@ -10,6 +10,7 @@ import _ from "lodash";
 
 import SunburstChart from './sunburst_chart';
 import BarChartActivityHistogram from './bar_chart_activity_histogram';
+import SwimLanesCombinedMultiplePipelines from './swim_lanes_combined_multiple_pipelines';
 
 
 interface OwnProps {
@@ -26,6 +27,9 @@ export interface ChartWrapperAppstateProps {
     pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     currentEvent: string;
+    currentMultipleEvent: [string, string] | "Default";
+    currentOperator: Array<string> | "All",
+    currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
@@ -58,13 +62,30 @@ class ChartWrapper extends React.Component<Props, State> {
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
 
+        //rerender on changed size
+        if (this.state.width !== nextState.width || this.state.width !== nextState.height) {
+            true;
+        }
+
+        //rerender on changed loading state, no rerender on different chart changes loading state
         if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
             return true;
-        }
-        if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
+        } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;
         }
-        return true;
+
+        //rerender only on affected input data changed and if they are available
+        if(Controller.newChartDataNeeded(nextProps, this.props, this.props.chartType)){
+            return true;
+        }
+
+        //rerender on changed data to be visualized
+        if (!_.isEqual(nextProps.chartData, this.props.chartData)) {
+            return true;
+        }
+
+        //do not rerender in all other cases 
+        return false;
     }
 
 
@@ -87,9 +108,17 @@ class ChartWrapper extends React.Component<Props, State> {
 
 
     componentDidUpdate(prevProps: Props): void {
-        Controller.requestNewChartData(this.props, prevProps, this.props.chartType, this.state.chartId);
+        //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
+        if(Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType)){
+            Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
+        }
     }
 
+    componentWillUnmount() {
+        removeEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+    }
 
     resizeListener() {
         if (!this.elementWrapper) return;
@@ -113,30 +142,37 @@ class ChartWrapper extends React.Component<Props, State> {
 
     createChildChart() {
 
-        const partialChartProps: any = {
+        //TODO interfaces for charts
+
+        const partialChartProps: model.IParcialChartProps = {
             chartId: this.state.chartId,
             width: this.state.width,
             chartType: this.props.chartType,
         }
-        let chartProps: any = {};
 
         switch (this.props.chartType) {
 
             case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-                console.log("create activity")
-                chartProps = {
+                const barChartActivityHistogramProps: model.IBarChartActivityHistogramProps = {
                     ...partialChartProps,
                 }
-                return React.createElement(BarChartActivityHistogram, chartProps);
+                return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
 
 
             case model.ChartType.SUNBURST_CHART:
-                console.log("create sunburst")
-                chartProps = {
+                const sunburstProps: model.ISunburstChartProps = {
                     ...partialChartProps,
                     height: this.state.height,
                 }
-                return React.createElement(SunburstChart, chartProps);
+                return React.createElement(SunburstChart, sunburstProps as any);
+
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                const SwimLanesCombinedMultiplePipelinesProps: model.ISwimlanesCombinedProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                    absoluteValues: true,
+                }
+                return React.createElement(SwimLanesCombinedMultiplePipelines, SwimLanesCombinedMultiplePipelinesProps as any);
         }
     }
 
@@ -177,9 +213,13 @@ const mapStateToProps = (state: model.AppState) => ({
     pipelines: state.pipelines,
     operators: state.operators,
     currentEvent: state.currentEvent,
+    currentMultipleEvent: state.currentMultipleEvent,
+    currentOperator: state.currentOperator,
+    currentPipeline: state.currentPipeline,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentBucketSize: state.currentBucketSize,
+
 
 });
 

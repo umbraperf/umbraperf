@@ -9,12 +9,6 @@ import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import IconButton from "@material-ui/core/IconButton";
 import _ from 'lodash';
 
-interface OwnProps {
-    chartType: model.ChartType;
-    chartId: number;
-    width: number;
-}
-
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IBarChartActivityHistogramData,
@@ -22,7 +16,7 @@ interface AppstateProps {
     currentTimePositionSelectionTuple: [number, number];
 }
 
-type Props = OwnProps & AppstateProps;
+type Props = model.IBarChartActivityHistogramProps & AppstateProps;
 
 
 class BarChartActivityHistogram extends React.Component<Props, {}> {
@@ -351,7 +345,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
 }
 
-const mapStateToProps = (state: model.AppState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: model.AppState, ownProps: model.IBarChartActivityHistogramProps) => ({
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IBarChartActivityHistogramData,

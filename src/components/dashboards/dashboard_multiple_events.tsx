@@ -3,8 +3,6 @@ import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
 import ChartWrapper from '../charts/chart_wrapper';
-import SwimLanesCombinedMultiplePipelines from '../charts/swim_lanes_combined_multiple_pipelines';
-import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
@@ -66,7 +64,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesCombinedMultiplePipelines absoluteValues={true} />
+                                    <ChartWrapper chartType={model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE} />
                                 </div>
                             </Box>
                         </Grid>

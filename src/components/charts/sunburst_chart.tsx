@@ -7,13 +7,6 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from "lodash";
 
-interface OwnProps {
-    chartType: model.ChartType;
-    chartId: number;
-    width: number;
-    height: number;
-}
-
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentPipeline: Array<string> | "All";
@@ -24,8 +17,7 @@ interface AppstateProps {
     chartData: model.ISunburstChartData,
 }
 
-type Props = OwnProps & AppstateProps;
-
+type Props = model.ISunburstChartProps & AppstateProps;
 
 class SunburstChart extends React.Component<Props, {}> {
 
@@ -316,7 +308,7 @@ class SunburstChart extends React.Component<Props, {}> {
     }
 }
 
-const mapStateToProps = (state: model.AppState, ownProps: OwnProps) => ({
+const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartProps) => ({
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
     pipelines: state.pipelines,

@@ -21,3 +21,20 @@ export enum ViewType {
     PIPELINES = "pipelines",
     DUMMY = "dummy",
 }
+
+export interface IParcialChartProps {
+    chartId: number,
+    width: number,
+    chartType: ChartType,
+}
+
+export type IBarChartActivityHistogramProps = IParcialChartProps;
+
+export type ISunburstChartProps = IParcialChartProps & {
+    height: number;
+};
+
+export type ISwimlanesCombinedProps = IParcialChartProps & {
+    height: number;
+    absoluteValues: boolean;
+}

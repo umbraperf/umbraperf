@@ -39,7 +39,7 @@ export type IBarChartProps = IParcialChartProps & {
     onDashboard: boolean;
 }
 
-export type ISwimlanesCombinedProps = IParcialChartProps & {
+export type ISwimlanesProps = IParcialChartProps & {
     height: number;
     absoluteValues: boolean;
 }

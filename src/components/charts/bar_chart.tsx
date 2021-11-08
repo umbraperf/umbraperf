@@ -9,17 +9,8 @@ import _ from "lodash";
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    resultLoading: model.ResultLoading;
-    csvParsingFinished: boolean;
-    currentChart: string;
-    currentEvent: string;
-    events: Array<string> | undefined;
     operators: Array<string> | undefined;
-    chartIdCounter: number;
-    currentPipeline: Array<string> | "All",
     currentOperator: Array<string> | "All",
-    currentTimeBucketSelectionTuple: [number, number],
-    currentView: model.ViewType;
     chartData: model.IBarChartData;
 }
 
@@ -207,17 +198,8 @@ class BarChart extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IBarChartProps) => ({
-    resultLoading: state.resultLoading,
-    csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
-    currentEvent: state.currentEvent,
-    events: state.events,
     operators: state.operators,
-    chartIdCounter: state.chartIdCounter,
-    currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
-    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentView: state.currentView,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IBarChartData,
 
 });

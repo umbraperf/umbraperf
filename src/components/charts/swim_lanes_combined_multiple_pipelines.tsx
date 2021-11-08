@@ -1,183 +1,46 @@
 import * as model from '../../model';
-import * as Controller from '../../controller';
 import * as Context from '../../app_context';
 import React from 'react';
-import Spinner from '../utils/spinner';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
-import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import _ from "lodash";
 
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
-    resultLoading: model.ResultLoading;
-    csvParsingFinished: boolean;
-    currentChart: string;
     currentMultipleEvent: [string, string] | "Default";
-    events: Array<string> | undefined;
     operators: Array<string> | undefined;
-    chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
-    currentOperator: Array<string> | "All",
-    currentPipeline: Array<string> | "All",
     currentInterpolation: String,
-    currentBucketSize: number,
-    currentTimeBucketSelectionTuple: [number, number],
-    currentView: model.ViewType;
-    setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
-
-    absoluteValues?: boolean;
+    chartData: model.ISwimlanesCombinedData,
 }
 
-interface State {
-    chartId: number,
-    width: number,
-    height: number,
-}
+type Props = AppstateProps & model.ISwimlanesCombinedProps
 
-
-class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
-
-    elementWrapper = createRef<HTMLDivElement>();
+class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            chartId: this.props.chartIdCounter,
-            width: 0,
-            height: 0,
-        };
-        this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-
-        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
-            return true;
-        }
-        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
-            return false;
-        }
-        return true;
-    }
-
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-
-        this.requestNewChartData(this.props, prevProps);
-
-    }
-
-    requestNewChartData(props: Props, prevProps: Props): void {
-        if (this.newChartDataNeeded(props, prevProps)) {
-            if (props.absoluteValues) {
-                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE);
-            } else {
-                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
-            }
-        }
-    }
-
-    newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            this.props.operators &&
-            (props.currentBucketSize !== prevProps.currentBucketSize ||
-                props.currentView !== prevProps.currentView ||
-                !_.isEqual(props.operators, prevProps.operators) ||
-                !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
-                !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
-                !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    componentDidMount() {
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.offsetHeight,
-
-        }));
-
-        if (this.props.csvParsingFinished) {
-
-            this.props.setCurrentChart(this.props.absoluteValues ? model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES);
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    componentWillUnmount() {
-        removeEventListener('resize', (event) => {
-            this.resizeListener();
-        });
-    }
-
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            child.style.display = 'block';
-        }
-    }
-
-    isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
     public render() {
-
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div className={"vegaContainer"}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
-                </div>
-            }
-        </div>;
+        return <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} />
     }
 
     createVisualizationData() {
 
         const chartDataElementPos: model.ISwimlanesData = {
-            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).buckets,
-            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operators,
-            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequency,
+            buckets: this.props.chartData.buckets,
+            operators: this.props.chartData.operators,
+            frequency: this.props.chartData.frequency,
         }
 
         const chartDataElementNeg: model.ISwimlanesData = {
-            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).bucketsNeg,
-            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).operatorsNeg,
-            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesCombinedData).frequencyNeg,
+            buckets: this.props.chartData.bucketsNeg,
+            operators: this.props.chartData.operatorsNeg,
+            frequency: this.props.chartData.frequencyNeg,
         }
 
         const data = [{
@@ -227,8 +90,8 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width - 60,
-            height: this.state.height - 10,
+            width: this.props.width - 60,
+            height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -476,32 +339,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    resultLoading: state.resultLoading,
-    csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
+const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesCombinedProps) => ({
     currentMultipleEvent: state.currentMultipleEvent,
-    events: state.events,
     operators: state.operators,
-    chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
-    currentPipeline: state.currentPipeline,
-    currentOperator: state.currentOperator,
     currentInterpolation: state.currentInterpolation,
-    currentBucketSize: state.currentBucketSize,
-    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentView: state.currentView,
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesCombinedData,
+
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    }),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanesCombinedMultiplePipelines));
+export default connect(mapStateToProps, undefined)(Context.withAppContext(SwimLanesCombinedMultiplePipelines));

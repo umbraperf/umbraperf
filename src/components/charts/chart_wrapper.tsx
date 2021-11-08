@@ -63,24 +63,30 @@ class ChartWrapper extends React.Component<Props, State> {
     shouldComponentUpdate(nextProps: Props, nextState: State) {
 
         //rerender on changed size
-        if (this.state.width !== nextState.width || this.state.width !== nextState.height) {
-            true;
+        if (this.state.width !== nextState.width || this.state.height !== nextState.height) {
+            return true;
         }
 
-        //rerender on changed loading state, no rerender on different chart changes loading state
+        // //rerender on changed loading state, no rerender on different chart changes loading state
+        // if(this.props.resultLoading[this.state.chartId]){
+
+        // }
         if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
             return true;
         } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;
         }
 
-        //rerender only on affected input data changed and if they are available
-        if(Controller.newChartDataNeeded(nextProps, this.props, this.props.chartType)){
-            return true;
-        }
+        // //rerender only on affected input data changed and if they are available
+        // if(Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)){
+        //     return true;
+        // }
 
-        //rerender on changed data to be visualized
-        if (!_.isEqual(nextProps.chartData, this.props.chartData)) {
+        // if(!_.isEqual(this.props.chartData, nextProps.chartData)){
+        //     return true;
+        // }
+
+        if (Controller.chartRerenderNeeded(this.props, nextProps, this.props.chartType)) {
             return true;
         }
 
@@ -109,16 +115,16 @@ class ChartWrapper extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
-        if(Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType)){
+        if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }
 
-    componentWillUnmount() {
-        removeEventListener('resize', (event) => {
-            this.resizeListener();
-        });
-    }
+    // componentWillUnmount() {
+    //     removeEventListener('resize', (event) => {
+    //         this.resizeListener();
+    //     });
+    // }
 
     resizeListener() {
         if (!this.elementWrapper) return;

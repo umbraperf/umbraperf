@@ -73,7 +73,7 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 }
 
-export function newChartDataNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
+export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
 
     const newChartDataNeededGeneral = () => {
         if (props.events &&
@@ -104,12 +104,13 @@ export function newChartDataNeeded(props: ChartWrapperAppstateProps, prevProps: 
                         true :
                         false;
                 case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                    return ((props.currentBucketSize !== prevProps.currentBucketSize ||
-                        !_.isEqual(props.operators, prevProps.operators) ||
-                        !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
-                        !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
-                        !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                        !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                    return (props.operators &&
+                        (props.currentBucketSize !== prevProps.currentBucketSize ||
+                            !_.isEqual(props.operators, prevProps.operators) ||
+                            !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
+                            !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
+                            !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
+                            !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
                         true :
                         false;
             }
@@ -120,6 +121,25 @@ export function newChartDataNeeded(props: ChartWrapperAppstateProps, prevProps: 
             //Controller.requestChartData(props.appContext.controller, chartId, chartType);
             return true;
         }
+    }
+    return false;
+}
+
+export function chartDataRequestReady(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
+    console.log("new data request")
+    switch (chartType) {
+        case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
+            return (props.events) ?
+                true :
+                false;
+        case model.ChartType.SUNBURST_CHART:
+            return (props.events && props.pipelines && props.operators) ?
+                true :
+                false;
+        case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+            return (props.events && props.operators) ?
+                true :
+                false;
     }
     return false;
 }

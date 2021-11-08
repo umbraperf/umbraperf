@@ -49,7 +49,7 @@ export function createRestQuery(query: QueryVariant) {
     const event = (query.data as any).event ? ((query.data as any).event === "Default" ? 'Default' : (query.data as any).event) : '';
     const eventFilter = event && `/?ev_name="${event}"`;
 
-    const time = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}to${(query.data as any).timeBucketFrame[1]}` : '';
+    const time = (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}from_to${(query.data as any).timeBucketFrame[1]}` : '';
     const timeFilter = time && `/?time="${time}"`;
 
     const pipelines = (query.data as any).pipelines && (query.data as any).pipelines.length > 0 ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : ' ';

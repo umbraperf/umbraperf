@@ -19,5 +19,5 @@ pub fn split_at_double_and(params: &str) -> Vec<&str> {
 }
 
 pub fn split_at_to(params: &str) -> Vec<&str> {
-    return params.split_terminator("to").collect::<Vec<&str>>();
+    return params.split_terminator("from_to").collect::<Vec<&str>>();
 }

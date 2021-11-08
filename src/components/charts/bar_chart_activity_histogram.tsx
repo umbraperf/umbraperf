@@ -39,7 +39,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     public render() {
 
-        return <div >
+        return <div style={{ position: "relative" }} >
             {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
             <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
         </div>

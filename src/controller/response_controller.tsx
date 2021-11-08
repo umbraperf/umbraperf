@@ -64,7 +64,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             if (events.length > 1) {
                 events.length > store.dispatch({
                     type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
-                    data: [events[1], events[0]],
+                    data: [events[0], events[1]],
                 });
             }
             break;

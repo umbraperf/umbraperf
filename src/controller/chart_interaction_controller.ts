@@ -1,5 +1,8 @@
 import * as model from "../model";
+import * as Controller from './';
 import { store } from '../app_config';
+import {ChartWrapperAppstateProps} from '../components/charts/chart_wrapper';
+import _ from "lodash";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
@@ -67,5 +70,28 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
         data: selectedPosition,
     });
+
+}
+
+export function requestNewChartData(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType, chartId: number){
+
+    const newChartDataNeeded = () => {
+        if (props.events &&
+            props.pipelines &&
+            props.operators &&
+            (props.currentEvent !== prevProps.currentEvent ||
+                props.currentView !== prevProps.currentView ||
+                !_.isEqual(props.pipelines, prevProps.pipelines) ||
+                !_.isEqual(props.operators, prevProps.operators) ||
+                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (newChartDataNeeded()){
+        Controller.requestChartData(props.appContext.controller, chartId, chartType);
+    }
 
 }

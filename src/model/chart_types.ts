@@ -34,6 +34,11 @@ export type ISunburstChartProps = IParcialChartProps & {
     height: number;
 };
 
+export type IBarChartProps = IParcialChartProps & {
+    height: number;
+    onDashboard: boolean;
+}
+
 export type ISwimlanesCombinedProps = IParcialChartProps & {
     height: number;
     absoluteValues: boolean;

@@ -9,6 +9,7 @@ import { createRef } from 'react';
 import _ from "lodash";
 
 import SunburstChart from './sunburst_chart';
+import BarChart from './bar_chart';
 import BarChartActivityHistogram from './bar_chart_activity_histogram';
 import SwimLanesCombinedMultiplePipelines from './swim_lanes_combined_multiple_pipelines';
 
@@ -77,6 +78,8 @@ class ChartWrapper extends React.Component<Props, State> {
             return false;
         }
 
+        //TODO render conditions
+
         // //rerender only on affected input data changed and if they are available
         // if(Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)){
         //     return true;
@@ -143,7 +146,6 @@ class ChartWrapper extends React.Component<Props, State> {
             child.style.display = 'block';
         }
 
-
     }
 
     createChildChart() {
@@ -161,6 +163,14 @@ class ChartWrapper extends React.Component<Props, State> {
                     ...partialChartProps,
                 }
                 return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
+
+            case model.ChartType.BAR_CHART:
+                const barChartProps: model.IBarChartProps = {
+                    ...partialChartProps,
+                    onDashboard: true,
+                    height: this.state.height,
+                }
+                return React.createElement(BarChart, barChartProps as any);
 
 
             case model.ChartType.SUNBURST_CHART:

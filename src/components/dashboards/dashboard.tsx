@@ -5,7 +5,7 @@ import DashboardHeader from './dashboard_header';
 //import SunburstChart from '../charts/sunburst_chart';
 import SwimLanesMultiplePipelines from '../charts/swim_lanes_multiple_pipelines';
 import BarChart from '../charts/bar_chart';
-import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
+import ChartWrapper from '../charts/chart_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 
@@ -28,14 +28,14 @@ class Dashboard extends React.Component<Props, {}> {
         return <div className={styles.dashboardGrid}>
 
             <div >
-                <DashboardHeader/>
+                <DashboardHeader />
 
                 <Grid container>
                     <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
                         <Grid item className={styles.dashboardGridCellItem} xs={12} >
                             <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    {/* <BarChartActivityHistogram /> */}
+                                    <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
                                 </div>
                             </Box>
                         </Grid>
@@ -46,8 +46,8 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-{/*                                     <SunburstChart />
- */}                                </div>
+                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
+                                </div>
                             </Box>
                         </Grid>
                     </Box>
@@ -66,7 +66,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <BarChart onDashboard={true} />
+                                    <ChartWrapper chartType={model.ChartType.BAR_CHART} />
                                 </div>
                             </Box>
                         </Grid>

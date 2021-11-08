@@ -1,17 +1,13 @@
 import * as model from '../../model';
-import * as Controller from '../../controller';
 import * as Context from '../../app_context';
-import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
-import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import _ from "lodash";
 
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
     csvParsingFinished: boolean;
@@ -20,148 +16,38 @@ interface Props {
     events: Array<string> | undefined;
     operators: Array<string> | undefined;
     chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All",
     currentOperator: Array<string> | "All",
     currentTimeBucketSelectionTuple: [number, number],
     currentView: model.ViewType;
-    setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
-
-    //TODO remove:
-    onDashboard?: boolean;
-
+    chartData: model.IBarChartData;
 }
 
-interface State {
-    chartId: number,
-    width: number,
-    height: number,
-}
+type Props = model.ISunburstChartProps & AppstateProps;
+
 
 const startSize = {
     width: 500,
     height: window.innerHeight > 1000 ? 500 : window.innerHeight - 300,
 }
 
-class BarChart extends React.Component<Props, State> {
-
-    elementWrapper = createRef<HTMLDivElement>();
+class BarChart extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            chartId: this.props.chartIdCounter,
-            width: 0,
-            height: 0,
-        };
-        this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-
-        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
-            return true;
-        }
-        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
-            return false;
-        }
-        return true;
-    }
-
-    componentDidUpdate(prevProps: Props): void {
-
-        this.requestNewChartData(this.props, prevProps);
-
-    }
-
-    requestNewChartData(props: Props, prevProps: Props): void {
-        if (this.newChartDataNeeded(props, prevProps)) {
-            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART);
-        }
-    }
-
-    newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.currentView !== prevProps.currentView ||
-                !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
-                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    componentDidMount() {
-
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.clientHeight,
-        }));
-
-        if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(model.ChartType.BAR_CHART);
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth > startSize.width ? startSize.width : newWidth,
-            }));
-
-            child.style.display = 'block';
-        }
-
-
-    }
-
-    isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public render() {
-
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div className={"vegaContainer"} >
-                    <Vega spec={this.createVisualizationSpec()} />
-                </div>
-            }
-        </div>;
+        return <Vega spec={this.createVisualizationSpec()} />
     }
 
     createVisualizationData() {
 
-        const operatorsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).operators;
-        const valueArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartData).frequency;
+        const operatorsArray = this.props.chartData.operators;
+        const valueArray = this.props.chartData.frequency;
 
         const data = [
             {
@@ -192,8 +78,8 @@ class BarChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width - 50,
-            height: this.state.height - 10,
+            width: this.props.width - 50,
+            height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -226,14 +112,6 @@ class BarChart extends React.Component<Props, State> {
                     range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                     domain: this.props.operators,
                 },
-                /*                 {
-                                    name: "colorDisabled",
-                                    type: "ordinal",
-                                    range: {
-                                        scheme: model.chartConfiguration.disabledColorSceme,
-                                    },
-                                    domain: this.props.operators,
-                                } */
             ],
 
             axes: [
@@ -328,7 +206,7 @@ class BarChart extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
+const mapStateToProps = (state: model.AppState, ownProps: model.IBarChartProps) => ({
     resultLoading: state.resultLoading,
     csvParsingFinished: state.csvParsingFinished,
     currentChart: state.currentChart,
@@ -336,23 +214,13 @@ const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     operators: state.operators,
     chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentView: state.currentView,
-});
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.IBarChartData,
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    }),
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(BarChart));
+export default connect(mapStateToProps, undefined)(Context.withAppContext(BarChart));

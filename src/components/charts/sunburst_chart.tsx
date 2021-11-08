@@ -1,157 +1,46 @@
 import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
-import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
-import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import _ from "lodash";
 
+interface OwnProps {
+    chartType: model.ChartType;
+    chartId: number;
+    width: number;
+    height: number;
+}
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
-    resultLoading: model.ResultLoading;
-    csvParsingFinished: boolean;
-    currentChart: string;
-    currentEvent: string;
-    events: Array<string> | undefined;
-    chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
-    currentTimeBucketSelectionTuple: [number, number],
-    currentView: model.ViewType;
-    setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
+    chartData: model.ISunburstChartData,
 }
 
-interface State {
-    chartId: number,
-    width: number,
-    height: number,
-}
+type Props = OwnProps & AppstateProps;
 
-class SunburstChart extends React.Component<Props, State> {
 
-    elementWrapper = createRef<HTMLDivElement>();
+class SunburstChart extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            chartId: this.props.chartIdCounter,
-            width: 0,
-            height: 0,
-        };
-        this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleClickPipeline = this.handleClickPipeline.bind(this);
         this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
 
-        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
-            return true;
-        }
-        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
-            return false;
-        }
-        return true;
-    }
-
-    componentDidUpdate(prevProps: Props): void {
-
-        this.requestNewChartData(this.props, prevProps);
-    }
-
-    requestNewChartData(props: Props, prevProps: Props): void {
-        if (this.newChartDataNeeded(props, prevProps)) {
-            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SUNBURST_CHART);
-        }
-    }
-
-    newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            this.props.pipelines &&
-            this.props.operators &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.currentView !== prevProps.currentView ||
-                !_.isEqual(this.props.pipelines, prevProps.pipelines) ||
-                !_.isEqual(this.props.operators, prevProps.operators) ||
-                !_.isEqual(this.props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    componentDidMount() {
-
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.offsetHeight,
-        }));
-
-        if (this.props.csvParsingFinished) {
-
-            this.props.setCurrentChart(model.ChartType.SUNBURST_CHART);
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            child.style.display = 'block';
-        }
-
-
-    }
-
-    isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.pipelines || !this.props.operators) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public render() {
-
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div className={"vegaContainer"}>
-                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-                </div>
-            }
-        </div>;
+        return <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
     }
 
     createVegaSignalListeners() {
@@ -176,10 +65,10 @@ class SunburstChart extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const operatorIdArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).operator;
-        const parentPipelinesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeline;
-        const operatorOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).opOccurrences);
-        const pipelineOccurrences = Array.from(((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISunburstChartData).pipeOccurrences);
+        const operatorIdArray = this.props.chartData.operator;
+        const parentPipelinesArray = this.props.chartData.pipeline;
+        const operatorOccurrences = Array.from(this.props.chartData.opOccurrences);
+        const pipelineOccurrences = Array.from(this.props.chartData.pipeOccurrences);
 
         //add datum for inner circle at beginning of data only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
@@ -272,8 +161,8 @@ class SunburstChart extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width - 50,
-            height: this.state.height - 10,
+            width: this.props.width - 50,
+            height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: false },
 
@@ -427,33 +316,14 @@ class SunburstChart extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    resultLoading: state.resultLoading,
-    csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
-    currentEvent: state.currentEvent,
-    events: state.events,
-    chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
+const mapStateToProps = (state: model.AppState, ownProps: OwnProps) => ({
     currentPipeline: state.currentPipeline,
     currentOperator: state.currentOperator,
     pipelines: state.pipelines,
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
-    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentView: state.currentView,
-});
-
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    })
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SunburstChart));
+export default connect(mapStateToProps, undefined)(Context.withAppContext(SunburstChart));

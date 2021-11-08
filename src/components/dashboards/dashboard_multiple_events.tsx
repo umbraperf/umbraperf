@@ -2,7 +2,7 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
-import SunburstChart from '../charts/sunburst_chart';
+import ChartWrapper from '../charts/chart_wrapper';
 import SwimLanesCombinedMultiplePipelines from '../charts/swim_lanes_combined_multiple_pipelines';
 import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
 import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
@@ -47,7 +47,7 @@ class DashboardMultipleEvents extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <SunburstChart />
+                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
                                 </div>
                             </Box>
                         </Grid>

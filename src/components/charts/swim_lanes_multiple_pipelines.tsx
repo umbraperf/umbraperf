@@ -1,174 +1,52 @@
 import * as model from '../../model';
-import * as Controller from '../../controller';
 import * as Context from '../../app_context';
-import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
-import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import _ from "lodash";
 import { View } from 'vega';
 
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
-    resultLoading: model.ResultLoading;
-    csvParsingFinished: boolean;
-    currentChart: string;
     currentEvent: string;
-    events: Array<string> | undefined;
     operators: Array<string> | undefined;
     chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
     currentPipeline: Array<string> | "All",
     currentOperators: Array<string> | "All",
     currentInterpolation: String,
     currentBucketSize: number,
-    currentTimeBucketSelectionTuple: [number, number],
-    currentView: model.ViewType;
-    setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
-
-    absoluteValues?: boolean;
+    chartData: model.ISwimlanesData,
 }
 
 interface State {
-    chartId: number,
-    width: number,
-    height: number,
     maxYDomainAbsoluteValues: number,
     currentDomainAbsoluteValues: number,
 }
 
-class SwimLanesMultiplePipelines extends React.Component<Props, State> {
+type Props = model.ISwimlanesProps & AppstateProps;
 
-    elementWrapper = createRef<HTMLDivElement>();
+class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
         this.state = {
-            chartId: this.props.chartIdCounter,
-            width: 0,
-            height: 0,
             maxYDomainAbsoluteValues: 0,
             currentDomainAbsoluteValues: 0,
         };
-        this.props.setChartIdCounter(this.state.chartId + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleVegaView = this.handleVegaView.bind(this);
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-
-        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
-            return true;
-        }
-        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
-            return false;
-        }
-        return true;
-    }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
-
         this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
-        this.requestNewChartData(this.props, prevProps);
-
     }
-
-    requestNewChartData(props: Props, prevProps: Props): void {
-        if (this.newChartDataNeeded(props, prevProps)) {
-            if (this.props.absoluteValues) {
-                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE);
-            } else {
-                Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
-            }
-        }
-    }
-
-    newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            this.props.operators &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.currentView !== prevProps.currentView ||
-                props.currentBucketSize !== prevProps.currentBucketSize ||
-                !_.isEqual(props.operators, prevProps.operators) ||
-                !_.isEqual(props.currentOperators, prevProps.currentOperators) ||
-                !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    componentDidMount() {
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-            height: this.elementWrapper.current!.offsetHeight,
-        }));
-
-        if (this.props.csvParsingFinished) {
-
-            this.props.setCurrentChart(this.props.absoluteValues ? model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE : model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES);
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    componentWillUnmount() {
-        removeEventListener('resize', (event) => {
-            this.resizeListener();
-        });
-    }
-
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            child.style.display = 'block';
-        }
-    }
-
-    isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 
     public render() {
-
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
-
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div className={"vegaContainer"}>
-                    <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
-                </div>
-            }
-        </div>;
+        return <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
     }
 
     handleVegaView(view: View) {
@@ -209,9 +87,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     createVisualizationData() {
 
         const chartDataElement: model.ISwimlanesData = {
-            buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
-            operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
-            frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
+            buckets: this.props.chartData.buckets,
+            operators: this.props.chartData.operators,
+            frequency: this.props.chartData.frequency,
         }
 
         const data = {
@@ -252,8 +130,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: this.state.width - 55,
-            height: this.state.height - 10,
+            width: this.props.width - 55,
+            height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             resize: true,
             autosize: 'fit',
@@ -406,32 +284,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    resultLoading: state.resultLoading,
-    csvParsingFinished: state.csvParsingFinished,
-    currentChart: state.currentChart,
+const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps) => ({
     currentEvent: state.currentEvent,
-    events: state.events,
     operators: state.operators,
     chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
     currentPipeline: state.currentPipeline,
     currentOperators: state.currentOperator,
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
-    currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentView: state.currentView,
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    }),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanesMultiplePipelines));
+export default connect(mapStateToProps, undefined)(Context.withAppContext(SwimLanesMultiplePipelines));

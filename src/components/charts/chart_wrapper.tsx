@@ -11,6 +11,7 @@ import _ from "lodash";
 import SunburstChart from './sunburst_chart';
 import BarChart from './bar_chart';
 import BarChartActivityHistogram from './bar_chart_activity_histogram';
+import SwimLanesMultiplePipelines from './swim_lanes_multiple_pipelines';
 import SwimLanesCombinedMultiplePipelines from './swim_lanes_combined_multiple_pipelines';
 
 
@@ -180,13 +181,29 @@ class ChartWrapper extends React.Component<Props, State> {
                 }
                 return React.createElement(SunburstChart, sunburstProps as any);
 
-            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                const SwimLanesCombinedMultiplePipelinesProps: model.ISwimlanesCombinedProps = {
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+                const SwimLanesMultiplePipelinesProps: model.ISwimlanesProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                    absoluteValues: false,
+                }
+                return React.createElement(SwimLanesMultiplePipelines, SwimLanesMultiplePipelinesProps as any);
+
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
+                const SwimLanesMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
                 }
-                return React.createElement(SwimLanesCombinedMultiplePipelines, SwimLanesCombinedMultiplePipelinesProps as any);
+                return React.createElement(SwimLanesMultiplePipelines, SwimLanesMultiplePipelinesAbsoluteProps as any);
+
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                const SwimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                    absoluteValues: true,
+                }
+                return React.createElement(SwimLanesCombinedMultiplePipelines, SwimLanesCombinedMultiplePipelinesAbsoluteProps as any);
         }
     }
 

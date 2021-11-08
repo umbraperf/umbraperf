@@ -14,7 +14,7 @@ interface AppstateProps {
     chartData: model.IBarChartData;
 }
 
-type Props = model.ISunburstChartProps & AppstateProps;
+type Props = model.IBarChartProps & AppstateProps;
 
 
 const startSize = {

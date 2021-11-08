@@ -55,7 +55,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesMultiplePipelines />
+                                <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />
                                 </div>
                             </Box>
                         </Grid>
@@ -75,7 +75,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <SwimLanesMultiplePipelines absoluteValues={true} />
+                                <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE} />
                                 </div>
                             </Box>
                         </Grid>

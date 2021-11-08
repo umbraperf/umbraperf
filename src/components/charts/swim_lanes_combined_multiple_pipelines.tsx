@@ -15,7 +15,7 @@ interface AppstateProps {
     chartData: model.ISwimlanesCombinedData,
 }
 
-type Props = AppstateProps & model.ISwimlanesCombinedProps
+type Props = AppstateProps & model.ISwimlanesProps
 
 class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
@@ -338,7 +338,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
 }
 
-const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesCombinedProps) => ({
+const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps) => ({
     currentMultipleEvent: state.currentMultipleEvent,
     operators: state.operators,
     currentInterpolation: state.currentInterpolation,

@@ -2,9 +2,6 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
-//import SunburstChart from '../charts/sunburst_chart';
-import SwimLanesMultiplePipelines from '../charts/swim_lanes_multiple_pipelines';
-import BarChart from '../charts/bar_chart';
 import ChartWrapper from '../charts/chart_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
@@ -52,7 +49,7 @@ class Dashboard extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                 <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />

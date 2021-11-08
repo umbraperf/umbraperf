@@ -12,9 +12,6 @@ interface AppstateProps {
     appContext: Context.IAppContext;
     currentEvent: string;
     operators: Array<string> | undefined;
-    chartIdCounter: number;
-    currentPipeline: Array<string> | "All",
-    currentOperators: Array<string> | "All",
     currentInterpolation: String,
     currentBucketSize: number,
     chartData: model.ISwimlanesData,
@@ -133,8 +130,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             width: this.props.width - 55,
             height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
-            autosize: 'fit',
+            autosize: { type: "fit", resize: true },
 
             title: {
                 text: 'Swim Lanes (variable Pipelines)',
@@ -287,9 +283,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps) => ({
     currentEvent: state.currentEvent,
     operators: state.operators,
-    chartIdCounter: state.chartIdCounter,
-    currentPipeline: state.currentPipeline,
-    currentOperators: state.currentOperator,
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,

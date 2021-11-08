@@ -148,8 +148,6 @@ class ChartWrapper extends React.Component<Props, State> {
 
     createChildChart() {
 
-        //TODO interfaces for charts
-
         const partialChartProps: model.IParcialChartProps = {
             chartId: this.state.chartId,
             width: this.state.width,

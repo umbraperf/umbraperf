@@ -13,6 +13,7 @@ import BarChart from './bar_chart';
 import BarChartActivityHistogram from './bar_chart_activity_histogram';
 import SwimLanesMultiplePipelines from './swim_lanes_multiple_pipelines';
 import SwimLanesCombinedMultiplePipelines from './swim_lanes_combined_multiple_pipelines';
+import MemoryAccessHeatmapChart from './memory_access_heatmap_chart';
 
 
 interface OwnProps {
@@ -138,7 +139,7 @@ class ChartWrapper extends React.Component<Props, State> {
             const newWidth = child.offsetWidth;
 
             child.style.display = 'none';
-            
+
             let resizingTimeoutId = undefined;
             clearTimeout(resizingTimeoutId);
             resizingTimeoutId = setTimeout(() => {
@@ -192,28 +193,34 @@ class ChartWrapper extends React.Component<Props, State> {
                 return React.createElement(SunburstChart, sunburstProps as any);
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
-                const SwimLanesMultiplePipelinesProps: model.ISwimlanesProps = {
+                const swimLanesMultiplePipelinesProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: false,
                 }
-                return React.createElement(SwimLanesMultiplePipelines, SwimLanesMultiplePipelinesProps as any);
+                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesProps as any);
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                const SwimLanesMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
+                const swimLanesMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
                 }
-                return React.createElement(SwimLanesMultiplePipelines, SwimLanesMultiplePipelinesAbsoluteProps as any);
+                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesAbsoluteProps as any);
 
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                const SwimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
+                const swimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
                 }
-                return React.createElement(SwimLanesCombinedMultiplePipelines, SwimLanesCombinedMultiplePipelinesAbsoluteProps as any);
+                return React.createElement(SwimLanesCombinedMultiplePipelines, swimLanesCombinedMultiplePipelinesAbsoluteProps as any);
+
+            case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+                const memoryAccessHeatmapChartProps: model.IMemoryAccessHeatmapChartProps = {
+                    ...partialChartProps,
+                }
+                return React.createElement(MemoryAccessHeatmapChart, memoryAccessHeatmapChartProps as any);
         }
     }
 

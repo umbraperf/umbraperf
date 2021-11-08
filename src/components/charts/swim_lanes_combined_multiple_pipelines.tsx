@@ -343,7 +343,6 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps)
     operators: state.operators,
     currentInterpolation: state.currentInterpolation,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesCombinedData,
-
 });
 
 

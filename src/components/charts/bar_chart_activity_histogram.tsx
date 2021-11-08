@@ -17,19 +17,9 @@ interface OwnProps {
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    resultLoading: model.ResultLoading;
-    csvParsingFinished: boolean;
-    currentEvent: string;
-    events: Array<string> | undefined;
-    chartIdCounter: number;
     chartData: model.IBarChartActivityHistogramData,
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
-    currentBucketSize: number;
-    currentView: model.ViewType;
-    setCurrentChart: (newCurrentChart: string) => void;
-    setChartIdCounter: (newChartIdCounter: number) => void;
-
 }
 
 type Props = OwnProps & AppstateProps;
@@ -44,6 +34,12 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
         this.resetCurrentSelectionTuples = this.resetCurrentSelectionTuples.bind(this);
+    }
+
+    componentDidUpdate(prevProps: Props): void {
+        if (this.props.width !== prevProps.width) {
+            this.resetCurrentSelectionTuples();
+        }
     }
 
 
@@ -356,15 +352,8 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: model.AppState, ownProps: OwnProps) => ({
-    resultLoading: state.resultLoading,
-    csvParsingFinished: state.csvParsingFinished,
-    currentEvent: state.currentEvent,
-    events: state.events,
-    chartIdCounter: state.chartIdCounter,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
-    currentBucketSize: state.currentBucketSize,
-    currentView: state.currentView,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IBarChartActivityHistogramData,
 });
 

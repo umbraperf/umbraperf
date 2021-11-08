@@ -2,8 +2,7 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
-import MemoryAccessHeatmapChart from '../charts/memory_access_heatmap_chart';
-import BarChartActivityHistogram from '../charts/bar_chart_activity_histogram';
+import ChartWrapper from '../charts/chart_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 
@@ -34,8 +33,8 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} >
                             <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-{/*                                     <BarChartActivityHistogram />
- */}                                </div>
+                                    <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
+                                </div>
                             </Box>
                         </Grid>
                     </Box>
@@ -45,7 +44,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
                             <Box className={styles.dashboardGridCellChartBoxMemoryChart}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <MemoryAccessHeatmapChart />
+                                    <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
                                 </div>
                             </Box>
                         </Grid>

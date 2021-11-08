@@ -75,8 +75,6 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
 
-    console.log("rerender needed " + chartType);
-
     const newChartDataNeededGeneral = () => {
         if (props.events &&
             (props.currentEvent !== prevProps.currentEvent ||
@@ -88,7 +86,6 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
     }
 
     if (newChartDataNeededGeneral()) {
-        //Controller.requestChartData(props.appContext.controller, chartId, chartType);
         return true;
     } else {
         const newChartDataNeededChart: () => boolean = () => {
@@ -129,6 +126,13 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
                             !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
                             !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
                             !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
+                            !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                        true :
+                        false;
+                case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+                    return (props.operators &&
+                        (props.currentBucketSize !== prevProps.currentBucketSize ||
+                            !_.isEqual(props.operators, prevProps.operators) ||
                             !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
                         true :
                         false;

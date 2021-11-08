@@ -43,3 +43,5 @@ export type ISwimlanesProps = IParcialChartProps & {
     height: number;
     absoluteValues: boolean;
 }
+
+export type IMemoryAccessHeatmapChartProps = IParcialChartProps;

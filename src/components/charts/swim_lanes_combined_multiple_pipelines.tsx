@@ -93,8 +93,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
             width: this.props.width - 60,
             height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
-            autosize: 'fit',
+            autosize: { type: "fit", resize: true },
 
             title: {
                 text: `Swim Lanes for multiple Events (variable Pipelines) with ${this.props.absoluteValues ? "Absolute" : "Relative"} Frequencies`,

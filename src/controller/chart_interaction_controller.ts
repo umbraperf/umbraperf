@@ -1,7 +1,7 @@
 import * as model from "../model";
 import * as Controller from './';
 import { store } from '../app_config';
-import {ChartWrapperAppstateProps} from '../components/charts/chart_wrapper';
+import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
@@ -73,9 +73,9 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 }
 
-export function requestNewChartData(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType, chartId: number){
+export function requestNewChartData(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType, chartId: number) {
 
-    const newChartDataNeeded = () => {
+    const newChartDataNeededGeneral = () => {
         if (props.events &&
             props.pipelines &&
             props.operators &&
@@ -90,7 +90,19 @@ export function requestNewChartData(props: ChartWrapperAppstateProps, prevProps:
         }
     }
 
-    if (newChartDataNeeded()){
+    let newChartDataNeededChart = false;
+    switch (chartType) {
+
+        case model.ChartType.SUNBURST_CHART:
+            const newChartDataNeededSunburst = () => {
+                return true;
+            }
+            newChartDataNeededChart = newChartDataNeededSunburst();
+            break;
+
+    }
+
+    if (newChartDataNeededGeneral() && newChartDataNeededChart) {
         Controller.requestChartData(props.appContext.controller, chartId, chartType);
     }
 

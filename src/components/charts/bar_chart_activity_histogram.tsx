@@ -84,7 +84,6 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
             ]
         };
 
-
         return { data: data, bucketsArray: timeBucketsArray };
     }
 

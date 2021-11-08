@@ -9,6 +9,8 @@ import { createRef } from 'react';
 import _ from "lodash";
 
 import SunburstChart from './sunburst_chart';
+import BarChartActivityHistogram from './bar_chart_activity_histogram';
+
 
 interface OwnProps {
     chartType: model.ChartType;
@@ -26,6 +28,7 @@ export interface ChartWrapperAppstateProps {
     currentEvent: string;
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
+    currentBucketSize: number,
 
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentChart: (newCurrentChart: string) => void;
@@ -113,24 +116,31 @@ class ChartWrapper extends React.Component<Props, State> {
         const partialChartProps: any = {
             chartId: this.state.chartId,
             width: this.state.width,
-            height: this.state.height,
+            chartType: this.props.chartType,
         }
+        let chartProps: any = {};
 
         switch (this.props.chartType) {
 
-            case model.ChartType.SUNBURST_CHART:
-                const chartProps = {
+            case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
+                console.log("create activity")
+                chartProps = {
                     ...partialChartProps,
-                    chartType: model.ChartType,
+                }
+                return React.createElement(BarChartActivityHistogram, chartProps);
+
+
+            case model.ChartType.SUNBURST_CHART:
+                console.log("create sunburst")
+                chartProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
                 }
                 return React.createElement(SunburstChart, chartProps);
         }
     }
 
     isComponentLoading(): boolean {
-        console.log(this.state.chartId);
-        console.log(this.props.resultLoading[this.state.chartId]);
-        console.log(this.props.chartData[this.state.chartId]);
 
         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
             return true;
@@ -169,6 +179,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentBucketSize: state.currentBucketSize,
 
 });
 

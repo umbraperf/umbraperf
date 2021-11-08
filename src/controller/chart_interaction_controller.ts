@@ -77,33 +77,38 @@ export function requestNewChartData(props: ChartWrapperAppstateProps, prevProps:
 
     const newChartDataNeededGeneral = () => {
         if (props.events &&
-            props.pipelines &&
-            props.operators &&
             (props.currentEvent !== prevProps.currentEvent ||
-                props.currentView !== prevProps.currentView ||
-                !_.isEqual(props.pipelines, prevProps.pipelines) ||
-                !_.isEqual(props.operators, prevProps.operators) ||
-                !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) {
+                props.currentView !== prevProps.currentView)) {
             return true;
         } else {
             return false;
         }
     }
 
-    let newChartDataNeededChart = false;
-    switch (chartType) {
-
-        case model.ChartType.SUNBURST_CHART:
-            const newChartDataNeededSunburst = () => {
-                return true;
-            }
-            newChartDataNeededChart = newChartDataNeededSunburst();
-            break;
-
-    }
-
-    if (newChartDataNeededGeneral() && newChartDataNeededChart) {
+    if (newChartDataNeededGeneral()) {
         Controller.requestChartData(props.appContext.controller, chartId, chartType);
+    } else {
+        const newChartDataNeededChart: () => boolean = () => {
+            switch (chartType) {
+                case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
+                    return (props.currentBucketSize !== prevProps.currentBucketSize) ?
+                        true :
+                        false;
+                case model.ChartType.SUNBURST_CHART:
+                    return (props.pipelines &&
+                        props.operators &&
+                        (!_.isEqual(props.pipelines, prevProps.pipelines) ||
+                            !_.isEqual(props.operators, prevProps.operators) ||
+                            !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                        true :
+                        false;
+            }
+            return false;
+        };
+
+        if (newChartDataNeededChart()) {
+            Controller.requestChartData(props.appContext.controller, chartId, chartType);
+        }
     }
 
 }

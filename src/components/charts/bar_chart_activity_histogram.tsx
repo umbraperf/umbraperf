@@ -1,25 +1,28 @@
 import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
-import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "../../../node_modules/react-vega/src";
-import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import IconButton from "@material-ui/core/IconButton";
 import _ from 'lodash';
 
-interface Props {
+interface OwnProps {
+    chartType: model.ChartType;
+    chartId: number;
+    width: number;
+}
+
+interface AppstateProps {
     appContext: Context.IAppContext;
     resultLoading: model.ResultLoading;
     csvParsingFinished: boolean;
     currentEvent: string;
     events: Array<string> | undefined;
     chartIdCounter: number;
-    chartData: model.ChartDataKeyValue,
+    chartData: model.IBarChartActivityHistogramData,
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
     currentBucketSize: number;
@@ -29,126 +32,28 @@ interface Props {
 
 }
 
-interface State {
-    chartId: number,
-    width: number,
-}
+type Props = OwnProps & AppstateProps;
 
 
-class BarChartActivityHistogram extends React.Component<Props, State> {
-
-    elementWrapper = createRef<HTMLDivElement>();
+class BarChartActivityHistogram extends React.Component<Props, {}> {
 
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            chartId: this.props.chartIdCounter,
-            width: 0,
-        };
-        
-        this.props.setChartIdCounter((this.state.chartId) + 1);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
         this.resetCurrentSelectionTuples = this.resetCurrentSelectionTuples.bind(this);
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-
-        if(this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]){
-            return true;
-        }
-        if(!_.isEqual(this.props.resultLoading, nextProps.resultLoading)){
-            return false;
-        }
-        return true;
-    }
-
-    componentDidUpdate(prevProps: Props): void {
-
-        this.requestNewChartData(this.props, prevProps);
-
-    }
-
-    requestNewChartData(props: Props, prevProps: Props): void {
-        if (this.newChartDataNeeded(props, prevProps)) {
-            Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
-        }
-    }
-
-    newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (this.props.events &&
-            (props.currentEvent !== prevProps.currentEvent
-                || props.currentView !== prevProps.currentView
-                || props.currentBucketSize !== prevProps.currentBucketSize)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    componentDidMount() {
-
-        this.setState((state, props) => ({
-            ...state,
-            width: this.elementWrapper.current!.offsetWidth,
-        }));
-
-        if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM);
-
-            addEventListener('resize', (event) => {
-                this.resizeListener();
-            });
-        }
-    }
-
-    resizeListener() {
-        if (!this.elementWrapper) return;
-
-        const child = this.elementWrapper.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            this.resetCurrentSelectionTuples();
-
-            child.style.display = 'block';
-        }
-
-
-    }
-
-    isComponentLoading(): boolean {
-        if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public render() {
 
-        if (!this.props.csvParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
+        return <div >
+            {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
+            <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+        </div>
 
-        return <div ref={this.elementWrapper} style={{ position: "relative", display: "flex", height: "100%" }}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div className={"vegaContainer"} >
-                    {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={this.resetCurrentSelectionTuples} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
-                    <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
-                </div>
-            }
-        </div>;
     }
 
     resetCurrentSelectionTuples() {
@@ -177,8 +82,8 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const timeBucketsArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).timeBucket;
-        const occurrencesArray = ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.IBarChartActivityHistogramData).occurrences;
+        const timeBucketsArray = this.props.chartData.timeBucket;
+        const occurrencesArray = this.props.chartData.occurrences;
 
         const data = {
 
@@ -207,7 +112,7 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.state.width - 60,
+            width: this.props.width - 60,
             height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: true },
@@ -450,29 +355,19 @@ class BarChartActivityHistogram extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
+const mapStateToProps = (state: model.AppState, ownProps: OwnProps) => ({
     resultLoading: state.resultLoading,
     csvParsingFinished: state.csvParsingFinished,
     currentEvent: state.currentEvent,
     events: state.events,
     chartIdCounter: state.chartIdCounter,
-    chartData: state.chartData,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentTimePositionSelectionTuple: state.currentTimePositionSelectionTuple,
     currentBucketSize: state.currentBucketSize,
     currentView: state.currentView,
-});
-
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
-        data: newChartIdCounter,
-    }),
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.IBarChartActivityHistogramData,
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(BarChartActivityHistogram));
+
+export default connect(mapStateToProps, undefined)(Context.withAppContext(BarChartActivityHistogram));

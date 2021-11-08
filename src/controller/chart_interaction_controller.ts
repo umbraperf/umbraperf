@@ -75,6 +75,8 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
 
+    console.log("rerender needed " + chartType);
+
     const newChartDataNeededGeneral = () => {
         if (props.events &&
             (props.currentEvent !== prevProps.currentEvent ||
@@ -109,8 +111,8 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
                         !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple)) ?
                         true :
                         false;
-                case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
-                case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+                case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
                     return (props.operators &&
                         (props.currentBucketSize !== prevProps.currentBucketSize ||
                             !_.isEqual(props.operators, prevProps.operators) ||

@@ -112,18 +112,17 @@ fn set_serde_dict(serde_dict: SerdeDict) {
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
-    let now = instant::Instant::now();
-
     clear_cache();
 
+    let now = instant::Instant::now();
+    
     let serde_reader = SerdeDict::read_dict(file_size as u64);
     set_serde_dict(serde_reader);
-
     let batches = record_batch_util::init_record_batches(file_size);
 
     let elapsed = now.elapsed();
-    print_to_js_with_obj(&format!("{:?}", elapsed).into());
 
+    print_to_js_with_obj(&format!("{:?}", elapsed).into());
     let record_batch = record_batch_util::convert(batches);
     set_record_batches(record_batch);
 

@@ -21,11 +21,13 @@ pub struct SerdeDict {
     pub dict: HashMap<String, HashMap<u64, String>>,
 }
 
+static DICT_FILE_NAME: &str = "dictionary_compression.json";
+
 impl SerdeDict {
 
     pub fn read_dict(length: u64) -> Self {
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
-        let reader = zip.by_name("dictionary_compression.json").unwrap();
+        let reader = zip.by_name(DICT_FILE_NAME).unwrap();
         let reader = BufReader::new(reader);
         let d: Dictionary = serde_json::from_reader(reader).unwrap();
 

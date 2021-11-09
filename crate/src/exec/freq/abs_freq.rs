@@ -29,7 +29,6 @@ pub fn abs_freq_of_event(
 
     let unique_event = find_unique_string(batch, column_for_event);
 
-    // Vector of unique strings
     let vec_event = unique_event
         .column(0)
         .as_any()

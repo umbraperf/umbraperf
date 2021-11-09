@@ -10,10 +10,10 @@ use std::{collections::HashSet, sync::Arc};
 use crate::utils::record_batch_util::create_record_batch;
 use crate::utils::record_batch_util::{concat_record_batches, create_new_record_batch};
 
-pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBatch {
+pub fn select_columns(batch: RecordBatch, columns_to_select: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();
 
-    for index in &column_index {
+    for index in &columns_to_select {
         let array = batch.column(*index).to_owned();
 
         vec.push(array);
@@ -22,7 +22,7 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
     let mut fields = Vec::new();
     let old_schema = batch.schema();
 
-    for index in &column_index {
+    for index in &columns_to_select {
         fields.push(old_schema.field(*index).to_owned());
     }
 
@@ -31,7 +31,7 @@ pub fn select_columns(batch: RecordBatch, column_index: Vec<usize>) -> RecordBat
     create_record_batch(Arc::new(new_schema), vec)
 }
 
-pub fn rename(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
+pub fn rename_column(record_batch: &RecordBatch, from: &str, to: &str) -> RecordBatch {
     let schema = record_batch.schema();
     let fields = schema.fields();
 
@@ -120,13 +120,9 @@ pub fn add_column(batch: &RecordBatch, string_to_add: &str, name_of_column: &str
 
     let stri_arr = StringArray::from(vec_str);
 
-    let result_field = Field::new(name_of_column, DataType::Utf8, false);
+    let new_batch = create_new_record_batch(vec![name_of_column], vec![DataType::Utf8], vec![Arc::new(stri_arr)]);
 
-    let schema = Schema::new(vec![result_field]);
-
-    let extra_batch = RecordBatch::try_new(Arc::new(schema), vec![Arc::new(stri_arr)]).unwrap();
-
-    concat_record_batches(vec![batch.to_owned(), extra_batch])
+    concat_record_batches(vec![batch.to_owned(), new_batch])
 }
 
 pub fn add_column_float(

@@ -64,6 +64,10 @@
     cursor: default;
 }
 
+.dagreUnavailableNode{
+    cursor: not-allowed;
+}
+
 .dagreInactiveNode text{
     fill: black;
 }

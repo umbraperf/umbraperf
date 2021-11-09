@@ -1,11 +1,14 @@
-use crate::{bindings::notify_js_query_result, get_serde_dict, utils::print_to_cons::print_to_js_with_obj, web_file::web_file_chunkreader::WebFileChunkReader};
+use crate::{
+    bindings::notify_js_query_result, get_serde_dict,
+    web_file::web_file_chunkreader::WebFileChunkReader,
+};
 use arrow::{
     array::{Array, ArrayRef, Int64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
 use parquet::{
-    arrow::{ArrowReader, ParquetFileArrowReader},
+    arrow::{arrow_reader::ParquetRecordBatchReader, ArrowReader, ParquetFileArrowReader},
     file::serialized_reader::SerializedFileReader,
 };
 use std::{io::Cursor, sync::Arc};
@@ -14,21 +17,22 @@ pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordB
     return RecordBatch::try_new(schema, columns).unwrap();
 }
 
-// Init record batch of JavaScript
-pub fn init_record_batches(file_size: i32) -> Vec<RecordBatch> {
+pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let webfile_chunkreader = WebFileChunkReader::new(file_size as i32);
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
     let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
-    let mut record_reader = reader
+    let record_reader = reader
         .get_record_reader_by_columns(vec![0, 1, 2, 3, 10].into_iter(), 1024 * 8)
         .unwrap();
+    record_reader
+}
 
+pub fn init_record_batches(file_size: i32) -> Vec<RecordBatch> {
+    let mut record_reader = init_reader(file_size);
     let mut vec = Vec::new();
-
     while let Some(record) = record_reader.next() {
         vec.push(record.unwrap());
     }
-
     vec
 }
 
@@ -75,7 +79,6 @@ pub fn create_new_record_batch(
 // Converts Vec<RecordBatch> to one whole RecordBatch
 pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     let number_columns = batches[0].num_columns() as i32;
-
     let mut to_concat_array = Vec::new();
 
     for i in 0..number_columns {
@@ -87,18 +90,16 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     }
 
     let mut columns = Vec::new();
-
     for array in to_concat_array {
         let concat_array = arrow::compute::kernels::concat::concat(&array);
         columns.push(concat_array.unwrap());
     }
 
     let batch = create_record_batch(batches[0].schema(), columns);
-
-    convert_to_str(batch)
+    mapping_with_dict(batch)
 }
 
-pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
+pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     let serde = get_serde_dict().unwrap();
 
     let operator_col = batch
@@ -165,7 +166,6 @@ pub fn convert_to_str(batch: RecordBatch) -> RecordBatch {
     )
 }
 
-// Send one record batch to JavaScript
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let mut buff = Cursor::new(vec![]);
 

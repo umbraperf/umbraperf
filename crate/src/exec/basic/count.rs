@@ -87,7 +87,6 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     }
 
     let builder = result_builder.finish();
-
     let batch = create_new_record_batch(
         vec![batch.schema().field(column_to_groupby_over).name(), "count"],
         vec![DataType::Utf8, DataType::Float64],

@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
-use arrow::{array::{Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema, UInt64Type}, record_batch::RecordBatch};
+use arrow::{array::{Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Schema, UInt64Type}, record_batch::RecordBatch};
 
 use crate::{
     exec::basic::basic::{find_unique_string, sort_batch},
@@ -101,15 +101,6 @@ pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveAr
         .column(column)
         .as_any()
         .downcast_ref::<Float64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_int_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Int64Array>()
         .unwrap();
     return column;
 }

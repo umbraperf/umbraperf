@@ -72,7 +72,7 @@ class BarChart extends React.Component<Props, {}> {
             width: this.props.width - 50,
             height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            resize: true,
+            resize: false,
             autosize: 'fit',
             title: {
                 text: "Absolute Occurence of Operators per Event",

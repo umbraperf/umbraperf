@@ -146,16 +146,6 @@ class ChartWrapper extends React.Component<Props, State> {
                 //  renderedDagrePlan: undefined,
             }));
 
-            // let resizingTimeoutId = undefined;
-            // clearTimeout(resizingTimeoutId);
-            // resizingTimeoutId = setTimeout(() => {
-            //     this.setState((state, props) => ({
-            //         ...state,
-            //         width: newWidth,
-            //         //  renderedDagrePlan: undefined,
-            //     }));
-            // }, 500);
-
             this.setState((state, props) => ({
                 ...state,
                 width: newWidth,

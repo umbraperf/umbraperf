@@ -202,7 +202,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeClass = (nodeId: string) => {
-            if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
+            if (nodeId === "root") {
+                return `${styles.dagreNode} ${styles.dagreRootNode}`;
+            } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
                 return `${styles.dagreNode} ${styles.dagreActiveNode}`;
             } else {
                 return `${styles.dagreNode} ${styles.dagreActiveNode}`;
@@ -210,19 +212,23 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeColor = (nodeId: string) => {
-            if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
+            if (nodeId === "root") {
+                return this.props.appContext.accentBlack;
+            } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
                 return this.props.appContext.secondaryColor;
             } else {
                 return this.props.appContext.tertiaryColor;
             }
         }
 
-        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: `${styles.dagreNode} ${styles.dagreRootNode}`, config: { style: `fill: ${this.props.appContext.accentBlack}` } })
+        const nodeCornerRadius = "rx: 12; ry: 12";
+
+        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: nodeClass(root.id!), config: { style: `fill: ${nodeColor(root.id!)}; ${nodeCornerRadius}` } })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}` } });
+            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}; ${nodeCornerRadius}` } });
             dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {

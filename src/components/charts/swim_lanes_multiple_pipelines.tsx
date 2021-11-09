@@ -48,6 +48,8 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     handleVegaView(view: View) {
         //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max
+        console.log(view);
+        // view.width = this.props.width;
         if (this.props.absoluteValues) {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);

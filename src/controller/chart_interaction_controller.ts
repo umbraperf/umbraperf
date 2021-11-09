@@ -75,7 +75,7 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
 
-    const newChartDataNeededGeneral = () => {
+    const chartDataInputChangedGeneral = () => {
         if (props.events &&
             (props.currentEvent !== prevProps.currentEvent ||
                 props.currentView !== prevProps.currentView)) {
@@ -85,10 +85,10 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
         }
     }
 
-    if (newChartDataNeededGeneral()) {
+    if (chartDataInputChangedGeneral()) {
         return true;
     } else {
-        const newChartDataNeededChart: () => boolean = () => {
+        const chartDataInputChangedChart: () => boolean = () => {
             switch (chartType) {
                 case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
                     return (props.currentBucketSize !== prevProps.currentBucketSize) ?
@@ -140,7 +140,7 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
             return false;
         };
 
-        if (newChartDataNeededChart()) {
+        if (chartDataInputChangedChart()) {
             //Controller.requestChartData(props.appContext.controller, chartId, chartType);
             return true;
         }
@@ -148,21 +148,3 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
     return false;
 }
 
-export function chartDataRequestReady(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
-    console.log("new data request")
-    switch (chartType) {
-        case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-            return (props.events) ?
-                true :
-                false;
-        case model.ChartType.SUNBURST_CHART:
-            return (props.events && props.pipelines && props.operators) ?
-                true :
-                false;
-        case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-            return (props.events && props.operators) ?
-                true :
-                false;
-    }
-    return false;
-}

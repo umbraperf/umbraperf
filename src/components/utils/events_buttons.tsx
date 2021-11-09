@@ -35,7 +35,7 @@ function EventsButtons(props: Props) {
 
     const handleEventButtonClick = (event: string) => {
         if (props.multipleEvents) {
-            const newMultipleEventsTuple: [string, string] = [props.currentMultipleEvent[1], event];
+            const newMultipleEventsTuple: [string, string] = [event, props.currentMultipleEvent[0]];
             props.setCurrentMultipleEvent(newMultipleEventsTuple);
             props.setCurrentEvent(event);
         } else {
@@ -58,9 +58,9 @@ function EventsButtons(props: Props) {
 
     const buttonColor = (event: string) => {
         if (props.multipleEvents) {
-            if (props.currentMultipleEvent[1] === event) {
+            if (props.currentMultipleEvent[0] === event) {
                 return "secondary";
-            } else if (props.currentMultipleEvent[0] === event) {
+            } else if (props.currentMultipleEvent[1] === event) {
                 return "primary";
             } else {
                 return "default";

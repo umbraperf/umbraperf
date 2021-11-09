@@ -187,7 +187,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFont: model.chartConfiguration.axisLabelFont,
                 },
-                ,
                 {
                     orient: "left",
                     scale: "yNeg",

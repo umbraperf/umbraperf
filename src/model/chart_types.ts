@@ -23,6 +23,8 @@ export enum ViewType {
 }
 
 export interface IParcialChartProps {
+    //key prop forces react to rerender child on change -> use for width
+    key: number;
     chartId: number,
     width: number,
     chartType: ChartType,

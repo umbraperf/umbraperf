@@ -15,12 +15,17 @@ interface AppstateProps {
     chartData: model.ISwimlanesCombinedData,
 }
 
-type Props = AppstateProps & model.ISwimlanesProps
+type Props = AppstateProps & model.ISwimlanesProps;
+
 
 class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
+        this.state={
+            ...this.state,
+            width: this.props.width
+        };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }
@@ -93,7 +98,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
             width: this.props.width - 60,
             height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
-            autosize: { type: "fit", resize: true },
+            autosize: { type: "fit", resize: false },
 
             title: {
                 text: `Swim Lanes for multiple Events (variable Pipelines) with ${this.props.absoluteValues ? "Absolute" : "Relative"} Frequencies`,

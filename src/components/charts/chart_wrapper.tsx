@@ -140,15 +140,21 @@ class ChartWrapper extends React.Component<Props, State> {
 
             child.style.display = 'none';
 
-            let resizingTimeoutId = undefined;
-            clearTimeout(resizingTimeoutId);
-            resizingTimeoutId = setTimeout(() => {
-                this.setState((state, props) => ({
-                    ...state,
-                    width: newWidth,
-                    //  renderedDagrePlan: undefined,
-                }));
-            }, 500);
+            this.setState((state, props) => ({
+                ...state,
+                width: newWidth,
+                //  renderedDagrePlan: undefined,
+            }));
+
+            // let resizingTimeoutId = undefined;
+            // clearTimeout(resizingTimeoutId);
+            // resizingTimeoutId = setTimeout(() => {
+            //     this.setState((state, props) => ({
+            //         ...state,
+            //         width: newWidth,
+            //         //  renderedDagrePlan: undefined,
+            //     }));
+            // }, 500);
 
             this.setState((state, props) => ({
                 ...state,
@@ -163,6 +169,7 @@ class ChartWrapper extends React.Component<Props, State> {
     createChildChart() {
 
         const partialChartProps: model.IParcialChartProps = {
+            key: this.state.width,
             chartId: this.state.chartId,
             width: this.state.width,
             chartType: this.props.chartType,
@@ -240,11 +247,10 @@ class ChartWrapper extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "flex", height: "100%" }}>
+        return <div ref={this.elementWrapper} style={{ display: "block", height: "100%", width:"100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
-                    {console.log("width: " + this.state.width)}
                     {this.createChildChart()}
                 </div>
             }

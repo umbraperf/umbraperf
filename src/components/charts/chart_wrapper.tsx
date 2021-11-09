@@ -49,6 +49,8 @@ interface State {
     height: number,
 }
 
+let globalInputDataChanged: boolean;
+
 class ChartWrapper extends React.Component<Props, State> {
 
     elementWrapper = createRef<HTMLDivElement>();
@@ -61,6 +63,7 @@ class ChartWrapper extends React.Component<Props, State> {
             height: 0,
         };
         this.props.setChartIdCounter((this.state.chartId) + 1);
+        globalInputDataChanged = false;
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -70,29 +73,20 @@ class ChartWrapper extends React.Component<Props, State> {
             return true;
         }
 
-        // //rerender on changed loading state, no rerender on different chart changes loading state
-        // if(this.props.resultLoading[this.state.chartId]){
-
-        // }
+        //rerender on changed loading state, no rerender on different chart changes loading state
         if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
             return true;
         } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;
         }
 
-        //TODO render conditions
-
-        // //rerender only on affected input data changed and if they are available
-        // if(Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)){
-        //     return true;
-        // }
-
-        // if(!_.isEqual(this.props.chartData, nextProps.chartData)){
-        //     return true;
-        // }
-
+        //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
         if (Controller.chartRerenderNeeded(this.props, nextProps, this.props.chartType)) {
+            globalInputDataChanged = true;
             return true;
+        } else {
+            globalInputDataChanged = false;
+            return false;
         }
 
         //do not rerender in all other cases 
@@ -120,7 +114,8 @@ class ChartWrapper extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
-        if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
+        // if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
+        if (globalInputDataChanged) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }
@@ -237,7 +232,7 @@ class ChartWrapper extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "block", height: "100%", width:"100%" }}>
+        return <div ref={this.elementWrapper} style={{ display: "block", height: "100%", width: "100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>

@@ -18,6 +18,7 @@ interface Props {
     queryPlan: object | undefined;
     currentView: model.ViewType;
     currentOperator: Array<string> | "All";
+    operators: Array<string> | undefined;
     setCurrentChart: (newCurrentChart: string) => void;
 }
 
@@ -62,24 +63,18 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
-        if (this.props.queryPlan !== prevProps.queryPlan ||
-            this.props.currentView !== prevProps.currentView ||
-            this.state.width !== prevState.width ||
-            !_.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
+        if (this.props.operators &&
+            (this.props.queryPlan !== prevProps.queryPlan ||
+                this.props.currentView !== prevProps.currentView ||
+                this.state.width !== prevState.width ||
+                !_.isEqual(this.props.operators, prevProps.operators) ||
+                !_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
             this.setState((state, props) => ({
                 ...state,
                 renderedDagrePlan: undefined,
             }));
             this.createQueryPlan();
         }
-
-        // if (this.state.width !== prevState.width && prevState.width !== 0) {
-        //     this.setState((state, props) => ({
-        //         ...state,
-        //         renderedDagrePlan: undefined,
-        //     }));
-        //     this.createQueryPlan();
-        // }
     }
 
 
@@ -120,19 +115,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 }));
             }, 500);
 
-            // this.setState((state, props) => ({
-            //     ...state,
-            //     width: newWidth,
-            //     //  renderedDagrePlan: undefined,
-            // }));
-
             child.style.display = 'block';
         }
 
     }
 
     isComponentLoading(): boolean {
-        if (!this.props.queryPlan) {
+        if (!this.props.queryPlan || !this.props.operators) {
             return true;
         } else {
             return false;
@@ -183,7 +172,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             nodes: dagreData.nodes,
             edges: dagreData.links,
             handleNodeClick: this.handleNodeClick,
-        });
+        } as any);
 
         return dagreGraph;
     }
@@ -191,7 +180,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
     handleNodeClick(event: { d3norde: object, original: DagreNode }) {
         //TODO add pipeline, make pipeline in function in controller obliq
-        Controller.handleOperatorSelection(event.original.id);
+        if(this.props.operators!.includes(event.original.id)){
+            //Only trigger operator selection if operator is in measurement data
+            Controller.handleOperatorSelection(event.original.id);
+        }
     }
 
     createDagreNodesLinks(root: Partial<DagreNode> & { child: object }) {
@@ -204,16 +196,22 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeClass = (nodeId: string) => {
             if (nodeId === "root") {
                 return `${styles.dagreNode} ${styles.dagreRootNode}`;
+            } else if (!this.props.operators!.includes(nodeId)) {
+                //node does not appear in measurement data
+                return `${styles.dagreNode} ${styles.dagreUnavailableNode}`;
             } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
                 return `${styles.dagreNode} ${styles.dagreActiveNode}`;
             } else {
-                return `${styles.dagreNode} ${styles.dagreActiveNode}`;
+                return `${styles.dagreNode} ${styles.dagreInactiveNode}`;
             }
         }
 
         const nodeColor = (nodeId: string) => {
             if (nodeId === "root") {
                 return this.props.appContext.accentBlack;
+            } else if (!this.props.operators!.includes(nodeId)) {
+                //node does not appear in measurement data
+                return this.props.appContext.tertiaryColor;
             } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
                 return this.props.appContext.secondaryColor;
             } else {
@@ -264,6 +262,7 @@ const mapStateToProps = (state: model.AppState) => ({
     queryPlan: state.queryPlan,
     currentView: state.currentView,
     currentOperator: state.currentOperator,
+    operators: state.operators,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

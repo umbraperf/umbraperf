@@ -1,7 +1,6 @@
 use std::{io::Read};
 
 use super::streambuf::WebFileReader;
-use global::Global;
 
 pub struct ParquetReader {
     offset: u64,

@@ -244,6 +244,7 @@ class ChartWrapper extends React.Component<Props, State> {
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"vegaContainer"}>
+                    {console.log("width: " + this.state.width)}
                     {this.createChildChart()}
                 </div>
             }

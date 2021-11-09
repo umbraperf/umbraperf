@@ -125,11 +125,11 @@ class ChartWrapper extends React.Component<Props, State> {
         }
     }
 
-    // componentWillUnmount() {
-    //     removeEventListener('resize', (event) => {
-    //         this.resizeListener();
-    //     });
-    // }
+    componentWillUnmount() {
+        removeEventListener('resize', (event) => {
+            this.resizeListener();
+        });
+    }
 
     resizeListener() {
         if (!this.elementWrapper) return;

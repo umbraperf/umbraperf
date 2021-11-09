@@ -237,12 +237,12 @@ pub fn abs_freq_with_pipelines_with_double_events(
 
     create_new_record_batch(
         vec![
-            "bucket",
-            "operator",
-            "absfreq",
             "bucketNEG",
             "operatorNEG",
             "absfreqNEG",
+            "bucket",
+            "operator",
+            "absfreq",
         ],
         vec![
             DataType::Float64,

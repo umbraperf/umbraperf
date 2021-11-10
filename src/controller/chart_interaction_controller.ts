@@ -119,7 +119,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                 case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
                 case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
                     return ((nextProps.currentBucketSize !== props.currentBucketSize ||
-                        !_.isEqual(nextProps.currentMultipleEvent, props.currentMultipleEvent) ||
+                        // !_.isEqual(nextProps.currentMultipleEvent, props.currentMultipleEvent) ||
                         !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
                         !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
                         !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple))) ?

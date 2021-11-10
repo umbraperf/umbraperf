@@ -88,6 +88,8 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
     }
 
     createVisualizationSpec() {
+        console.log("vega spec histogram");
+
         const visData = this.createVisualizationData();
 
         const xTicks = () => {

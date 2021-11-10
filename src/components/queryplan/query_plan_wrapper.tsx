@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 
 
-interface Props {
+export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
     csvParsingFinished: boolean;
     queryPlan: object | undefined;
@@ -46,11 +46,11 @@ export type DagreEdge = {
 }
 
 
-class QueryPlanWrapper extends React.Component<Props, State> {
+class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, State> {
 
     graphContainer = createRef<HTMLDivElement>();
 
-    constructor(props: Props) {
+    constructor(props: QueryPlanWrapperAppstateProps) {
         super(props);
         this.state = {
             height: 0,
@@ -63,13 +63,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         this.handleNodeClick = this.handleNodeClick.bind(this);
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-        if (this.props.operators &&
-            (this.props.queryPlan !== prevProps.queryPlan ||
-                this.props.currentView !== prevProps.currentView ||
-                this.state.width !== prevState.width ||
-                !_.isEqual(this.props.operators, prevProps.operators) ||
-                !_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
+    componentDidUpdate(prevProps: QueryPlanWrapperAppstateProps, prevState: State): void {
+        if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
             this.setState((state, props) => ({
                 ...state,
                 renderedDagrePlan: undefined,

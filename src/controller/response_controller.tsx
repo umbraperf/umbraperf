@@ -22,7 +22,6 @@ export function storeQueryPlan(queryPlanJson: object) {
             data: queryPlanJson,
         });
     }
-    console.log(store.getState().queryPlan);
 }
 
 export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {

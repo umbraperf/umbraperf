@@ -180,7 +180,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
     handleNodeClick(event: { d3norde: object, original: DagreNode }) {
         //TODO add pipeline, make pipeline in function in controller obliq
-        if(this.props.operators!.includes(event.original.id)){
+        if (this.props.operators!.includes(event.original.id)) {
             //Only trigger operator selection if operator is in measurement data
             Controller.handleOperatorSelection(event.original.id);
         }

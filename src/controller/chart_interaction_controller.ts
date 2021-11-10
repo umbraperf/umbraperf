@@ -73,17 +73,17 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 
 }
 
-export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps: ChartWrapperAppstateProps, chartType: model.ChartType/* , chartId: number */): boolean {
+export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
     const chartDataInputChangedGeneral = () => {
-        if (props.events &&
-            props.pipelines &&
-            props.operators &&
-            props.chartIdCounter === prevProps.chartIdCounter &&
-            (props.currentEvent !== prevProps.currentEvent ||
-                props.currentView !== prevProps.currentView ||
-                !_.isEqual(props.pipelines, prevProps.pipelines) ||
-                !_.isEqual(props.operators, prevProps.operators))) {
+        if (nextProps.events &&
+            nextProps.pipelines &&
+            nextProps.operators &&
+            // nextProps.chartIdCounter === props.chartIdCounter &&
+            (nextProps.currentEvent !== props.currentEvent ||
+                nextProps.currentView !== props.currentView ||
+                !_.isEqual(nextProps.pipelines, props.pipelines) ||
+                !_.isEqual(nextProps.operators, props.operators))) {
             return true;
         } else {
             return false;
@@ -96,37 +96,37 @@ export function chartRerenderNeeded(props: ChartWrapperAppstateProps, prevProps:
         const chartDataInputChangedChart: () => boolean = () => {
             switch (chartType) {
                 case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-                    return (props.currentBucketSize !== prevProps.currentBucketSize) ?
+                    return (nextProps.currentBucketSize !== props.currentBucketSize) ?
                         true :
                         false;
                 case model.ChartType.SUNBURST_CHART:
-                    return (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple)) ?
+                    return (!_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                         true :
                         false;
                 case model.ChartType.BAR_CHART:
-                    return (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple)) ?
+                    return (!_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                         true :
                         false;
                 case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
                 case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                    return ((props.currentBucketSize !== prevProps.currentBucketSize ||
-                        !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
-                        !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                        !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                    return ((nextProps.currentBucketSize !== props.currentBucketSize ||
+                        !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                        !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
+                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple))) ?
                         true :
                         false;
                 case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
                 case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                    return ((props.currentBucketSize !== prevProps.currentBucketSize ||
-                        !_.isEqual(props.currentMultipleEvent, prevProps.currentMultipleEvent) ||
-                        !_.isEqual(props.currentOperator, prevProps.currentOperator) ||
-                        !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
-                        !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                    return ((nextProps.currentBucketSize !== props.currentBucketSize ||
+                        !_.isEqual(nextProps.currentMultipleEvent, props.currentMultipleEvent) ||
+                        !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                        !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
+                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple))) ?
                         true :
                         false;
                 case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
-                    return ((props.currentBucketSize !== prevProps.currentBucketSize ||
-                            !_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple))) ?
+                    return ((nextProps.currentBucketSize !== props.currentBucketSize ||
+                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple))) ?
                         true :
                         false;
             }

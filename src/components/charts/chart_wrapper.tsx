@@ -68,25 +68,24 @@ class ChartWrapper extends React.Component<Props, State> {
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
 
+        globalInputDataChanged = false;
+
         //rerender on changed size
         if (this.state.width !== nextState.width || this.state.height !== nextState.height) {
             return true;
         }
 
         //rerender on changed loading state, no rerender on different chart changes loading state
-        if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
+        if (this.props.resultLoading[this.state.chartId] === true && nextProps.resultLoading[this.state.chartId] === false) {
             return true;
         } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;
         }
 
         //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
-        if (Controller.chartRerenderNeeded(this.props, nextProps, this.props.chartType)) {
+        if (Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)) {
             globalInputDataChanged = true;
             return true;
-        } else {
-            globalInputDataChanged = false;
-            return false;
         }
 
         //do not rerender in all other cases 
@@ -116,6 +115,7 @@ class ChartWrapper extends React.Component<Props, State> {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
         // if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
         if (globalInputDataChanged) {
+            console.log("here");
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }

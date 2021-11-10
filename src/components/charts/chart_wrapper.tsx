@@ -76,7 +76,7 @@ class ChartWrapper extends React.Component<Props, State> {
         }
 
         //rerender on changed loading state, no rerender on different chart changes loading state
-        if (this.props.resultLoading[this.state.chartId] === true && nextProps.resultLoading[this.state.chartId] === false) {
+        if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
             return true;
         } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;

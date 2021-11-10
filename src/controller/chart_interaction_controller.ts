@@ -1,5 +1,4 @@
 import * as model from "../model";
-import * as Controller from './';
 import { store } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import { QueryPlanWrapperAppstateProps } from '../components/queryplan/query_plan_wrapper';
@@ -74,6 +73,7 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 }
 
 export function resetTimeBucketSelection() {
+    console.log("here width change");
     handleTimeBucketSelection([-1, -1], [-1, -1]);
 }
 

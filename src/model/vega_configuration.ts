@@ -33,7 +33,7 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => object | Array<string>;
+    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => Array<string>;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,

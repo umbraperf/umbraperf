@@ -193,6 +193,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             links: new Array<DagreEdge>()
         }
 
+        const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
+
         const nodeClass = (nodeId: string) => {
             if (nodeId === "root") {
                 return `${styles.dagreNode} ${styles.dagreRootNode}`;
@@ -213,7 +215,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 //node does not appear in measurement data
                 return this.props.appContext.tertiaryColor;
             } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
-                return this.props.appContext.secondaryColor;
+                return nodeColorScale[this.props.operators!.indexOf(nodeId)];
             } else {
                 return this.props.appContext.tertiaryColor;
             }

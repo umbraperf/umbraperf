@@ -145,7 +145,6 @@ class SunburstChart extends React.Component<Props, {}> {
     }
 
     createVisualizationSpec() {
-        console.log("vega spec sunburst");
         const visData = this.createVisualizationData();
 
         const pipelinesLegend = () => {

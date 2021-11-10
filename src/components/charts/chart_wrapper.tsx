@@ -115,7 +115,6 @@ class ChartWrapper extends React.Component<Props, State> {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
         // if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
         if (globalInputDataChanged) {
-            console.log("here");
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }

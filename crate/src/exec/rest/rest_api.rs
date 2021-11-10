@@ -1,12 +1,4 @@
-use crate::{
-    exec::basic::{basic, count, filter, kpis},
-    get_query_from_cache, insert_query_to_cache,
-    record_batch_util::send_record_batch_to_js,
-    utils::{
-        print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches,
-        string_util::split_at_double_and,
-    },
-};
+use crate::{exec::basic::{basic, count, filter, kpis}, get_query_from_cache, insert_query_to_cache, record_batch_util::send_record_batch_to_js, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_and, split_at_comma, split_at_double_and, split_at_to}}};
 use arrow::record_batch::RecordBatch;
 use std::usize;
 
@@ -36,7 +28,7 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
         let filter_str = split[1].replace("\"", "");
 
         if filter_str.contains(&"from_to") {
-            let filter_strs = filter_str.split_terminator("from_to").collect::<Vec<&str>>();
+            let filter_strs = split_at_to(&filter_str);
             let from = filter_strs[0].parse::<f64>().unwrap();
             let to = filter_strs[1].parse::<f64>().unwrap();
 
@@ -52,7 +44,7 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
                 filter_vec,
             );
         } else {
-            let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
+            let filter_strs = split_at_comma(&filter_str);
             filter_vec.remove(0);
             return eval_filters(
                 filter::filter_with(
@@ -68,7 +60,7 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
 
 fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
     for op in op_vec {
-        let split = op.split_terminator("?").collect::<Vec<&str>>();
+        let split = split_at_and(op);
         let operator = split[0];
         let params = split[1];
 

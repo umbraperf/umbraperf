@@ -70,21 +70,21 @@ class ChartWrapper extends React.Component<Props, State> {
 
         globalInputDataChanged = false;
 
-        //rerender on changed size
-        if (this.state.width !== nextState.width || this.state.height !== nextState.height) {
+        //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
+        if (Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)) {
+            globalInputDataChanged = true;
             return true;
         }
 
-        //rerender on changed loading state, no rerender on different chart changes loading state
+        //rerender on changed loading state, no rerender on different chart changes loading state!
         if (this.props.resultLoading[this.state.chartId] !== nextProps.resultLoading[this.state.chartId]) {
             return true;
         } else if (!_.isEqual(this.props.resultLoading, nextProps.resultLoading)) {
             return false;
         }
 
-        //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
-        if (Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)) {
-            globalInputDataChanged = true;
+        //rerender on changed size
+        if (this.state.width !== nextState.width || this.state.height !== nextState.height) {
             return true;
         }
 

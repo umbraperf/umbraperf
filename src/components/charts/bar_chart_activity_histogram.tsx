@@ -29,10 +29,6 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
     }
 
-    componentDidUpdate(prevProps: Props){
-        console.log("update bar chart histogram: " + this.props.width)
-    }
-
     componentDidMount(){
         Controller.resetTimeBucketSelection();
     }

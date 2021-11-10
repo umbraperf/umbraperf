@@ -71,7 +71,10 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
         data: selectedPosition,
     });
+}
 
+export function resetTimeBucketSelection() {
+    handleTimeBucketSelection([-1, -1], [-1, -1]);
 }
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {

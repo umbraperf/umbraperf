@@ -60,6 +60,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             renderDagrePlan: true,
         };
 
+        this.handleNodeClick = this.handleNodeClick.bind(this);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {

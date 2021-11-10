@@ -99,7 +99,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     resizeListener() {
         if (!this.graphContainer) return;
 
-        console.log(this.graphContainer)
         const child = this.graphContainer.current;
         if (child) {
             const newWidth = child.offsetWidth;

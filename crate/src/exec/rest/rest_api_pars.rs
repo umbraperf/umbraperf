@@ -138,7 +138,7 @@ pub fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
 
 pub fn rename(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     let split = split_at_comma(params);
-    basic::rename(record_batch, split[0], split[1])
+    basic::rename_column(record_batch, split[0], split[1])
 }
 
 pub fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {

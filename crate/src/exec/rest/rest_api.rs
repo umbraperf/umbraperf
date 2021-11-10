@@ -27,7 +27,7 @@ pub fn find_name(name: &str, batch: &RecordBatch) -> usize {
 
 // FILTER:
 // /?operator="No operator" -- for String
-fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBatch {
+fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBatch {
     if filter_vec.len() == 0 {
         return record_batch;
     } else {
@@ -42,7 +42,7 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
 
             filter_vec.remove(0);
 
-            return eval_filter(
+            return eval_filters(
                 filter::filter_between(
                     find_name(column_str.as_str(), &record_batch),
                     from,
@@ -54,7 +54,7 @@ fn eval_filter(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordBa
         } else {
             let filter_strs = filter_str.split_terminator(",").collect::<Vec<&str>>();
             filter_vec.remove(0);
-            return eval_filter(
+            return eval_filters(
                 filter::filter_with(
                     find_name(column_str.as_str(), &record_batch),
                     filter_strs,
@@ -173,7 +173,7 @@ fn multiple_queries_concat(restful_string: &str) -> bool {
 
 fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
     let split_query = split_query(restful_string);
-    let record_batch = eval_filter(record_batch, split_query.0);
+    let record_batch = eval_filters(record_batch, split_query.0);
     let record_batch = eval_operations(record_batch, split_query.1);
     let record_batch = eval_selections(record_batch, split_query.2);
     record_batch

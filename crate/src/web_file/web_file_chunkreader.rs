@@ -31,7 +31,8 @@ impl Length for WebFileChunkReader {
     fn len(&self) -> u64 {
         let mut zip =
             zip::ZipArchive::new(WebFileReader::new_from_file(self.length as i32)).unwrap();
-        let reader = zip.by_name("samples.parquet").unwrap();
+        const PARQUET_FILE_NAME: &str = "samples.parquet";
+        let reader = zip.by_name(PARQUET_FILE_NAME).unwrap();
         reader.size()
     }
 }

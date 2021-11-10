@@ -1,10 +1,17 @@
 use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
-use arrow::{array::{Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Int64Type, Schema, UInt64Type}, record_batch::RecordBatch};
+use arrow::{
+    array::{
+        Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray, UInt64Array,
+    },
+    datatypes::{DataType, Field, Float64Type, Schema, UInt64Type},
+    record_batch::RecordBatch,
+};
 
 use crate::{
     exec::basic::basic::{find_unique_string, sort_batch},
     get_record_batches,
+    utils::record_batch_util::create_new_record_batch,
 };
 
 pub enum Freq {
@@ -28,27 +35,22 @@ pub fn create_freq_bucket(
     let schema = record_batch.schema();
     let column_for_operator_name = schema.field(column_for_operator).name();
 
-    let field_bucket = Field::new("bucket", DataType::Float64, false);
-    let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
     let freq_name;
     if matches!(freq, Freq::REL) {
         freq_name = "relfreq";
     } else {
         freq_name = "absfreq";
     }
-    let result_field = Field::new(freq_name, DataType::Float64, false);
 
-    let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
-
-    RecordBatch::try_new(
-        Arc::new(schema),
+    create_new_record_batch(
+        vec!["bucket", column_for_operator_name, freq_name],
+        vec![DataType::Float64, DataType::Utf8, DataType::Float64],
         vec![
             Arc::new(builder_bucket),
             Arc::new(operator_arr),
             Arc::new(builder_result),
         ],
     )
-    .unwrap()
 }
 
 pub fn create_mem_bucket(
@@ -64,19 +66,17 @@ pub fn create_mem_bucket(
     let memory_arr = Int32Array::from(result_vec_memory);
     let builder_result = Float64Array::from(result_builder);
 
-    // Record Batch
     let schema = record_batch.schema();
     let column_for_operator_name = schema.field(column_for_operator).name();
 
-    let field_bucket = Field::new("bucket", DataType::Float64, false);
-    let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let mem_field = Field::new("mem", DataType::Int32, false);
-    let result_field = Field::new("freq", DataType::Float64, false);
-
-    let schema = Schema::new(vec![field_bucket, field_operator, mem_field, result_field]);
-
-    RecordBatch::try_new(
-        Arc::new(schema),
+    create_new_record_batch(
+        vec!["bucket", column_for_operator_name, "mem", "freq"],
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Int32,
+            DataType::Float64,
+        ],
         vec![
             Arc::new(builder_bucket),
             Arc::new(operator_arr),
@@ -84,7 +84,6 @@ pub fn create_mem_bucket(
             Arc::new(builder_result),
         ],
     )
-    .unwrap()
 }
 
 pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {
@@ -101,15 +100,6 @@ pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveAr
         .column(column)
         .as_any()
         .downcast_ref::<Float64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_int_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Int64Array>()
         .unwrap();
     return column;
 }
@@ -303,7 +293,7 @@ pub fn freq_of_memory(
         let current_operator = operator_column.value(column_index as usize);
         let current_memory = (memory_column.value(column_index as usize) / 10000000000) as i32;
         while time_bucket < time.unwrap() {
-            for operator in vec_operator    {
+            for operator in vec_operator {
                 let operator = operator.unwrap();
 
                 let frequenzy = bucket_map.get(operator).unwrap();

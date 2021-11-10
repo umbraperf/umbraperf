@@ -76,8 +76,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
     }
 
     createVisualizationSpec() {
-        console.log("vega spec area chart");
-
         const visData = this.createVisualizationData();
 
         const xTicks = () => {

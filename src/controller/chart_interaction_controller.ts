@@ -73,7 +73,6 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 }
 
 export function resetTimeBucketSelection() {
-    console.log("here width change");
     handleTimeBucketSelection([-1, -1], [-1, -1]);
 }
 

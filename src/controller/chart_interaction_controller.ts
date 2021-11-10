@@ -2,6 +2,7 @@ import * as model from "../model";
 import * as Controller from './';
 import { store } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
+import { QueryPlanWrapperAppstateProps } from '../components/queryplan/query_plan_wrapper';
 import _ from "lodash";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
@@ -140,4 +141,18 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     }
     return false;
 }
+
+export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
+    if (props.operators &&
+        (props.queryPlan !== prevProps.queryPlan ||
+            props.currentView !== prevProps.currentView ||
+            width !== prevWidth ||
+            !_.isEqual(props.operators, prevProps.operators) ||
+            !_.isEqual(props.currentOperator, prevProps.currentOperator))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 

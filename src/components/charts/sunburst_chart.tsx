@@ -144,20 +144,20 @@ class SunburstChart extends React.Component<Props, {}> {
         return data;
     }
 
-    createVisualizationSpec() {        
+    createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        const sunburstSize = () =>{
-            if(this.props.doubleRowSize){
-                if(this.props.width > 520){
+        const sunburstSize = () => {
+            if (this.props.doubleRowSize) {
+                if (this.props.width > 520) {
                     return 120;
-                }else if(this.props.width > 450){
+                } else if (this.props.width > 450) {
                     return 100;
-                }else {
+                } else {
                     return 80;
                 }
 
-            }else{
+            } else {
                 return 70;
             }
         }
@@ -270,7 +270,7 @@ class SunburstChart extends React.Component<Props, {}> {
                             baseline: { value: "middle" },
                             text: { signal: "datum['pipelineShort']" },
                             fillOpacity: [
-                                { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
+                                this.props.doubleRowSize ? { test: "(datum['a1'] - datum['a0']) < '0.1'", value: 0 } : { test: "(datum['a1'] - datum['a0']) < '0.3'", value: 0 },
                                 { test: "datum.parent === 'inner'", value: 1 },
                                 { value: 0 }
                             ]

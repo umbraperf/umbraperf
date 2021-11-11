@@ -150,6 +150,7 @@ class SunburstChart extends React.Component<Props, {}> {
         const pipelinesLegend = () => {
             return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
         }
+        console.log("render sunburst, height: " + this.props.height)
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",

@@ -34,6 +34,7 @@ export type IBarChartActivityHistogramProps = IParcialChartProps;
 
 export type ISunburstChartProps = IParcialChartProps & {
     height: number;
+    doubleRowSize: boolean;
 };
 
 export type IBarChartProps = IParcialChartProps & {

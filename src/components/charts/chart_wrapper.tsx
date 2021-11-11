@@ -177,6 +177,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 const sunburstProps: model.ISunburstChartProps = {
                     ...partialChartProps,
                     height: this.state.height,
+                    doubleRowSize: this.state.height > 400 ? true : false,
                 }
                 return React.createElement(SunburstChart, sunburstProps as any);
 

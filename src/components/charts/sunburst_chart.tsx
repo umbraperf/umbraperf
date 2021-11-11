@@ -221,7 +221,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     encode: {
                         enter: {
                             x: { signal: "width / 2" },
-                            y: { signal: "height / 2" },
+                            y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             tooltip: [
                                 { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
                                 { test: "datum.opOccurrences > 0", signal: model.chartConfiguration.sunburstChartTooltip(false) }
@@ -259,7 +259,7 @@ class SunburstChart extends React.Component<Props, {}> {
                             fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
                             x: { signal: "width/ 2" },
-                            y: { signal: "height/ 2" },
+                            y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
                             theta: { signal: "(datum['a0'] + datum['a1'])/2" },
                             fill: [

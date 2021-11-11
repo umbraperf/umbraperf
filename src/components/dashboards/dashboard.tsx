@@ -3,6 +3,7 @@ import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
 import ChartWrapper from '../charts/chart_wrapper';
+import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 
@@ -43,7 +44,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
+                                    <ChartWrapper chartType={model.ChartType.BAR_CHART} />
                                 </div>
                             </Box>
                         </Grid>
@@ -52,7 +53,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />
+                                    <QueryPlanWrapper />
                                 </div>
                             </Box>
                         </Grid>
@@ -63,7 +64,7 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <ChartWrapper chartType={model.ChartType.BAR_CHART} />
+                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
                                 </div>
                             </Box>
                         </Grid>
@@ -72,7 +73,27 @@ class Dashboard extends React.Component<Props, {}> {
                         <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8} >
                             <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE} />
+                                    <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
+
+
+                    <Box clone order={{ xs: 3, md: 3, lg: 6 }}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
+                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
+                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Box>
+                    <Box clone order={{ xs: 7, md: 7, lg: 7 }}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
+                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                <div className={styles.dashboardGridCellChartContainer}>
+                                    <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE} />
                                 </div>
                             </Box>
                         </Grid>

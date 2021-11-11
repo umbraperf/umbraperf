@@ -23,6 +23,12 @@
     justify-content: center;
     align-items: center;
     padding: var(--gridCellItemPadding);
+    width: 100%;
+}
+
+.dashboardDoubleGridCellItem{
+    composes: dashboardGridCellItem;
+    padding: 0px;
 }
 
 .dashboardGridCellOptionsItem{
@@ -40,29 +46,34 @@
 }
 
 .dashboardGridCellChartBox{
-    composes:dashboardGridCellBox;
+    composes: dashboardGridCellBox;
     width: 100%;
 }
 
 .dashboardGridCellChartBoxActivityHistogram{
-    composes:dashboardGridCellChartBox;
+    composes: dashboardGridCellChartBox;
     height: var(--activityHistogramHeight);
 }
 
 .dashboardGridCellChartBoxMainVisualizations{
-    composes:dashboardGridCellChartBox;
+    composes: dashboardGridCellChartBox;
     height: var(--mainVisualizationsHeight);
 }
 
+.dashboardGridCellChartBoxDoublerowVisualizations{
+    composes: dashboardGridCellChartBox;
+    height: calc(2* var(--mainVisualizationsHeight) + (2 * var(--gridCellBoxPadding)) + (2 * var(--gridCellItemPadding)));
+}
+
 .dashboardGridCellChartBoxMemoryChart{
-    composes:dashboardGridCellChartBox;
+    composes: dashboardGridCellChartBox;
     padding-top: 20px;
     padding-bottom: 20px;
     height: auto;
 }
 
 .dashboardGridCellOptionsBox{
-    composes:dashboardGridCellBox;
+    composes: dashboardGridCellBox;
     width: 100%;
     height: var(--optionsItemBoxHeight);
     transition: var(--movingTransition);
@@ -83,7 +94,12 @@
         width: 100%;
         height: auto;
         min-height: var(--optionsItemBoxHeight);
-    }  
+    } 
+
+    .dashboardGridCellChartBoxDoublerowVisualizations{
+        composes: dashboardGridCellChartBoxDoublerowVisualizations;
+        height: var(--mainVisualizationsHeight);
+    }
 }
 
   @media not all and (min-width: 900px){

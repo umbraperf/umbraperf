@@ -61,8 +61,8 @@ class Dashboard extends React.Component<Props, {}> {
 
 
                     <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4}>
+                            <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
                                 <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                                     <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
                                 </div>
@@ -70,34 +70,24 @@ class Dashboard extends React.Component<Props, {}> {
                         </Grid>
                     </Box>
                     <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8} >
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />
-                                </div>
-                            </Box>
+                        <Grid item container direction="column" className={styles.dashboardDoubleGridCellItem} xs={12} md={12} lg={8}>
+                            <Grid item className={styles.dashboardGridCellItem}>
+                                <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                    <div className={styles.dashboardGridCellChartContainer}>
+                                        <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES} />
+                                    </div>
+                                </Box>
+                            </Grid>
+                            <Grid item className={styles.dashboardGridCellItem}>
+                                <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                    <div className={styles.dashboardGridCellChartContainer}>
+                                        <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE} />
+                                    </div>
+                                </Box>
+                            </Grid>
                         </Grid>
                     </Box>
 
-
-                    <Box clone order={{ xs: 3, md: 3, lg: 6 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
-                                </div>
-                            </Box>
-                        </Grid>
-                    </Box>
-                    <Box clone order={{ xs: 7, md: 7, lg: 7 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
-                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    <ChartWrapper chartType={model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE} />
-                                </div>
-                            </Box>
-                        </Grid>
-                    </Box>
                 </Grid>
 
             </div>

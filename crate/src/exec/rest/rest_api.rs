@@ -1,4 +1,4 @@
-use crate::{exec::basic::{basic, count, filter, kpis}, get_query_from_cache, insert_query_to_cache, record_batch_util::send_record_batch_to_js, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_and, split_at_comma, split_at_double_and, split_at_to}}};
+use crate::{exec::basic::{basic, count, filter, kpis}, get_query_from_cache, insert_query_to_cache, record_batch_util::send_record_batch_to_js, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_and, split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}}};
 use arrow::record_batch::RecordBatch;
 use std::usize;
 
@@ -60,7 +60,7 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
 
 fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
     for op in op_vec {
-        let split = split_at_and(op);
+        let split = split_at_question_mark(op);
         let operator = split[0];
         let params = split[1];
 

@@ -144,13 +144,27 @@ class SunburstChart extends React.Component<Props, {}> {
         return data;
     }
 
-    createVisualizationSpec() {
+    createVisualizationSpec() {        
         const visData = this.createVisualizationData();
+
+        const sunburstSize = () =>{
+            if(this.props.doubleRowSize){
+                if(this.props.width > 520){
+                    return 120;
+                }else if(this.props.width > 450){
+                    return 100;
+                }else {
+                    return 80;
+                }
+
+            }else{
+                return 70;
+            }
+        }
 
         const pipelinesLegend = () => {
             return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
         }
-        console.log("render sunburst, height: " + this.props.height)
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -175,7 +189,7 @@ class SunburstChart extends React.Component<Props, {}> {
             signals: [
                 {
                     name: "pieSize",
-                    update: "if(width > 160, 75, 50)"
+                    update: sunburstSize(),
                 },
                 {
                     name: "clickPipeline",
@@ -269,7 +283,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     fill: "colorOperators", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
-                    orient: "right",
+                    orient: this.props.doubleRowSize ? "bottom-left" : "right",
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
                     values: pipelinesLegend(),
@@ -285,10 +299,10 @@ class SunburstChart extends React.Component<Props, {}> {
                 {
                     fill: "colorOperators",
                     title: "Operators",
-                    orient: "right",
+                    orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
                     rowPadding: 2,
-                    columns: 3,
+                    columns: this.props.doubleRowSize ? 1 : 3,
                     columnPadding: 3,
                     labelFontSize: model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
@@ -297,7 +311,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: "truncate(datum.value, 8)" },
+                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 15)" } : { signal: "truncate(datum.value, 8)" },
                             }
                         }
                     }

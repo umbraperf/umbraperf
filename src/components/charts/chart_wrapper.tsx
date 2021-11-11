@@ -113,7 +113,6 @@ class ChartWrapper extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
-        // if (Controller.chartRerenderNeeded(this.props, prevProps, this.props.chartType)) {
         if (globalInputDataChanged) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
@@ -131,21 +130,19 @@ class ChartWrapper extends React.Component<Props, State> {
         const child = this.elementWrapper.current;
         if (child) {
             const newWidth = child.offsetWidth;
+            const newHeight = child.offsetHeight;
 
-            child.style.display = 'none';
+            if (newWidth !== this.state.width || newHeight !== this.state.height) {
+                child.style.display = 'none';
 
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-                //  renderedDagrePlan: undefined,
-            }));
+                this.setState((state, props) => ({
+                    ...state,
+                    width: newWidth,
+                    height: newHeight,
+                }));
 
-            this.setState((state, props) => ({
-                ...state,
-                width: newWidth,
-            }));
-
-            child.style.display = 'block';
+                child.style.display = 'block';
+            }
         }
 
     }
@@ -153,7 +150,7 @@ class ChartWrapper extends React.Component<Props, State> {
     createChildChart() {
 
         const partialChartProps: model.IParcialChartProps = {
-            key: this.state.width,
+            key: this.state.chartId + this.state.width + this.state.height,
             chartId: this.state.chartId,
             width: this.state.width,
             chartType: this.props.chartType,

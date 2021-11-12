@@ -132,7 +132,9 @@ fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBa
 }
 
 fn query_already_calculated(restful_string: &str) -> bool {
-    if let Some(batch) = get_query_from_cache().get(restful_string) {
+    let cache = get_query_from_cache();
+    let query = cache.lock().unwrap();
+    if let Some(batch) = query.get(restful_string) {
         send_record_batch_to_js(&batch);
         return true;
     }

@@ -1,21 +1,12 @@
 import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
-import DashboardHeader from './dashboard_header';
 import ChartWrapper from '../charts/chart_wrapper';
 import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
 
-interface Props {
-    setCurrentView: (newCurrentView: model.ViewType) => void;
-}
 
-class DashboardSingleEvent extends React.Component<Props, {}> {
-
-    constructor(props: any) {
-        super(props);
-    }
+class DashboardSingleEvent extends React.Component<{}, {}> {
 
     public render() {
 
@@ -84,15 +75,8 @@ class DashboardSingleEvent extends React.Component<Props, {}> {
     }
 }
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentView: (newCurrentView: model.ViewType) =>
-        dispatch({
-            type: model.StateMutationType.SET_CURRENTVIEW,
-            data: newCurrentView,
-        }),
-});
 
-export default connect(undefined, mapDispatchToProps)(DashboardSingleEvent);
+export default DashboardSingleEvent;
 
 
 

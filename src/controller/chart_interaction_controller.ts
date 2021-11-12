@@ -78,17 +78,6 @@ export function resetTimeBucketSelection() {
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
-    // console.log(nextProps.currentView + " : " + props.currentView);
-
-    // console.log((nextProps.events &&
-    //     nextProps.pipelines &&
-    //     nextProps.operators &&
-    //     // nextProps.chartIdCounter === props.chartIdCounter &&
-    //     (nextProps.currentEvent !== props.currentEvent ||
-    //         nextProps.currentView !== props.currentView ||
-    //         !_.isEqual(nextProps.pipelines, props.pipelines) ||
-    //         !_.isEqual(nextProps.operators, props.operators))));
-
     const chartDataInputChangedGeneral = () => {
         if (nextProps.events &&
             nextProps.pipelines &&

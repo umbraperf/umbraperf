@@ -20,6 +20,7 @@ export enum ViewType {
     UPLOAD = "upload",
     PIPELINES = "pipelines",
     DUMMY = "dummy",
+    NONE = "none",
 }
 
 export interface IParcialChartProps {

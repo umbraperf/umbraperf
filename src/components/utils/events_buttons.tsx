@@ -34,6 +34,7 @@ function EventsButtons(props: Props) {
         }
     }, [props.events]);
 
+    //automatically change event to memory loads if available on change to memory dashboard
     useEffect(() => {
         if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
             if (events.includes("mem_inst_retired.all_loads")) {
@@ -75,6 +76,13 @@ function EventsButtons(props: Props) {
         }
     }
 
+    const isButtonDisabled = (event: string) => {
+        if(props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp"){
+            return true;
+        }
+        return false;
+    }
+
 
     return (
         <div className={styles.eventButtonsContainer}>
@@ -85,6 +93,7 @@ function EventsButtons(props: Props) {
                         {events && events!.map((event: string, index: number) => (
                             <Button
                                 className={styles.eventButton}
+                                disabled={isButtonDisabled(event)}
                                 variant="contained"
                                 color={buttonColor(event)}
                                 onClick={() => handleEventButtonClick(event)}

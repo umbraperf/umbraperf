@@ -75,8 +75,13 @@ export function requestOperators(controller: RequestController) {
         }), true);
 }
 
-//request statistics such as number of pipelines, number of cycles, ... from rust, metarequest
+//request statistics such as number of pipelines, number of cycles, ... from rust, metarequest, set old statistics to empty to show spinner in component
 export function requestStatistics(controller: RequestController) {
+    store.dispatch({
+        type: model.StateMutationType.SET_KPIS,
+        data: [],
+    });
+
     controller.calculateChartData(
         model.RestQueryType.GET_STATISTICS,
         model.createRestQuery({

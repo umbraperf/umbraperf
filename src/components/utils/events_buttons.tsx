@@ -33,21 +33,22 @@ function EventsButtons(props: Props) {
         }
     }, [events]);
 
-    //automatically change event to memory loads if available on change to memory dashboard, only call once on mount events buttons component
+    //automatically change event to memory loads if available on change to memory dashboard, allow for multiple events selection if multiple events dashboard
     useEffect(() => {
-        console.log("trigger")
-        console.log(props.currentView);
         if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
-            console.log("went in if")
+            console.log(props.currentView);
             if (events.includes("mem_inst_retired.all_loads")) {
+                console.log("went in if, set: " + props.currentMultipleEvent)
                 handleEventButtonClick("mem_inst_retired.all_loads");
             }
         }
-        if(events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS){
+
+        if (events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS) {
             setMultipleEvents(true);
-        }else{
+        } else {
             setMultipleEvents(false);
         }
+
     }, [props.currentView]);
 
     const handleEventButtonClick = (event: string) => {
@@ -70,7 +71,6 @@ function EventsButtons(props: Props) {
     }
 
     const buttonColor = (event: string) => {
-        console.log(multipleEvents)
         if (multipleEvents) {
             if (props.currentMultipleEvent[0] === event) {
                 return "secondary";

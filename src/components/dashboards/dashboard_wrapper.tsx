@@ -22,7 +22,9 @@ class DashboardWrapper extends React.Component<Props, {}> {
 
     constructor(props: any) {
         super(props);
+        this.props.setCurrentView(model.ViewType.NONE);
     }
+
 
     componentDidMount() {
         this.props.setCurrentView(this.props.dashboardView);

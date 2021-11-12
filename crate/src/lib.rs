@@ -8,6 +8,7 @@ use wasm_bindgen::prelude::*;
 extern crate console_error_panic_hook;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 // Arrow
 extern crate arrow;
@@ -53,18 +54,24 @@ use utils::bindings;
 use utils::record_batch_util;
 use std::sync::Arc;
 
+pub struct RecordBatchShared {
+    pub batch: RecordBatch
+}
+
 //STATE
 pub struct State {
-    pub record_batches: Option<RecordBatch>,
-    pub queries: HashMap<String, RecordBatch>,
+    pub record_batches: Option<Arc<RecordBatchShared>>,
+    pub queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
     pub dict: Option<Arc<SerdeDict>>,
+    pub parquet_file_binary: Arc<Mutex<Vec<u8>>>,
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
         record_batches: None,
-        queries: HashMap::new(),
-        dict: None
+        queries:  Arc::new(Mutex::new(HashMap::new())),
+        dict: None,
+        parquet_file_binary: Arc::new(Mutex::new(Vec::new()))
     });
 }
 
@@ -83,25 +90,43 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-fn get_record_batches() -> Option<RecordBatch> {
+fn get_record_batches() -> Option<Arc<RecordBatchShared>> {
     with_state(|s| s.record_batches.clone())
 }
 
-fn get_query_from_cache() -> HashMap<String, RecordBatch> {
+fn get_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
     with_state(|s| s.queries.clone())
 }
 
+fn get_parquet_file_binary() -> Arc<Mutex<Vec<u8>>> {
+    with_state(|s| s.parquet_file_binary.clone())
+}
+
+fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
+    _with_state_mut(|s| {
+        let mut t = s.parquet_file_binary.lock().unwrap();
+        t.append(&mut vec);
+    });
+}
+
 fn clear_cache() {
-    _with_state_mut(|s| s.queries.clear());
+    _with_state_mut(|s| {
+        let mut t = s.queries.lock().unwrap();
+        t.clear();
+    });
 }
 
 fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
-    _with_state_mut(|s| s.queries.insert(restful_string.to_string(), record_batch));
+    _with_state_mut(|s| {
+        let mut t = s.queries.lock().unwrap();
+        t.insert(restful_string.to_string(), record_batch)
+    });
 }
 
 fn set_record_batches(record_batches: RecordBatch) {
-    _with_state_mut(|s| s.record_batches = Some(record_batches));
-}
+    let shared_record_batch = RecordBatchShared { batch: record_batches };
+    _with_state_mut(|s| s.record_batches = Some(Arc::new(shared_record_batch)));
+} 
 
 fn get_serde_dict() -> Option<Arc<SerdeDict>> {
     with_state(|s| s.dict.clone())
@@ -132,5 +157,5 @@ pub fn analyze_file(file_size: i32) {
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
-    eval_query(get_record_batches().unwrap(), rest_query);
+    eval_query(get_record_batches().unwrap().batch.clone(), rest_query);
 }

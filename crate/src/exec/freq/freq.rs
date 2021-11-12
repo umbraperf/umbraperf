@@ -1,18 +1,8 @@
 use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
-use arrow::{
-    array::{
-        Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray, UInt64Array,
-    },
-    datatypes::{DataType, Field, Float64Type, Schema, UInt64Type},
-    record_batch::RecordBatch,
-};
+use arrow::{array::{Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Schema, UInt64Type}, record_batch::RecordBatch};
 
-use crate::{
-    exec::basic::basic::{find_unique_string, sort_batch},
-    get_record_batches,
-    utils::record_batch_util::create_new_record_batch,
-};
+use crate::{exec::basic::basic::{find_unique_string, sort_batch}, get_record_batches, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::{create_new_record_batch, send_record_batch_to_js}}};
 
 pub enum Freq {
     ABS,
@@ -126,7 +116,7 @@ pub fn freq_of_pipelines(
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
+    let unique_operator = find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
     // Vector of unique strings
     let vec_operator = get_stringarray_column(&unique_operator, 0);
@@ -256,14 +246,16 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-    //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
 
     let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
+    let unique_operator = find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
-    // Vector of unique strings
+    let unique_operator = &sort_batch(&unique_operator, 0, false);
+
     let vec_operator = get_stringarray_column(&unique_operator, 0);
+
+    print_to_js_with_obj(&format!("vec_operator {:?}", vec_operator).into());
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
@@ -289,6 +281,11 @@ pub fn freq_of_memory(
         bucket_map.insert(operator.unwrap(), HashMap::<i32, f64>::new());
     }
 
+    let mut bucket_map_count = HashMap::new();
+    for operator in vec_operator {
+        bucket_map_count.insert(operator.unwrap(), 0.);
+    }
+
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_memory = (memory_column.value(column_index as usize) / 10000000000) as i32;
@@ -304,6 +301,8 @@ pub fn freq_of_memory(
                         result_vec_operator.push(operator);
                         result_mem_operator.push(current_memory.try_into().unwrap());
                         result_builder.push(item.1.to_owned());
+                        let current_value = bucket_map_count[operator] + 1.;
+                        bucket_map_count.insert(operator, current_value);
                     }
                 }
                 // reset bucket_map
@@ -329,6 +328,8 @@ pub fn freq_of_memory(
                             result_vec_operator.push(operator);
                             result_mem_operator.push(current_memory.try_into().unwrap());
                             result_builder.push(item.1.to_owned());
+                            let current_value = bucket_map_count[operator] + 1.;
+                            bucket_map_count.insert(operator, current_value);
                         }
                     }
                     // reset bucket_map
@@ -349,6 +350,33 @@ pub fn freq_of_memory(
         result_mem_operator,
         result_builder,
     );
+
+    let sorted_batch = sort_batch(&batch, 1, false);
+
+    print_to_js_with_obj(&format!("sorted_batch {:?}", sorted_batch).into());
+
+    print_to_js_with_obj(&format!("bucket map {:?}", bucket_map_count).into());
+
+    let mut offset = 0.;
+    for entry in vec_operator.into_iter().enumerate() {
+
+        let len = bucket_map_count.get(entry.1.unwrap()).unwrap();
+
+        print_to_js_with_obj(&format!("offset {:?} len {:?}", offset, len).into());
+
+        let slice_batch = sorted_batch.slice(offset as usize, *len as usize);
+
+        print_to_js_with_obj(&format!("{:?}", slice_batch).into());
+
+        offset += len;
+
+        if entry.0 == vec_operator.len() {
+            	return slice_batch;
+        } else {
+            send_record_batch_to_js(&slice_batch);
+        }
+
+    }
 
     batch
 }

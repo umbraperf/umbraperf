@@ -15,9 +15,6 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
     constructor(props: any) {
         super(props);
-    }
-
-    componentDidMount(): void {
         this.props.setCurrentView(model.ViewType.DASHBOARD_MEMORY);
     }
 

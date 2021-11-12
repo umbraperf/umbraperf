@@ -1,12 +1,13 @@
 use std::{io::Read};
 
+use crate::{append_to_parquet_file_binary, get_parquet_file_binary};
+
 use super::streambuf::WebFileReader;
 
 pub struct ParquetReader {
     offset: u64,
 }
 
-static mut ARRAY: Vec<u8> = Vec::new();
 static PARQUET_FILE_NAME: &str = "samples.parquet";
 
 impl ParquetReader {
@@ -23,9 +24,7 @@ impl ParquetReader {
             let readsize = (8 * 1024).min(length - offset) as usize;
             let mut vec = vec![0; readsize];
             let _result = reader.read(&mut vec);
-            unsafe {
-                ARRAY.append(&mut vec);
-            }
+            append_to_parquet_file_binary(vec);
             offset = offset + readsize as u64;
         }
 
@@ -41,9 +40,10 @@ impl Read for ParquetReader {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
         let read_size = buf.len();
 
-        unsafe {
-            buf.clone_from_slice(&ARRAY[self.offset as usize..(self.offset as usize) + read_size]);
-        }
+        let parquet_file = get_parquet_file_binary();
+        let binary = parquet_file.lock().unwrap();
+
+        buf.clone_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);
 
         self.offset = self.offset + (read_size as u64);
 

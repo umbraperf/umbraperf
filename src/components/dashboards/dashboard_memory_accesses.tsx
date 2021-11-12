@@ -15,41 +15,33 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
     constructor(props: any) {
         super(props);
-        this.props.setCurrentView(model.ViewType.DASHBOARD_MEMORY);
     }
 
     public render() {
 
-        return <div className={styles.dashboardGrid}>
-
-            <div >
-                <DashboardHeader />
-
-                <Grid container>
-                    <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} >
-                            <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
-                                </div>
-                            </Box>
-                        </Grid>
-                    </Box>
-
-
-                    <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
-                            <Box className={styles.dashboardGridCellChartBoxMemoryChart}>
-                                <div className={styles.dashboardGridCellChartContainer}>
-                                    <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
-                                </div>
-                            </Box>
-                        </Grid>
+        return <Grid container>
+            <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
+                <Grid item className={styles.dashboardGridCellItem} xs={12} >
+                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
+                        <div className={styles.dashboardGridCellChartContainer}>
+                            <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
+                        </div>
                     </Box>
                 </Grid>
+            </Box>
 
-            </div>
-        </div >;
+
+            <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
+                <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
+                    <Box className={styles.dashboardGridCellChartBoxMemoryChart}>
+                        <div className={styles.dashboardGridCellChartContainer}>
+                            <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
+                        </div>
+                    </Box>
+                </Grid>
+            </Box>
+        </Grid>
+
     }
 
 }

@@ -14,7 +14,7 @@ export enum ChartType {
 }
 
 export enum ViewType {
-    DASHBOARD = "dashboard",
+    DASHBOARD_SINGLE_EVENT = "dashboard_single_event",
     DASHBOARD_MULTIPLE_EVENTS = "dashboard_multiple_events",
     DASHBOARD_MEMORY = "dashboard_memory",
     UPLOAD = "upload",

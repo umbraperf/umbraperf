@@ -12,6 +12,7 @@ interface Props {
     events: Array<string> | undefined;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
+    currentView: model.ViewType;
     setCurrentEvent: (newCurrentEvent: string) => void;
     setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => void;
 
@@ -31,16 +32,20 @@ function EventsButtons(props: Props) {
                 props.setCurrentMultipleEvent([events[0], events[1]]);
             }
         }
-    });
+    }, [props.events]);
+
+    useEffect(() => {
+        if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
+            if (events.includes("mem_inst_retired.all_loads")) {
+                handleEventButtonClick("mem_inst_retired.all_loads");
+            }
+        }
+    }, [props.currentView]);
 
     const handleEventButtonClick = (event: string) => {
-        if (props.multipleEvents) {
-            const newMultipleEventsTuple: [string, string] = [event, props.currentMultipleEvent[0]];
-            props.setCurrentMultipleEvent(newMultipleEventsTuple);
-            props.setCurrentEvent(event);
-        } else {
-            props.setCurrentEvent(event);
-        }
+        props.setCurrentEvent(event);
+        const newMultipleEventsTuple: [string, string] = [event, props.currentMultipleEvent[0]];
+        props.setCurrentMultipleEvent(newMultipleEventsTuple);
     }
 
     const createEventShortString = (event: string) => {
@@ -82,7 +87,7 @@ function EventsButtons(props: Props) {
                                 className={styles.eventButton}
                                 variant="contained"
                                 color={buttonColor(event)}
-                                 onClick={() => handleEventButtonClick(event)}
+                                onClick={() => handleEventButtonClick(event)}
                                 key={index}
                             >
                                 {createEventShortString(event)}
@@ -100,6 +105,7 @@ const mapStateToProps = (state: model.AppState) => ({
     events: state.events,
     currentEvent: state.currentEvent,
     currentMultipleEvent: state.currentMultipleEvent,
+    currentView: state.currentView,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

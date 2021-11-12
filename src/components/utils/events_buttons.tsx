@@ -1,7 +1,7 @@
 import * as model from '../../model';
 import * as Context from '../../app_context';
 import Spinner from './spinner';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Button, useTheme } from '@material-ui/core';
 import styles from '../../style/utils.module.css';
@@ -15,31 +15,38 @@ interface Props {
     currentView: model.ViewType;
     setCurrentEvent: (newCurrentEvent: string) => void;
     setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => void;
-
-    multipleEvents?: boolean;
 }
 
 function EventsButtons(props: Props) {
 
     const events = props.events;
+    const [multipleEvents, setMultipleEvents] = useState(false);
 
     useEffect(() => {
         if (events && events.length > 1) {
-            if (!props.multipleEvents && props.currentEvent === "Default") {
+            if (!multipleEvents && props.currentEvent === "Default") {
                 props.setCurrentEvent(events[0]);
             }
-            if (props.multipleEvents && props.currentMultipleEvent === "Default") {
+            if (multipleEvents && props.currentMultipleEvent === "Default") {
                 props.setCurrentMultipleEvent([events[0], events[1]]);
             }
         }
-    }, [props.events]);
+    }, [events]);
 
-    //automatically change event to memory loads if available on change to memory dashboard
+    //automatically change event to memory loads if available on change to memory dashboard, only call once on mount events buttons component
     useEffect(() => {
+        console.log("trigger")
+        console.log(props.currentView);
         if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
+            console.log("went in if")
             if (events.includes("mem_inst_retired.all_loads")) {
                 handleEventButtonClick("mem_inst_retired.all_loads");
             }
+        }
+        if(events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS){
+            setMultipleEvents(true);
+        }else{
+            setMultipleEvents(false);
         }
     }, [props.currentView]);
 
@@ -63,7 +70,8 @@ function EventsButtons(props: Props) {
     }
 
     const buttonColor = (event: string) => {
-        if (props.multipleEvents) {
+        console.log(multipleEvents)
+        if (multipleEvents) {
             if (props.currentMultipleEvent[0] === event) {
                 return "secondary";
             } else if (props.currentMultipleEvent[1] === event) {
@@ -77,7 +85,7 @@ function EventsButtons(props: Props) {
     }
 
     const isButtonDisabled = (event: string) => {
-        if(props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp"){
+        if (props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp") {
             return true;
         }
         return false;

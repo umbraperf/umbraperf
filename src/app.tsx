@@ -10,12 +10,7 @@ import '../node_modules/react-resizable/css/styles.css';
 import styles from './style/main-app.module.css';
 import * as Config from './app_config';
 
-import VisualizationContainer from './components/visualization_container';
 import TabPanel from './components/utils/tab_panel';
-import FileUploader from './components/utils/file_uploader';
-import Dashboard from './components/dashboards/dashboard';
-import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
-import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
 
 
 function NoMatch() {
@@ -66,29 +61,9 @@ export default function App() {
                                             <Redirect to="/upload" />
                                         </Route>
 
-                                        <Route exact path="/upload" key="/upload">
-                                            <FileUploader />
-                                        </Route>
-
-                                        <Route exact path="/dashboard" key="/dashboard">
-                                            <Dashboard />
-                                        </Route>
-
-                                        <Route exact path="/dashboard-multiple-events" key="/dashboard-multiple-events">
-                                            <DashboardMultipleEvents />
-                                        </Route>
-
-                                        <Route exact path="/dashboard-memory-accesses" key="/dashboard-memory-accesses">
-                                            <DashboardMemoryAccesses />
-                                        </Route>
-{/* 
-                                        <Route exact path="/dummy" key="/dummy">
-                                            <Dummy />
-                                        </Route> */}
-
-                                        {Config.topLevelComponents.map((route: any) => {
-                                            return <Route exact path={route.path} key={route.path}>
-                                                <VisualizationContainer component={route.component} visualizationName={route.path} />
+                                        {Config.topLevelComponents.map((topLevelComponent) => {
+                                            return <Route exact path={topLevelComponent.path} key={topLevelComponent.path}>
+                                                {topLevelComponent.component}
                                             </Route>
                                         })}
 

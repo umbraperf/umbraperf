@@ -5,14 +5,9 @@ import { IAppContext } from './app_context';
 import * as model from './model';
 
 import FileUploader from './components/utils/file_uploader';
-import Dashboard from './components/dashboards/dashboard';
-import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
-import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
-import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
+import DashboardWrapper from './components/dashboards/dashboard_wrapper';
 
-import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
-import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import SdStorageIcon from '@material-ui/icons/SdStorage';
@@ -42,32 +37,6 @@ export const appContext: IAppContext = {
 //export const store = createProdStore();
 export const store = createDevStore();
 
-//module augmentation to add accent color to material ui color palette
-// declare module '@material-ui/core/styles/createPalette' {
-//     interface Palette {
-//         accent: Palette['primary'];
-//     }
-//     interface PaletteOptions {
-//         accent: PaletteOptions['primary'];
-//     }
-// }
-// declare module '@material-ui/core/Button/Button' {
-//     interface ButtonPropsColorOverrides  {
-//         accent: true;
-//     }
-// }
-// declare module '@material-ui/core/styles/createTheme' {
-//     interface Theme {
-//         accentColor: {
-//             accent: React.CSSProperties['color'],
-//         }
-//     }
-//     interface ThemeOptions {
-//         accentColor: {
-//             accent: React.CSSProperties['color']
-//         }
-//     }
-// }
 
 export const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
@@ -78,9 +47,6 @@ export const materialUiTheme = createTheme({
         secondary: {
             main: appColor.secondary
         },
-        // accent: {
-        //     main: appColor.secondary,
-        // },
     },
     breakpoints: {
         values: {
@@ -93,42 +59,44 @@ export const materialUiTheme = createTheme({
     }
 });
 
-export const topLevelComponents = [
+interface ITopLevelComponent{
+    path: string;
+    sidebarName: string;
+    component: JSX.Element;
+    icon: () => JSX.Element;
+}
+export const topLevelComponents: Array<ITopLevelComponent> = [
     {
         path: '/upload',
         sidebarName: 'Upload File',
-        component: FileUploader,
-        view: model.ViewType.UPLOAD,
+        component: <FileUploader/>,
         icon: () => { return (<BackupIcon />) },
     },
     {
-        path: '/dashboard',
-        sidebarName: 'Dashboard',
-        component: Dashboard,
-        view: model.ViewType.DASHBOARD,
+        path: '/dashboard-single-event',
+        sidebarName: 'Dashboard (Single Event)',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT}/>,
         icon: () => { return (<DashboardIcon />) },
     },
     {
         path: '/dashboard-multiple-events',
         sidebarName: 'Dashboard (Multiple Events)',
-        component: DashboardMultipleEvents,
-        view: model.ViewType.DASHBOARD_MULTIPLE_EVENTS,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS}/>,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
         path: '/dashboard-memory-accesses',
         sidebarName: 'Dashboard (Memory Accesses)',
-        component: DashboardMemoryAccesses,
-        view: model.ViewType.DASHBOARD_MEMORY,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY}/>,
         icon: () => { return (<SdStorageIcon />) },
     },
-    {
-        path: '/swim-lanes-pipelines',
-        sidebarName: 'Swim Lanes (Pipelines)',
-        component: SwimLanesPipelines,
-        view: model.ViewType.PIPELINES,
-        icon: () => { return (<SortIcon />) },
-    },
+    // {
+    //     path: '/swim-lanes-pipelines',
+    //     sidebarName: 'Swim Lanes (Pipelines)',
+    //     // component: SwimLanesPipelines,
+    //     // view: model.ViewType.PIPELINES,
+    //     icon: () => { return (<SortIcon />) },
+    // },
     // {
     //     path: '/dummy',
     //     sidebarName: 'Dummy',

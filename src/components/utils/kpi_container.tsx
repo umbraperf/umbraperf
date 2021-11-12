@@ -100,7 +100,7 @@ class KpiContainer extends React.Component<Props, {}> {
     }
 
     isComponentLoading(): boolean {
-        if (this.props.kpis) {
+        if (!this.props.kpis || this.props.kpis.length === 0) {
             return true;
         } else {
             return false;
@@ -111,10 +111,10 @@ class KpiContainer extends React.Component<Props, {}> {
 
         return <div className={styles.kpiContainer}>
             {this.isComponentLoading() ?
-                <div className={styles.kpiCardsArea}>
+                <Spinner />
+                : <div className={styles.kpiCardsArea}>
                     {this.mapKpiArrayToCards()}
                 </div>
-                : <Spinner />
             }
         </div>
     }

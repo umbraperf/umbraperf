@@ -22,7 +22,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.state={
+        this.state = {
             ...this.state,
             width: this.props.width
         };
@@ -122,7 +122,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "y",
                     type: "linear",
-                    range: [{ signal: "height/2" }, 0],
+                    range: [{ signal: "(height/2) - 4" }, 0],
                     nice: true,
                     zero: true,
                     domain: {
@@ -134,7 +134,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "yNeg",
                     type: "linear",
-                    range: [{ signal: "height" }, { signal: "height/2" }],
+                    range: [{ signal: "height" }, { signal: "(height/2) + 4" }],
                     nice: true,
                     zero: true,
                     reverse: true, //down counting values
@@ -153,7 +153,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorNeg",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, true),
+                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                     domain: this.props.operators,
                 }
             ],

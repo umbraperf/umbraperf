@@ -108,6 +108,9 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
+
+    console.log(resultObject.resultTable);
+
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
     let setResultLoading = false;
@@ -274,8 +277,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
-            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
+            //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
+            let chartData: model.IMemoryAccessHeatmapChartData | undefined = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : undefined;
 
+            //console.log(chartData);
             if (resultObject.resultTable.schema.fields.length === 6) {
                 //domain info received
                 const domainData: model.IMemoryAccessHeatmapChartDomainData = {
@@ -290,9 +295,13 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     frequencyDomain: {
                         max: resultObject.resultTable.getColumn('max_freq').data.values[0],
                         min: resultObject.resultTable.getColumn('min_freq').data.values[0],
-                    }
+                    },
+                    numberOperators: resultObject.resultTable.getColumn('num_op').data.values[0]
                 }
-                chartData.domain = domainData;
+                chartData = {
+                    domain: domainData,
+                    heatmapsData: [],
+                }
 
             } else if (resultObject.resultTable.schema.fields.length === 4) {
                 //single heatmap chart data received
@@ -302,8 +311,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
                     occurrences: resultObject.resultTable.getColumn('freq').toArray(),
                 }
-                chartData.heatmapsData.push(singleChartData);
-                if (chartData.heatmapsData.length === store.getState().operators!.length) {
+                chartData = {
+                    ...chartData!,
+                    heatmapsData: chartData!.heatmapsData.concat(singleChartData),
+                }
+                console.log(chartData);
+                if (chartData.heatmapsData.length === chartData.domain.numberOperators) {
                     // set result loading to true only if data for all operators arrived
                     setResultLoading = true;
                 }
@@ -313,10 +326,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 requestId,
                 {
                     chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
-                    data: chartData,
+                    data: chartData!,
                 });
-
-            console.log((store.getState().chartData[requestId]));
             break;
     }
 

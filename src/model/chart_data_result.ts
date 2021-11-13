@@ -84,6 +84,7 @@ export interface IMemoryAccessHeatmapChartDomainData {
     memoryDomain: { max: number, min: number },
     timeDomain: { max: number, min: number },
     frequencyDomain: { max: number, min: number },
+    numberOperators: number,
 }
 
 export interface IMemoryAccessHeatmapChartData {

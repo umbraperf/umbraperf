@@ -24,12 +24,18 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     }
 
     public render() {
-        return <p></p>
+        return <div>{this.renderChartPerOperator()}</div>
         // return <div> {this.renderChartPerOperatorRelative()}</div>
         /* {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />} */
     }
 
-
+    renderChartPerOperator() {
+        const vegaElements = this.props.chartData.heatmapsData.map((elem, index) => {
+            const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
+            return index;
+        });
+        return vegaElements;
+    }
     // renderChartPerOperatorRelative() {
     //     const preparedData = this.flattenDataRelative();
     //     const domains = preparedData.domains;
@@ -78,19 +84,28 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     //     return { dataFlattend, domains }
     // }
 
-    createVisualizationDataRelative(dataFlattendFiltered: any) {
+    createVisualizationData(id: number) {
+
+        //TODO Array from data
+        const singleChartData = {
+            operator: this.props.chartData.heatmapsData[id].operator,
+            bucket: this.props.chartData.heatmapsData[id].buckets,
+            memAdr: this.props.chartData.heatmapsData[id].memoryAdress,
+            occurrences: this.props.chartData.heatmapsData[id].occurrences,
+        }
 
         const data = [
             {
                 name: "table",
-                values: dataFlattendFiltered,
-                transform: [
-                    {
-                        type: "extent",
-                        field: "occurrences",
-                        signal: "extent"
-                    }
-                ]
+                values: singleChartData,
+                // transform: [
+                //     //TODO still necessary?
+                //     {
+                //         type: "extent",
+                //         field: "occurrences",
+                //         signal: "extent"
+                //     }
+                // ]
             },
             {
                 name: "density",
@@ -109,7 +124,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                         field: "grid",
                         resolve: "shared",
                         //TODO times extend signal
-                        color: { "expr": `scale('density', (datum.$value/datum.$max) * extent[1])` },
+                        //TODO max freq as extend
+                        color: { "expr": `scale('density', (datum.$value/datum.$max) * ${this.props.chartData.domain.frequencyDomain.max})` },
                         opacity: 1
                     }
                 ]
@@ -118,13 +134,14 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
         return data;
     }
 
-    createVisualizationSpecRelative(operator: string, domains: any, dataFlattendFiltered: Array<any>) {
+    createVisualizationSpec(id: number) {
 
-        const visData = this.createVisualizationDataRelative(dataFlattendFiltered);
+        const visData = this.createVisualizationData(id);
 
-        if (visData[0].values && visData[0].values.length === 0) {
-            return null;
-        };
+        // if (visData[0].values && visData[0].values.length === 0) {
+        //     //TODO still necessary? 
+        //     return null;
+        // };
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -135,7 +152,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
 
             title: {
-                text: `Memory Access Heatmap: ${operator}`,
+                //TODO change id to op name first element in data
+                text: `Memory Access Heatmap: ${id}`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
@@ -149,9 +167,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 {
                     "name": "x",
                     "type": "linear",
-                    domain: domains.bucketDomain,
-                    domainMin: domains.bucketDomain[0],
-                    domainMax: domains.bucketDomain[1],
+                    domain: [this.props.chartData.domain.timeDomain.min, this.props.chartData.domain.timeDomain.max],
+                    domainMin: this.props.chartData.domain.timeDomain.min,
+                    domainMax: this.props.chartData.domain.timeDomain.max,
                     "range": "width",
                     "zero": true,
                     "nice": true,
@@ -160,9 +178,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 {
                     "name": "y",
                     "type": "linear",
-                    domain: domains.memDomain,
-                    domainMin: domains.memDomain[0],
-                    domainMax: domains.memDomain[1],
+                    domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
+                    domainMin: this.props.chartData.domain.memoryDomain.min,
+                    domainMax: this.props.chartData.domain.memoryDomain.max,
                     "range": "height",
                     "zero": true,
                     "nice": true,

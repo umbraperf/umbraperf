@@ -46,7 +46,6 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4}>
                     <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                            {console.log("window size: " + window.innerWidth)}
                             <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
                         </div>
                     </Box>

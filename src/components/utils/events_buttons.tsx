@@ -50,7 +50,7 @@ function EventsButtons(props: Props) {
             setMultipleEvents(false);
         }
 
-    },[props.currentView, events]);
+    }, [props.currentView, events]);
 
     const handleEventButtonClick = (event: string) => {
         props.setCurrentEvent(event);

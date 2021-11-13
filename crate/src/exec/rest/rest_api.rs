@@ -173,12 +173,13 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
     record_batch
 }
 
-fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
+pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
     if false {
         print_to_js_with_obj(&format!("{:?}", restful_string).into());
         print_to_js_with_obj(&format!("{:?}", record_batch).into());
     }
     send_record_batch_to_js(&record_batch);
+    //send_record_batch_to_js(&record_batch);
     insert_query_to_cache(restful_string, record_batch);
 }
 

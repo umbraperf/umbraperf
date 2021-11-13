@@ -90,6 +90,9 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
+
+// GETTER,SETTER STATE 
+// GETTER
 fn get_record_batches() -> Option<Arc<RecordBatchShared>> {
     with_state(|s| s.record_batches.clone())
 }
@@ -108,7 +111,20 @@ fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
         binary.append(&mut vec);
     });
 }
+// SETTER
+fn set_record_batches(record_batches: RecordBatch) {
+    let shared_record_batch = RecordBatchShared { batch: record_batches };
+    _with_state_mut(|s| s.record_batches = Some(Arc::new(shared_record_batch)));
+} 
 
+fn get_serde_dict() -> Option<Arc<SerdeDict>> {
+    with_state(|s| s.dict.clone())
+}
+
+fn set_serde_dict(serde_dict: SerdeDict) {
+    _with_state_mut(|s| s.dict = Some(Arc::new(serde_dict)));
+}
+// CACHE
 fn clear_cache() {
     _with_state_mut(|s| {
         let mut hashmap = s.queries.lock().unwrap();
@@ -123,18 +139,6 @@ fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
     });
 }
 
-fn set_record_batches(record_batches: RecordBatch) {
-    let shared_record_batch = RecordBatchShared { batch: record_batches };
-    _with_state_mut(|s| s.record_batches = Some(Arc::new(shared_record_batch)));
-} 
-
-fn get_serde_dict() -> Option<Arc<SerdeDict>> {
-    with_state(|s| s.dict.clone())
-}
-
-fn set_serde_dict(serde_dict: SerdeDict) {
-    _with_state_mut(|s| s.dict = Some(Arc::new(serde_dict)));
-}
 
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {

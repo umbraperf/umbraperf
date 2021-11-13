@@ -30,9 +30,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     }
 
     renderChartPerOperator() {
-        const vegaElements = this.props.chartData.heatmapsData.map((elem, index) => {
-            const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
-            return vegaElement;
+        let vegaElements = new Array<JSX.Element>();
+        this.props.chartData.heatmapsData.forEach((elem, index) => {
+            if(elem.operator.length > 0){
+                const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
+                vegaElements.push(vegaElement);
+            }
         });
         return vegaElements;
     }
@@ -138,11 +141,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const visData = this.createVisualizationData(id);
 
-        // if (visData[0].values && visData[0].values.length === 0) {
-        //     //TODO still necessary? 
-        //     return null;
-        // };
-
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: 300,
@@ -152,7 +150,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
 
             title: {
-                //TODO change id to op name first element in data
                 text: `Memory Access Heatmap: ${this.props.chartData.heatmapsData[id].operator[0]}`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,

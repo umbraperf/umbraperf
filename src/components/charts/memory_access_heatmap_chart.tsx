@@ -87,7 +87,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     createVisualizationData(id: number) {
 
         const singleChartData = {
-            operator: this.props.chartData.heatmapsData[id].operator,
+            //operator: this.props.chartData.heatmapsData[id].operator,
             bucket: Array.from(this.props.chartData.heatmapsData[id].buckets),
             memAdr: Array.from(this.props.chartData.heatmapsData[id].memoryAdress),
             occurrences: Array.from(this.props.chartData.heatmapsData[id].occurrences),
@@ -96,9 +96,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
         const data = [
             {
                 name: "table",
-                values: singleChartData,
+                values: { bucket: singleChartData.bucket, memAdr: singleChartData.memAdr, occurrences: singleChartData.occurrences },
                 transform: [
-                    //TODO still necessary?
+                    {
+                        type: "flatten",
+                        fields: ["bucket", "memAdr", "occurrences"]
+                    },
                     {
                         type: "extent",
                         field: "occurrences",
@@ -122,8 +125,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                         type: "heatmap",
                         field: "grid",
                         resolve: "shared",
-                        //TODO times extend signal
-                        //TODO max freq as extend
                         color: { "expr": `scale('density', (datum.$value/datum.$max) * extent[1])` },
                         opacity: 1
                     }
@@ -152,7 +153,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
             title: {
                 //TODO change id to op name first element in data
-                text: `Memory Access Heatmap: ${id}`,
+                text: `Memory Access Heatmap: ${this.props.chartData.heatmapsData[id].operator[0]}`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,

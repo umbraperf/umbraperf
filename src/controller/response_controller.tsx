@@ -110,6 +110,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
+    let setResultLoading = false;
 
     switch (requestType) {
 
@@ -124,6 +125,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('count').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
@@ -138,6 +140,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
@@ -156,7 +159,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     chartType: model.ChartType.SWIM_LANES_PIPELINES,
                     data: dataArray,
                 });
-
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
@@ -171,6 +174,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
@@ -185,6 +189,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
@@ -202,6 +207,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequencyNeg: resultObject.resultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
@@ -219,6 +225,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequencyNeg: resultObject.resultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_PIPELINE_COUNT:
@@ -232,6 +239,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         count: resultObject.resultTable.getColumn('count').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
@@ -245,6 +253,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         occurrences: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
@@ -260,9 +269,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         pipeOccurrences: resultObject.resultTable.getColumn('pipecount').toArray(),
                     }
                 });
+            setResultLoading = true;
             break;
 
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
+
+            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
             if (resultObject.resultTable.schema.fields.length === 6) {
                 //domain info received
@@ -280,7 +292,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         min: resultObject.resultTable.getColumn('min_freq').data.values[0],
                     }
                 }
-                console.log(domainData);
+                chartData.domain = domainData;
 
             } else if (resultObject.resultTable.schema.fields.length === 4) {
                 //single heatmap chart data received
@@ -290,24 +302,22 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
                     occurrences: resultObject.resultTable.getColumn('freq').toArray(),
                 }
-                console.log(singleChartData);
-
+                chartData.heatmapsData.push(singleChartData);
+                if (chartData.heatmapsData.length === store.getState().operators!.length) {
+                    // set result loading to true only if data for all operators arrived
+                    setResultLoading = true;
+                }
             }
 
-            //     chartDataElem = model.createChartDataObject(
-            //         requestId,
-            //         {
-            //             chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
-            //             data: {
-            //                 operator: resultObject.resultTable.getColumn('operator').toArray(),
-            //                 buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-            //                 memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
-            //                 occurrences: resultObject.resultTable.getColumn('freq').toArray(),
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
+                    data: chartData,
+                });
 
-            //             }
-            //         });
+            console.log((store.getState().chartData[requestId]));
             break;
-
     }
 
     chartDataCollection[requestId] = chartDataElem!;
@@ -316,10 +326,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         data: chartDataCollection,
     });
 
-    store.dispatch({
-        type: model.StateMutationType.SET_RESULTLOADING,
-        data: { key: requestId, value: false },
-    });
+    if (setResultLoading) {
+        store.dispatch({
+            type: model.StateMutationType.SET_RESULTLOADING,
+            data: { key: requestId, value: false },
+        });
+    }
 
 }
 

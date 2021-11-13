@@ -89,6 +89,6 @@ export interface IMemoryAccessHeatmapChartDomainData {
 export interface IMemoryAccessHeatmapChartData {
 
     domain: IMemoryAccessHeatmapChartDomainData,
-    heatmaps: Array<IMemoryAccessHeatmapChartSingleData>,
+    heatmapsData: Array<IMemoryAccessHeatmapChartSingleData>,
 }
 

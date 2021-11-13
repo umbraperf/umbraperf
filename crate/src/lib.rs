@@ -104,22 +104,22 @@ fn get_parquet_file_binary() -> Arc<Mutex<Vec<u8>>> {
 
 fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
     _with_state_mut(|s| {
-        let mut t = s.parquet_file_binary.lock().unwrap();
-        t.append(&mut vec);
+        let mut binary = s.parquet_file_binary.lock().unwrap();
+        binary.append(&mut vec);
     });
 }
 
 fn clear_cache() {
     _with_state_mut(|s| {
-        let mut t = s.queries.lock().unwrap();
-        t.clear();
+        let mut hashmap = s.queries.lock().unwrap();
+        hashmap.clear();
     });
 }
 
 fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
     _with_state_mut(|s| {
-        let mut t = s.queries.lock().unwrap();
-        t.insert(restful_string.to_string(), record_batch)
+        let mut hashmap = s.queries.lock().unwrap();
+        hashmap.insert(restful_string.to_string(), record_batch)
     });
 }
 

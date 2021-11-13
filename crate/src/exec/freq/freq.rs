@@ -280,7 +280,7 @@ pub fn freq_of_memory(
     let unique_operator =
         find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
-    let unique_operator = &sort_batch(&unique_operator, 0, true);
+    let unique_operator = &sort_batch(&unique_operator, 0, false);
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
 
@@ -416,7 +416,7 @@ pub fn freq_of_memory(
 
     send_record_batch_to_js(&meta_info);
 
-    let sorted_batch = sort_batch(&batch, 1, true);
+    let sorted_batch = sort_batch(&batch, 1, false);
 
     print_to_js_with_obj(&format!("sorted_batch {:?}", sorted_batch).into());
 

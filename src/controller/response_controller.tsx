@@ -109,7 +109,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
 
-    console.log(resultObject.resultTable);
+    //console.log(resultObject.resultTable.getColumn('operator'));
 
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
@@ -281,7 +281,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             let chartData: model.IMemoryAccessHeatmapChartData | undefined = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : undefined;
 
             //console.log(chartData);
-            if (resultObject.resultTable.schema.fields.length === 6) {
+            if (resultObject.resultTable.schema.fields.length === 7) {
                 //domain info received
                 const domainData: model.IMemoryAccessHeatmapChartDomainData = {
                     memoryDomain: {

@@ -275,7 +275,7 @@ pub fn freq_of_memory(
     let unique_operator =
         find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
-    let unique_operator = &sort_batch(&unique_operator, 0, false);
+    let unique_operator = &sort_batch(&unique_operator, 0, true);
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
 
@@ -376,20 +376,16 @@ pub fn freq_of_memory(
     );
 
     let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
-
     let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
-
     let max_time = arrow::compute::max(get_floatarray_column(&batch, 0)).unwrap();
-
     let min_time = arrow::compute::min(get_floatarray_column(&batch, 0)).unwrap();
-
     let max_freq = arrow::compute::max(get_floatarray_column(&batch, 3)).unwrap();
-
     let min_freq = arrow::compute::min(get_floatarray_column(&batch, 3)).unwrap();
+    let num_op = vec_operator.len() as f64;
 
-    let info = create_new_record_batch(
+    let meta_info = create_new_record_batch(
         vec![
-            "max_mem", "min_mem", "max_time", "min_time", "max_freq", "min_freq",
+            "max_mem", "min_mem", "max_time", "min_time", "max_freq", "min_freq", "num_op"
         ],
         vec![
             DataType::Int32,
@@ -398,6 +394,7 @@ pub fn freq_of_memory(
             DataType::Float64,
             DataType::Float64,
             DataType::Float64,
+            DataType::Float64
         ],
         vec![
             Arc::new(Int32Array::from(vec![max_mem])),
@@ -406,14 +403,15 @@ pub fn freq_of_memory(
             Arc::new(Float64Array::from(vec![min_time])),
             Arc::new(Float64Array::from(vec![max_freq])),
             Arc::new(Float64Array::from(vec![min_freq])),
+            Arc::new(Float64Array::from(vec![num_op])),
         ],
     );
 
-    print_to_js_with_obj(&format!("info batch {:?}", &info).into());
+    print_to_js_with_obj(&format!("info batch {:?}", &meta_info).into());
 
-    send_record_batch_to_js(&info);
+    send_record_batch_to_js(&meta_info);
 
-    let sorted_batch = sort_batch(&batch, 1, false);
+    let sorted_batch = sort_batch(&batch, 1, true);
 
     print_to_js_with_obj(&format!("sorted_batch {:?}", sorted_batch).into());
 
@@ -432,8 +430,10 @@ pub fn freq_of_memory(
         offset += len;
 
         if entry.0 == vec_operator.len() - 1 {
+            print_to_js_with_obj(&format!("1111").into());
             return slice_batch;
         } else {
+            print_to_js_with_obj(&format!("0000").into());
             send_record_batch_to_js(&slice_batch);
         }
     }

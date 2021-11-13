@@ -1,8 +1,22 @@
 use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
-use arrow::{array::{Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray, UInt64Array}, datatypes::{DataType, Field, Float64Type, Schema, UInt64Type}, record_batch::RecordBatch};
+use arrow::{
+    array::{
+        Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
+        UInt64Array,
+    },
+    datatypes::{DataType, Field, Float64Type, Int32Type, Schema, UInt64Type},
+    record_batch::RecordBatch,
+};
 
-use crate::{exec::basic::basic::{find_unique_string, sort_batch}, get_record_batches, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::{create_new_record_batch, send_record_batch_to_js}}};
+use crate::{
+    exec::basic::basic::{find_unique_string, sort_batch},
+    get_record_batches,
+    utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js},
+    },
+};
 
 pub enum Freq {
     ABS,
@@ -103,6 +117,15 @@ pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UI
     return column;
 }
 
+pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int32Type> {
+    let column = batch
+        .column(column)
+        .as_any()
+        .downcast_ref::<Int32Array>()
+        .unwrap();
+    return column;
+}
+
 pub fn freq_of_pipelines(
     batch: &RecordBatch,
     freq: Freq,
@@ -116,7 +139,8 @@ pub fn freq_of_pipelines(
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
+    let unique_operator =
+        find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
     // Vector of unique strings
     let vec_operator = get_stringarray_column(&unique_operator, 0);
@@ -246,10 +270,10 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
     let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
+    let unique_operator =
+        find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
     let unique_operator = &sort_batch(&unique_operator, 0, false);
 
@@ -342,6 +366,44 @@ pub fn freq_of_memory(
         column_index += 1;
     }
 
+    let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
+
+    let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
+
+    let max_time = arrow::compute::max(get_floatarray_column(&batch, 0)).unwrap();
+
+    let min_time = arrow::compute::min(get_floatarray_column(&batch, 0)).unwrap();
+
+    let max_freq = arrow::compute::max(get_floatarray_column(&batch, 3)).unwrap();
+
+    let min_freq = arrow::compute::min(get_floatarray_column(&batch, 3)).unwrap();
+
+    let info = create_new_record_batch(
+        vec![
+            "max_mem", "min_mem", "max_time", "min_time", "max_freq", "min_freq",
+        ],
+        vec![
+            DataType::Int32,
+            DataType::Int32,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+        ],
+        vec![
+            Arc::new(Int32Array::from(vec![max_mem])),
+            Arc::new(Int32Array::from(vec![min_mem])),
+            Arc::new(Float64Array::from(vec![max_time])),
+            Arc::new(Float64Array::from(vec![min_time])),
+            Arc::new(Float64Array::from(vec![max_freq])),
+            Arc::new(Float64Array::from(vec![min_freq])),
+        ],
+    );
+
+    print_to_js_with_obj(&format!("info batch {:?}", &info).into());
+
+    send_record_batch_to_js(&info);
+
     let batch = create_mem_bucket(
         &batch,
         column_for_operator,
@@ -359,7 +421,6 @@ pub fn freq_of_memory(
 
     let mut offset = 0.;
     for entry in vec_operator.into_iter().enumerate() {
-
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap();
 
         print_to_js_with_obj(&format!("offset {:?} len {:?}", offset, len).into());
@@ -370,13 +431,14 @@ pub fn freq_of_memory(
 
         offset += len;
 
-        if entry.0 == vec_operator.len() {
-            	return slice_batch;
+        if entry.0 == vec_operator.len() - 1 {
+            return slice_batch;
         } else {
             send_record_batch_to_js(&slice_batch);
         }
-
     }
+
+    print_to_js_with_obj(&format!("NOOOOOOOOOOOOOO {:?}", batch).into());
 
     batch
 }

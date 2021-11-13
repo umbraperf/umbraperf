@@ -278,7 +278,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
-            let chartData: model.IMemoryAccessHeatmapChartData | undefined = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : undefined;
+            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : {domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: []};
 
             //console.log(chartData);
             if (resultObject.resultTable.schema.fields.length === 7) {
@@ -299,8 +299,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     numberOperators: resultObject.resultTable.getColumn('num_op').data.values[0]
                 }
                 chartData = {
+                    ...chartData,
                     domain: domainData,
-                    heatmapsData: [],
                 }
 
             } else if (resultObject.resultTable.schema.fields.length === 4) {
@@ -312,7 +312,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     occurrences: resultObject.resultTable.getColumn('freq').toArray(),
                 }
                 chartData = {
-                    ...chartData!,
+                    ...chartData,
                     heatmapsData: chartData!.heatmapsData.concat(singleChartData),
                 }
                 console.log(chartData);
@@ -326,7 +326,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 requestId,
                 {
                     chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
-                    data: chartData!,
+                    data: chartData,
                 });
             break;
     }

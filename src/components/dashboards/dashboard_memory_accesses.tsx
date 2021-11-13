@@ -17,6 +17,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
     }
 
     componentDidUpdate() {
+        console.log("was here: " + this.props.events);
         //TODO event change on open!
         if (this.props.events?.includes("mem_inst_retired.all_loads")) {
             this.props.setCurrentEvent("mem_inst_retired.all_loads");

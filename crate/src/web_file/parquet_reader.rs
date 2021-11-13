@@ -1,6 +1,6 @@
 use std::{io::Read};
 
-use crate::{append_to_parquet_file_binary, get_parquet_file_binary};
+use crate::state::{append_to_parquet_file_binary, get_parquet_file_binary};
 
 use super::streambuf::WebFileReader;
 

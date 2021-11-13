@@ -32,7 +32,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     renderChartPerOperator() {
         const vegaElements = this.props.chartData.heatmapsData.map((elem, index) => {
             const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
-            return index;
+            return vegaElement;
         });
         return vegaElements;
     }
@@ -86,26 +86,25 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
     createVisualizationData(id: number) {
 
-        //TODO Array from data
         const singleChartData = {
             operator: this.props.chartData.heatmapsData[id].operator,
-            bucket: this.props.chartData.heatmapsData[id].buckets,
-            memAdr: this.props.chartData.heatmapsData[id].memoryAdress,
-            occurrences: this.props.chartData.heatmapsData[id].occurrences,
+            bucket: Array.from(this.props.chartData.heatmapsData[id].buckets),
+            memAdr: Array.from(this.props.chartData.heatmapsData[id].memoryAdress),
+            occurrences: Array.from(this.props.chartData.heatmapsData[id].occurrences),
         }
 
         const data = [
             {
                 name: "table",
                 values: singleChartData,
-                // transform: [
-                //     //TODO still necessary?
-                //     {
-                //         type: "extent",
-                //         field: "occurrences",
-                //         signal: "extent"
-                //     }
-                // ]
+                transform: [
+                    //TODO still necessary?
+                    {
+                        type: "extent",
+                        field: "occurrences",
+                        signal: "extent"
+                    }
+                ]
             },
             {
                 name: "density",
@@ -125,7 +124,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                         resolve: "shared",
                         //TODO times extend signal
                         //TODO max freq as extend
-                        color: { "expr": `scale('density', (datum.$value/datum.$max) * ${this.props.chartData.domain.frequencyDomain.max})` },
+                        color: { "expr": `scale('density', (datum.$value/datum.$max) * extent[1])` },
                         opacity: 1
                     }
                 ]
@@ -190,9 +189,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                     "name": "density",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    // "domain": [0, 1],
                     "domain": [0, { "signal": "extent[1]" }],
-                    // "domain": [0, { signal: "extent" }],
+                    // domain: [0, this.props.chartData.domain.frequencyDomain.max],
                     "zero": true,
                 }
             ],

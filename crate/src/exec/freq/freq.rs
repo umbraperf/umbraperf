@@ -366,6 +366,15 @@ pub fn freq_of_memory(
         column_index += 1;
     }
 
+    let batch = create_mem_bucket(
+        &batch,
+        column_for_operator,
+        result_bucket,
+        result_vec_operator,
+        result_mem_operator,
+        result_builder,
+    );
+
     let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
 
     let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
@@ -403,15 +412,6 @@ pub fn freq_of_memory(
     print_to_js_with_obj(&format!("info batch {:?}", &info).into());
 
     send_record_batch_to_js(&info);
-
-    let batch = create_mem_bucket(
-        &batch,
-        column_for_operator,
-        result_bucket,
-        result_vec_operator,
-        result_mem_operator,
-        result_builder,
-    );
 
     let sorted_batch = sort_batch(&batch, 1, false);
 

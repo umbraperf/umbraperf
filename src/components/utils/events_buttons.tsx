@@ -35,10 +35,11 @@ function EventsButtons(props: Props) {
 
     //automatically change event to memory loads if available on change to memory dashboard, allow for multiple events selection if multiple events dashboard
     useEffect(() => {
+
         if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
             console.log(props.currentView);
+
             if (events.includes("mem_inst_retired.all_loads")) {
-                console.log("went in if, set: " + props.currentMultipleEvent)
                 handleEventButtonClick("mem_inst_retired.all_loads");
             }
         }
@@ -49,7 +50,7 @@ function EventsButtons(props: Props) {
             setMultipleEvents(false);
         }
 
-    }, [props.currentView]);
+    },[props.currentView, events]);
 
     const handleEventButtonClick = (event: string) => {
         props.setCurrentEvent(event);

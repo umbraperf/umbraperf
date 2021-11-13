@@ -1,7 +1,7 @@
 // Wasm Bindgen
 extern crate wasm_bindgen;
 use exec::rest::rest_api::eval_query;
-use state::get_record_batches;
+use state::state::get_record_batches;
 use utils::print_to_cons::print_to_js_with_obj;
 use wasm_bindgen::prelude::*;
 
@@ -46,11 +46,13 @@ mod utils {
     pub mod string_util;
 }
 
-pub mod state;
+mod state {
+    pub mod state;
+}
 
-use crate::state::clear_cache;
-use crate::state::set_record_batches;
-use crate::state::set_serde_dict;
+use crate::state::state::clear_cache;
+use crate::state::state::set_record_batches;
+use crate::state::state::set_serde_dict;
 use crate::utils::bindings::notify_js_finished_reading;
 use crate::web_file::serde_reader::SerdeDict;
 use utils::bindings;

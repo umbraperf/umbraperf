@@ -37,12 +37,11 @@ export class RequestController {
     }
 }
 
-//request all metadata
+//request metadata without statistics
 export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
-    requestStatistics(controller);
 }
 
 //request events from rust, metarequest

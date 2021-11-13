@@ -40,7 +40,7 @@ class KpiContainer extends React.Component<Props, {}> {
     }
 
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
-        if (prevProps.currentEvent !== "Default" &&
+        if (this.props.currentEvent !== "Default" &&
             (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
                 props.chartIdCounter !== prevProps.chartIdCounter ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||

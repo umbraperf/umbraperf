@@ -268,16 +268,16 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 //domain info received
                 const domainData: model.IMemoryAccessHeatmapChartDomainData = {
                     memoryDomain: {
-                        max: Array.from(resultObject.resultTable.getColumn('max_mem').toArray())[0] as number,
-                        min: Array.from(resultObject.resultTable.getColumn('min_mem').toArray())[0] as number,
+                        max: resultObject.resultTable.getColumn('max_mem').data.values[0],
+                        min: resultObject.resultTable.getColumn('min_mem').data.values[0],
                     },
                     timeDomain: {
-                        max: Array.from(resultObject.resultTable.getColumn('max_time').toArray())[0] as number,
-                        min: Array.from(resultObject.resultTable.getColumn('min_time').toArray())[0] as number,
+                        max: resultObject.resultTable.getColumn('max_time').data.values[0],
+                        min: resultObject.resultTable.getColumn('min_time').data.values[0],
                     },
                     frequencyDomain: {
-                        max: Array.from(resultObject.resultTable.getColumn('max_freq').toArray())[0] as number,
-                        min: Array.from(resultObject.resultTable.getColumn('min_freq').toArray())[0] as number,
+                        max: resultObject.resultTable.getColumn('max_freq').data.values[0],
+                        min: resultObject.resultTable.getColumn('min_freq').data.values[0],
                     }
                 }
                 console.log(domainData);

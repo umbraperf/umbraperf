@@ -198,6 +198,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
 
         case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+
             controller.calculateChartData(
                 model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT,
                 model.createRestQuery({
@@ -205,9 +206,7 @@ export function requestChartData(controller: RequestController, chartId: number,
                     data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
                 }), false, chartId);
             break;
-
     }
-
 }
 
 

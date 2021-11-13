@@ -88,6 +88,7 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter}${timeFilter}/sunburst?pipeline`;
         case RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
+            console.log(`bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`);
             return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`;
         case RestQueryType.other:
             return 'error - bad request to backend';

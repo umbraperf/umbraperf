@@ -277,8 +277,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
+        //TODO bug on same event reload
+
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
-            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : {domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: []};
+            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
             //console.log(chartData);
             if (resultObject.resultTable.schema.fields.length === 7) {
@@ -299,9 +301,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     numberOperators: resultObject.resultTable.getColumn('num_op').data.values[0]
                 }
                 chartData = {
-                    ...chartData,
                     domain: domainData,
+                    heatmapsData: [], //need for reset stored heatmaps array on new data
                 }
+                console.log("yes");
+                console.log(chartData);
 
             } else if (resultObject.resultTable.schema.fields.length === 4) {
                 //single heatmap chart data received
@@ -315,7 +319,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     ...chartData,
                     heatmapsData: chartData!.heatmapsData.concat(singleChartData),
                 }
+                console.log(chartData.heatmapsData.length);
+                console.log(chartData.domain.numberOperators);
                 console.log(chartData);
+
                 if (chartData.heatmapsData.length === chartData.domain.numberOperators) {
                     // set result loading to true only if data for all operators arrived
                     setResultLoading = true;

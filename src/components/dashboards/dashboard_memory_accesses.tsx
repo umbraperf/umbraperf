@@ -5,24 +5,7 @@ import ChartWrapper from '../charts/chart_wrapper';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 
-interface Props {
-    events: Array<string> | undefined;
-    setCurrentEvent: (newCurrentEvent: string) => void;
-}
-
-class DashboardMemoryAccesses extends React.Component<Props, {}> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    componentDidUpdate() {
-        console.log("was here: " + this.props.events);
-        //TODO event change on open!
-        if (this.props.events?.includes("mem_inst_retired.all_loads")) {
-            this.props.setCurrentEvent("mem_inst_retired.all_loads");
-        }
-    }
+class DashboardMemoryAccesses extends React.Component<{}, {}> {
 
     public render() {
 
@@ -53,18 +36,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    events: state.events,
-});
-
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
-        data: newCurrentEvent,
-    }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardMemoryAccesses);
+export default DashboardMemoryAccesses;
 
 
 

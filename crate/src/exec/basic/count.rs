@@ -9,11 +9,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{
-    exec::basic::{basic::find_unique_string, filter::filter_with},
-    get_record_batches,
-    utils::record_batch_util::create_new_record_batch,
-};
+use crate::{exec::basic::{basic::find_unique_string, filter::filter_with}, state::state::get_record_batches, utils::record_batch_util::create_new_record_batch};
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let vec = batch

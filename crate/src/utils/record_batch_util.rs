@@ -1,7 +1,4 @@
-use crate::{
-    bindings::notify_js_query_result, get_serde_dict,
-    web_file::web_file_chunkreader::WebFileChunkReader,
-};
+use crate::{bindings::notify_js_query_result, state::state::get_serde_dict, utils::print_to_cons::print_to_js_with_obj, web_file::web_file_chunkreader::WebFileChunkReader};
 use arrow::{
     array::{Array, ArrayRef, Int64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},
@@ -167,6 +164,9 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
 }
 
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
+
+    print_to_js_with_obj(&format!("{:?}", record_batch).into());
+
     let mut buff = Cursor::new(vec![]);
 
     let options = arrow::ipc::writer::IpcWriteOptions::default();
@@ -187,6 +187,34 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
     let _writer_mess =
         arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
+    
+    notify_js_query_result(buff.into_inner());
+}
 
+pub fn send_record_batch_to_js_no_ref(record_batch: RecordBatch) {
+
+    print_to_js_with_obj(&format!("{:?}", record_batch).into());
+
+    let mut buff = Cursor::new(vec![]);
+
+    let options = arrow::ipc::writer::IpcWriteOptions::default();
+    let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
+
+    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(
+        &arrow::ipc::writer::IpcDataGenerator::default(),
+        &record_batch.schema(),
+        &options,
+    );
+    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(
+        &arrow::ipc::writer::IpcDataGenerator::default(),
+        &record_batch,
+        &mut dict,
+        &options,
+    );
+
+    let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
+    let _writer_mess =
+        arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
+    
     notify_js_query_result(buff.into_inner());
 }

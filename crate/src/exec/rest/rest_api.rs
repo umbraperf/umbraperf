@@ -1,4 +1,4 @@
-use crate::{exec::basic::{basic, count, filter, kpis}, get_query_from_cache, insert_query_to_cache, record_batch_util::send_record_batch_to_js, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_and, split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}}};
+use crate::{exec::basic::{basic, count, filter, kpis}, record_batch_util::send_record_batch_to_js, state::state::{get_query_from_cache, insert_query_to_cache}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_and, split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}}};
 use arrow::record_batch::RecordBatch;
 use std::usize;
 
@@ -173,7 +173,7 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
     record_batch
 }
 
-fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
+pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
     if false {
         print_to_js_with_obj(&format!("{:?}", restful_string).into());
         print_to_js_with_obj(&format!("{:?}", record_batch).into());
@@ -183,7 +183,6 @@ fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
-    //print_to_js_with_obj(&format!("{:?}", restful_string).into());
 
     if query_already_calculated(restful_string) {
         return;

@@ -9,19 +9,15 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{
-    exec::{
+use crate::{exec::{
         basic::basic::{find_unique_string, sort_batch},
         rest::rest_api::finish_query_exec,
-    },
-    get_record_batches,
-    utils::{
+    }, state::state::get_record_batches, utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js, send_record_batch_to_js_no_ref,
         },
-    },
-};
+    }};
 
 pub enum Freq {
     ABS,

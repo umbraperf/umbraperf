@@ -211,7 +211,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE,
                     data: {
-                        //TODO turn around neg and pos
                         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
                         operators: resultObject.resultTable.getColumn('operator').toArray(),
                         frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
@@ -265,18 +264,48 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
-            chartDataElem = model.createChartDataObject(
-                requestId,
-                {
-                    chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
-                    data: {
-                        operator: resultObject.resultTable.getColumn('operator').toArray(),
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
-                        occurrences: resultObject.resultTable.getColumn('freq').toArray(),
-
+            if (resultObject.resultTable.schema.fields.length === 6) {
+                //domain info received
+                const domainData: model.IMemoryAccessHeatmapChartDomainData = {
+                    memoryDomain: {
+                        max: Array.from(resultObject.resultTable.getColumn('max_mem').toArray())[0] as number,
+                        min: Array.from(resultObject.resultTable.getColumn('min_mem').toArray())[0] as number,
+                    },
+                    timeDomain: {
+                        max: Array.from(resultObject.resultTable.getColumn('max_time').toArray())[0] as number,
+                        min: Array.from(resultObject.resultTable.getColumn('min_time').toArray())[0] as number,
+                    },
+                    frequencyDomain: {
+                        max: Array.from(resultObject.resultTable.getColumn('max_freq').toArray())[0] as number,
+                        min: Array.from(resultObject.resultTable.getColumn('min_freq').toArray())[0] as number,
                     }
-                });
+                }
+                console.log(domainData);
+
+            } else if (resultObject.resultTable.schema.fields.length === 4) {
+                //single heatmap chart data received
+                const singleChartData: model.IMemoryAccessHeatmapChartSingleData = {
+                    operator: resultObject.resultTable.getColumn('operator').toArray(),
+                    buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+                    memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
+                    occurrences: resultObject.resultTable.getColumn('freq').toArray(),
+                }
+                console.log(singleChartData);
+
+            }
+
+            //     chartDataElem = model.createChartDataObject(
+            //         requestId,
+            //         {
+            //             chartType: model.ChartType.MEMORY_ACCESS_HEATMAP_CHART,
+            //             data: {
+            //                 operator: resultObject.resultTable.getColumn('operator').toArray(),
+            //                 buckets: resultObject.resultTable.getColumn('bucket').toArray(),
+            //                 memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
+            //                 occurrences: resultObject.resultTable.getColumn('freq').toArray(),
+
+            //             }
+            //         });
             break;
 
     }

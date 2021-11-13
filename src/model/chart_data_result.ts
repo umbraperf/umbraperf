@@ -69,14 +69,26 @@ export interface IBarChartActivityHistogramData {
 export interface ISunburstChartData {
     operator: Array<string>;
     pipeline: Array<string | null>;
-    opOccurrences: Array<number | null>; 
-    pipeOccurrences: Array<number | null>; 
+    opOccurrences: Array<number | null>;
+    pipeOccurrences: Array<number | null>;
 }
 
-export interface IMemoryAccessHeatmapChartData {
+export interface IMemoryAccessHeatmapChartSingleData {
     operator: Array<string>,
     buckets: Array<number>,
     memoryAdress: Array<number>,
-    occurrences: Array<number>,
+    occurrences: Array<number>
+}
+
+export interface IMemoryAccessHeatmapChartDomainData {
+    memoryDomain: { max: number, min: number },
+    timeDomain: { max: number, min: number },
+    frequencyDomain: { max: number, min: number },
+}
+
+export interface IMemoryAccessHeatmapChartData {
+
+    domain: IMemoryAccessHeatmapChartDomainData,
+    heatmaps: Array<IMemoryAccessHeatmapChartSingleData>,
 }
 

@@ -2,7 +2,6 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
-import QueryPlanWrapper from '../charts/queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 
 
@@ -15,12 +14,14 @@ class DashboardUir extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} >
                     <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            <p>will be uri list</p>
                             <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
                         </div>
                     </Box>
                 </Grid>
             </Box>
+
+            <p>will be uri list</p>
+
 
         </Grid>
     }

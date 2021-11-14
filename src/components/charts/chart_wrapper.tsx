@@ -210,6 +210,13 @@ class ChartWrapper extends React.Component<Props, State> {
                     ...partialChartProps,
                 }
                 return React.createElement(MemoryAccessHeatmapChart, memoryAccessHeatmapChartProps as any);
+
+            case model.ChartType.UIR_VIEWER:
+                const uirViewerChartProps: model.IMemoryAccessHeatmapChartProps = {
+                    ...partialChartProps,
+                }
+                return React.createElement(MemoryAccessHeatmapChart, uirViewerChartProps as any);
+
         }
     }
 

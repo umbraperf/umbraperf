@@ -58,7 +58,7 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
     }
 }
 
-fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBatch {
+fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<RecordBatch> {
     for op in op_vec {
         let split = split_at_question_mark(op);
         let operator = split[0];
@@ -110,7 +110,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
                 record_batch = sort(&record_batch, params);
             }
             "heatmap" => {
-                record_batch = freq_mem(record_batch, params);
+                freq_mem(record_batch, params);
+                return None;
             }
             _ => {
                 panic!("Not supported operator!");
@@ -118,7 +119,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> RecordBa
         }
     }
 
-    return record_batch;
+    return Some(record_batch);
 }
 
 fn eval_selections(record_batch: RecordBatch, select_vec: Vec<&str>) -> RecordBatch {
@@ -165,12 +166,16 @@ fn multiple_queries_concat(restful_string: &str) -> bool {
     restful_string.contains("&&")
 }
 
-fn exec_query(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
+fn exec_query(record_batch: RecordBatch, restful_string: &str) -> Option<RecordBatch> {
     let split_query = split_query(restful_string);
     let record_batch = eval_filters(record_batch, split_query.0);
     let record_batch = eval_operations(record_batch, split_query.1);
-    let record_batch = eval_selections(record_batch, split_query.2);
-    record_batch
+    if let Some(batch) = record_batch {
+        let record_batch = eval_selections(batch, split_query.2);
+        return Some(record_batch);
+    } else {
+        return None;
+    }
 }
 
 pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
@@ -183,6 +188,7 @@ pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
+    print_to_js_with_obj(&format!("{:?}", restful_string).into());
 
     if query_already_calculated(restful_string) {
         return;
@@ -192,11 +198,13 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
         let split = split_at_double_and(restful_string);
         let mut vec_batch = Vec::new();
         for query in split {
-            vec_batch.push(exec_query(record_batch.to_owned(), query));
+            vec_batch.push(exec_query(record_batch.to_owned(), query).unwrap());
         }
         finish_query_exec(concat_record_batches(vec_batch), restful_string);
     } else {
         let batch = exec_query(record_batch, restful_string);
-        finish_query_exec(batch, restful_string);
+        if let Some(batch) = batch {
+            finish_query_exec(batch, restful_string);
+        }
     }
 }

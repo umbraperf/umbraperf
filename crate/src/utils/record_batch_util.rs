@@ -190,31 +190,3 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     
     notify_js_query_result(buff.into_inner());
 }
-
-pub fn send_record_batch_to_js_no_ref(record_batch: RecordBatch) {
-
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
-
-    let mut buff = Cursor::new(vec![]);
-
-    let options = arrow::ipc::writer::IpcWriteOptions::default();
-    let mut dict = arrow::ipc::writer::DictionaryTracker::new(true);
-
-    let encoded_schema = arrow::ipc::writer::IpcDataGenerator::schema_to_bytes(
-        &arrow::ipc::writer::IpcDataGenerator::default(),
-        &record_batch.schema(),
-        &options,
-    );
-    let encoded_message = arrow::ipc::writer::IpcDataGenerator::encoded_batch(
-        &arrow::ipc::writer::IpcDataGenerator::default(),
-        &record_batch,
-        &mut dict,
-        &options,
-    );
-
-    let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
-    let _writer_mess =
-        arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
-    
-    notify_js_query_result(buff.into_inner());
-}

@@ -9,15 +9,19 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{
+use crate::{
+    exec::{
         basic::basic::{find_unique_string, sort_batch},
         rest::rest_api::finish_query_exec,
-    }, state::state::get_record_batches, utils::{
+    },
+    state::state::get_record_batches,
+    utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
-            create_new_record_batch, send_record_batch_to_js, send_record_batch_to_js_no_ref,
+            create_new_record_batch, send_record_batch_to_js,
         },
-    }};
+    },
+};
 
 pub enum Freq {
     ABS,
@@ -270,11 +274,15 @@ pub fn freq_of_memory(
     bucket_size: f64,
     from: f64,
     to: f64,
-) -> RecordBatch {
+) {
+
+
+        print_to_js_with_obj(&format!("in it! {:?}", from).into());
+
     let batch = &sort_batch(batch, 2, false);
 
     let unique_operator =
-        find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
+        find_unique_string(batch, column_for_operator);
 
     let unique_operator = &sort_batch(&unique_operator, 0, false);
 
@@ -408,73 +416,74 @@ pub fn freq_of_memory(
         ],
     );
 
-    print_to_js_with_obj(&format!("info batch {:?}", &meta_info).into());
-
     send_record_batch_to_js(&meta_info);
 
     let sorted_batch = sort_batch(&batch, 1, false);
-
-    print_to_js_with_obj(&format!("sorted_batch {:?}", sorted_batch).into());
-
-    print_to_js_with_obj(&format!("bucket map {:?}", bucket_map_count).into());
-
     let mut offset = 0.;
+    let mut hashmap = HashMap::new();
+
+    print_to_js_with_obj(&format!("entry {:?}", "hi").into());
+
     for entry in vec_operator.into_iter().enumerate() {
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 
-        print_to_js_with_obj(&format!("offset {:?} len {:?}", offset, len).into());
+        let batch = sorted_batch.slice(offset as usize, len as usize);
 
-        if entry.0 == vec_operator.len() - 1 {
-            let batch = sorted_batch.slice(offset as usize, len as usize);
-
-            return batch;
-        } else {
-            let batch = sorted_batch.slice(offset as usize, len as usize);
-
-            let bucket = get_floatarray_column(&batch, 0);
-            let mut bucket_vec = Vec::new();
-            for entry in bucket {
-                bucket_vec.push(entry.unwrap());
-            }
-            let operator = get_stringarray_column(&batch, 1);
-            let mut operator_vec = Vec::new();
-            for entry in operator {
-                operator_vec.push(entry.unwrap());
-            }
-            let mem = get_int32_column(&batch, 2);
-            let mut mem_vec = Vec::new();
-            for entry in mem {
-                mem_vec.push(entry.unwrap());
-            }
-            let freq = get_floatarray_column(&batch, 3);
-            let mut freq_vec = Vec::new();
-            for entry in freq {
-                freq_vec.push(entry.unwrap());
-            }
-
-            let batch = create_new_record_batch(
-                vec!["bucket", "operator", "mem", "freq"],
-                vec![
-                    DataType::Float64,
-                    DataType::Utf8,
-                    DataType::Int32,
-                    DataType::Float64,
-                ],
-                vec![
-                    Arc::new(Float64Array::from(bucket_vec)),
-                    Arc::new(StringArray::from(operator_vec)),
-                    Arc::new(Int32Array::from(mem_vec)),
-                    Arc::new(Float64Array::from(freq_vec)),
-                ],
-            );
-
-            send_record_batch_to_js(&batch);
+        let bucket = get_floatarray_column(&batch, 0);
+        let mut bucket_vec = Vec::new();
+        for entry in bucket {
+            bucket_vec.push(entry.unwrap());
         }
+        let operator = get_stringarray_column(&batch, 1);
+        let mut operator_vec = Vec::new();
+        for entry in operator {
+            operator_vec.push(entry.unwrap());
+        }
+        let mem = get_int32_column(&batch, 2);
+        let mut mem_vec = Vec::new();
+        for entry in mem {
+            mem_vec.push(entry.unwrap());
+        }
+        let freq = get_floatarray_column(&batch, 3);
+        let mut freq_vec = Vec::new();
+        for entry in freq {
+            freq_vec.push(entry.unwrap());
+        }
+
+        let single_batch = create_new_record_batch(
+            vec!["bucket", "operator", "mem", "freq"],
+            vec![
+                DataType::Float64,
+                DataType::Utf8,
+                DataType::Int32,
+                DataType::Float64,
+            ],
+            vec![
+                Arc::new(Float64Array::from(bucket_vec)),
+                Arc::new(StringArray::from(operator_vec)),
+                Arc::new(Int32Array::from(mem_vec)),
+                Arc::new(Float64Array::from(freq_vec)),
+            ],
+        );
+
+        print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());
+        let min_bucket = arrow::compute::min(bucket).unwrap();
+        hashmap.insert((entry.1.unwrap(), min_bucket as usize),single_batch);
 
         offset += len;
     }
 
-    print_to_js_with_obj(&format!("NOOOOOOOOOOOOOO {:?}", batch).into());
+    let mut vec = Vec::new();
+    for k in hashmap.keys() {
+        vec.push(k);
+    }
 
-    batch
+    vec.sort_by(|a, b| a.0.cmp(&b.0));
+    vec.sort_by(|a, b| a.1.cmp(&b.1));
+
+    for entry in vec {
+        let batch = hashmap.get(entry).unwrap();
+        send_record_batch_to_js(batch);
+    }
+
 }

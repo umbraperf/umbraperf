@@ -153,7 +153,7 @@ pub fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     return basic::sort_batch(&record_batch, find_name(params, &record_batch), false);
 }
 
-pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
+pub fn freq_mem(record_batch: RecordBatch, params: &str) {
     let split = split_at_excl_mark(params);
 
     let before_excl_mark = 0;
@@ -166,7 +166,7 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
         .parse::<f64>()
         .unwrap();
 
-    return freq_of_memory(
+    freq_of_memory(
         &record_batch,
         find_name("operator", &record_batch),
         find_name("time", &record_batch),

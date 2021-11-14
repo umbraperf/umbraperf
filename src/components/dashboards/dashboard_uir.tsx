@@ -20,7 +20,15 @@ class DashboardUir extends React.Component<{}, {}> {
                 </Grid>
             </Box>
 
-            <p>will be uri list</p>
+            <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
+                <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
+                    <Box className={styles.dashboardGridCellChartBoxAutoheightChart}>
+                        <div className={styles.dashboardGridCellChartContainer}>
+                            <ChartWrapper chartType={model.ChartType.UIR_VIEWER} />
+                        </div>
+                    </Box>
+                </Grid>
+            </Box>
 
 
         </Grid>

@@ -16,12 +16,24 @@ struct Dictionary {
     mapping: Map<String, Value>,
 }
 
+#[derive(Deserialize, Clone, Debug)]
+pub struct DictionaryUri {
+    pipeline: Option<String>,
+    uir: Option<String>, 
+    #[serde(rename = "instrId")]
+    instrid: Option<String>, 
+    op: Option<String>
+}
+
 #[derive(Clone)]
 pub struct SerdeDict {
     pub dict: HashMap<String, HashMap<u64, String>>,
+    pub uri_dict: HashMap<String, DictionaryUri>
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
+static URI_DICT_FILE_NAME: &str = "uir.json";
+
 
 impl SerdeDict {
 
@@ -59,7 +71,20 @@ impl SerdeDict {
             }
         }
 
-        return Self { dict:  hash_map};
+        for srclines in d.srclines {
+            let inner_hash_map = hash_map.entry("srclines".to_string()).or_insert(HashMap::new());
+            let string = srclines.0;
+            if let Number(x) = srclines.1 {
+                let num = x.as_u64().unwrap();
+                inner_hash_map.insert(num, string);
+            }
+        }
+
+        let reader = zip.by_name(URI_DICT_FILE_NAME).unwrap();
+        let reader = BufReader::new(reader);
+        let d: HashMap<String, DictionaryUri> = serde_json::from_reader(reader).unwrap();
+
+        return Self { dict:  hash_map, uri_dict: d};
 
     }
 

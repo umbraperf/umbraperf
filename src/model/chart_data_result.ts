@@ -27,6 +27,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
     | ChartData<ChartType.SUNBURST_CHART, ISunburstChartData>
     | ChartData<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartData>
+    | ChartData<ChartType.UIR_VIEWER, IUirViewerData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
@@ -93,6 +94,6 @@ export interface IMemoryAccessHeatmapChartData {
 }
 
 export interface IUirViewerData {
-    
+// TODO:
 }
 

@@ -1,10 +1,10 @@
-import * as model from '../../model';
-import * as Context from '../../app_context';
+import * as model from '../../../model';
+import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
-import { VisualizationSpec } from "../../../node_modules/react-vega/src";
-import _ from "lodash";
+import { VisualizationSpec } from "react-vega/src";
+import _ from 'lodash';
 
 
 interface AppstateProps {

@@ -1,10 +1,10 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import * as Context from '../../app_context';
+import * as model from '../../../model';
+import * as Controller from '../../../controller';
+import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
-import { VisualizationSpec } from "../../../node_modules/react-vega/src";
+import { VisualizationSpec } from "react-vega/src";
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import IconButton from "@material-ui/core/IconButton";
 import _ from 'lodash';

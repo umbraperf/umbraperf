@@ -1,11 +1,11 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import * as Context from '../../app_context';
+import * as model from '../../../model';
+import * as Controller from '../../../controller';
+import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
-import _ from "lodash";
+import _ from 'lodash';
 
 interface AppstateProps {
     appContext: Context.IAppContext;

@@ -1,14 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as model from '../model';
+import * as model from '../../model';
 import styles from '../style/charts.module.css';
 
-import EventsButtons from './utils/events_buttons';
+import EventsButtons from './events_buttons';
 
 import { Redirect } from "react-router";
-import InterpolationDropdown from "./utils/interpolation_dropdown";
-import BucketsizeDropdwn from "./utils/bucketsize_dropdown";
-import PipelinesSelector from "./utils/pipelines_selector";
+import InterpolationDropdown from "./interpolation_dropdown";
+import BucketsizeDropdwn from "./bucketsize_dropdown";
+import PipelinesSelector from "./pipelines_selector";
 
 
 interface State {

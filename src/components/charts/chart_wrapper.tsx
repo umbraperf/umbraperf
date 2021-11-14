@@ -8,12 +8,12 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
 
-import SunburstChart from './sunburst_chart';
-import BarChart from './bar_chart';
-import BarChartActivityHistogram from './bar_chart_activity_histogram';
-import SwimLanesMultiplePipelines from './swim_lanes_multiple_pipelines';
-import SwimLanesCombinedMultiplePipelines from './swim_lanes_combined_multiple_pipelines';
-import MemoryAccessHeatmapChart from './memory_access_heatmap_chart';
+import SunburstChart from './vega_visualizations/sunburst_chart';
+import BarChart from './vega_visualizations/bar_chart';
+import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
+import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multiple_pipelines';
+import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
+import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
 
 
 interface OwnProps {

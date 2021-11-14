@@ -1,7 +1,7 @@
 import * as model from "../model";
 import { store } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
-import { QueryPlanWrapperAppstateProps } from '../components/queryplan/query_plan_wrapper';
+import { QueryPlanWrapperAppstateProps } from '../components/charts/queryplan/query_plan_wrapper';
 import _ from "lodash";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {

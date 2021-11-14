@@ -20,6 +20,7 @@ export enum RestQueryType {
     GET_EVENT_OCCURRENCES_PER_TIME_UNIT = "GET_EVENT_OCCURRENCES_PER_TIME_UNIT",
     GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES = "GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES",
     GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT = "GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT",
+    GET_GROUPED_UIR_LINES = "GET_GROUPED_UIR_LINES",
     other = "other",
 }
 
@@ -39,6 +40,7 @@ export type QueryVariant =
     | RestQuery<RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, bucketSize: number }>
     | RestQuery<RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | RestQuery<RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number] }>
+    | RestQuery<RestQueryType.GET_GROUPED_UIR_LINES, { timeBucketFrame: [number, number] }>
     | RestQuery<RestQueryType.other, {}>
     ;
 
@@ -88,8 +90,10 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter}${timeFilter}/sunburst?pipeline`;
         case RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
-            console.log(`bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`);
             return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`;
+        case RestQueryType.GET_GROUPED_UIR_LINES:
+            console.log(`${timeFilter}/uir?srclines`);
+            return `${timeFilter}/uir?srclines`;
         case RestQueryType.other:
             return 'error - bad request to backend';
     }

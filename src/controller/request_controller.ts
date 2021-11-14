@@ -92,121 +92,109 @@ export function requestStatistics(controller: RequestController) {
 //request data for chart visualizations
 export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType) {
 
+    let restQuery: string = "";
+    let restQueryType: model.RestQueryType = model.RestQueryType.other;
+
     switch (chartType) {
 
         case model.ChartType.BAR_CHART:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT,
-                    data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.SWIM_LANES:
-
-            controller.calculateChartData(
-
-                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
+            });
             break;
 
         case model.ChartType.SWIM_LANES_PIPELINES:
-
-            resetChartDataInStore(chartId);
-            controller.calculateChartData(
-                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
+            });
             break;
 
         case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                    data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                    data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS;
+            restQuery = model.createRestQuery({
+                type: model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
+                data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.DONUT_CHART:
-
-            //depreciated
-            controller.calculateChartData(
-                model.RestQueryType.GET_PIPELINE_COUNT,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_PIPELINE_COUNT,
-                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_PIPELINE_COUNT;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
 
         case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
+            });
             break;
 
         case model.ChartType.SUNBURST_CHART:
-
-            controller.calculateChartData(
-                model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES,
-                    data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, allPipelines: store.getState().pipelines! },
-                }), false, chartId);
+            restQueryType = model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, allPipelines: store.getState().pipelines! },
+            });
             break;
 
         case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+            restQueryType = model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
+            break;
 
-            controller.calculateChartData(
-                model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT,
-                model.createRestQuery({
-                    type: model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT,
-                    data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-                }), false, chartId);
+        case model.ChartType.UIR_VIEWER:
+            restQueryType = model.RestQueryType.GET_GROUPED_UIR_LINES;
+            restQuery = model.createRestQuery({
+                type: restQueryType,
+                data: { timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            });
             break;
     }
+
+    controller.calculateChartData(restQueryType, restQuery, false, chartId);
 }
 
 

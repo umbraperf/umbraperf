@@ -277,8 +277,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
-        //TODO bug on same event reload
-
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
             let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
@@ -336,6 +334,19 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     data: chartData,
                 });
             break;
+
+            case model.RestQueryType.GET_GROUPED_UIR_LINES:
+
+                chartDataElem = model.createChartDataObject(
+                    requestId,
+                    {
+                        chartType: model.ChartType.UIR_VIEWER,
+                        data: {
+                            //TODO 
+                        }
+                    });
+                setResultLoading = true;
+                break;
     }
 
     chartDataCollection[requestId] = chartDataElem!;

@@ -18,6 +18,7 @@ pub struct State {
     pub queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
     pub dict: Option<Arc<SerdeDict>>,
     pub parquet_file_binary: Arc<Mutex<Vec<u8>>>,
+    pub file_size: Option<u64>
 }
 
 thread_local! {
@@ -25,7 +26,8 @@ thread_local! {
         record_batches: None,
         queries:  Arc::new(Mutex::new(HashMap::new())),
         dict: None,
-        parquet_file_binary: Arc::new(Mutex::new(Vec::new()))
+        parquet_file_binary: Arc::new(Mutex::new(Vec::new())),
+        file_size: None
     });
 }
 
@@ -57,6 +59,12 @@ pub fn get_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
 pub fn get_parquet_file_binary() -> Arc<Mutex<Vec<u8>>> {
     with_state(|s| s.parquet_file_binary.clone())
 }
+pub fn get_serde_dict() -> Option<Arc<SerdeDict>> {
+    with_state(|s| s.dict.clone())
+}
+pub fn get_file_size() -> Option<u64> {
+    with_state(|s| s.file_size.clone())
+}
 
 pub fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
     _with_state_mut(|s| {
@@ -65,17 +73,15 @@ pub fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
     });
 }
 // SETTER
+pub fn set_file_size(file_size: u64) {
+    _with_state_mut(|s| s.file_size = Some(file_size));
+}
 pub fn set_record_batches(record_batches: RecordBatch) {
     let shared_record_batch = RecordBatchShared {
         batch: record_batches,
     };
     _with_state_mut(|s| s.record_batches = Some(Arc::new(shared_record_batch)));
 }
-
-pub fn get_serde_dict() -> Option<Arc<SerdeDict>> {
-    with_state(|s| s.dict.clone())
-}
-
 pub fn set_serde_dict(serde_dict: SerdeDict) {
     _with_state_mut(|s| s.dict = Some(Arc::new(serde_dict)));
 }

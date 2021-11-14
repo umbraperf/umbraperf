@@ -19,7 +19,7 @@ pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
     let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
     let record_reader = reader
-        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10].into_iter(), 1024 * 8)
+        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6].into_iter(), 1024 * 8)
         .unwrap();
     record_reader
 }
@@ -97,6 +97,8 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
 }
 
 pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
+    print_to_js_with_obj(&format!("batch {:?}", batch).into());
+
     let serde = get_serde_dict().unwrap();
 
     let operator_col = batch
@@ -142,16 +144,30 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let addr = batch.column(4).to_owned();
+    let addr = batch.column(5).to_owned();
+
+    let uri = batch.column(4).to_owned();
+       /*  .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();
+
+    let mut uri_vec = Vec::new();
+    let hash_map = serde.dict.get("srclines").unwrap();
+    print_to_js_with_obj(&format!("{:?}", hash_map).into());
+    for value in uri {
+        let dict_key = hash_map.get(&(value.unwrap() as u64));
+        uri_vec.push(dict_key.unwrap().as_str());
+    } */
 
     create_new_record_batch(
-        vec!["operator", "ev_name", "time", "pipeline", "addr"],
+        vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],
         vec![
             DataType::Utf8,
             DataType::Utf8,
             DataType::Float64,
             DataType::Utf8,
             DataType::UInt64,
+            DataType::Int64
         ],
         vec![
             Arc::new(StringArray::from(operator_vec)),
@@ -159,6 +175,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             time,
             Arc::new(StringArray::from(pipeline_vec)),
             addr,
+            uri
         ],
     )
 }

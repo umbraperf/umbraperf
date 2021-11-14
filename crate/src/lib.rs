@@ -17,6 +17,7 @@ mod web_file {
     pub mod serde_reader;
     pub mod streambuf;
     pub mod web_file_chunkreader;
+    pub mod uir_reader;
 }
 
 // Analyze
@@ -31,6 +32,7 @@ mod exec {
         pub mod count;
         pub mod filter;
         pub mod kpis;
+        pub mod uir;
     }
     pub mod rest {
         pub mod rest_api;
@@ -51,6 +53,7 @@ mod state {
 }
 
 use crate::state::state::clear_cache;
+use crate::state::state::set_file_size;
 use crate::state::state::set_record_batches;
 use crate::state::state::set_serde_dict;
 use crate::utils::bindings::notify_js_finished_reading;
@@ -67,6 +70,7 @@ pub fn analyze_file(file_size: i32) {
     
     let serde_reader = SerdeDict::read_dict(file_size as u64);
     set_serde_dict(serde_reader);
+    set_file_size(file_size as u64);
     let batches = record_batch_util::init_record_batches(file_size);
 
     let elapsed = now.elapsed();

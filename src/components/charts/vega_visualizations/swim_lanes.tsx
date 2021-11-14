@@ -1,7 +1,7 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import * as Context from '../../app_context';
-import Spinner from '../utils/spinner';
+import * as model from '../../../model';
+import * as Controller from '../../../controller';
+import * as Context from '../../../app_context';
+import Spinner from '../../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
@@ -9,7 +9,6 @@ import { VisualizationSpec } from "react-vega/src";
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
-
 
 
 interface Props {
@@ -20,30 +19,28 @@ interface Props {
    currentEvent: string;
    events: Array<string> | undefined;
    operators: Array<string> | undefined;
-   pipelines: Array<string> | undefined;
    chartIdCounter: number;
    chartData: model.ChartDataKeyValue,
    currentInterpolation: String,
-   currentBucketSize: number;
-   currentPipeline: Array<string> | "All";
+   currentBucketSize: number,
    currentView: model.ViewType;
    setCurrentChart: (newCurrentChart: string) => void;
    setChartIdCounter: (newChartIdCounter: number) => void;
+
 }
 
 interface State {
    chartId: number,
-   chartData: Array<model.ISwimlanesData>,
    width: number,
    height: number,
 }
 
 const startSize = {
-   width: 400,
-   height: 150,
+   width: 750,
+   height: 200,
 }
 
-class SwimLanesPipelines extends React.Component<Props, State> {
+class SwimLanes extends React.Component<Props, State> {
 
    chartWrapper = createRef<HTMLDivElement>();
 
@@ -53,7 +50,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          chartId: this.props.chartIdCounter,
          width: startSize.width,
          height: startSize.height,
-         chartData: [],
       };
       this.props.setChartIdCounter(this.state.chartId + 1);
 
@@ -73,31 +69,13 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
    componentDidUpdate(prevProps: Props, prevState: State): void {
 
-      // update component and add new data to component state as soon as further pipeline in array received. Remove dublicates with lodash.
-      if (this.props.chartData[this.state.chartId] && (this.props.chartData[this.state.chartId].chartData.data as model.ISwimlanesData[]).length > (prevProps.chartData[this.state.chartId].chartData.data as model.ISwimlanesData[]).length) {
-         this.setState((state, props) => {
-            const newChartDataArray = _.union(state.chartData, ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data) as model.ISwimlanesData[]);
-
-            return {
-               ...this.state,
-               chartData: newChartDataArray,
-            }
-
-         });
-      }
-
       this.requestNewChartData(this.props, prevProps);
 
    }
 
    requestNewChartData(props: Props, prevProps: Props): void {
       if (this.newChartDataNeeded(props, prevProps)) {
-         this.setState((state, props) => ({
-            ...state,
-            chartData: [],
-         }));
-         Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES_PIPELINES);
-
+         Controller.requestChartData(props.appContext.controller, this.state.chartId, model.ChartType.SWIM_LANES);
       }
    }
 
@@ -116,7 +94,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
 
    componentDidMount() {
       if (this.props.csvParsingFinished) {
-         this.props.setCurrentChart(model.ChartType.SWIM_LANES_PIPELINES);
+         this.props.setCurrentChart(model.ChartType.SWIM_LANES);
 
          addEventListener('resize', (event) => {
             this.resizeListener();
@@ -151,12 +129,13 @@ class SwimLanesPipelines extends React.Component<Props, State> {
    }
 
    isComponentLoading(): boolean {
-      if (this.props.resultLoading[this.state.chartId] || !this.state.chartData || !this.props.pipelines || !this.props.operators) {
+      if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId] || !this.props.operators) {
          return true;
       } else {
          return false;
       }
    }
+
 
    public render() {
 
@@ -168,18 +147,23 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          {this.isComponentLoading()
             ? <Spinner />
             : <div className={"vegaContainer"} ref={this.chartWrapper}>
-               {this.state.chartData.map((elem, index) => (<Vega className={`vegaSwimlane${index}`} key={index} spec={this.createVisualizationSpec(index)} />))}
+               <Vega className={`vegaSwimlaneTotal}`} spec={this.createVisualizationSpec()} />
             </div>
          }
       </div>;
    }
 
+   createVisualizationData() {
 
-   createVisualizationData(chartId: number) {
+      const chartDataElement: model.ISwimlanesData = {
+         buckets: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).buckets,
+         operators: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).operators,
+         frequency: ((this.props.chartData[this.state.chartId] as model.ChartDataObject).chartData.data as model.ISwimlanesData).frequency,
+      }
 
       const data = {
          "name": "table",
-         "values": this.state.chartData[chartId],
+         "values": chartDataElement,
          transform: [
             { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
             { "type": "collect", "sort": { "field": "operators" } },
@@ -187,17 +171,16 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          ]
       };
 
-      return data;
+      return { data: data, chartDataElement: chartDataElement };
    }
 
-   createVisualizationSpec(chartId: number) {
-
-      const visData = this.createVisualizationData(chartId);
+   createVisualizationSpec() {
+      const visData = this.createVisualizationData();
 
       const xTicks = () => {
 
-         const bucketsArrayLength = this.state.chartData[chartId].buckets.length;
-         const numberOfTicks = 30;
+         const bucketsArrayLength = visData.chartDataElement.buckets.length;
+         const numberOfTicks = 20;
 
          if (bucketsArrayLength > numberOfTicks) {
 
@@ -206,7 +189,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             const delta = Math.floor(bucketsArrayLength / numberOfTicks);
 
             for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-               ticks.push(this.state.chartData[chartId].buckets[i]);
+               ticks.push(visData.chartDataElement.buckets[i]);
             }
             return ticks;
          }
@@ -222,21 +205,14 @@ class SwimLanesPipelines extends React.Component<Props, State> {
          autosize: 'fit',
 
          title: {
-            text: { signal: "currentPipeline" },
+            text: 'Swim Lanes (all Pipelines)',
             align: model.chartConfiguration.titleAlign,
             dy: model.chartConfiguration.titlePadding,
             font: model.chartConfiguration.titleFont
          },
 
          data: [
-            visData
-         ],
-
-         signals: [
-            {
-               name: "currentPipeline",
-               value: this.props.pipelines![chartId],
-            }
+            visData.data
          ],
 
          scales: [
@@ -280,7 +256,6 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                orient: "left",
                scale: "y",
                zindex: 1,
-               tickCount: 5,
                title: model.chartConfiguration.areaChartYTitle,
                titlePadding: model.chartConfiguration.axisPadding,
                titleFont: model.chartConfiguration.axisTitleFont,
@@ -325,7 +300,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
                               field: "operators"
                            },
                            tooltip: {
-                              signal: `{'Pipeline': currentPipeline, ${model.chartConfiguration.areaChartTooltip}}`,
+                              signal: `{${model.chartConfiguration.areaChartTooltip}}`,
                            },
 
                         },
@@ -349,7 +324,7 @@ class SwimLanesPipelines extends React.Component<Props, State> {
             title: "Operators",
             orient: "right",
          }
-         ]
+         ],
       } as VisualizationSpec;
 
       return spec;
@@ -364,12 +339,10 @@ const mapStateToProps = (state: model.AppState) => ({
    currentEvent: state.currentEvent,
    events: state.events,
    operators: state.operators,
-   pipelines: state.pipelines,
    chartIdCounter: state.chartIdCounter,
    chartData: state.chartData,
    currentInterpolation: state.currentInterpolation,
    currentBucketSize: state.currentBucketSize,
-   currentPipeline: state.currentPipeline,
    currentView: state.currentView,
 });
 
@@ -385,7 +358,4 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanesPipelines));
-
-
-
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(SwimLanes));

@@ -1,4 +1,4 @@
-import styles from '../../style/queryplan.module.css';
+import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
 import DagreGraph from 'dagre-d3-react';

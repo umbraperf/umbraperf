@@ -2,7 +2,7 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
-import QueryPlanWrapper from '../queryplan/query_plan_wrapper';
+import QueryPlanWrapper from '../charts/queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 
 

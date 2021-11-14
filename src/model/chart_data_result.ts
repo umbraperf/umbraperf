@@ -88,8 +88,11 @@ export interface IMemoryAccessHeatmapChartDomainData {
 }
 
 export interface IMemoryAccessHeatmapChartData {
-
     domain: IMemoryAccessHeatmapChartDomainData,
     heatmapsData: Array<IMemoryAccessHeatmapChartSingleData>,
+}
+
+export interface IUirViewerData {
+    
 }
 

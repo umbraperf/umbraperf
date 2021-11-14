@@ -65,7 +65,7 @@
     height: calc(2* var(--mainVisualizationsHeight) + (2 * var(--gridCellBoxPadding)) + (2 * var(--gridCellItemPadding)));
 }
 
-.dashboardGridCellChartBoxMemoryChart{
+.dashboardGridCellChartBoxAutoheightChart{
     composes: dashboardGridCellChartBox;
     padding-top: 20px;
     padding-bottom: 20px;

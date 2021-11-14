@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import DashboardSingleEvent from '../dashboards/dashboard_single_event';
 import DashboardMultipleEvents from '../dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from '../dashboards/dashboard_memory_accesses';
+import DashboardUir from '../dashboards/dashboard_uir';
 
 interface OwnProps {
     dashboardView: model.ViewType;
@@ -39,6 +40,10 @@ class DashboardWrapper extends React.Component<Props, {}> {
                 return React.createElement(DashboardMultipleEvents);
             case model.ViewType.DASHBOARD_MEMORY:
                 return React.createElement(DashboardMemoryAccesses);
+            case model.ViewType.DASHBOARD_MEMORY:
+                return React.createElement(DashboardMemoryAccesses);
+            case model.ViewType.DASHBOARD_UIR:
+                return React.createElement(DashboardUir);
         }
 
     }

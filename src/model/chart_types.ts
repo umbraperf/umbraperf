@@ -9,14 +9,16 @@ export enum ChartType {
     SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE = "swim_lanes_combined_multiple_pipelines_absolute",
     BAR_CHART_ACTIVITY_HISTOGRAM = "bar_chart_activity_histogram",
     SUNBURST_CHART = "sunburst_chart",
-    MEMORY_ACCESS_HEATMAP_CHART = "memory-access-heatmap-chart",
-    QUERY_PLAN = "query-plan"
+    MEMORY_ACCESS_HEATMAP_CHART = "memory_access_heatmap_chart",
+    QUERY_PLAN = "query_plan",
+    UIR_VIEWER = "uir_viewer",
 }
 
 export enum ViewType {
     DASHBOARD_SINGLE_EVENT = "dashboard_single_event",
     DASHBOARD_MULTIPLE_EVENTS = "dashboard_multiple_events",
     DASHBOARD_MEMORY = "dashboard_memory",
+    DASHBOARD_UIR = "dashboard_uir",
     UPLOAD = "upload",
     PIPELINES = "pipelines",
     DUMMY = "dummy",

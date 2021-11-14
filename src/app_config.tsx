@@ -11,6 +11,7 @@ import BackupIcon from '@material-ui/icons/Backup';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import SdStorageIcon from '@material-ui/icons/SdStorage';
+import DeveloperModeIcon from '@material-ui/icons/DeveloperMode';
 import { createTheme } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -59,7 +60,7 @@ export const materialUiTheme = createTheme({
     }
 });
 
-interface ITopLevelComponent{
+interface ITopLevelComponent {
     path: string;
     sidebarName: string;
     component: JSX.Element;
@@ -69,26 +70,32 @@ export const topLevelComponents: Array<ITopLevelComponent> = [
     {
         path: '/upload',
         sidebarName: 'Upload File',
-        component: <FileUploader/>,
+        component: <FileUploader />,
         icon: () => { return (<BackupIcon />) },
     },
     {
         path: '/dashboard-single-event',
         sidebarName: 'Dashboard (Single Event)',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT}/>,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT} />,
         icon: () => { return (<DashboardIcon />) },
     },
     {
         path: '/dashboard-multiple-events',
         sidebarName: 'Dashboard (Multiple Events)',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS}/>,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS} />,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
         path: '/dashboard-memory-accesses',
         sidebarName: 'Dashboard (Memory Accesses)',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY}/>,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY} />,
         icon: () => { return (<SdStorageIcon />) },
+    },
+    {
+        path: '/dashboard-uir',
+        sidebarName: 'Dashboard (UIR)',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR} />,
+        icon: () => { return (<DeveloperModeIcon />) },
     },
     // {
     //     path: '/swim-lanes-pipelines',

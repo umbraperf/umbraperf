@@ -33,7 +33,7 @@ class UirViewer extends React.Component<Props, {}> {
     public render() {
         return <div>
             {this.createMonacoEditor()}
-            {this.prepareUirLines()}
+            {/* {this.prepareUirLines()} */}
         </div>
     }
 
@@ -43,14 +43,14 @@ class UirViewer extends React.Component<Props, {}> {
 
     createMonacoEditor() {
 
-        const monacoDefaultValue = "//hello world!"
+        const monacoDefaultValue = this.props.chartData.uirLines.join();
 
         const monacoOptions = {
             readOnly: true,
         }
 
         const monacoEditor = <Editor
-            height="90vh"
+            height="50vh"
             defaultLanguage="javascript"
             defaultValue={monacoDefaultValue}
             options={monacoOptions}

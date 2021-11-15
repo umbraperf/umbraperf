@@ -9,10 +9,10 @@ class DashboardUir extends React.Component<{}, {}> {
 
     public render() {
 
-        return <Grid container>
+        return <Grid container style={{display: "flex", top: 0, bottom: 0}}>
             <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} >
-                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
+                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram} style={{overflowY: "hidden",}}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
                         </div>

@@ -43,7 +43,7 @@ class UirViewer extends React.Component<Props, {}> {
 
     createMonacoEditor() {
 
-        const monacoDefaultValue = this.props.chartData.uirLines.join();
+        const monacoDefaultValue = this.props.chartData.uirLines.join('');
 
         const monacoOptions = {
             readOnly: true,

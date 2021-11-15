@@ -3,7 +3,7 @@ use std::{collections::HashMap, io::BufReader};
 use serde::Deserialize;
 use serde_json::{Map,Value};
 
-use super::streambuf::WebFileReader;
+use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
 use crate::web_file::serde_reader::Value::Number;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -38,9 +38,7 @@ static URI_DICT_FILE_NAME: &str = "uir.json";
 impl SerdeDict {
 
     pub fn read_dict(length: u64) -> Self {
-        let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
-        let reader = zip.by_name(DICT_FILE_NAME).unwrap();
-        let reader = BufReader::new(reader);
+        let reader = BufferReader::read_to_buffer(DICT_FILE_NAME,length as u64);
         let d: Dictionary = serde_json::from_reader(reader).unwrap();
 
         let mut hash_map = HashMap::new();
@@ -80,8 +78,7 @@ impl SerdeDict {
             }
         }
 
-        let reader = zip.by_name(URI_DICT_FILE_NAME).unwrap();
-        let reader = BufReader::new(reader);
+        let reader = BufferReader::read_to_buffer(URI_DICT_FILE_NAME,length as u64);
         let d: HashMap<String, DictionaryUri> = serde_json::from_reader(reader).unwrap();
 
         return Self { dict:  hash_map, uri_dict: d};

@@ -184,6 +184,8 @@ class UirViewer extends React.Component<Props, {}> {
 
         const datatypes = /int8|int16|int32|int64/gi;
 
+        const occurrenceValues = /[\/*]/gi;
+
         // Register a tokens provider for the language
         monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', {
             tokenizer: {
@@ -192,8 +194,12 @@ class UirViewer extends React.Component<Props, {}> {
                     [seconedLevelKeywords, 'seconedLevelKeyword'],
                     [operators, 'operator'],
                     [datatypes, 'datatype'],
-
-                ]
+                    [occurrenceValues, 'occurrenceValue'],
+                    [/[^\/*]+/, 'occurrenceValue'],
+                    // [/\/\*/, 'occurrenceValue'],  
+                    // ["\\*/", 'occurrenceValue'],
+                    // [/[\/*]/, 'occurrenceValue']
+                ],
             }
         });
 
@@ -206,6 +212,8 @@ class UirViewer extends React.Component<Props, {}> {
                 { token: 'seconedLevelKeyword', foreground: this.props.appContext.primaryColor },
                 { token: 'operator', foreground: this.props.appContext.accentBlack },
                 { token: 'datatype', foreground: this.props.appContext.tertiaryColor },
+                { token: 'occurrenceValue', foreground: this.props.appContext.secondaryColor },
+
             ]
         });
 

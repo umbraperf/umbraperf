@@ -213,8 +213,9 @@ class ChartWrapper extends React.Component<Props, State> {
                 return React.createElement(MemoryAccessHeatmapChart, memoryAccessHeatmapChartProps as any);
 
             case model.ChartType.UIR_VIEWER:
-                const uirViewerChartProps: model.IMemoryAccessHeatmapChartProps = {
+                const uirViewerChartProps: model.IUirViewerProps = {
                     ...partialChartProps,
+                    height: this.state.height,
                 }
                 return React.createElement(UirViewer, uirViewerChartProps as any);
 
@@ -240,7 +241,7 @@ class ChartWrapper extends React.Component<Props, State> {
         return <div ref={this.elementWrapper} style={{ display: "block", height: "100%", width: "100%" }}>
             {this.isComponentLoading()
                 ? <Spinner />
-                : <div className={"vegaContainer"}>
+                : <div className={"chartContainer"}>
                     {this.createChildChart()}
                 </div>
             }

@@ -51,13 +51,9 @@ class DashboardWrapper extends React.Component<Props, {}> {
     public render() {
 
         return <div className={styles.dashboardGrid}>
+            <DashboardHeader />
 
-            <div >
-                <DashboardHeader />
-
-                {this.createView()}
-
-            </div>
+            {this.createView()}
         </div >;
     }
 }

@@ -92,7 +92,6 @@ export function createRestQuery(query: QueryVariant) {
         case RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
             return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`;
         case RestQueryType.GET_GROUPED_UIR_LINES:
-            console.log(`${timeFilter}/uir?srclines`);
             return `scrline${timeFilter}/uir?srclines`;
         case RestQueryType.other:
             return 'error - bad request to backend';

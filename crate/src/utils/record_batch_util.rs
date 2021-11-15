@@ -1,4 +1,4 @@
-use crate::{bindings::notify_js_query_result, state::state::get_serde_dict, utils::print_to_cons::print_to_js_with_obj, web_file::web_file_chunkreader::WebFileChunkReader};
+use crate::{bindings::notify_js_query_result, state::state::{get_serde_dict, set_file_size, set_serde_dict}, utils::print_to_cons::print_to_js_with_obj, web_file::{serde_reader::SerdeDict, web_file_chunkreader::WebFileChunkReader}};
 use arrow::{
     array::{Array, ArrayRef, Int64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},

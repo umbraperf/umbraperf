@@ -1,8 +1,4 @@
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::{cell::RefCell, collections::HashMap, sync::{Arc, Mutex, MutexGuard}};
 
 use arrow::record_batch::RecordBatch;
 
@@ -56,7 +52,7 @@ pub fn get_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
     with_state(|s| s.queries.clone())
 }
 
-pub fn get_parquet_file_binary() -> Arc<Mutex<Vec<u8>>> {
+pub fn get_buffer() -> Arc<Mutex<Vec<u8>>> {
     with_state(|s| s.parquet_file_binary.clone())
 }
 pub fn get_serde_dict() -> Option<Arc<SerdeDict>> {
@@ -66,10 +62,16 @@ pub fn get_file_size() -> Option<u64> {
     with_state(|s| s.file_size.clone())
 }
 
-pub fn append_to_parquet_file_binary(mut vec: Vec<u8>) {
+pub fn append_to_buffer(mut vec: Vec<u8>) {
     _with_state_mut(|s| {
         let mut binary = s.parquet_file_binary.lock().unwrap();
         binary.append(&mut vec);
+    });
+}
+pub fn clear_buffer() {
+    _with_state_mut(|s| {
+        //let mut binary = s.parquet_file_binary.lock().unwrap();
+        s.parquet_file_binary = Arc::new(Mutex::new(Vec::new()));
     });
 }
 // SETTER

@@ -17,7 +17,6 @@ mod web_file {
     pub mod serde_reader;
     pub mod streambuf;
     pub mod web_file_chunkreader;
-    pub mod uir_reader;
 }
 
 // Analyze
@@ -67,7 +66,6 @@ pub fn analyze_file(file_size: i32) {
     clear_cache();
 
     let now = instant::Instant::now();
-    
     let serde_reader = SerdeDict::read_dict(file_size as u64);
     set_serde_dict(serde_reader);
     set_file_size(file_size as u64);

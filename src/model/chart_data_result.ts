@@ -94,6 +94,6 @@ export interface IMemoryAccessHeatmapChartData {
 }
 
 export interface IUirViewerData {
-// TODO:
+    uirLines: Array<string>;
 }
 

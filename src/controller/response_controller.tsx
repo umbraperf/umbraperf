@@ -302,8 +302,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     domain: domainData,
                     heatmapsData: [], //need for reset stored heatmaps array on new data
                 }
-                console.log("yes");
-                console.log(chartData);
 
             } else if (resultObject.resultTable.schema.fields.length === 4) {
                 //single heatmap chart data received
@@ -317,9 +315,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     ...chartData,
                     heatmapsData: chartData!.heatmapsData.concat(singleChartData),
                 }
-                console.log(chartData.heatmapsData.length);
-                console.log(chartData.domain.numberOperators);
-                console.log(chartData);
 
                 if (chartData.heatmapsData.length === chartData.domain.numberOperators) {
                     // set result loading to true only if data for all operators arrived
@@ -337,12 +332,13 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
             case model.RestQueryType.GET_GROUPED_UIR_LINES:
 
+            console.log(resultObject.resultTable);
                 chartDataElem = model.createChartDataObject(
                     requestId,
                     {
                         chartType: model.ChartType.UIR_VIEWER,
                         data: {
-                            //TODO 
+                            uirLines: resultObject.resultTable.getColumn('scrline').toArray(),
                         }
                     });
                 setResultLoading = true;

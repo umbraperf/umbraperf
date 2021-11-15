@@ -14,6 +14,7 @@ import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_
 import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multiple_pipelines';
 import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
+import UirViewer from './uir/uir_viewer';
 
 
 interface OwnProps {
@@ -215,7 +216,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 const uirViewerChartProps: model.IMemoryAccessHeatmapChartProps = {
                     ...partialChartProps,
                 }
-                return React.createElement(MemoryAccessHeatmapChart, uirViewerChartProps as any);
+                return React.createElement(UirViewer, uirViewerChartProps as any);
 
         }
     }

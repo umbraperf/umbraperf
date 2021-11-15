@@ -45,13 +45,22 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let mut output_vec = Vec::new();
 
-    for entry in mapping_vec {
+
+    let keys = dict.uri_dict.keys();
+    let mut vec = keys.collect::<Vec<&String>>();
+    let mut vec = vec.into_iter().map(|i| i.parse::<i64>().unwrap()).collect::<Vec<i64>>();
+    vec.sort();
+    print_to_js_with_obj(&format!("vec {:?}", vec).into());
+
+
+    for entry in vec {
+        let entry = entry.to_string();
         let mut vec = Vec::new();
         for event in &unqiue_events {
             let inner_hashmap = hashmap_count.get(event).unwrap();
           /*   print_to_js_with_obj(&format!("summe {:?}", inner_hashmap.get(entry)).into());
             print_to_js_with_obj(&format!("summe {:?}", inner_hashmap.get("sum")).into()); */
-            let specific = *inner_hashmap.get(entry).unwrap_or(&0) as f64;
+            let specific = *inner_hashmap.get(&(entry.as_str())).unwrap_or(&0) as f64;
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = specific / total;
             let percentage = f64::trunc((percentage) * 100.0) / 100.0;
@@ -59,10 +68,9 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
  
             vec.push(out);
         }
-      
-/*         print_to_js_with_obj(&format!("{:?}", vec).into());
- */        let d = dict.uri_dict.get(entry).unwrap();
-        let mut output = format!("{}: {} | ", entry, &d.uir.as_ref().unwrap());
+
+        let d = dict.uri_dict.get(&entry).unwrap();
+        let mut output = format!("{}: {} | \n ", entry, &d.uir.as_ref().unwrap());
         for e in vec {
             output.push_str(&e);
         }

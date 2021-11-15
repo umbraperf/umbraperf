@@ -1,6 +1,7 @@
 import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
+import styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -238,7 +239,7 @@ class ChartWrapper extends React.Component<Props, State> {
             return <Redirect to={"/upload"} />
         }
 
-        return <div ref={this.elementWrapper} style={{ display: "block", height: "100%", width: "100%" }}>
+        return <div className={styles.elementWrapper} ref={this.elementWrapper}>
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={"chartContainer"}>

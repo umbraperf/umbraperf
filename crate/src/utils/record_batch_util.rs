@@ -181,9 +181,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
 }
 
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
-
-    print_to_js_with_obj(&format!("{:?}", record_batch).into());
-
+    
     let mut buff = Cursor::new(vec![]);
 
     let options = arrow::ipc::writer::IpcWriteOptions::default();

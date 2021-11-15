@@ -43,10 +43,17 @@ class UirViewer extends React.Component<Props, {}> {
 
     createMonacoEditor() {
 
+        const monacoDefaultValue = "//hello world!"
+
+        const monacoOptions = {
+            readOnly: true,
+        }
+
         const monacoEditor = <Editor
             height="90vh"
             defaultLanguage="javascript"
-            defaultValue="// some comment"
+            defaultValue={monacoDefaultValue}
+            options={monacoOptions}
         />
 
         return monacoEditor;

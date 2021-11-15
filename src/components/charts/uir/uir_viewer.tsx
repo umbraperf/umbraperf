@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    chartData: model.IBarChartActivityHistogramData,
+    chartData: model.IUirViewerData,
 }
 
 type Props = model.IUirViewerProps & AppstateProps;
@@ -29,7 +29,13 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     public render() {
-        return <p>Will be uir lines</p>
+        return <div> 
+            {this.prepareUirLines()}
+        </div>
+    }
+
+    prepareUirLines(){
+        return this.props.chartData.uirLines;
     }
 
 }

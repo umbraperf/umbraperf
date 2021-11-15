@@ -17,11 +17,6 @@ interface AppstateProps {
 type Props = model.IBarChartProps & AppstateProps;
 
 
-const startSize = {
-    width: 500,
-    height: window.innerHeight > 1000 ? 500 : window.innerHeight - 300,
-}
-
 class BarChart extends React.Component<Props, {}> {
 
     constructor(props: Props) {

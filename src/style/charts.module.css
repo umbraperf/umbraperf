@@ -21,3 +21,11 @@
     justify-content: center;
     margin-bottom: 40px;
 }
+
+.elementWrapper{
+    display: flex;
+    justify-Content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}

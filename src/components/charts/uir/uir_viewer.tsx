@@ -23,13 +23,6 @@ class UirViewer extends React.Component<Props, {}> {
 
     }
 
-    componentDidMount() {
-    }
-
-    componentDidUpdate() {
-
-    }
-
     public render() {
         return <div>
             {this.createMonacoEditor()}
@@ -47,14 +40,19 @@ class UirViewer extends React.Component<Props, {}> {
 
         const monacoOptions = {
             readOnly: true,
+            scrollBeyondLastLine: false,
+            folding: true,
+            foldingHighlight: true,
+            // foldingStrategy: 'indentation' as "auto" | "indentation" | undefined,
         }
 
         const monacoEditor = <Editor
-            height={this.props.height}
+            height={this.props.height - 15}
             width={this.props.width}
-            defaultLanguage="javascript"
+            defaultLanguage="c++"
             defaultValue={monacoDefaultValue}
             options={monacoOptions}
+            
         />
 
         return monacoEditor;

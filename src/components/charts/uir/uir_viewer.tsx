@@ -51,6 +51,7 @@ class UirViewer extends React.Component<Props, {}> {
 
         const monacoEditor = <Editor
             height={this.props.height}
+            width={this.props.width}
             defaultLanguage="javascript"
             defaultValue={monacoDefaultValue}
             options={monacoOptions}

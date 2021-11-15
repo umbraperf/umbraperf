@@ -103,6 +103,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                         true :
                         false;
                 case model.ChartType.SUNBURST_CHART:
+                case model.ChartType.UIR_VIEWER:
                     return (!_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                         true :
                         false;

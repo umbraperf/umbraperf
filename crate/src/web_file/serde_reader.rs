@@ -18,11 +18,11 @@ struct Dictionary {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct DictionaryUri {
-    pipeline: Option<String>,
-    uir: Option<String>, 
+    pub pipeline: Option<String>,
+    pub uir: Option<String>, 
     #[serde(rename = "instrId")]
-    instrid: Option<String>, 
-    op: Option<String>
+    pub instrid: Option<String>, 
+    pub op: Option<String>
 }
 
 #[derive(Clone)]

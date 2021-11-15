@@ -195,7 +195,7 @@ class UirViewer extends React.Component<Props, {}> {
                     [operators, 'operator'],
                     [datatypes, 'datatype'],
                     [occurrenceValues, 'occurrenceValue'],
-                    [/[^\/*]+/, 'occurrenceValue'],
+                    // [/[^\/*]+/, 'occurrenceValue'],
                     // [/\/\*/, 'occurrenceValue'],  
                     // ["\\*/", 'occurrenceValue'],
                     // [/[\/*]/, 'occurrenceValue']

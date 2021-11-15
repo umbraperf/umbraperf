@@ -9,10 +9,10 @@ class DashboardUir extends React.Component<{}, {}> {
 
     public render() {
 
-        return <Grid container style={{display: "flex", top: 0, bottom: 0}}>
+        return <Grid container className={styles.visualizationGridFullScreenNoOverflow}>
             <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} >
-                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram} style={{overflowY: "hidden",}}>
+                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12}>
+                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
                         </div>
@@ -21,8 +21,8 @@ class DashboardUir extends React.Component<{}, {}> {
             </Box>
 
             <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
-                    <Box className={styles.dashboardGridCellChartBoxAutoheightChart}>
+                <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={12} >
+                    <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.UIR_VIEWER} />
                         </div>

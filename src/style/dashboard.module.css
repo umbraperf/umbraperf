@@ -11,11 +11,19 @@
 }
 
 .dashboardGrid{
+    display: flex;
+    flex-direction: column;
     padding: var(--outerGridPadding);
     background-color: var(--backgroundColor);
     transition: var(--movingTransition);
     overflow-y: auto;
     height: calc(100% - 2 * var(--outerGridPadding));
+}
+
+.visualizationGridFullScreenNoOverflow{
+    flex: 1;
+    display:flex;
+    flex-flow:column;
 }
 
 .dashboardGridCellItem{
@@ -24,6 +32,17 @@
     align-items: center;
     padding: var(--gridCellItemPadding);
     width: 100%;
+}
+
+.dashboardGridCellItemFullScreenFixedContent{
+    composes: dashboardGridCellItem;
+    flex: none
+}
+
+.dashboardGridCellItemFullScreenStretchContent{
+    composes: dashboardGridCellItem;
+    flex: 1;
+    min-height: 100px;
 }
 
 .dashboardDoubleGridCellItem{
@@ -70,6 +89,11 @@
     padding-top: 20px;
     padding-bottom: 20px;
     height: auto;
+}
+
+.dashboardGridCellChartBoxAutoheightFullheightStretchChart{
+    composes: dashboardGridCellChartBox;
+    height: calc(100% - 2 * var(--gridCellBoxPadding));
 }
 
 .dashboardGridCellOptionsBox{

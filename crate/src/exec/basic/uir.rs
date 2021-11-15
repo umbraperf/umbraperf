@@ -43,6 +43,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         }
     }
 
+    print_to_js_with_obj(&format!("hashmap {:?}", hashmap_count).into());
+
+
+
     let mut output_vec = Vec::new();
 
 
@@ -58,9 +62,9 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         let mut vec = Vec::new();
         for event in &unqiue_events {
             let inner_hashmap = hashmap_count.get(event).unwrap();
-          /*   print_to_js_with_obj(&format!("summe {:?}", inner_hashmap.get(entry)).into());
-            print_to_js_with_obj(&format!("summe {:?}", inner_hashmap.get("sum")).into()); */
+            print_to_js_with_obj(&format!("summe {:?}", inner_hashmap.get("sum")).into()); 
             let specific = *inner_hashmap.get(&(entry.as_str())).unwrap_or(&0) as f64;
+            print_to_js_with_obj(&format!("specific {:?}", specific).into());
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = specific / total;
             let percentage = f64::trunc((percentage) * 100.0) / 100.0;

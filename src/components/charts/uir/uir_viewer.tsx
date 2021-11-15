@@ -32,7 +32,7 @@ class UirViewer extends React.Component<Props, {}> {
 
     public render() {
         return <div>
-            {this.createMonacoEditor()}
+            {/* {this.createMonacoEditor()} */}
             {/* {this.prepareUirLines()} */}
         </div>
     }

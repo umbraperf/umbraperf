@@ -66,103 +66,6 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     createMonacoCustomTheme(monaco: any) {
-        // const definition = () => {
-        //     return {
-        //         defaultToken: 'invalid',
-
-        //         keywords: [
-        //             'define', 'declare'
-        //         ],
-
-        //         typeKeywords: [
-        //             'array', 'bool', 'char', 'f32', 'f64', 'i16', 'i32', 'i64', 'i8',
-        //             'isize', 'pointer', 'slice', 'str', 'tuple', 'u16', 'u32', 'u64', 'u8',
-        //             'usize', 'int32'
-        //         ],
-
-        //         operators: [
-        //             '=', '>', '<', '!', '~', '?', ':',
-        //             '==', '<=', '>=', '!=', '&&', '||', '++', '--',
-        //             '+', '-', '*', '/', '&', '|', '^', '%', '<<',
-        //             '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=',
-        //             '^=', '%=', '<<=', '>>=', '>>>='
-        //         ],
-
-        //         symbols: /[=><!~?:&|+\-*\/^%]+/,
-        //         escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
-
-        //         // The main tokenizer for our languages
-        //         tokenizer: {
-        //             root: [
-        //                 // identifiers and keywords
-        //                 [/[a-z_$][\w$]*/, {
-        //                     cases: {
-        //                         '@typeKeywords': 'keyword',
-        //                         '@keywords': 'keyword',
-        //                         '@default': 'identifier'
-        //                     }
-        //                 }],
-        //                 [/[A-Z][\w$]*/, 'type.identifier'],  // to show class names nicely
-
-        //                 // whitespace
-        //                 { include: '@whitespace' },
-
-        //                 // delimiters and operators
-        //                 [/[{}()\[\]]/, '@brackets'],
-        //                 [/[<>](?!@symbols)/, '@brackets'],
-        //                 [/@symbols/, {
-        //                     cases: {
-        //                         '@operators': 'operator',
-        //                         '@default': ''
-        //                     }
-        //                 }],
-
-        //                 [/#!\[[^]*\]/, 'annotation'],
-        //                 [/#!.*$/, 'annotation.invalid'],
-
-        //                 // numbers
-        //                 [/\d*\.\d+([eE][\-+]?\d+)?[fFdD]?/, 'number.float'],
-        //                 [/0[xX][0-9a-fA-F_]*[0-9a-fA-F][Ll]?/, 'number.hex'],
-        //                 [/0[0-7_]*[0-7][Ll]?/, 'number.octal'],
-        //                 [/0[bB][0-1_]*[0-1][Ll]?/, 'number.binary'],
-        //                 [/\d+[lL]?/, 'number'],
-
-        //                 // delimiter: after number because of .\d floats
-        //                 [/[;,.]/, 'delimiter'],
-
-        //                 // strings
-        //                 [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
-        //                 [/"/, 'string', '@string'],
-
-        //                 // characters
-        //                 [/'[^\\']'/, 'string'],
-        //                 [/(')(@escapes)(')/, ['string', 'string.escape', 'string']],
-        //                 [/'/, 'string.invalid']
-        //             ],
-
-        //             whitespace: [
-        //                 [/[ \t\r\n]+/, 'white'],
-        //                 [/\/\*/, 'comment', '@comment'],
-        //                 [/\/\/.*$/, 'comment'],
-        //             ],
-
-        //             comment: [
-        //                 [/[^\/*]+/, 'comment'],
-        //                 [/\/\*/, 'comment', '@push'],
-        //                 [/\/\*/, 'comment.invalid'],
-        //                 ["\\*/", 'comment', '@pop'],
-        //                 [/[\/*]/, 'comment']
-        //             ],
-
-        //             string: [
-        //                 [/[^\\"]+/, 'string'],
-        //                 [/@escapes/, 'string.escape'],
-        //                 [/\\./, 'string.escape.invalid'],
-        //                 [/"/, 'string', '@pop']
-        //             ],
-        //         },
-        //     };
-        // }
 
         //Register new Language
         monaco.languages.register({ id: 'umbraIntermediateRepresentation' });
@@ -170,39 +73,47 @@ class UirViewer extends React.Component<Props, {}> {
 
         //Define Tokens:
         const tokens = {
-            topLevelKeywords: {
+            topLevelKeyword: {
                 uirKeyword: /define|declare/,
                 comments: /'#.*'/,
             },
 
-            // seconedLevelKeywords: {
-            //     uirKeyword: ,
-            //     uirName: ,
-            //     uirLabel: ,
-            // },
+            seconedLevelKeyword: {
+                uirKeyword: /const|functionargument|functionvar|globalref|headerptrpair|unreachable|switch|return/,
+                uirFunctionName: /@\w+/,
+                //     uirName: ,
+                //     uirLabel: ,
+            },
 
-            thirdLevelKeywords: {
+            thirdLevelKeyword: {
                 operators: /add|sub|mul|sdiv|udiv|srem|urem|pow|shl|ashr|lshr|rotl|rotr|and|or|xor|saddoverflow|uaddoverflow|ssuboverflow|usuboverflow|smuloverflow|umuloverflow|overflowresult|crc32|not|neg|isnull|isnotnull|bswap|ctlz|cmpeq|cmpne|cmpslt|cmpsuolt|cmpult|cmpsle|cmpsuole|cmpule|zext|SExt|trunc|fptosi|sitofp|ptrtoint|inttoptr|builddata128|extractdata128|select|getelementptr|load|atomicload|store|atomicstore|atomicrmwadd|atomicrmwxchg|atomicrmwumax|atomiccmpxchg|phi|br|condbr|checkedsadd|checkedssub|checkedsmul/,
                 datatypes: /int8|int16|int32|int64|uint8|uint16|uint32|uint64|i8|i16|i32|i64|ptr|d128|data128|void|object\s(\w|:)+/,
             }
 
         }
 
-        // const seconedLevelKeywords = /const|void|call|functionargument|functionvar|globalref|headerptrpair|unreachable|switch|return/;
-
-
-
         // Register a tokens provider for the language
+        let tokenizerRoot: Array<[RegExp, string]> = [];
+        for (let tokenLevelName in tokens) {
+            const tokenLevel = (tokens as any)[tokenLevelName];
+            for (let token in tokenLevel) {
+                tokenizerRoot.push([(tokenLevel as any)[token], tokenLevelName]);
+            }
+        }
         monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', {
             tokenizer: {
-                root: [
-                    [tokens.topLevelKeywords.uirKeyword, 'topLevelKeyword'],
-                    [tokens.topLevelKeywords.comments, 'topLevelKeyword'],
-                    // [seconedLevelKeywords, 'seconedLevelKeyword'],
-                    [tokens.thirdLevelKeywords.operators, 'thirdLevelKeyword'],
-                    [tokens.thirdLevelKeywords.datatypes, 'thirdLevelKeyword'],
+                root: tokenizerRoot
+                // [
+                    // [tokens.topLevelKeyword.uirKeyword, 'topLevelKeyword'],
+                    // [tokens.topLevelKeyword.comments, 'topLevelKeyword'],
+
+                    // [tokens.seconedLevelKeyword.uirKeyword, 'seconedLevelKeyword'],
+                    // [tokens.seconedLevelKeyword.uirFunctionName, 'seconedLevelKeyword'],
+
+                    // [tokens.thirdLevelKeyword.operators, 'thirdLevelKeyword'],
+                    // [tokens.thirdLevelKeyword.datatypes, 'thirdLevelKeyword'],
                     // [ , 'occurrenceValue'],
-                ],
+                // ],
             }
         });
 
@@ -213,7 +124,6 @@ class UirViewer extends React.Component<Props, {}> {
             rules: [
                 { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
                 { token: 'seconedLevelKeyword', foreground: this.props.appContext.primaryColor },
-                { token: 'thirdLevelKeyword', foreground: this.props.appContext.accentBlack },
                 { token: 'thirdLevelKeyword', foreground: this.props.appContext.tertiaryColor },
 
             ]

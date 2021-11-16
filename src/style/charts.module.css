@@ -29,3 +29,9 @@
     height: 100%;
     width: 100%;
 }
+
+.monacoEditorContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,13 +1,11 @@
 import * as model from '../../../model';
-import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
+import styles from '../../../style/charts.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Editor from "@monaco-editor/react";
 import Spinner from '../../utils/spinner';
-import { ThreeSixtyTwoTone } from '@material-ui/icons';
-
 
 
 interface AppstateProps {
@@ -28,10 +26,7 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     public render() {
-        return <div>
-            {this.createMonacoEditor()}
-            {/* {this.prepareUirLines()} */}
-        </div>
+        return this.createMonacoEditor();
     }
 
     prepareUirLines() {
@@ -44,7 +39,7 @@ class UirViewer extends React.Component<Props, {}> {
 
     handleEditorWillMount(monaco: any) {
 
-        console.log(monaco);
+        console.log("was here: " + this.props.height);
 
         this.createMonacoCustomTheme(monaco);
 
@@ -176,29 +171,39 @@ class UirViewer extends React.Component<Props, {}> {
         // monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', definition());
 
         //Define Tokens:
-        const topLevelKeywords = /define|declare/gi;
+        const tokens = {
+            topLevelKeywords: {
+                uirKeyword: /define|declare/,
+                comments: /'#.*'/,
+            },
 
-        const seconedLevelKeywords = /body/;
+            // seconedLevelKeywords: {
+            //     uirKeyword: ,
+            //     uirName: ,
+            //     uirLabel: ,
+            // },
 
-        const operators = /void/;
+            thirdLevelKeywords: {
+                operators: /add|sub|mul|sdiv|udiv|srem|urem|pow|shl|ashr|lshr|rotl|rotr|and|or|xor|saddoverflow|uaddoverflow|ssuboverflow|usuboverflow|smuloverflow|umuloverflow|overflowresult|crc32|not|neg|isnull|isnotnull|bswap|ctlz|cmpeq|cmpne|cmpslt|cmpsuolt|cmpult|cmpsle|cmpsuole|cmpule|zext|SExt|trunc|fptosi|sitofp|ptrtoint|inttoptr|builddata128|extractdata128|select|getelementptr|load|atomicload|store|atomicstore|atomicrmwadd|atomicrmwxchg|atomicrmwumax|atomiccmpxchg|phi|br|condbr|checkedsadd|checkedssub|checkedsmul/,
+                datatypes: /int8|int16|int32|int64|uint8|uint16|uint32|uint64|i8|i16|i32|i64|ptr|d128|data128|void|object\s(\w|:)+/,
+            }
 
-        const datatypes = /int8|int16|int32|int64/gi;
+        }
 
-        const occurrenceValues = /[\/*]/gi;
+        // const seconedLevelKeywords = /const|void|call|functionargument|functionvar|globalref|headerptrpair|unreachable|switch|return/;
+
+
 
         // Register a tokens provider for the language
         monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', {
             tokenizer: {
                 root: [
-                    [topLevelKeywords, 'topLevelKeyword'],
-                    [seconedLevelKeywords, 'seconedLevelKeyword'],
-                    [operators, 'operator'],
-                    [datatypes, 'datatype'],
-                    [occurrenceValues, 'occurrenceValue'],
-                    // [/[^\/*]+/, 'occurrenceValue'],
-                    // [/\/\*/, 'occurrenceValue'],  
-                    // ["\\*/", 'occurrenceValue'],
-                    // [/[\/*]/, 'occurrenceValue']
+                    [tokens.topLevelKeywords.uirKeyword, 'topLevelKeyword'],
+                    [tokens.topLevelKeywords.comments, 'topLevelKeyword'],
+                    // [seconedLevelKeywords, 'seconedLevelKeyword'],
+                    [tokens.thirdLevelKeywords.operators, 'thirdLevelKeyword'],
+                    [tokens.thirdLevelKeywords.datatypes, 'thirdLevelKeyword'],
+                    // [ , 'occurrenceValue'],
                 ],
             }
         });
@@ -210,9 +215,8 @@ class UirViewer extends React.Component<Props, {}> {
             rules: [
                 { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
                 { token: 'seconedLevelKeyword', foreground: this.props.appContext.primaryColor },
-                { token: 'operator', foreground: this.props.appContext.accentBlack },
-                { token: 'datatype', foreground: this.props.appContext.tertiaryColor },
-                { token: 'occurrenceValue', foreground: this.props.appContext.secondaryColor },
+                { token: 'thirdLevelKeyword', foreground: this.props.appContext.accentBlack },
+                { token: 'thirdLevelKeyword', foreground: this.props.appContext.tertiaryColor },
 
             ]
         });
@@ -234,21 +238,20 @@ class UirViewer extends React.Component<Props, {}> {
             // foldingStrategy: 'indentation' as "auto" | "indentation" | undefined,
         }
 
-        const monacoEditor = <Editor
-            key={this.props.key}
-            height={this.props.height - 15}
-            width={this.props.width}
-            defaultLanguage="umbraIntermediateRepresentation"
-            theme={"customTheme"}
-            defaultValue={monacoDefaultValue}
-            options={monacoOptions}
-            loading={<Spinner />}
-            beforeMount={this.handleEditorWillMount}
-            onMount={this.handleEditorDidMount}
+        const monacoEditor = <div className={styles.monacoEditorContainer} style={{ height: this.props.height - 50, width: this.props.width - 50 }}
+        >
+            <Editor
+                key={this.props.key}
+                defaultLanguage="umbraIntermediateRepresentation"
+                theme={"customTheme"}
+                defaultValue={monacoDefaultValue}
+                options={monacoOptions}
+                loading={<Spinner />}
+                beforeMount={this.handleEditorWillMount}
+                onMount={this.handleEditorDidMount}
+            />
+        </div>
 
-
-
-        />
 
         return monacoEditor;
 

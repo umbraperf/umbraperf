@@ -92,7 +92,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         }
 
         if has_entries {
-            vec.push("// ".to_string());
+            vec.push("# ".to_string());
             for perc in buffer_percentage {
                 let out = format!("{}% ", perc.to_string());
                 vec.push(out);
@@ -153,7 +153,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         if sum1 + sum2 + sum3 + sum4 == 0. {
                             aggregated_output_vec.push(format!("{} \n", current_item));
                         } else {
-                            aggregated_output_vec.push(format!("{} /* {}% {}% {}% {}% */ \n", current_item, round(sum1), round(sum2),round(sum3),round(sum4)));
+                            aggregated_output_vec.push(format!("{}  # {}% {}% {}% {}%  \n", current_item, round(sum1), round(sum2),round(sum3),round(sum4)));
                         }
 
                         break;

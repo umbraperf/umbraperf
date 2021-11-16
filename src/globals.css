@@ -3,5 +3,5 @@
 html { font-family: 'Roboto', sans-serif; }
 
 :root {
-    --some_cool_css_variable: rgb(30, 30, 30);
+    --appBackgroundColor: rgb(235, 235, 235);
 }

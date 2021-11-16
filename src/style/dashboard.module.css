@@ -6,7 +6,6 @@
     --optionsItemBoxHeight: 75px;
     --mainVisualizationsHeight: 200px;
     --activityHistogramHeight: 84px;
-    --backgroundColor: rgb(245, 245, 245);
     --movingTransition: all .5s ease-in-out;
 }
 
@@ -14,18 +13,16 @@
     display: flex;
     flex-flow: column;
     padding: var(--outerGridPadding);
-    background-color: var(--backgroundColor);
+    background-color: var(--appBackgroundColor);
     transition: var(--movingTransition);
     overflow-y: auto;
     height: calc(100% - 2 * var(--outerGridPadding));
 }
 
 .visualizationGridFullScreenNoOverflow{
-    flex: 1 0 auto; /* TODO APP BODY */
-    display:flex;
-    flex-flow:column;
-    box-sizing: border-box;
-    max-height: 200px;
+    flex: 1 0 auto;
+    display: flex;
+    flex-flow: column;
 }
 
 .dashboardGridCellItem{
@@ -64,11 +61,12 @@
     background-color: white;
     border-radius: 10px;
     padding: var(--gridCellBoxPadding);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .dashboardGridCellChartBox{
     composes: dashboardGridCellBox;
-    width: 100%;
 }
 
 .dashboardGridCellChartBoxActivityHistogram{

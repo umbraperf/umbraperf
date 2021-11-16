@@ -21,9 +21,11 @@
 }
 
 .visualizationGridFullScreenNoOverflow{
-    flex: 1;
+    flex: 1 0 auto; /* TODO APP BODY */
     display:flex;
     flex-flow:column;
+    box-sizing: border-box;
+    max-height: 200px;
 }
 
 .dashboardGridCellItem{
@@ -42,8 +44,8 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1;
-    min-height: 100px;
-}
+/*     min-height: 100px; TODO
+ */}
 
 .dashboardDoubleGridCellItem{
     composes: dashboardGridCellItem;

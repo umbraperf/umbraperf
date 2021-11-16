@@ -147,6 +147,8 @@ class ChartWrapper extends React.Component<Props, State> {
             }
         }
 
+        console.log(this.state.chartId + " " + this.state.height);
+
     }
 
     createChildChart() {
@@ -216,7 +218,6 @@ class ChartWrapper extends React.Component<Props, State> {
             case model.ChartType.UIR_VIEWER:
                 const uirViewerChartProps: model.IUirViewerProps = {
                     ...partialChartProps,
-                    height: this.state.height,
                 }
                 return React.createElement(UirViewer, uirViewerChartProps as any);
 
@@ -242,7 +243,7 @@ class ChartWrapper extends React.Component<Props, State> {
         return <div className={styles.elementWrapper} ref={this.elementWrapper}>
             {this.isComponentLoading()
                 ? <Spinner />
-                : <div className={"chartContainer"}>
+                : <div className={styles.chartContainer}>
                     {this.createChildChart()}
                 </div>
             }
@@ -266,8 +267,6 @@ const mapStateToProps = (state: model.AppState) => ({
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentBucketSize: state.currentBucketSize,
-
-
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

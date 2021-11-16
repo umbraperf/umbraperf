@@ -52,6 +52,4 @@ export type ISwimlanesProps = IParcialChartProps & {
 
 export type IMemoryAccessHeatmapChartProps = IParcialChartProps;
 
-export type IUirViewerProps = IParcialChartProps & {
-    height: number;
-};
+export type IUirViewerProps = IParcialChartProps;

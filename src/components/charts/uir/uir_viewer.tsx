@@ -39,8 +39,6 @@ class UirViewer extends React.Component<Props, {}> {
 
     handleEditorWillMount(monaco: any) {
 
-        console.log("was here: " + this.props.height);
-
         this.createMonacoCustomTheme(monaco);
 
         // // Register a tokens provider for the language
@@ -225,9 +223,6 @@ class UirViewer extends React.Component<Props, {}> {
 
     createMonacoEditor() {
 
-        //TODO height rerender not working
-        console.log(this.props.height)
-
         const monacoDefaultValue = this.props.chartData.uirLines.join('');
 
         const monacoOptions = {
@@ -238,20 +233,24 @@ class UirViewer extends React.Component<Props, {}> {
             // foldingStrategy: 'indentation' as "auto" | "indentation" | undefined,
         }
 
-        const monacoEditor = <div className={styles.monacoEditorContainer} style={{ height: this.props.height - 50, width: this.props.width - 50 }}
+        const monacoEditor = <div
+            className={styles.monacoEditorContainer}
         >
-            <Editor
-                key={this.props.key}
-                defaultLanguage="umbraIntermediateRepresentation"
-                theme={"customTheme"}
-                defaultValue={monacoDefaultValue}
-                options={monacoOptions}
-                loading={<Spinner />}
-                beforeMount={this.handleEditorWillMount}
-                onMount={this.handleEditorDidMount}
-            />
-        </div>
+            <div className={styles.chartTitle}>UIR Profiler</div>
 
+            <div className={styles.monacoEditor}>
+                <Editor
+                    key={this.props.key}
+                    defaultLanguage="umbraIntermediateRepresentation"
+                    theme={"customTheme"}
+                    defaultValue={monacoDefaultValue}
+                    options={monacoOptions}
+                    loading={<Spinner />}
+                    beforeMount={this.handleEditorWillMount}
+                    onMount={this.handleEditorDidMount}
+                />
+            </div>
+        </div>
 
         return monacoEditor;
 

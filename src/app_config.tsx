@@ -23,6 +23,8 @@ export const appColor = {
     secondary: '#d4733e',
     tertiary: '#919191',
     accentBlack: '#040404',
+    accentDarkGreen: '#379634',
+    accentDarkBlue: '#454E9E',
 }
 
 export const appContext: IAppContext = {
@@ -31,6 +33,8 @@ export const appContext: IAppContext = {
     secondaryColor: appColor.secondary,
     tertiaryColor: appColor.tertiary,
     accentBlack: appColor.accentBlack,
+    accentDarkGreen: appColor.accentDarkGreen,
+    accentDarkBlue: appColor.accentDarkBlue,
 };
 
 //Create Redux stroe

@@ -62,14 +62,15 @@ class UirViewer extends React.Component<Props, {}> {
             },
 
             thirdLevelKeyword: {
-                operators: /add|sub|mul|sdiv|udiv|srem|urem|pow|shl|ashr|lshr|rotl|rotr|and|or|xor|saddoverflow|uaddoverflow|ssuboverflow|usuboverflow|smuloverflow|umuloverflow|overflowresult|crc32|not|neg|isnull|isnotnull|bswap|ctlz|cmpeq|cmpne|cmpslt|cmpsuolt|cmpult|cmpsle|cmpsuole|cmpule|zext|SExt|trunc|fptosi|sitofp|ptrtoint|inttoptr|builddata128|extractdata128|select|getelementptr|load|atomicload|store|atomicstore|atomicrmwadd|atomicrmwxchg|atomicrmwumax|atomiccmpxchg|phi|br|condbr|checkedsadd|checkedssub|checkedsmul/,
-                datatypes: /int8|int16|int32|int64|uint8|uint16|uint32|uint64|i8|i16|i32|i64|ptr|d128|data128|void|object\s(\w|:)+/,
+                operators: /\ add\ |\ sub\ |\ mul\ |\ sdiv\ |\ udiv\ |\ srem\ |\ urem\ |\ pow\ |\ shl\ |\ ashr\ |\ lshr\ |\ rotl\ |\ rotr\ |\ and\ |\ or\ |\ xor\ |\ saddoverflow\ |\ uaddoverflow\ |\ ssuboverflow\ |\ usuboverflow\ |\ smuloverflow\ |\ umuloverflow\ |\ overflowresult\ |\ crc32\ |\ not\ |\ neg\ |\ isnull\ |\ isnotnull\ |\ bswap\ |\ ctlz\ |\ cmpeq\ |\ cmpne\ |\ cmpslt\ |\ cmpsuolt\ |\ cmpult\ |\ cmpsle\ |\ cmpsuole\ |\ cmpule\ |\ zext\ |\ SExt\ |\ trunc\ |\ fptosi\ |\ sitofp\ |\ ptrtoint\ |\ inttoptr\ |\ builddata128\ |\ extractdata128\ |\ select\ |\ getelementptr\ |\ load\ |\ atomicload\ |\ store\ |\ atomicstore\ |\ atomicrmwadd\ |\ atomicrmwxchg\ |\ atomicrmwumax\ |\ atomiccmpxchg\ |\ phi\ |\ br\ |\ condbr\ |\ checkedsadd\ |\ checkedssub\ |\ checkedsmul\ /,
+                datatypes: /int8|int16|int32|int64|uint8|uint16|uint32|uint64|i8|i16|i32|i64|ptr|d128|data128|void|object\s(\w|:)+ /,
 
             },
 
             fourthLevelKeyword: {
                 uirString: /".*"/,
-                uirNumber: /\s\(0x\)\@!\d\+/, // TODO not working
+                uirNumber: /0x[a-zA-Z0-9]+/,
+                //TODO further number in vim file?
             }
 
         }
@@ -86,15 +87,15 @@ class UirViewer extends React.Component<Props, {}> {
             tokenizer: {
                 root: tokenizerRoot
                 // [
-                    // [tokens.topLevelKeyword.uirKeyword, 'topLevelKeyword'],
-                    // [tokens.topLevelKeyword.comments, 'topLevelKeyword'],
+                // [tokens.topLevelKeyword.uirKeyword, 'topLevelKeyword'],
+                // [tokens.topLevelKeyword.comments, 'topLevelKeyword'],
 
-                    // [tokens.seconedLevelKeyword.uirKeyword, 'seconedLevelKeyword'],
-                    // [tokens.seconedLevelKeyword.uirFunctionName, 'seconedLevelKeyword'],
+                // [tokens.seconedLevelKeyword.uirKeyword, 'seconedLevelKeyword'],
+                // [tokens.seconedLevelKeyword.uirFunctionName, 'seconedLevelKeyword'],
 
-                    // [tokens.thirdLevelKeyword.operators, 'thirdLevelKeyword'],
-                    // [tokens.thirdLevelKeyword.datatypes, 'thirdLevelKeyword'],
-                    // [ , 'occurrenceValue'],
+                // [tokens.thirdLevelKeyword.operators, 'thirdLevelKeyword'],
+                // [tokens.thirdLevelKeyword.datatypes, 'thirdLevelKeyword'],
+                // [ , 'occurrenceValue'],
                 // ],
             }
         });

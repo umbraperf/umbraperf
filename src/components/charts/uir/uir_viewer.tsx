@@ -38,31 +38,7 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     handleEditorWillMount(monaco: any) {
-
         this.createMonacoCustomTheme(monaco);
-
-        // // Register a tokens provider for the language
-        // monaco.languages.setMonarchTokensProvider('additionalTokens', {
-        //     tokenizer: {
-        //         root: [
-        //             [/"(?:[^"\\]|\\.\n{0,})*"/gi, 'my-string'],
-        //         ]
-        //     }
-        // });
-
-        // // Define a new theme that contains only rules that match this language
-        // monaco.editor.defineTheme('customTheme', {
-        //     base: 'vs',
-        //     inherit: false,
-        //     rules: [
-        //         { token: 'my-string', foreground: '0000FF' },
-        //     ]
-        // });
-
-
-        // here is the monaco instance
-        // do something before editor is mounted
-        // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
     }
 
     createMonacoCustomTheme(monaco: any) {
@@ -75,19 +51,25 @@ class UirViewer extends React.Component<Props, {}> {
         const tokens = {
             topLevelKeyword: {
                 uirKeyword: /define|declare/,
-                comments: /'#.*'/,
+                comments: /#.*/,
             },
 
             seconedLevelKeyword: {
-                uirKeyword: /const|functionargument|functionvar|globalref|headerptrpair|unreachable|switch|return/,
+                uirKeyword: /call|const|functionargument|functionvar|globalref|headerptrpair|unreachable|switch|return/,
                 uirFunctionName: /@\w+/,
-                //     uirName: ,
-                //     uirLabel: ,
+                uirName: /%\w+/,
+                uirLabel: /^\w+:/,
             },
 
             thirdLevelKeyword: {
                 operators: /add|sub|mul|sdiv|udiv|srem|urem|pow|shl|ashr|lshr|rotl|rotr|and|or|xor|saddoverflow|uaddoverflow|ssuboverflow|usuboverflow|smuloverflow|umuloverflow|overflowresult|crc32|not|neg|isnull|isnotnull|bswap|ctlz|cmpeq|cmpne|cmpslt|cmpsuolt|cmpult|cmpsle|cmpsuole|cmpule|zext|SExt|trunc|fptosi|sitofp|ptrtoint|inttoptr|builddata128|extractdata128|select|getelementptr|load|atomicload|store|atomicstore|atomicrmwadd|atomicrmwxchg|atomicrmwumax|atomiccmpxchg|phi|br|condbr|checkedsadd|checkedssub|checkedsmul/,
                 datatypes: /int8|int16|int32|int64|uint8|uint16|uint32|uint64|i8|i16|i32|i64|ptr|d128|data128|void|object\s(\w|:)+/,
+
+            },
+
+            fourthLevelKeyword: {
+                uirString: /".*"/,
+                uirNumber: /\s\(0x\)\@!\d\+/, // TODO not working
             }
 
         }
@@ -123,8 +105,9 @@ class UirViewer extends React.Component<Props, {}> {
             inherit: false,
             rules: [
                 { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
-                { token: 'seconedLevelKeyword', foreground: this.props.appContext.primaryColor },
+                { token: 'seconedLevelKeyword', foreground: this.props.appContext.accentDarkGreen },
                 { token: 'thirdLevelKeyword', foreground: this.props.appContext.tertiaryColor },
+                { token: 'fourthLevelKeyword', foreground: this.props.appContext.accentDarkBlue },
 
             ]
         });

@@ -12,7 +12,7 @@
 
 .dashboardGrid{
     display: flex;
-    flex-direction: column;
+    flex-flow: column;
     padding: var(--outerGridPadding);
     background-color: var(--backgroundColor);
     transition: var(--movingTransition);

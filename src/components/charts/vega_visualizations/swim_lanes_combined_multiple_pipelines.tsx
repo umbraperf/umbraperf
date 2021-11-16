@@ -22,10 +22,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            ...this.state,
-            width: this.props.width
-        };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
     }

@@ -1,5 +1,5 @@
 .app{
-    background-color: rgb(247, 251, 255);
+    background-color: var(--appBackgroundColor);
 }
 
 .appHeader{
@@ -19,7 +19,6 @@
     top: 76px;
     bottom: 0px;
     width: 100%;
-    /* overflow-y: auto; */
 }
 
 .appHeaderTitle{

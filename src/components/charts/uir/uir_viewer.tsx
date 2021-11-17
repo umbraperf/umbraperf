@@ -38,14 +38,40 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     handleEditorWillMount(monaco: any) {
+        this.createUirLanguage(monaco);
         this.createMonacoCustomTheme(monaco);
     }
 
     createMonacoCustomTheme(monaco: any) {
 
+        // Define new Theme
+        monaco.editor.defineTheme('uirTheme', {
+            base: 'vs',
+            inherit: false,
+            rules: [
+                { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
+                { token: 'seconedLevelKeyword', foreground: this.props.appContext.accentDarkGreen },
+                { token: 'thirdLevelKeyword', foreground: this.props.appContext.tertiaryColor },
+                { token: 'fourthLevelKeyword', foreground: this.props.appContext.accentDarkBlue },
+            ],
+            colors: {
+                'editorCursor.foreground': this.props.appContext.secondaryColor,
+                'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
+                'editorLineNumber.activeForeground': this.props.appContext.secondaryColor,
+                // 'scrollbarSlider.background': this.props.appContext.tertiaryColor,
+                // 'scrollbarSlider.hoverBackground': this.props.appContext.secondaryColor,
+                // 'scrollbarSlider.activeBackground': this.props.appContext.secondaryColor,
+                'editor.lineHighlightBorder': this.props.appContext.secondaryColor,
+
+
+
+            }
+        });
+    }
+
+    createUirLanguage(monaco: any) {
         //Register new Language
         monaco.languages.register({ id: 'umbraIntermediateRepresentation' });
-        // monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', definition());
 
         //Define Tokens:
         const tokens = {
@@ -86,31 +112,7 @@ class UirViewer extends React.Component<Props, {}> {
         monaco.languages.setMonarchTokensProvider('umbraIntermediateRepresentation', {
             tokenizer: {
                 root: tokenizerRoot
-                // [
-                // [tokens.topLevelKeyword.uirKeyword, 'topLevelKeyword'],
-                // [tokens.topLevelKeyword.comments, 'topLevelKeyword'],
-
-                // [tokens.seconedLevelKeyword.uirKeyword, 'seconedLevelKeyword'],
-                // [tokens.seconedLevelKeyword.uirFunctionName, 'seconedLevelKeyword'],
-
-                // [tokens.thirdLevelKeyword.operators, 'thirdLevelKeyword'],
-                // [tokens.thirdLevelKeyword.datatypes, 'thirdLevelKeyword'],
-                // [ , 'occurrenceValue'],
-                // ],
             }
-        });
-
-        // Define new Theme
-        monaco.editor.defineTheme('customTheme', {
-            base: 'vs',
-            inherit: false,
-            rules: [
-                { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
-                { token: 'seconedLevelKeyword', foreground: this.props.appContext.accentDarkGreen },
-                { token: 'thirdLevelKeyword', foreground: this.props.appContext.tertiaryColor },
-                { token: 'fourthLevelKeyword', foreground: this.props.appContext.accentDarkBlue },
-
-            ]
         });
 
     }
@@ -125,7 +127,6 @@ class UirViewer extends React.Component<Props, {}> {
             folding: true,
             foldingHighlight: true,
             fontSize: 11,
-            // foldingStrategy: 'indentation' as "auto" | "indentation" | undefined,
         }
 
         const monacoEditor = <div
@@ -137,7 +138,7 @@ class UirViewer extends React.Component<Props, {}> {
                 <Editor
                     key={this.props.key}
                     defaultLanguage="umbraIntermediateRepresentation"
-                    theme={"customTheme"}
+                    theme={"uirTheme"}
                     defaultValue={monacoDefaultValue}
                     options={monacoOptions}
                     loading={<Spinner />}

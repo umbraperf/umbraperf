@@ -32,8 +32,6 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
     createVisualizationData() {
 
-        //TODO turn pos and neg around in backend
-
         const chartDataElementPos: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
             operators: this.props.chartData.operators,
@@ -168,13 +166,12 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFont: model.chartConfiguration.axisLabelFont,
                     labelSeparation: model.chartConfiguration.areaChartXLabelSeparation,
-
                 },
                 {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: this.props.currentMultipleEvent[0],
+                    title: { signal: `truncate("${this.props.currentMultipleEvent[0]}", 15)` },
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -187,7 +184,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                     orient: "left",
                     scale: "yNeg",
                     zindex: 1,
-                    title: this.props.currentMultipleEvent[1],
+                    title: { signal: `truncate("${this.props.currentMultipleEvent[1]}", 15)` },
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,

@@ -14,7 +14,6 @@ use crate::{
     utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
-
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
 }
@@ -91,15 +90,26 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             }
         }
 
+        let d = dict.uri_dict.get(&entry).unwrap();
+
         if has_entries {
             vec.push("# ".to_string());
-            for perc in buffer_percentage {
-                let out = format!("{}% ", perc.to_string());
-                vec.push(out);
+            for perc in buffer_percentage.into_iter().enumerate() {
+                if perc.0 == 3 {
+                    let dict = d;
+                    let default = String::from("None");
+                    let op = dict.op.as_ref().unwrap_or(&default);
+                    let pipe = dict.pipeline.as_ref().unwrap_or(&default);
+                    let out = format!("{}% {} {}", perc.1.to_string(), op, pipe);
+                    vec.push(out);
+                } else {
+                    let out = format!("{}% ", perc.1.to_string());
+                    vec.push(out);
+                }
+            
             }
         }
 
-        let d = dict.uri_dict.get(&entry).unwrap();
         let srcline = &d.uir.as_ref().unwrap();
         let len_srcline = srcline.chars().count();
         if len_srcline < 110 {
@@ -153,7 +163,11 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         if sum1 + sum2 + sum3 + sum4 == 0. {
                             aggregated_output_vec.push(format!("{} \n", current_item));
                         } else {
-                            aggregated_output_vec.push(format!("{}  # {}% {}% {}% {}%  \n", current_item, round(sum1), round(sum2),round(sum3),round(sum4)));
+                            let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
+                            let default = String::from("None");
+                            let op = dict.op.as_ref().unwrap_or(&default);
+                            let pipe = dict.pipeline.as_ref().unwrap_or(&default);
+                            aggregated_output_vec.push(format!("{}  # {}% {}% {}% {}% {} {} \n", current_item, round(sum1), round(sum2),round(sum3),round(sum4), op, pipe));
                         }
 
                         break;

@@ -18,10 +18,8 @@ type Props = model.IUirViewerProps & AppstateProps;
 
 class UirViewer extends React.Component<Props, {}> {
 
-
     constructor(props: Props) {
         super(props);
-
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
     }
 
@@ -31,10 +29,6 @@ class UirViewer extends React.Component<Props, {}> {
 
     prepareUirLines() {
         return this.props.chartData.uirLines;
-    }
-
-    handleEditorDidMount(editor: any, monaco: any) {
-
     }
 
     handleEditorWillMount(monaco: any) {
@@ -69,31 +63,19 @@ class UirViewer extends React.Component<Props, {}> {
                 'editorLineNumber.activeForeground': this.props.appContext.secondaryColor,
                 'editor.findMatchBackground': lightColor(this.props.appContext.secondaryColor),
                 'focusBorder': this.props.appContext.secondaryColor,
+                'list.activeSelectionBackground': this.props.appContext.secondaryColor,
+                'list.hoverBackground': this.props.appContext.secondaryColor,
 
                 //tertiary color:
                 'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
-                'editor.lineHighlightBorder': this.props.appContext.tertiaryColor,
+                'editor.lineHighlightBorder': lightColor(this.props.appContext.tertiaryColor),
                 'foreground': this.props.appContext.tertiaryColor,
                 'editor.selectionHighlightBackground': lightColor(this.props.appContext.tertiaryColor),
 
-                //accentBlack color:
-
                 //white color:
                 'editor.rangeHighlightBackground': '#fff',
-
-                //custom color:
-
-
-
-
-                // 'scrollbarSlider.background': this.props.appContext.tertiaryColor,
-                // 'scrollbarSlider.hoverBackground': this.props.appContext.secondaryColor,
-                // 'scrollbarSlider.activeBackground': this.props.appContext.secondaryColor,
-                // 'inputOption.activeBorder': this.props.appContext.secondaryColor,
-
-
-
-
+                'list.activeSelectionForeground': '#fff',
+                'list.hoverForeground': '#fff',
             }
         });
     }
@@ -156,11 +138,11 @@ class UirViewer extends React.Component<Props, {}> {
             folding: true,
             foldingHighlight: true,
             fontSize: 11,
+            color: this.props.appContext.accentBlack,
         }
 
-        const monacoEditor = <div
-            className={styles.monacoEditorContainer}
-        >
+        const monacoEditor = <div className={styles.monacoEditorContainer}>
+
             <div className={styles.chartTitle}>UIR Profiler</div>
 
             <div className={styles.monacoEditor}>
@@ -172,7 +154,6 @@ class UirViewer extends React.Component<Props, {}> {
                     options={monacoOptions}
                     loading={<Spinner />}
                     beforeMount={this.handleEditorWillMount}
-                    onMount={this.handleEditorDidMount}
                 />
             </div>
         </div>
@@ -186,6 +167,5 @@ class UirViewer extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps) => ({
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IUirViewerData,
 });
-
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(UirViewer));

@@ -1,3 +1,6 @@
+@value colors: "./export-variables.module.css";
+@value colorSecondary, colorTertiary, colorAccentBlack from colors;
+
 .spinnerContainer{
     height: 100%;
     width: 100%;
@@ -44,68 +47,67 @@
 }
 
 
-
 @keyframes stretchdelay {
 	0%, 40%, 100% {
 		transform: scaleX(0.8);
-		background-color: rgb(145,145,145);
+		background-color: colorTertiary;
 		box-shadow: 0 0 0 rgba(10,10,10,0.07);
 	}
 	20% {
 		transform: scaleX(1);
-		background-color: rgb(212,115,62);
-		box-shadow: 0 5px 6px rgba(212,115,62,0);
+		background-color: colorSecondary;
+		box-shadow: 0 5px 6px colorTertiary;
 	}
 }
 
 @-o-keyframes stretchdelay {
 	0%, 40%, 100% {
 		-o-transform: scaleX(0.8);
-		background-color: rgb(145,145,145);
+		background-color: colorTertiary;
 		box-shadow: 0 0 0 rgba(10,10,10,0.07);
 	}
 	20% {
 		-o-transform: scaleX(1);
-		background-color: rgb(212,115,62);
-		box-shadow: 0 5px 6px rgba(212,115,62,0);
+		background-color: colorSecondary;
+		box-shadow: 0 5px 6px colorTertiary;
 	}
 }
 
 @-ms-keyframes stretchdelay {
 	0%, 40%, 100% {
 		-ms-transform: scaleX(0.8);
-		background-color: rgb(145,145,145);
+		background-color: colorTertiary;
 		box-shadow: 0 0 0 rgba(10,10,10,0.07);
 	}
 	20% {
 		-ms-transform: scaleX(1);
-		background-color: rgb(212,115,62);
-		box-shadow: 0 5px 6px rgba(212,115,62,0);
+		background-color: colorSecondary;
+		box-shadow: 0 5px 6px colorTertiary;
 	}
 }
 
 @-webkit-keyframes stretchdelay {
 	0%, 40%, 100% {
 		-webkit-transform: scaleX(0.8);
-		background-color: rgb(145,145,145);
+		background-color: colorTertiary;
 		box-shadow: 0 0 0 rgba(10,10,10,0.07);
 	}
 	20% {
 		-webkit-transform: scaleX(1);
-		background-color: rgb(212,115,62);
-		box-shadow: 0 5px 6px rgba(212,115,62,0);
+		background-color: colorSecondary;
+		box-shadow: 0 5px 6px colorTertiary;
 	}
 }
 
 @-moz-keyframes stretchdelay {
 	0%, 40%, 100% {
 		-moz-transform: scaleX(0.8);
-		background-color: rgb(145,145,145);
+		background-color: colorTertiary;
 		box-shadow: 0 0 0 rgba(10,10,10,0.07);
 	}
 	20% {
 		-moz-transform: scaleX(1);
-		background-color: rgb(212,115,62);
-		box-shadow: 0 5px 6px rgba(212,115,62,0);
+		background-color: colorSecondary;
+		box-shadow: 0 5px 6px colorTertiary;
 	}
 }

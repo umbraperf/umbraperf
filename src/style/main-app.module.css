@@ -1,5 +1,8 @@
+@value colors: "./export-variables.module.css";
+@value appBackgroundColor from colors;
+
 .app{
-    background-color: var(--appBackgroundColor);
+    background-color: appBackgroundColor;
 }
 
 .appHeader{

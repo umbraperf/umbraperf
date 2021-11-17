@@ -6,17 +6,6 @@
 @value colorAccentDarkGreen: #379634;
 @value colorAccentDarkBlue: #454E9E;
 
-
-:root {
-    --appBackgroundColor: appBackgroundColor;
-    --colorPrimary: #f5f3bb;
-    --colorSecondary: #d4733e;
-    --colorTertiary: #919191;
-    --colorAccentBlack: #040404;
-    --colorAccentDarkGreen: #379634;
-    --colorAccentDarkBlue: #454E9E;
-}
-
 :export {
     colorPrimary: colorPrimary;
     colorSecondary: colorSecondary;

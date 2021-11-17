@@ -6,7 +6,6 @@ import { ViewType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
-    fileName: string | undefined;
     fileLoading: boolean;
     resultLoading: ResultLoading;
     result: Result | undefined;
@@ -38,7 +37,6 @@ export interface AppState {
 
 export function createDefaultState(): AppState {
     return {
-        fileName: undefined,
         fileLoading: false,
         resultLoading: {},
         result: undefined,

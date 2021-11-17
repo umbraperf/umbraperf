@@ -10,7 +10,6 @@ import { Redirect } from 'react-router-dom';
 interface Props {
     appContext: IAppContext;
     file: undefined | File;
-    fileName: string | undefined;
     csvParsingFinished: boolean;
     fileLoading: boolean;
     setFile: (newFile: File) => void;
@@ -149,7 +148,6 @@ class FileUploader extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
-    fileName: state.fileName,
     csvParsingFinished: state.csvParsingFinished,
     fileLoading: state.fileLoading,
 });

@@ -120,13 +120,6 @@ function extractQueryPlanFromZip(file: File) {
         },
       )
     }
-
-    // console.log(queryPlanFile);
-    // Object.keys(umbraperfArchiv.files).forEach(function (filename) {
-    //   umbraperfArchiv.files[filename].async('string').then(function (fileData: any) {
-    //     console.log(fileData) // These are your file contents      
-    //   })
-    // })
   })
 
 }

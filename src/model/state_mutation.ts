@@ -14,7 +14,6 @@ export type StateMutation<T, P> = {
 
 /// A mutation type
 export enum StateMutationType {
-    SET_FILENAME = 'SET_FILENAME',
     SET_FILELOADING = 'SET_FILELOADING',
     SET_RESULTLOADING = 'SET_RESULTLOADING',
     SET_RESULT = 'SET_RESULT',
@@ -46,7 +45,6 @@ export enum StateMutationType {
 
 /// An state mutation variant
 export type StateMutationVariant =
-    | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_FILELOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULTLOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
@@ -81,11 +79,6 @@ export type Dispatch = (mutation: StateMutationVariant) => void;
 export class AppStateMutation {
     public static reduce(state: AppState, mutation: StateMutationVariant): AppState {
         switch (mutation.type) {
-            case StateMutationType.SET_FILENAME:
-                return {
-                    ...state,
-                    fileName: mutation.data,
-                };
             case StateMutationType.SET_FILELOADING:
                 return {
                     ...state,
@@ -214,7 +207,6 @@ export class AppStateMutation {
                 }
             case StateMutationType.RESET_STATE:
                 return {
-                    fileName: undefined,
                     fileLoading: false,
                     resultLoading: {},
                     result: undefined,

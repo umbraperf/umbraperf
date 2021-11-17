@@ -10,6 +10,10 @@ export function setCsvReadingFinished() {
         type: model.StateMutationType.SET_CSVPARSINGFINISHED,
         data: true,
     });
+    store.dispatch({
+        type: model.StateMutationType.SET_FILELOADING,
+        data: false,
+    });
 
     RequestController.requestMetadata(appContext.controller);
 }

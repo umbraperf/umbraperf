@@ -124,6 +124,7 @@ class UirViewer extends React.Component<Props, {}> {
             scrollBeyondLastLine: false,
             folding: true,
             foldingHighlight: true,
+            fontSize: 11,
             // foldingStrategy: 'indentation' as "auto" | "indentation" | undefined,
         }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AppContextProvider } from './app_context';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
-import { StylesProvider, AppBar, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
+import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
 
 import './globals.css';
 import '../node_modules/react-grid-layout/css/styles.css';
@@ -11,6 +11,7 @@ import styles from './style/main-app.module.css';
 import * as Config from './app_config';
 
 import TabPanel from './components/utils/tab_panel';
+import HeaderAppbar from './components/utils/header_appbar';
 
 
 function NoMatch() {
@@ -39,19 +40,11 @@ export default function App() {
                             <div className={`app ${styles.app}`}>
 
                                 <div className={styles.appHeader}>
-                                    <AppBar position="static" style={{ color: "white", background: Config.appContext.accentBlack }} >
-                                        <Toolbar style={{ minHeight: '38px' }}>
-                                            <Typography variant="h6" className={styles.appHeaderTitle}>
-                                                Umbra-Profiler
-                                            </Typography>
-                                        </Toolbar>
-                                    </AppBar>
+                                    <HeaderAppbar />
                                 </div>
 
                                 <div className={`appNavigation ${styles.appNavigation}`}>
-
                                     <TabPanel />
-
                                 </div>
 
                                 <div className={styles.appBody}>

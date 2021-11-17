@@ -61,7 +61,13 @@ class UirViewer extends React.Component<Props, {}> {
                 // 'scrollbarSlider.background': this.props.appContext.tertiaryColor,
                 // 'scrollbarSlider.hoverBackground': this.props.appContext.secondaryColor,
                 // 'scrollbarSlider.activeBackground': this.props.appContext.secondaryColor,
-                'editor.lineHighlightBorder': this.props.appContext.secondaryColor,
+                'editor.lineHighlightBorder': this.props.appContext.tertiaryColor,
+                'editor.findMatchBackground': this.props.appContext.secondaryColor,
+                'editor.findMatchHighlightBackground': this.props.appContext.primaryColor,
+                // 'inputOption.activeBorder': this.props.appContext.secondaryColor,
+                'editor.rangeHighlightBackground': '#fff',
+                'editor.wordHighlightBackground': this.props.appContext.primaryColor,
+
 
 
 

@@ -11,7 +11,7 @@ use arrow::{
 
 use crate::{
     state::state::get_serde_dict,
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+    utils::{record_batch_util::create_new_record_batch},
 };
 
 pub fn round(to_round: f64) -> f64 {
@@ -98,15 +98,44 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 if perc.0 == 3 {
                     let dict = d;
                     let default = String::from("None");
-                    let op = dict.op.as_ref().unwrap_or(&default);
-                    let pipe = dict.pipeline.as_ref().unwrap_or(&default);
-                    let out = format!("{}% {} {}", perc.1.to_string(), op, pipe);
+                    let out = format!(" {}% ", perc.1.to_string());
                     vec.push(out);
                 } else {
-                    let out = format!("{}% ", perc.1.to_string());
+                    let out = format!(" {}% ", perc.1.to_string());
                     vec.push(out);
                 }
             
+            }
+           /*  let mut count = 0;
+            for e in vec.clone() {
+                count += e.chars().count();
+            } */
+            /* if count < 40 {
+                let diff = 40 - count;
+                let repeat = " ".repeat(diff);
+                let output = format!("{}", repeat);
+                vec.push(output);
+            } */
+            let dict = d;
+            let default = String::from("None");
+            let op = dict.op.as_ref().unwrap_or(&default);
+            let pipe = dict.pipeline.as_ref().unwrap_or(&default);
+            let out = format!(" {} {}", op, pipe);
+            vec.push(out);   
+        } else {
+            let dict = d;
+            let default = String::from("None");
+            let op = dict.op.as_ref().unwrap_or(&default);
+            let pipe = dict.pipeline.as_ref().unwrap_or(&default);
+
+       /*      let diff = 40 - 10;
+            let repeat = " ".repeat(diff);
+            let output = format!("{}", repeat);
+            vec.push(output); */
+            
+            if op != "None" && pipe != "None" {
+                let out = format!("# - - - - {} {}", /*repeat,*/ op, pipe);
+                vec.push(out);
             }
         }
 
@@ -139,12 +168,9 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             for item in output_vec.clone().into_iter().enumerate() {
                 if item.0 > iter {
                     let str = item.1;
-                    //print_to_js_with_obj(&format!("{:?}", str).into());                   
                     if str.contains("define") || str.contains("declare") {     
-                        //print_to_js_with_obj(&format!("{:?}", buffer_percentage).into());                   
                         let mut sum1 = 0.;
                         for item in buffer_percentage.iter().step_by(4) {
-                            //print_to_js_with_obj(&format!("{:?}", sum1).into());                   
                             sum1 += item;
                         }
                         let mut sum2 = 0.;
@@ -172,7 +198,6 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
                         break;
                     } else {
-                        //print_to_js_with_obj(&format!("{:?}", "HERHEIRHEIRH").into());                   
                         for event in &unique_events_set {
                             let inner_hashmap = hashmap_count.get(event).unwrap();
                             let specific = *inner_hashmap.get(&(item.0 as i64).to_string().as_str()).unwrap_or(&0) as f64;

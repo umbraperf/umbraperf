@@ -97,8 +97,6 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
 }
 
 pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
-    print_to_js_with_obj(&format!("batch {:?}", batch).into());
-
     let serde = get_serde_dict().unwrap();
 
     let operator_col = batch

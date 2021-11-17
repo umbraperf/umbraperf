@@ -39,8 +39,6 @@
     composes: dropzoneBase;
     border-color:#00e676;
     background-color: #d5ebdf;
-
-
 }
 
 .dropzoneReject{

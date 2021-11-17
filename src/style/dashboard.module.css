@@ -1,3 +1,6 @@
+@value colors: "./export-variables.module.css";
+@value appBackgroundColor from colors;
+
 :root {
     --outerGridPadding: 7px;
     --gridCellBoxPadding: 3px;
@@ -13,7 +16,7 @@
     display: flex;
     flex-flow: column;
     padding: var(--outerGridPadding);
-    background-color: var(--appBackgroundColor);
+    background-color: appBackgroundColor;
     transition: var(--movingTransition);
     overflow-y: auto;
     height: calc(100% - 2 * var(--outerGridPadding));
@@ -41,8 +44,7 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1;
-/*     min-height: 100px; TODO
- */}
+}
 
 .dashboardDoubleGridCellItem{
     composes: dashboardGridCellItem;

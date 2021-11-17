@@ -1,3 +1,6 @@
+@value colors: "./export-variables.module.css";
+@value colorAccentBlack from colors;
+
 :root {
     --dagreGraphPadding: 2px;
 }
@@ -26,7 +29,7 @@
     font-family: 'Segoe UI';
     font-size: 11px;
     font-weight: bold;
-    color: #000;
+    color: colorAccentBlack;
     opacity: 1;
     margin-bottom: 0;
 }
@@ -44,8 +47,6 @@
     box-sizing: border-box;
     height: 100%;
     width: 100%; 
-/*     height: calc(100% - 2* var(--dagreGraphPadding));
-    width: 100%; */
 }
 
 .dagreGraph:active{
@@ -55,7 +56,7 @@
 .dagreNode{
     cursor: pointer;
     border: solid;
-    border-color: black;
+    border-color: colorAccentBlack;
     font-size: small;
 }
 
@@ -68,7 +69,7 @@
 }
 
 .dagreInactiveNode text{
-    fill: black;
+    fill: colorAccentBlack;
 }
 
 .dagreActiveNode text{
@@ -80,6 +81,6 @@
 }
 
 .dagreEdge{
-    stroke: black;
+    stroke: colorAccentBlack;
     size: 1px;
 }

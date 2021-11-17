@@ -55,8 +55,6 @@ class UirViewer extends React.Component<Props, {}> {
             colors: {
                 //primary color:
                 'editor.findMatchHighlightBackground': this.props.appContext.primaryColor,
-                'editor.wordHighlightBackground': this.props.appContext.primaryColor,
-                'editor.selectionBackground': this.props.appContext.primaryColor,
 
                 //secondary color:
                 'editorCursor.foreground': this.props.appContext.secondaryColor,
@@ -65,6 +63,8 @@ class UirViewer extends React.Component<Props, {}> {
                 'focusBorder': this.props.appContext.secondaryColor,
                 'list.activeSelectionBackground': this.props.appContext.secondaryColor,
                 'list.hoverBackground': this.props.appContext.secondaryColor,
+                'editor.wordHighlightBackground': lightColor(this.props.appContext.secondaryColor),
+                'editor.selectionBackground': lightColor(this.props.appContext.secondaryColor),
 
                 //tertiary color:
                 'editorLineNumber.foreground': this.props.appContext.tertiaryColor,

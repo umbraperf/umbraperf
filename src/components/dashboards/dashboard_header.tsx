@@ -31,7 +31,7 @@ class DashboardHeader extends React.Component<Props, {}> {
             <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
                 <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={5}>
                     <Box className={styles.dashboardGridCellOptionsBox}>
-                        <EventsButtons/>
+                        <EventsButtons />
                     </Box>
                 </Grid>
             </Box>
@@ -58,7 +58,6 @@ class DashboardHeader extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
 });
-
 
 
 export default connect(mapStateToProps)(DashboardHeader);

@@ -6,12 +6,17 @@ import { InputLabel, Select } from '@material-ui/core';
 import styles from "../../style/utils.module.css";
 import { connect } from 'react-redux';
 
+interface BucketsizeDropdwnProps{
+    disabled: boolean,
+}
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
     currentBucketSize: number;
     setCurrentBucketSize: (newCurrentBucketSize: number) => void;
 }
+
+type Props = AppstateProps & BucketsizeDropdwnProps;
 
 function BucketsizeDropdwn(props: Props) {
 
@@ -30,6 +35,7 @@ function BucketsizeDropdwn(props: Props) {
                 labelId="bucketsize-selector-label"
                 id="bucketsize-selector"
                 value={props.currentBucketSize}
+                disabled={props.disabled}
             >
                 {bucketsizes.map((elem, index) =>
                     (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)

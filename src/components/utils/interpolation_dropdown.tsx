@@ -6,13 +6,17 @@ import { InputLabel, Select } from '@material-ui/core';
 import styles from "../../style/utils.module.css";
 import { connect } from 'react-redux';
 
+interface BucketsizeDropdwnProps{
+    disabled: boolean,
+}
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
     currentInterpolation: String;
     setCurrentInterpolation: (newCurrentInterpolation: String) => void;
 }
 
+type Props = AppstateProps & BucketsizeDropdwnProps;
 
 function InterpolationDropdown(props: Props) {
 
@@ -31,6 +35,7 @@ function InterpolationDropdown(props: Props) {
                 labelId="interpolation-selector-label"
                 id="interpolation-selector"
                 value={props.currentInterpolation}
+                disabled={props.disabled}
             >
                 {interpolations.map((elem, index) =>
                     (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)

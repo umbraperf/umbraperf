@@ -3,7 +3,7 @@ import * as Context from '../../app_context';
 import Spinner from './spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Button, useTheme } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import styles from '../../style/utils.module.css';
 
 

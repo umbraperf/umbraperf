@@ -44,6 +44,10 @@ class UirViewer extends React.Component<Props, {}> {
 
     createMonacoCustomTheme(monaco: any) {
 
+        const lightColor = (color: string) => {
+            return color + "80";
+        }
+
         // Define new Theme
         monaco.editor.defineTheme('uirTheme', {
             base: 'vs',
@@ -55,18 +59,37 @@ class UirViewer extends React.Component<Props, {}> {
                 { token: 'fourthLevelKeyword', foreground: this.props.appContext.accentDarkBlue },
             ],
             colors: {
+                //primary color:
+                'editor.findMatchHighlightBackground': this.props.appContext.primaryColor,
+                'editor.wordHighlightBackground': this.props.appContext.primaryColor,
+                'editor.selectionBackground': this.props.appContext.primaryColor,
+
+                //secondary color:
                 'editorCursor.foreground': this.props.appContext.secondaryColor,
-                'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
                 'editorLineNumber.activeForeground': this.props.appContext.secondaryColor,
+                'editor.findMatchBackground': lightColor(this.props.appContext.secondaryColor),
+                'focusBorder': this.props.appContext.secondaryColor,
+
+                //tertiary color:
+                'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
+                'editor.lineHighlightBorder': this.props.appContext.tertiaryColor,
+                'foreground': this.props.appContext.tertiaryColor,
+                'editor.selectionHighlightBackground': lightColor(this.props.appContext.tertiaryColor),
+
+                //accentBlack color:
+
+                //white color:
+                'editor.rangeHighlightBackground': '#fff',
+
+                //custom color:
+
+
+
+
                 // 'scrollbarSlider.background': this.props.appContext.tertiaryColor,
                 // 'scrollbarSlider.hoverBackground': this.props.appContext.secondaryColor,
                 // 'scrollbarSlider.activeBackground': this.props.appContext.secondaryColor,
-                'editor.lineHighlightBorder': this.props.appContext.tertiaryColor,
-                'editor.findMatchBackground': this.props.appContext.secondaryColor,
-                'editor.findMatchHighlightBackground': this.props.appContext.primaryColor,
                 // 'inputOption.activeBorder': this.props.appContext.secondaryColor,
-                'editor.rangeHighlightBackground': '#fff',
-                'editor.wordHighlightBackground': this.props.appContext.primaryColor,
 
 
 

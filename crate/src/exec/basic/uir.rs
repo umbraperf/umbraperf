@@ -93,48 +93,50 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         let d = dict.uri_dict.get(&entry).unwrap();
 
         if has_entries {
-            vec.push("# ".to_string());
+            vec.push("#".to_string());
             for perc in buffer_percentage.into_iter().enumerate() {
                 if perc.0 == 3 {
-                    let dict = d;
-                    let default = String::from("None");
-                    let out = format!(" {}% ", perc.1.to_string());
+                    let out = format!(" {}%", perc.1.to_string());
                     vec.push(out);
                 } else {
-                    let out = format!(" {}% ", perc.1.to_string());
+                    let out = format!(" {}%", perc.1.to_string());
                     vec.push(out);
                 }
             
             }
-           /*  let mut count = 0;
+            let mut count = 0;
             for e in vec.clone() {
                 count += e.chars().count();
-            } */
-            /* if count < 40 {
-                let diff = 40 - count;
+            } 
+            if count < 22 {
+                let diff = 22 - count;
                 let repeat = " ".repeat(diff);
                 let output = format!("{}", repeat);
                 vec.push(output);
-            } */
+            } 
             let dict = d;
             let default = String::from("None");
             let op = dict.op.as_ref().unwrap_or(&default);
             let pipe = dict.pipeline.as_ref().unwrap_or(&default);
-            let out = format!(" {} {}", op, pipe);
+            let op_len = op.chars().count();
+            let diff = 12 - op_len;
+            let repeat__ = " ".repeat(diff);
+            let out = format!(" {}{}{}", op, repeat__,pipe);
             vec.push(out);   
         } else {
             let dict = d;
-            let default = String::from("None");
+            let default = String::from("");
             let op = dict.op.as_ref().unwrap_or(&default);
             let pipe = dict.pipeline.as_ref().unwrap_or(&default);
 
-       /*      let diff = 40 - 10;
+            let diff = 22 - 10;
             let repeat = " ".repeat(diff);
-            let output = format!("{}", repeat);
-            vec.push(output); */
             
-            if op != "None" && pipe != "None" {
-                let out = format!("# - - - - {} {}", /*repeat,*/ op, pipe);
+            if op != "" && pipe != "" {
+                let op_len = op.chars().count();
+                let diff = 12 - op_len;
+                let repeat__ = " ".repeat(diff);
+                let out = format!("# - - - - {} {}{}{}", repeat, op, repeat__,pipe);
                 vec.push(out);
             }
         }

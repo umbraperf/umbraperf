@@ -7,9 +7,9 @@ type ChartComponent<T, P> = {
 // The chart types
 export enum ChartType {
     BAR_CHART = "BAR_CHART",
-    DONUT_CHART = "DONUT_CHART", // TODO remove
-    SWIM_LANES = "SWIM_LANES", // TODO remove
-    SWIM_LANES_PIPELINES = "SWIM_LANES_PIPELINES", // TODO remove
+    // DONUT_CHART = "DONUT_CHART", // TODO remove
+    // SWIM_LANES = "SWIM_LANES", // TODO remove
+    // SWIM_LANES_PIPELINES = "SWIM_LANES_PIPELINES", // TODO remove
     SWIM_LANES_MULTIPLE_PIPELINES = "SWIM_LANES_MULTIPLE_PIPELINES",
     SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE = "SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE",
     SWIM_LANES_COMBINED_MULTIPLE_PIPELINES = "SWIM_LANES_COMBINED_MULTIPLE_PIPELINES",
@@ -19,6 +19,7 @@ export enum ChartType {
     MEMORY_ACCESS_HEATMAP_CHART = "MEMORY_ACCESS_HEATMAP_CHART",
     QUERY_PLAN = "QUERY_PLAN",
     UIR_VIEWER = "UIR_VIEWER",
+    OTHER = "OTHER",
 }
 
 //Readable chart names
@@ -33,6 +34,7 @@ export enum ChartTypeReadable {
     MEMORY_ACCESS_HEATMAP_CHART = "Memory Heatmap",
     QUERY_PLAN = "Query Plan",
     UIR_VIEWER = "UIR Viewer",
+    OTHER = "",
 }
 
 // The chart props

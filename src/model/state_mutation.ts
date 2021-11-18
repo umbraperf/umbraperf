@@ -3,7 +3,7 @@ import { IKpiData, Result } from "./core_result";
 import { RestQueryType } from './rest_queries';
 import { ChartDataKeyValue } from './chart_data_result';
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-import { ViewType } from './chart_types';
+import { ViewType, ChartType, ChartTypeReadable } from './chart_types';
 
 
 /// A mutation
@@ -53,8 +53,8 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
-    | StateMutation<StateMutationType.SET_CURRENTCHART, string>
-    | StateMutation<StateMutationType.SET_LOADINGCHARTREADABLENAME, string>
+    | StateMutation<StateMutationType.SET_CURRENTCHART, ChartType>
+    | StateMutation<StateMutationType.SET_LOADINGCHARTREADABLENAME, ChartType>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
@@ -117,9 +117,10 @@ export class AppStateMutation {
                     currentChart: mutation.data,
                 };
             case StateMutationType.SET_LOADINGCHARTREADABLENAME:
+                console.log(ChartTypeReadable[mutation.data])
                 return {
                     ...state,
-                    currentChart: mutation.data,
+                    loadingChartReadableName: ChartTypeReadable[mutation.data],
                 };
             case StateMutationType.SET_CURRENTEVENT:
                 return {
@@ -220,8 +221,8 @@ export class AppStateMutation {
                     chunksNumber: 0,
                     csvParsingFinished: false,
                     file: undefined,
-                    currentChart: "",
-                    loadingChartReadableName: "",
+                    currentChart: ChartType.OTHER,
+                    loadingChartReadableName: ChartTypeReadable.OTHER,
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",

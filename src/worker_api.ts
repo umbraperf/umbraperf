@@ -25,9 +25,8 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(metadata: string, restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.RestQueryType) {
+    public calculateChartData(restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.RestQueryType) {
         const requestData: ICalculateChartDataRequestData = {
-            queryMetadata: metadata,
             restQuery: restQuery,
             metaRequest: metaRequest,
             requestId: requestId,

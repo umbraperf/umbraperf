@@ -2,7 +2,7 @@ import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
 import { RestQueryType } from "./rest_queries";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-import { ViewType } from "./chart_types";
+import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
@@ -12,8 +12,8 @@ export interface AppState {
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
-    currentChart: string;
-    loadingChartReadableName: string;
+    currentChart: ChartType;
+    loadingChartReadableName: ChartTypeReadable;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
@@ -44,8 +44,8 @@ export function createDefaultState(): AppState {
         chunksNumber: 0,
         csvParsingFinished: false,
         file: undefined,
-        currentChart: "",
-        loadingChartReadableName: "",
+        currentChart: ChartType.OTHER,
+        loadingChartReadableName: ChartTypeReadable.OTHER,
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",

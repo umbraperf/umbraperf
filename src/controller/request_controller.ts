@@ -12,10 +12,8 @@ export class RequestController {
     }
 
 
-    public calculateChartData(restQueryType: model.RestQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, metadata?: string) {
+    public calculateChartData(restQueryType: model.RestQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
 
-        //TODO: metadata currently never used, can be removed
-        const queryMetadata = metadata ? metadata : "";
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
@@ -30,7 +28,7 @@ export class RequestController {
 
         store.dispatch({
             type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
-            data: "",
+            data: chartType ? chartType : model.ChartType.OTHER,
         });
 
         store.dispatch({
@@ -38,7 +36,7 @@ export class RequestController {
             data: undefined,
         });
 
-        worker.calculateChartData(queryMetadata, restQuery, queryRequestId, metaRequest, restQueryType);
+        worker.calculateChartData(restQuery, queryRequestId, metaRequest, restQueryType);
     }
 }
 
@@ -110,21 +108,21 @@ export function requestChartData(controller: RequestController, chartId: number,
             });
             break;
 
-        case model.ChartType.SWIM_LANES:
-            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET;
-            restQuery = model.createRestQuery({
-                type: restQueryType,
-                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-            });
-            break;
+        // case model.ChartType.SWIM_LANES:
+        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET;
+        //     restQuery = model.createRestQuery({
+        //         type: restQueryType,
+        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
+        //     });
+        //     break;
 
-        case model.ChartType.SWIM_LANES_PIPELINES:
-            restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE;
-            restQuery = model.createRestQuery({
-                type: restQueryType,
-                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-            });
-            break;
+        // case model.ChartType.SWIM_LANES_PIPELINES:
+        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE;
+        //     restQuery = model.createRestQuery({
+        //         type: restQueryType,
+        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
+        //     });
+        //     break;
 
         case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
             restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES;
@@ -158,13 +156,13 @@ export function requestChartData(controller: RequestController, chartId: number,
             });
             break;
 
-        case model.ChartType.DONUT_CHART:
-            restQueryType = model.RestQueryType.GET_PIPELINE_COUNT;
-            restQuery = model.createRestQuery({
-                type: restQueryType,
-                data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-            });
-            break;
+        // case model.ChartType.DONUT_CHART:
+        //     restQueryType = model.RestQueryType.GET_PIPELINE_COUNT;
+        //     restQuery = model.createRestQuery({
+        //         type: restQueryType,
+        //         data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+        //     });
+        //     break;
 
         case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
             restQueryType = model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT;
@@ -199,7 +197,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
     }
 
-    controller.calculateChartData(restQueryType, restQuery, false, chartId);
+    controller.calculateChartData(restQueryType, restQuery, false, chartId, chartType);
 }
 
 

@@ -48,7 +48,6 @@ export type WorkerRequest<T, P> = {
 
 export interface ICalculateChartDataRequestData {
   readonly requestId: number | undefined;
-  readonly queryMetadata: string,
   readonly restQuery: string,
   readonly metaRequest: boolean,
   readonly restQueryType: RestApi.RestQueryType;

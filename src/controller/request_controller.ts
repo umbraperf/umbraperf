@@ -21,14 +21,16 @@ export class RequestController {
             data: restQueryType,
         });
 
+        if (!metaRequest && chartType) {
+            store.dispatch({
+                type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
+                data: chartType,
+            });
+        }
+
         store.dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: { key: requestingChartId ? requestingChartId : -1, value: true },
-        });
-
-        store.dispatch({
-            type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
-            data: chartType ? chartType : model.ChartType.OTHER,
         });
 
         store.dispatch({

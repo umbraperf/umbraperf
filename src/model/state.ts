@@ -12,8 +12,8 @@ export interface AppState {
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
-    currentChart: ChartType;
-    loadingChartReadableName: ChartTypeReadable;
+    currentChart: Array<ChartType>;
+    loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
@@ -44,8 +44,8 @@ export function createDefaultState(): AppState {
         chunksNumber: 0,
         csvParsingFinished: false,
         file: undefined,
-        currentChart: ChartType.OTHER,
-        loadingChartReadableName: ChartTypeReadable.OTHER,
+        currentChart: [],
+        loadingChartReadableName: [],
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",

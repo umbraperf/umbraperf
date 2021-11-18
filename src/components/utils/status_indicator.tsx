@@ -1,7 +1,6 @@
 import * as model from '../../model/';
 import * as Context from '../../app_context';
 import React from 'react';
-import styles from "../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 
@@ -15,7 +14,9 @@ interface Props {
     pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     kpis: Array<model.IKpiData> | undefined;
-    currentChartReadableName: string;
+    currentChart: Array<model.ChartType>;
+    loadingChartReadableName: Array<model.ChartTypeReadable>;
+    queryPlan: object | undefined;
 
 }
 
@@ -23,7 +24,6 @@ function StatusIndicator(props: Props) {
 
     const getStatusString = () => {
         return "Status: " + getCurrentStatus();
-
     }
 
     const truncateString = (text: string) => {
@@ -39,6 +39,10 @@ function StatusIndicator(props: Props) {
         if (true === props.fileLoading && props.file) {
             return `Reading file (${truncateString(props.file.name)})...`;
         }
+        if (!loading && undefined === props.queryPlan) {
+            return "Rendering queryplan..."
+
+        }
         if ((loading && props.resultLoading[-1] === true) ||
             undefined === props.events ||
             undefined === props.pipelines ||
@@ -47,7 +51,7 @@ function StatusIndicator(props: Props) {
             return "Fetching metadata..."
         }
         if (loading) {
-            return `Rendering (${props.currentChartReadableName})...`
+            return `Rendering (${getLoadingChartName()})...`
         }
         if (!loading) {
             return "Done.";
@@ -64,6 +68,11 @@ function StatusIndicator(props: Props) {
         return false;
     }
 
+    const getLoadingChartName: () => model.ChartTypeReadable = () => {
+        const currentLoadingIndex = Object.values(props.resultLoading).indexOf(true, 0);
+        return props.loadingChartReadableName[currentLoadingIndex];
+    }
+
     return (
         <div>{getStatusString()}</div>
     );
@@ -78,7 +87,9 @@ const mapStateToProps = (state: model.AppState) => ({
     pipelines: state.pipelines,
     operators: state.operators,
     kpis: state.kpis,
-    currentChartReadableName: state.loadingChartReadableName,
+    loadingChartReadableName: state.loadingChartReadableName,
+    currentChart: state.currentChart,
+    queryPlan: state.queryPlan,
 });
 
 

@@ -35,17 +35,26 @@ function StatusIndicator(props: Props) {
         if (true === props.fileLoading && props.file) {
             return `Reading file (${truncateString(props.file.name)})...`;
         }
-        if (props.file && !isResultLoading() && Object.keys(props.chartData).length === 0) {
+        if (props.file && !isResultLoading()) {
             return "Initialising...";
         }
         if (isResultLoading() && props.resultLoading[-1] && props.resultLoading[-1] === true) {
             return "Fetching metadata..."
+            // TODO 
         }
         if (props.resultLoading[props.chartIdCounter] && props.resultLoading[props.chartIdCounter] === true) {
             // TODO name rendering chart
             return `Rendering ${props.chartIdCounter}...`
         }
-        return "Done.";
+        if (props.file && !isResultLoading() && Object.keys(props.chartData).length === 0) {
+            return "Initialising...";
+            //TODO 
+        }
+        if (props.file && !isResultLoading() && Object.keys(props.chartData).length > 0) {
+            return "Done.";
+            // TODO 
+        }
+        return "";
     }
 
     const isResultLoading = () => {

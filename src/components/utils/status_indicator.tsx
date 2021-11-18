@@ -5,16 +5,13 @@ import { connect } from 'react-redux';
 
 
 interface Props {
-    appContext: Context.IAppContext;
     fileLoading: boolean;
     file: undefined | File;
     resultLoading: model.ResultLoading;
-    chartData: model.ChartDataKeyValue;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     kpis: Array<model.IKpiData> | undefined;
-    currentChart: Array<model.ChartType>;
     loadingChartReadableName: Array<model.ChartTypeReadable>;
     queryPlan: object | undefined;
 
@@ -82,15 +79,13 @@ const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
     fileLoading: state.fileLoading,
     resultLoading: state.resultLoading,
-    chartData: state.chartData,
     events: state.events,
     pipelines: state.pipelines,
     operators: state.operators,
     kpis: state.kpis,
     loadingChartReadableName: state.loadingChartReadableName,
-    currentChart: state.currentChart,
     queryPlan: state.queryPlan,
 });
 
 
-export default connect(mapStateToProps)(Context.withAppContext(StatusIndicator));
+export default connect(mapStateToProps)(StatusIndicator);

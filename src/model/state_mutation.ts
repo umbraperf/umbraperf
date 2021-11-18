@@ -114,13 +114,12 @@ export class AppStateMutation {
             case StateMutationType.SET_CURRENTCHART:
                 return {
                     ...state,
-                    currentChart: mutation.data,
+                    currentChart: state.currentChart.concat([mutation.data]),
                 };
             case StateMutationType.SET_LOADINGCHARTREADABLENAME:
-                console.log(ChartTypeReadable[mutation.data])
                 return {
                     ...state,
-                    loadingChartReadableName: ChartTypeReadable[mutation.data],
+                    loadingChartReadableName: state.loadingChartReadableName.concat([ChartTypeReadable[mutation.data]]),
                 };
             case StateMutationType.SET_CURRENTEVENT:
                 return {
@@ -221,8 +220,8 @@ export class AppStateMutation {
                     chunksNumber: 0,
                     csvParsingFinished: false,
                     file: undefined,
-                    currentChart: ChartType.OTHER,
-                    loadingChartReadableName: ChartTypeReadable.OTHER,
+                    currentChart: [],
+                    loadingChartReadableName: [],
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",

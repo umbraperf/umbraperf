@@ -19,7 +19,7 @@ export interface QueryPlanWrapperAppstateProps {
     currentView: model.ViewType;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 interface State {
@@ -264,7 +264,7 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

@@ -40,7 +40,7 @@ export interface ChartWrapperAppstateProps {
     currentBucketSize: number,
 
     setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 type Props = OwnProps & ChartWrapperAppstateProps;
@@ -314,7 +314,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
     }),
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

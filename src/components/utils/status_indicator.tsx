@@ -78,7 +78,7 @@ const mapStateToProps = (state: model.AppState) => ({
     pipelines: state.pipelines,
     operators: state.operators,
     kpis: state.kpis,
-    currentChartReadableName: state.currentChartReadableName,
+    currentChartReadableName: state.loadingChartReadableName,
 });
 
 

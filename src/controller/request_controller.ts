@@ -29,6 +29,11 @@ export class RequestController {
         });
 
         store.dispatch({
+            type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
+            data: "",
+        });
+
+        store.dispatch({
             type: model.StateMutationType.SET_RESULT,
             data: undefined,
         });

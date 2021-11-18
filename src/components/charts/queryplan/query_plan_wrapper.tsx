@@ -19,7 +19,7 @@ export interface QueryPlanWrapperAppstateProps {
     currentView: model.ViewType;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: [string, string]) => void;
 }
 
 interface State {
@@ -83,7 +83,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: this.graphContainer.current!.offsetHeight,
         }));
 
-        this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
+        this.props.setCurrentChart([model.ChartType.QUERY_PLAN, model.ChartTypeReadable.QUERY_PLAN]);
 
         addEventListener('resize', (event) => {
             this.resizeListener();
@@ -264,7 +264,7 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: [string, string]) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

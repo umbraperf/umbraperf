@@ -52,7 +52,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
-    | StateMutation<StateMutationType.SET_CURRENTCHART, string>
+    | StateMutation<StateMutationType.SET_CURRENTCHART, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
@@ -112,7 +112,8 @@ export class AppStateMutation {
             case StateMutationType.SET_CURRENTCHART:
                 return {
                     ...state,
-                    currentChart: mutation.data,
+                    currentChart: mutation.data[0],
+                    currentChartReadableName: mutation.data[1],
                 };
             case StateMutationType.SET_CURRENTEVENT:
                 return {
@@ -214,6 +215,7 @@ export class AppStateMutation {
                     csvParsingFinished: false,
                     file: undefined,
                     currentChart: "",
+                    currentChartReadableName: "",
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",

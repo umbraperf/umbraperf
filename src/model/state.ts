@@ -13,6 +13,7 @@ export interface AppState {
     csvParsingFinished: boolean;
     file: undefined | File;
     currentChart: string;
+    currentChartReadableName: string;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
@@ -44,6 +45,7 @@ export function createDefaultState(): AppState {
         csvParsingFinished: false,
         file: undefined,
         currentChart: "",
+        currentChartReadableName: "",
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",

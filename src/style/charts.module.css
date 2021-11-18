@@ -26,20 +26,17 @@
 }
 
 .elementWrapper{
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-Content: center;
     align-items: stretch; 
-    height: 100%;
-    width: 100%;
 }
 
 .chartContainer{
     display: flex;
     justify-content: center;
-    align-items: stretch;
-    height: 100%;
-    width: 100%;
+    flex: 1;
 }
 
 .monacoEditorContainer{

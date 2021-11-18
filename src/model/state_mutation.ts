@@ -22,6 +22,7 @@ export enum StateMutationType {
     SET_CSVPARSINGFINISHED = 'SET_CSVPARSINGFINISHED',
     RESET_STATE = 'RESET_STATE',
     SET_CURRENTCHART = 'SET_CURRENTCHART',
+    SET_LOADINGCHARTREADABLENAME = 'SET_LOADINGCHARTREADABLENAME',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     SET_CURRENTMULTIPLEEVENT = 'SET_CURRENTMULTIPLEEVENT',
     SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
@@ -53,6 +54,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENTCHART, string>
+    | StateMutation<StateMutationType.SET_LOADINGCHARTREADABLENAME, string>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
@@ -110,6 +112,11 @@ export class AppStateMutation {
                     csvParsingFinished: mutation.data,
                 };
             case StateMutationType.SET_CURRENTCHART:
+                return {
+                    ...state,
+                    currentChart: mutation.data,
+                };
+            case StateMutationType.SET_LOADINGCHARTREADABLENAME:
                 return {
                     ...state,
                     currentChart: mutation.data,
@@ -214,7 +221,7 @@ export class AppStateMutation {
                     csvParsingFinished: false,
                     file: undefined,
                     currentChart: "",
-                    currentChartReadableName: "",
+                    loadingChartReadableName: "",
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",

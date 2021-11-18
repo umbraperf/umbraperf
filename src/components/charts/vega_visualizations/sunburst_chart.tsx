@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
+import { mode } from 'd3-array';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -284,14 +285,14 @@ class SunburstChart extends React.Component<Props, {}> {
                     labelOffset: -11,
                     title: "Pipelines",
                     orient: this.props.doubleRowSize ? "bottom-left" : "right",
-                    labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
+                    labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
+                    titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     values: pipelinesLegend(),
                     rowPadding: 0,
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: "truncate(datum.value, 35)" },
+                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 60)" } : { signal: "truncate(datum.value, 35)" },
                             }
                         }
                     }
@@ -304,9 +305,9 @@ class SunburstChart extends React.Component<Props, {}> {
                     rowPadding: 2,
                     columns: this.props.doubleRowSize ? 1 : 3,
                     columnPadding: 3,
-                    labelFontSize: model.chartConfiguration.legendLabelFontSize,
-                    titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                    symbolSize: model.chartConfiguration.legendSymbolSize,
+                    labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
+                    titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
+                    symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,
                     values: this.props.operators,
                     encode: {
                         labels: {

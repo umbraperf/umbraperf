@@ -18,6 +18,9 @@ export interface ChartConfiguration {
     legendTitleFontSize: number;
     legendLabelFontSize: number;
     legendSymbolSize: number;
+    legendDoubleTitleFontSize: number;
+    legendDoubleLabelFontSize: number;
+    legendDoubleSymbolSize: number;
     subtitleFontSize: number;
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
@@ -75,6 +78,9 @@ export let chartConfiguration: ChartConfiguration = {
     legendTitleFontSize: 9,
     legendLabelFontSize: 8,
     legendSymbolSize: 50,
+    legendDoubleTitleFontSize: 11,
+    legendDoubleLabelFontSize: 10,
+    legendDoubleSymbolSize: 60,
 
     //Value Lables
     sunburstChartValueLabelFontSize: 11,

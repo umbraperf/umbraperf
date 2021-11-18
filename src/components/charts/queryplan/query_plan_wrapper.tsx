@@ -45,12 +45,13 @@ export type DagreEdge = {
     config: object,
 }
 
+type Props = QueryPlanWrapperAppstateProps & model.IQueryPlanProps;
 
-class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, State> {
+class QueryPlanWrapper extends React.Component<Props, State> {
 
     graphContainer = createRef<HTMLDivElement>();
 
-    constructor(props: QueryPlanWrapperAppstateProps) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             height: 0,
@@ -63,7 +64,7 @@ class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, St
         this.handleNodeClick = this.handleNodeClick.bind(this);
     }
 
-    componentDidUpdate(prevProps: QueryPlanWrapperAppstateProps, prevState: State): void {
+    componentDidUpdate(prevProps: Props, prevState: State): void {
         if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
             this.setState((state, props) => ({
                 ...state,

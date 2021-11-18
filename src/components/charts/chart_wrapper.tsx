@@ -4,7 +4,7 @@ import * as Context from '../../app_context';
 import styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner';
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
@@ -104,7 +104,6 @@ class ChartWrapper extends React.Component<Props, State> {
         }));
 
         if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(this.props.chartType);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -146,82 +145,125 @@ class ChartWrapper extends React.Component<Props, State> {
                 child.style.display = 'block';
             }
         }
-
-        console.log(this.state.chartId + " " + this.state.height);
-
     }
 
     createChildChart() {
 
-        const partialChartProps: model.IParcialChartProps = {
+        const partialChartProps: model.ICommonChartProps = {
             key: this.state.chartId + this.state.width + this.state.height,
             chartId: this.state.chartId,
             width: this.state.width,
             chartType: this.props.chartType,
         }
 
+        let specificChart: model.ChartComponentVariant = {} as model.ChartComponentVariant;
+        let chartClass: React.ElementType | undefined = undefined;
+
         switch (this.props.chartType) {
 
             case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
                 const barChartActivityHistogramProps: model.IBarChartActivityHistogramProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: barChartActivityHistogramProps,
+                };
+                chartClass = BarChartActivityHistogram;
+                break;
+                // chartElement = React.createElement(BarChartActivityHistogram, specificChart.props as any);
+                // return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
 
             case model.ChartType.BAR_CHART:
                 const barChartProps: model.IBarChartProps = {
                     ...partialChartProps,
                     onDashboard: true,
                     height: this.state.height,
-                }
-                return React.createElement(BarChart, barChartProps as any);
-
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: barChartProps,
+                };
+                chartClass = BarChart;
+                break;
 
             case model.ChartType.SUNBURST_CHART:
                 const sunburstProps: model.ISunburstChartProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     doubleRowSize: this.state.height > 400 ? true : false,
-                }
-                return React.createElement(SunburstChart, sunburstProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: sunburstProps,
+                };
+                chartClass = SunburstChart;
+                break;
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
                 const swimLanesMultiplePipelinesProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: false,
-                }
-                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesMultiplePipelinesProps,
+                };
+                chartClass = SwimLanesMultiplePipelines;
+                break;
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
                 const swimLanesMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
-                }
-                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesAbsoluteProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesMultiplePipelinesAbsoluteProps,
+                };
+                chartClass = SwimLanesMultiplePipelines;
+                break;
 
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
                 const swimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
-                }
-                return React.createElement(SwimLanesCombinedMultiplePipelines, swimLanesCombinedMultiplePipelinesAbsoluteProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesCombinedMultiplePipelinesAbsoluteProps,
+                };
+                chartClass = SwimLanesCombinedMultiplePipelines;
+                break;
 
             case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
                 const memoryAccessHeatmapChartProps: model.IMemoryAccessHeatmapChartProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(MemoryAccessHeatmapChart, memoryAccessHeatmapChartProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: memoryAccessHeatmapChartProps,
+                };
+                chartClass = MemoryAccessHeatmapChart;
+                break;
 
             case model.ChartType.UIR_VIEWER:
                 const uirViewerChartProps: model.IUirViewerProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(UirViewer, uirViewerChartProps as any);
-
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: uirViewerChartProps,
+                };
+                chartClass = UirViewer;
+                break;
         }
+
+        this.props.setCurrentChart(specificChart.type);
+        return React.createElement(chartClass!, specificChart.props as any);
     }
 
     isComponentLoading(): boolean {

@@ -123,11 +123,11 @@
 }
 
 .dashboardGridCellChartContainer{
-    flex: 1 1 fit-content;
+    flex: 1 1 0;
     display: flex;
     justify-content: center;
     flex-flow: column;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 @media not all and (min-width: 1200px) {

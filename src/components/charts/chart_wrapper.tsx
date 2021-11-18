@@ -40,7 +40,7 @@ export interface ChartWrapperAppstateProps {
     currentBucketSize: number,
 
     setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: [string, string]) => void;
 }
 
 type Props = OwnProps & ChartWrapperAppstateProps;
@@ -167,6 +167,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: barChartActivityHistogramProps,
                 };
                 chartClass = BarChartActivityHistogram;
@@ -182,6 +183,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: barChartProps,
                 };
                 chartClass = BarChart;
@@ -195,6 +197,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: sunburstProps,
                 };
                 chartClass = SunburstChart;
@@ -208,6 +211,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: swimLanesMultiplePipelinesProps,
                 };
                 chartClass = SwimLanesMultiplePipelines;
@@ -221,6 +225,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: swimLanesMultiplePipelinesAbsoluteProps,
                 };
                 chartClass = SwimLanesMultiplePipelines;
@@ -234,6 +239,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: swimLanesCombinedMultiplePipelinesAbsoluteProps,
                 };
                 chartClass = SwimLanesCombinedMultiplePipelines;
@@ -245,6 +251,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: memoryAccessHeatmapChartProps,
                 };
                 chartClass = MemoryAccessHeatmapChart;
@@ -256,13 +263,14 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 specificChart = {
                     type: this.props.chartType,
+                    readableName: model.ChartTypeReadable[this.props.chartType],
                     props: uirViewerChartProps,
                 };
                 chartClass = UirViewer;
                 break;
         }
 
-        this.props.setCurrentChart(specificChart.type);
+        this.props.setCurrentChart([specificChart.type, specificChart.readableName]);
         return React.createElement(chartClass!, specificChart.props as any);
     }
 
@@ -316,7 +324,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
     }),
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: [string, string]) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

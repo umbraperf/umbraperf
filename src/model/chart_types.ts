@@ -1,25 +1,25 @@
 // Generic chart with type and props
-type ChartComponent<T, P, /* N */> = {
+type ChartComponent<T, N, P,> = {
     readonly type: T,
-    //readonly name: N,
+    readonly readableName: N,
     readonly props: P,
 }
 
 // The chart types
 export enum ChartType {
-    BAR_CHART = "bar_chart",
-    DONUT_CHART = "donut_chart", // TODO remove
-    SWIM_LANES = "swim_lanes", // TODO remove
-    SWIM_LANES_PIPELINES = "swim_lanes_pipelines", // TODO remove
-    SWIM_LANES_MULTIPLE_PIPELINES = "swim_lanes_multiple_pipelines",
-    SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE = "swim_lanes_multiple_pipelines_absolute",
-    SWIM_LANES_COMBINED_MULTIPLE_PIPELINES = "swim_lanes_combined_multiple_pipelines",
-    SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE = "swim_lanes_combined_multiple_pipelines_absolute",
-    BAR_CHART_ACTIVITY_HISTOGRAM = "bar_chart_activity_histogram",
-    SUNBURST_CHART = "sunburst_chart",
-    MEMORY_ACCESS_HEATMAP_CHART = "memory_access_heatmap_chart",
-    QUERY_PLAN = "query_plan",
-    UIR_VIEWER = "uir_viewer",
+    BAR_CHART = "BAR_CHART",
+    DONUT_CHART = "DONUT_CHART", // TODO remove
+    SWIM_LANES = "SWIM_LANES", // TODO remove
+    SWIM_LANES_PIPELINES = "SWIM_LANES_PIPELINES", // TODO remove
+    SWIM_LANES_MULTIPLE_PIPELINES = "SWIM_LANES_MULTIPLE_PIPELINES",
+    SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE = "SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE",
+    SWIM_LANES_COMBINED_MULTIPLE_PIPELINES = "SWIM_LANES_COMBINED_MULTIPLE_PIPELINES",
+    SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE = "SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE",
+    BAR_CHART_ACTIVITY_HISTOGRAM = "BAR_CHART_ACTIVITY_HISTOGRAM",
+    SUNBURST_CHART = "SUNBURST_CHART",
+    MEMORY_ACCESS_HEATMAP_CHART = "MEMORY_ACCESS_HEATMAP_CHART",
+    QUERY_PLAN = "QUERY_PLAN",
+    UIR_VIEWER = "UIR_VIEWER",
 }
 
 //Readable chart names
@@ -73,13 +73,13 @@ export type ChartProps = IBarChartActivityHistogramProps | ISunburstChartProps |
 
 // The Chart Component Variants with specific chart types and their props
 export type ChartComponentVariant =
-    | ChartComponent<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramProps>
-    | ChartComponent<ChartType.SUNBURST_CHART, ISunburstChartProps>
-    | ChartComponent<ChartType.BAR_CHART, IBarChartProps>
-    | ChartComponent<ChartType.SWIM_LANES_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesProps>
-    | ChartComponent<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartProps>
-    | ChartComponent<ChartType.QUERY_PLAN, IQueryPlanProps>
-    | ChartComponent<ChartType.UIR_VIEWER, IUirViewerProps>
+    | ChartComponent<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, ChartTypeReadable.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramProps>
+    | ChartComponent<ChartType.SUNBURST_CHART, ChartTypeReadable.SUNBURST_CHART, ISunburstChartProps>
+    | ChartComponent<ChartType.BAR_CHART, ChartTypeReadable.BAR_CHART, IBarChartProps>
+    | ChartComponent<ChartType.SWIM_LANES_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ChartTypeReadable.SWIM_LANES_MULTIPLE_PIPELINES | ChartTypeReadable.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartTypeReadable.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartTypeReadable.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesProps>
+    | ChartComponent<ChartType.MEMORY_ACCESS_HEATMAP_CHART, ChartTypeReadable.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartProps>
+    | ChartComponent<ChartType.QUERY_PLAN, ChartTypeReadable.QUERY_PLAN, IQueryPlanProps>
+    | ChartComponent<ChartType.UIR_VIEWER, ChartTypeReadable.UIR_VIEWER, IUirViewerProps>
     ;
 
 // Top level view types

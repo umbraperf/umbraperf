@@ -162,7 +162,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut pipe = Vec::new();
 
     for input in aggregated_output_vec {
-        srcline.push(input.0.unwrap().as_str());
+        srcline.push(format!("{}\n",input.0.unwrap()));
         perc_1.push(input.1);
         perc_2.push(input.2);
         perc_3.push(input.3);

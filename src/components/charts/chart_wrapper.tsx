@@ -172,8 +172,6 @@ class ChartWrapper extends React.Component<Props, State> {
                 };
                 chartClass = BarChartActivityHistogram;
                 break;
-                // chartElement = React.createElement(BarChartActivityHistogram, specificChart.props as any);
-                // return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
 
             case model.ChartType.BAR_CHART:
                 const barChartProps: model.IBarChartProps = {

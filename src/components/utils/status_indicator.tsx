@@ -11,6 +11,7 @@ interface Props {
     file: undefined | File;
     resultLoading: model.ResultLoading;
     chartData: model.ChartDataKeyValue;
+    chartIdCounter: number;
 
 }
 
@@ -23,22 +24,26 @@ function StatusIndicator(props: Props) {
 
     const truncateString = (text: string) => {
         const length = 20;
-        return text.length > length ? text.substring(0, length-1) + '&hellip;' : text;
+        return text.length > length ? text.substring(0, length - 1) + '&hellip;' : text;
     }
 
     const getCurrentStatus = () => {
+        console.log(props.chartIdCounter);
         if (undefined === props.file && false === props.fileLoading) {
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
             return `Reading file (${truncateString(props.file.name)})...`;
         }
-        if(!isResultLoading() && Object.keys(props.chartData).length === 0){
-            return "Initialising..."; //TODO metadata
+        if (props.file && !isResultLoading() && Object.keys(props.chartData).length === 0) {
+            return "Initialising...";
         }
-        if(isResultLoading()){
+        if (isResultLoading() && props.resultLoading[-1] && props.resultLoading[-1] === true) {
+            return "Fetching metadata..."
+        }
+        if (props.resultLoading[props.chartIdCounter] && props.resultLoading[props.chartIdCounter] === true) {
             // TODO name rendering chart
-            return `Rendering ${"xxx"}...`
+            return `Rendering ${props.chartIdCounter}...`
         }
         return "Done.";
     }
@@ -62,6 +67,7 @@ const mapStateToProps = (state: model.AppState) => ({
     fileLoading: state.fileLoading,
     resultLoading: state.resultLoading,
     chartData: state.chartData,
+    chartIdCounter: state.chartIdCounter,
 });
 
 

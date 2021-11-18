@@ -1,4 +1,5 @@
-@value appBackgroundColor: rgb(238, 238, 238);
+/* @value appBackgroundColor: rgb(238, 238, 238); */
+@value appBackgroundColor: rgb(100, 100, 100);
 @value colorPrimary: #f5f3bb;
 @value colorSecondary: #d4733e;
 @value colorTertiary: #919191;

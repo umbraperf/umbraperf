@@ -12,7 +12,10 @@ interface Props {
     resultLoading: model.ResultLoading;
     chartData: model.ChartDataKeyValue;
     chartIdCounter: number;
-
+    events: Array<string> | undefined;
+    pipelines: Array<string> | undefined;
+    operators: Array<string> | undefined;
+    kpis: Array<model.IKpiData> | undefined;
 }
 
 function StatusIndicator(props: Props) {
@@ -28,31 +31,25 @@ function StatusIndicator(props: Props) {
     }
 
     const getCurrentStatus = () => {
-        console.log(props.chartIdCounter);
+        const loading = isResultLoading();
         if (undefined === props.file && false === props.fileLoading) {
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
             return `Reading file (${truncateString(props.file.name)})...`;
         }
-        if (props.file && !isResultLoading()) {
-            return "Initialising...";
-        }
-        if (isResultLoading() && props.resultLoading[-1] && props.resultLoading[-1] === true) {
+        if ((loading && props.resultLoading[-1] === true) ||
+            undefined === props.events ||
+            undefined === props.pipelines ||
+            undefined === props.operators ||
+            undefined === props.kpis) {
             return "Fetching metadata..."
-            // TODO 
         }
-        if (props.resultLoading[props.chartIdCounter] && props.resultLoading[props.chartIdCounter] === true) {
-            // TODO name rendering chart
-            return `Rendering ${props.chartIdCounter}...`
+        if (loading) {
+            return `Rendering ${getLoadingChartName()}...`
         }
-        if (props.file && !isResultLoading() && Object.keys(props.chartData).length === 0) {
-            return "Initialising...";
-            //TODO 
-        }
-        if (props.file && !isResultLoading() && Object.keys(props.chartData).length > 0) {
+        if (!loading) {
             return "Done.";
-            // TODO 
         }
         return "";
     }
@@ -66,6 +63,16 @@ function StatusIndicator(props: Props) {
         return false;
     }
 
+    const getLoadingChartName = () => {
+        for (let resultId in props.resultLoading) {
+            if (true === props.resultLoading[resultId]) {
+                console.log(props.chartData);
+                return resultId;
+            }
+        }
+        return "";
+    }
+
     return (
         <div>{getStatusString()}</div>
     );
@@ -77,6 +84,10 @@ const mapStateToProps = (state: model.AppState) => ({
     resultLoading: state.resultLoading,
     chartData: state.chartData,
     chartIdCounter: state.chartIdCounter,
+    events: state.events,
+    pipelines: state.pipelines,
+    operators: state.operators,
+    kpis: state.kpis,
 });
 
 

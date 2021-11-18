@@ -34,7 +34,7 @@ function StatusIndicator(props: Props) {
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
-            return `Reading file (${truncateString(props.file.name)})...`;
+            return `Reading file "${truncateString(props.file.name)}"...`;
         }
         if (!loading && undefined === props.queryPlan) {
             return "Rendering queryplan..."
@@ -48,7 +48,7 @@ function StatusIndicator(props: Props) {
             return "Fetching metadata..."
         }
         if (loading) {
-            return `Rendering (${getLoadingChartName()})...`
+            return `Rendering "${getLoadingChartName()}"...`
         }
         if (!loading) {
             return "Done.";

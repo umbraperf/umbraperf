@@ -1,7 +1,6 @@
 // Generic chart with type and props
-type ChartComponent<T, N, P,> = {
+type ChartComponent<T, P> = {
     readonly type: T,
-    readonly readableName: N,
     readonly props: P,
 }
 
@@ -73,13 +72,13 @@ export type ChartProps = IBarChartActivityHistogramProps | ISunburstChartProps |
 
 // The Chart Component Variants with specific chart types and their props
 export type ChartComponentVariant =
-    | ChartComponent<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, ChartTypeReadable.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramProps>
-    | ChartComponent<ChartType.SUNBURST_CHART, ChartTypeReadable.SUNBURST_CHART, ISunburstChartProps>
-    | ChartComponent<ChartType.BAR_CHART, ChartTypeReadable.BAR_CHART, IBarChartProps>
-    | ChartComponent<ChartType.SWIM_LANES_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ChartTypeReadable.SWIM_LANES_MULTIPLE_PIPELINES | ChartTypeReadable.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartTypeReadable.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartTypeReadable.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesProps>
-    | ChartComponent<ChartType.MEMORY_ACCESS_HEATMAP_CHART, ChartTypeReadable.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartProps>
-    | ChartComponent<ChartType.QUERY_PLAN, ChartTypeReadable.QUERY_PLAN, IQueryPlanProps>
-    | ChartComponent<ChartType.UIR_VIEWER, ChartTypeReadable.UIR_VIEWER, IUirViewerProps>
+    | ChartComponent<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramProps>
+    | ChartComponent<ChartType.SUNBURST_CHART, ISunburstChartProps>
+    | ChartComponent<ChartType.BAR_CHART, IBarChartProps>
+    | ChartComponent<ChartType.SWIM_LANES_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES | ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesProps>
+    | ChartComponent<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartProps>
+    | ChartComponent<ChartType.QUERY_PLAN, IQueryPlanProps>
+    | ChartComponent<ChartType.UIR_VIEWER, IUirViewerProps>
     ;
 
 // Top level view types

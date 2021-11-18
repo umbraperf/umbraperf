@@ -11,11 +11,12 @@ interface Props {
     file: undefined | File;
     resultLoading: model.ResultLoading;
     chartData: model.ChartDataKeyValue;
-    chartIdCounter: number;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     operators: Array<string> | undefined;
     kpis: Array<model.IKpiData> | undefined;
+    currentChartReadableName: string;
+
 }
 
 function StatusIndicator(props: Props) {
@@ -46,7 +47,7 @@ function StatusIndicator(props: Props) {
             return "Fetching metadata..."
         }
         if (loading) {
-            return `Rendering ${getLoadingChartName()}...`
+            return `Rendering (${props.currentChartReadableName})...`
         }
         if (!loading) {
             return "Done.";
@@ -63,16 +64,6 @@ function StatusIndicator(props: Props) {
         return false;
     }
 
-    const getLoadingChartName = () => {
-        for (let resultId in props.resultLoading) {
-            if (true === props.resultLoading[resultId]) {
-                console.log(props.chartData);
-                return resultId;
-            }
-        }
-        return "";
-    }
-
     return (
         <div>{getStatusString()}</div>
     );
@@ -83,11 +74,11 @@ const mapStateToProps = (state: model.AppState) => ({
     fileLoading: state.fileLoading,
     resultLoading: state.resultLoading,
     chartData: state.chartData,
-    chartIdCounter: state.chartIdCounter,
     events: state.events,
     pipelines: state.pipelines,
     operators: state.operators,
     kpis: state.kpis,
+    currentChartReadableName: state.currentChartReadableName,
 });
 
 

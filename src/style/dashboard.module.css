@@ -44,6 +44,7 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1;
+    max-height: 700px;
 }
 
 .dashboardDoubleGridCellItem{

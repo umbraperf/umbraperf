@@ -21,15 +21,20 @@ function StatusIndicator(props: Props) {
 
     }
 
+    const truncateString = (text: string) => {
+        const length = 20;
+        return text.length > length ? text.substring(0, length-1) + '&hellip;' : text;
+    }
+
     const getCurrentStatus = () => {
         if (undefined === props.file && false === props.fileLoading) {
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
-            return `Reading file (${(props.file.name.length > 20) ? props.file.name.substr(0, 20) + '&hellip;' : props.file.name})...`;
+            return `Reading file (${truncateString(props.file.name)})...`;
         }
         if(!isResultLoading() && Object.keys(props.chartData).length === 0){
-            return "Initialising...";
+            return "Initialising..."; //TODO metadata
         }
         if(isResultLoading()){
             // TODO name rendering chart

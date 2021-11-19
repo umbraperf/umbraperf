@@ -22,6 +22,7 @@ class UirViewer extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
+        this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
     }
 
     componentDidMount(){

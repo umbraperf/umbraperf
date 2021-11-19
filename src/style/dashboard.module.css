@@ -47,7 +47,7 @@
     composes: dashboardGridCellItem;
     flex: 1 1 auto;
     max-height: 500px;
-    min-height: 150px;
+    min-height: 200px;
 }
 
 .dashboardGridCellItemDoubleRow{

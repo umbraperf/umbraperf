@@ -117,6 +117,10 @@
     overflow: hidden;
 }
 
+.dashboardGridCellItemFullScreenStretchContentMultiColumnContainer{
+    flex: 1;
+}
+
 .dashboardGridCellOptionsBox{
     composes: dashboardGridCellBox;
     width: 100%;

@@ -102,8 +102,6 @@
     composes: dashboardGridCellChartBox;
     flex: 1 1 0;
     height: calc(2 * var(--mainVisualizationsHeight));
-    /* height: var(--mainVisualizationsHeight); */
-    /* max-height: calc(100% - var(--gridCellBoxPadding)); */
 }
 
 .dashboardGridCellChartBoxAutoheightChart{
@@ -115,7 +113,8 @@
 
 .dashboardGridCellChartBoxAutoheightFullheightStretchChart{
     composes: dashboardGridCellChartBox;
-    flex: 1 1;
+    flex: 1 1 0;
+    overflow: hidden;
 }
 
 .dashboardGridCellOptionsBox{
@@ -126,10 +125,8 @@
 }
 
 .dashboardGridCellChartContainer{
-    /* flex: 1 1 auto; */
     min-width: 0;
     min-height: 0;
-    overflow: hidden;
     height: 100%;
     width: 100%;
     max-height: 100%;

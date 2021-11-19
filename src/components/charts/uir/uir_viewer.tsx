@@ -4,8 +4,9 @@ import styles from '../../../style/charts.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import Editor from "@monaco-editor/react";
+import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner';
+import * as monaco from 'monaco-editor';
 
 
 interface AppstateProps {
@@ -31,16 +32,12 @@ class UirViewer extends React.Component<Props, {}> {
         return this.props.chartData.uirLines;
     }
 
-    handleEditorWillMount(monaco: any) {
+    handleEditorWillMount(monaco: Monaco) {
         this.createUirLanguage(monaco);
         this.createMonacoCustomTheme(monaco);
-
-        //TODO fold all on startup
-        // //fold all lines on render
-        // monaco.editor.trigger('fold', 'editor.foldAll');
     }
 
-    createMonacoCustomTheme(monaco: any) {
+    createMonacoCustomTheme(monaco: Monaco) {
 
         const lightColor = (color: string) => {
             return color + "80";
@@ -84,7 +81,7 @@ class UirViewer extends React.Component<Props, {}> {
         });
     }
 
-    createUirLanguage(monaco: any) {
+    createUirLanguage(monaco: Monaco) {
         //Register new Language
         monaco.languages.register({ id: 'umbraIntermediateRepresentation' });
 
@@ -132,6 +129,14 @@ class UirViewer extends React.Component<Props, {}> {
 
     }
 
+    handleEditorDidMount(editor: any, monaco: Monaco) {
+        this.foldAllLines(editor);
+    }
+
+    foldAllLines(editor: any){
+        editor.trigger('fold', 'editor.foldAll');
+    }
+
     createMonacoEditor() {
 
         const monacoDefaultValue = this.props.chartData.uirLines.join('');
@@ -158,6 +163,7 @@ class UirViewer extends React.Component<Props, {}> {
                     options={monacoOptions}
                     loading={<Spinner />}
                     beforeMount={this.handleEditorWillMount}
+                    onMount={this.handleEditorDidMount}
                 />
             </div>
         </div>

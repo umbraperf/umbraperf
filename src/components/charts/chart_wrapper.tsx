@@ -142,7 +142,7 @@ class ChartWrapper extends React.Component<Props, State> {
                     height: newHeight,
                 }));
 
-                child.style.display = 'block';
+                child.style.display = 'flex';
             }
         }
     }

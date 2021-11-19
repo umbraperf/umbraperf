@@ -25,7 +25,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let column = record_batch
+    let column_srcline = record_batch
         .column(5)
         .as_any()
         .downcast_ref::<Int64Array>()
@@ -34,24 +34,24 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let dict = get_serde_dict().unwrap();
 
     // CALCULATE
-    let mut srcline_key_vec = Vec::new();
     let mut hashmap_count = HashMap::new();
     let mut unique_events_set = HashSet::new();
-    for entry in column.into_iter().enumerate() {
-        let entry_num = entry.1.unwrap();
+    for entry in column_srcline.into_iter().enumerate() {
+        let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
-        let srcline = hashmap_samplekey_srcline.get(&(entry_num as u64)).unwrap();
+        let srcline = hashmap_samplekey_srcline.get(&(entry_srcline_num as u64)).unwrap();
         let current_ev = column_ev_name.value(entry.0);
         if srcline.contains("dump") || srcline.contains("proxy") {
             let split = srcline.split_terminator(":").collect::<Vec<&str>>();
             let srcline_key = split[1];
-            let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
-            srcline_key_vec.push(srcline_key);
-            unique_events_set.insert(current_ev);
-            inner_hashmap.entry(srcline_key).or_insert(0);
-            inner_hashmap.insert(srcline_key, inner_hashmap[split[1]] + 1);
-            inner_hashmap.entry("sum").or_insert(0);
-            inner_hashmap.insert("sum", inner_hashmap["sum"] + 1);
+            if dict.uri_dict.get(srcline_key).is_some() {
+                let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
+                unique_events_set.insert(current_ev);
+                inner_hashmap.entry(srcline_key).or_insert(0);
+                inner_hashmap.insert(srcline_key, inner_hashmap[split[1]] + 1);
+                inner_hashmap.entry("sum").or_insert(0);
+                inner_hashmap.insert("sum", inner_hashmap["sum"] + 1);
+            }
         }
     }
 
@@ -130,7 +130,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
                         aggregated_output_vec.push((Some(current_srcline.to_owned()), sum1, sum2, sum3, sum4, op, pipe));
-
+                        print_to_js_with_obj(&format!("output sum {:?} {:?} {:?} {:?}", sum1, sum2, sum3, sum4).into());
                         break;
                     } else {
                         for event in &unique_events_set {
@@ -140,7 +140,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
                             let percentage = specific / total;
-                            let percentage = f64::trunc((percentage) * 1000.0) / 1000.0;
+                            let percentage = f64::trunc((percentage) * 1000.0) / 10.;
                             buffer_percentage.push(percentage)
                         }
                     }
@@ -152,6 +152,9 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
         }
     }
+
+    print_to_js_with_obj(&format!("output vec {:?}", aggregated_output_vec).into());
+
 
 
     let mut srcline = Vec::new();

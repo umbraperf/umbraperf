@@ -23,7 +23,7 @@ interface Props {
 
 function StatusIndicator(props: Props) {
 
-    const [loadingDone, setLoadingDone] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const truncateString = (text: string) => {
         const length = 20;
@@ -33,13 +33,21 @@ function StatusIndicator(props: Props) {
     const getCurrentStatus = () => {
         const loading = isResultLoading();
         if (undefined === props.file && false === props.fileLoading) {
+            if (isLoading === true) {
+                setIsLoading(false);
+            }
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
-            // setLoadingDone(false);
+            if (isLoading === false) {
+                setIsLoading(true);
+            }
             return `Reading file "${truncateString(props.file.name)}"...`;
         }
         if (!loading && undefined === props.queryPlan) {
+            if (isLoading === false) {
+                setIsLoading(true);
+            }
             return "Rendering queryplan..."
         }
         if ((loading && props.resultLoading[-1] === true) ||
@@ -47,16 +55,24 @@ function StatusIndicator(props: Props) {
             undefined === props.pipelines ||
             undefined === props.operators ||
             undefined === props.kpis) {
+            if (isLoading === false) {
+                setIsLoading(true);
+            }
             return "Fetching metadata..."
         }
         if (loading) {
+            if (isLoading === false) {
+                setIsLoading(true);
+            }
             return `Rendering "${getLoadingChartName()}"...`
         }
-        if (!loading) {
-            // setLoadingDone(true);
+        if (!loading && Object.keys(props.resultLoading).length > 0) {
+            if (isLoading === true) {
+                setIsLoading(false);
+            }
             return "Done.";
         }
-        return "";
+        return "Loading...";
     }
 
     const isResultLoading = () => {
@@ -80,7 +96,7 @@ function StatusIndicator(props: Props) {
     return (
         <div className={styles.statusContainer}>
             {getCurrentStatusString()}
-            {!loadingDone && <MiniSpinner />}
+            {isLoading && <MiniSpinner />}
         </div>
     );
 }

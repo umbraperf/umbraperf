@@ -23,7 +23,7 @@ class DashboardUir extends React.Component<{}, {}> {
 
             <Box clone order={{ xs: 2, sm: 2, lg: 2 }}>
                 <Grid item container className={styles.dashboardGridCellItemFullScreenStretchContentMultiColumnContainer} >
-                    <Box clone order={{ xs: 1, md: 1, lg: 1 }}>
+                    <Box clone order={{ xs: 2, md: 2, lg: 1 }}>
                         <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={9} >
                             <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                                 <div className={styles.dashboardGridCellChartContainer}>
@@ -32,7 +32,7 @@ class DashboardUir extends React.Component<{}, {}> {
                             </Box>
                         </Grid>
                     </Box>
-                    <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
+                    <Box clone order={{ xs: 1, md: 1, lg: 2 }}>
                         <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={3} >
                             <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                                 <div className={styles.dashboardGridCellChartContainer}>

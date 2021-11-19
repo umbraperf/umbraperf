@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack from colors;
+@value colorSecondary from colors;
 
 .monacoEditorContainer{
     flex: 1 1 fit-content;
@@ -33,10 +33,47 @@
     flex-wrap: wrap;
 }
 
-.glyphMarginClass{
-    background: blue;
+
+.glyphMarginClass0-1{
+    background: #F4CBB5;
 }
 
-.myContentClass{
+.glyphMarginClass1-2{
+    background: #EDB596;
+}
+
+.glyphMarginClass2-3{
+    background: #E69F78;
+}
+
+.glyphMarginClass3-4{
+    background: #E69F78;
+}
+
+.glyphMarginClass4-5{
+    background: #DD895A;
+}
+
+.glyphMarginClass5-6{
+    background: #d4733e;
+}
+
+.glyphMarginClass6-7{
+    background: #C56937;
+}
+
+.glyphMarginClass7-8{
+    background: #B66031;
+}
+
+.glyphMarginClass8-9{
+    background: #A6562A;
+}
+
+.glyphMarginClass9-10{
+    background: #964D24;
+}
+
+.editorContentClass{
     background: black;
 }

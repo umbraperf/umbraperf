@@ -92,7 +92,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
             return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}/sort?mem,desc`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
-            return `scrline${timeFilter}/uir?srclines`;
+            return `scrline/perc1/perc2/perc3/perc4/op/pipe${timeFilter}/uir?srclines`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

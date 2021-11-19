@@ -129,7 +129,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
-                        aggregated_output_vec.push((Some(str.unwrap().to_owned()), sum1, sum2, sum3, sum4, op, pipe));
+                        aggregated_output_vec.push((Some(current_srcline.to_owned()), sum1, sum2, sum3, sum4, op, pipe));
 
                         break;
                     } else {

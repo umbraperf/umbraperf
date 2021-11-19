@@ -46,12 +46,13 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1;
-    max-height: 700px;
+    max-height: 500px;
 }
 
 .dashboardGridCellItemDoubleRow{
     composes: dashboardGridCellItem;
     flex: 1 1 0;
+    min-height: var(--mainVisualizationsHeight);
     max-height: var(--girdCellItemDoubleRowHeight);
 }
 
@@ -124,9 +125,12 @@
 }
 
 .dashboardGridCellChartContainer{
-    flex: 1 1 0;
+    /* flex: 1 0 0; */
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-flow: column;
 }
 
@@ -143,6 +147,7 @@
 
     .dashboardGridCellChartBoxDoublerowVisualizations{
         composes: dashboardGridCellChartBoxDoublerowVisualizations;
+        min-height: var(--mainVisualizationsHeight);
         max-height: var(--mainVisualizationsHeight);
     }
 }

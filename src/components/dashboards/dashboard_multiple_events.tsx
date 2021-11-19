@@ -10,9 +10,9 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
 
     public render() {
 
-        return <Grid container>
+        return <Grid container className={styles.visualizationGridFullScreenNoOverflow}>
             <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} >
+                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} >
                     <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
@@ -23,7 +23,7 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
 
 
             <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
+                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={4} >
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                             <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
@@ -32,7 +32,7 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
                 </Grid>
             </Box>
             <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={8}>
+                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={8}>
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <QueryPlanWrapper />
@@ -42,8 +42,8 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
             </Box>
 
             <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                <Grid item className={styles.dashboardGridCellItemDoubleRow} xs={12}>
-                    <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
+                <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12}>
+                    <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE} />
                         </div>

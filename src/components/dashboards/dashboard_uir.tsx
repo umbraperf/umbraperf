@@ -22,23 +22,15 @@ class DashboardUir extends React.Component<{}, {}> {
             </Box>
 
             <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                <Grid item container direction="row" className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={12}>
-                    <Box clone order={{ xs: 1, md: 1, lg: 1 }}>
-                        <Grid item className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart} xs={12} md={9} lg={9}>
-                            <div className={styles.dashboardGridCellChartContainer}>
-                                <ChartWrapper chartType={model.ChartType.UIR_VIEWER} />
-                            </div>
-                        </Grid>
-                    </Box>
-                    <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                        <Grid item className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart} xs={12} md={3} lg={3}>
-                            <div className={styles.dashboardGridCellChartContainer}>
-                                <QueryPlanWrapper />
-                            </div>
-                        </Grid>
+                <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={12} >
+                    <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
+                        <div className={styles.dashboardGridCellChartContainer}>
+                            <ChartWrapper chartType={model.ChartType.UIR_VIEWER} />
+                        </div>
                     </Box>
                 </Grid>
             </Box>
+
 
         </Grid>
     }

@@ -270,7 +270,7 @@ pub fn freq_of_memory(
 ) {
 
 
-        print_to_js_with_obj(&format!("in it! {:?}", from).into());
+    print_to_js_with_obj(&format!("in it! {:?}", from).into());
 
     let batch = &sort_batch(batch, 2, false);
 

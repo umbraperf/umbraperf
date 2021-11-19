@@ -87,5 +87,11 @@ export interface IMemoryAccessHeatmapChartData {
 
 export interface IUirViewerData {
     uirLines: Array<string>;
+    event1: Array<number>;
+    event2: Array<number>;
+    event3: Array<number>;
+    event4: Array<number>;
+    operators: Array<string>;
+    pipelines: Array<string>;
 }
 

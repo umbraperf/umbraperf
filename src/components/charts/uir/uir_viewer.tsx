@@ -24,6 +24,10 @@ class UirViewer extends React.Component<Props, {}> {
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
     }
 
+    componentDidMount(){
+        console.log(this.props.chartData);
+    }
+
     public render() {
         return this.createMonacoEditor();
     }

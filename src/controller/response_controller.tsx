@@ -334,19 +334,32 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 });
             break;
 
-            case model.RestQueryType.GET_GROUPED_UIR_LINES:
+        case model.RestQueryType.GET_GROUPED_UIR_LINES:
 
             console.log(resultObject.resultTable);
-                chartDataElem = model.createChartDataObject(
-                    requestId,
-                    {
-                        chartType: model.ChartType.UIR_VIEWER,
-                        data: {
-                            uirLines: resultObject.resultTable.getColumn('scrline').toArray(),
-                        }
-                    });
-                setResultLoading = true;
-                break;
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.UIR_VIEWER,
+                    data: {
+                        uirLines: resultObject.resultTable.getColumn('scrline').toArray(),
+                        event1: [1,2,3],
+                        event2: [1,2,3],
+                        event3: [1,2,3],
+                        event4: [1,2,3],
+                        operators: ["a", "b", "c"],
+                        pipelines: ["a", "b", "c"],
+                        // uirLines: resultObject.resultTable.getColumn('scrline').toArray(),
+                        // event1: resultObject.resultTable.getColumn('perc_1').toArray(),
+                        // event2: resultObject.resultTable.getColumn('perc_2').toArray(),
+                        // event3: resultObject.resultTable.getColumn('perc_3').toArray(),
+                        // event4: resultObject.resultTable.getColumn('perc_4').toArray(),
+                        // operators: resultObject.resultTable.getColumn('op').toArray(),
+                        // pipelines: resultObject.resultTable.getColumn('pipe').toArray(),
+                    }
+                });
+            setResultLoading = true;
+            break;
     }
 
     chartDataCollection[requestId] = chartDataElem!;

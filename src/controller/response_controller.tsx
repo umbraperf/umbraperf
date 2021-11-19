@@ -28,7 +28,7 @@ export function storeQueryPlan(queryPlanJson: object) {
     }
 }
 
-export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.RestQueryType) {
+export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType) {
 
     //store result of current request in redux store result variable 
     const resultObject: model.Result = model.createResultObject(requestId, result);
@@ -50,11 +50,11 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 }
 
 //extract events, statistics and pipelines from result table, store them to app state, set current event and current pipelines
-function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
+function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
     switch (restQueryType) {
 
-        case model.RestQueryType.GET_EVENTS:
+        case model.BackendQueryType.GET_EVENTS:
             const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_EVENTS,
@@ -72,7 +72,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             }
             break;
 
-        case model.RestQueryType.GET_PIPELINES:
+        case model.BackendQueryType.GET_PIPELINES:
             const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_PIPELINES,
@@ -80,7 +80,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             });
             break;
 
-        case model.RestQueryType.GET_OPERATORS:
+        case model.BackendQueryType.GET_OPERATORS:
             const operators = store.getState().result?.resultTable.getColumn('operator').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_OPERATORS,
@@ -88,7 +88,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
             });
             break;
 
-        case model.RestQueryType.GET_STATISTICS:
+        case model.BackendQueryType.GET_STATISTICS:
             const numberSamplesKpi: model.IKpiData = { id: "noSamples", title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
             const numberPipelinesKpi: model.IKpiData = { id: "noPipelines", title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
             const numberOperatorsKpi: model.IKpiData = { id: "noOperators", title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
@@ -111,7 +111,7 @@ function storeMetaDataFromRust(restQueryType: model.RestQueryType) {
 }
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
-function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.RestQueryType) {
+function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.BackendQueryType) {
 
     //console.log(resultObject.resultTable.getColumn('operator'));
 
@@ -121,7 +121,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
     switch (requestType) {
 
-        case model.RestQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
+        case model.BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -169,7 +169,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         //     setResultLoading = true;
         //     break;
 
-        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
+        case model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -184,7 +184,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             setResultLoading = true;
             break;
 
-        case model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
+        case model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -199,7 +199,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             setResultLoading = true;
             break;
 
-        case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
+        case model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -217,7 +217,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             setResultLoading = true;
             break;
 
-        case model.RestQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
+        case model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -249,7 +249,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         //     setResultLoading = true;
         //     break;
 
-        case model.RestQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
+        case model.BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -263,7 +263,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             setResultLoading = true;
             break;
 
-        case model.RestQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
+        case model.BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
 
             chartDataElem = model.createChartDataObject(
                 requestId,
@@ -279,7 +279,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             setResultLoading = true;
             break;
 
-        case model.RestQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
+        case model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
             let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
@@ -334,7 +334,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 });
             break;
 
-        case model.RestQueryType.GET_GROUPED_UIR_LINES:
+        case model.BackendQueryType.GET_GROUPED_UIR_LINES:
 
             console.log(resultObject.resultTable);
             chartDataElem = model.createChartDataObject(

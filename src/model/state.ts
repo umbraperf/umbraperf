@@ -1,6 +1,6 @@
 import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
-import { RestQueryType } from "./rest_queries";
+import { BackendQueryType } from "./backend_queries";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
@@ -18,7 +18,7 @@ export interface AppState {
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    currentRequest: RestQueryType | undefined;
+    currentRequest: BackendQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;

@@ -1,6 +1,6 @@
 import { AppState } from './state';
 import { IKpiData, Result } from "./core_result";
-import { RestQueryType } from './rest_queries';
+import { BackendQueryType } from './backend_queries';
 import { ChartDataKeyValue } from './chart_data_result';
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 import { ViewType, ChartType, ChartTypeReadable } from './chart_types';
@@ -59,7 +59,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
+    | StateMutation<StateMutationType.SET_CURRENTREQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>

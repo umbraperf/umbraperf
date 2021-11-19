@@ -9,19 +9,12 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{
-    exec::{
-        basic::basic::{find_unique_string, sort_batch},
-        rest::rest_api::finish_query_exec,
-    },
-    state::state::get_record_batches,
-    utils::{
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js,
         },
-    },
-};
+    }};
 
 pub enum Freq {
     ABS,
@@ -460,11 +453,19 @@ pub fn freq_of_memory(
             ],
             vec![
                 Arc::new(Float64Array::from(bucket_vec)),
+                Arc::new(Float64Array::from(freq_vec)),
                 Arc::new(StringArray::from(operator_vec)),
                 Arc::new(Int32Array::from(mem_vec)),
-                Arc::new(Float64Array::from(freq_vec)),
             ],
+               
         );
+
+        let mem_column = get_floatarray_column(&single_batch, 2);
+        let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i32)).collect::<Vec<i32>>();
+  
+        let mean = statistics::mean(&mem_vec);
+        let std_deviation = statistics::std_deviation(&mem_vec);
+
 
         print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());
         let min_bucket = arrow::compute::min(bucket).unwrap();

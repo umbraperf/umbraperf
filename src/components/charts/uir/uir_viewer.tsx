@@ -34,6 +34,10 @@ class UirViewer extends React.Component<Props, {}> {
     handleEditorWillMount(monaco: any) {
         this.createUirLanguage(monaco);
         this.createMonacoCustomTheme(monaco);
+
+        //TODO fold all on startup
+        // //fold all lines on render
+        // monaco.editor.trigger('fold', 'editor.foldAll');
     }
 
     createMonacoCustomTheme(monaco: any) {

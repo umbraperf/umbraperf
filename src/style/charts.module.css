@@ -67,3 +67,9 @@
     color: colorAccentBlack;
     opacity: 1;
 }
+
+.vegaHeatmapsContainer{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}

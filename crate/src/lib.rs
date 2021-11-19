@@ -32,6 +32,7 @@ mod exec {
         pub mod filter;
         pub mod kpis;
         pub mod uir;
+        pub mod statistics;
     }
     pub mod rest {
         pub mod rest_api;

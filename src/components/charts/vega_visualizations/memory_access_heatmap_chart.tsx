@@ -1,5 +1,6 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
+import styles from '../../../style/charts.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
@@ -19,14 +20,10 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-
-        // this.createVisualizationSpecAbsolute = this.createVisualizationSpecAbsolute.bind(this);
     }
 
     public render() {
-        return <div>{this.renderChartPerOperator()}</div>
-        // return <div> {this.renderChartPerOperatorRelative()}</div>
-        /* {<Vega className={`vegaMemoryHeatmapAbsolute`} spec={this.createVisualizationSpecAbsolute()} />} */
+        return <div className={styles.vegaHeatmapsContainer}>{this.renderChartPerOperator()}</div>
     }
 
     renderChartPerOperator() {

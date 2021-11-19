@@ -1,6 +1,6 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
-import styles from '../../../style/charts.module.css';
+import styles from '../../../style/uir-viewer.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -25,7 +25,7 @@ class UirViewer extends React.Component<Props, {}> {
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
         console.log(this.props.chartData);
     }
 
@@ -136,9 +136,10 @@ class UirViewer extends React.Component<Props, {}> {
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
         this.foldAllLines(editor);
+        this.setMonacoGlyphs(editor);
     }
 
-    foldAllLines(editor: any){
+    foldAllLines(editor: any) {
         editor.trigger('fold', 'editor.foldAll');
     }
 
@@ -174,6 +175,41 @@ class UirViewer extends React.Component<Props, {}> {
         </div>
 
         return monacoEditor;
+
+    }
+
+    setMonacoGlyphs(editor: any) {
+        const glyps = this.createEventColorGlyphs(1);
+        console.log(glyps);
+        const decorations = editor.deltaDecorations(
+            [], glyps
+        );
+    }
+
+    createEventColorGlyphs(event: 1 | 2 | 3 | 4) {
+        const eventString = `event${event}` as "event1" | "event2" | "event3" | "event4";
+        const eventOccurrences = Array.from(this.props.chartData[eventString]);
+
+        console.log(this.props.chartData.event1.length);
+        console.log(this.props.chartData.uirLines.length);
+
+        let glyps: Array<{range: monaco.Range, options: object}> = [];
+        eventOccurrences.forEach((elem, index) => {
+            if (elem > 0) {
+                glyps.push(
+                    {
+                        range: new monaco.Range(index, 1, index, 1),
+                        options: {
+                            isWholeLine: true,
+                            // className: 'myContentClass', line background of range
+                            glyphMarginClassName: styles.glyphMarginClass // glyph
+                        }
+                    }
+                )
+            }
+        });
+
+        return glyps;
 
     }
 

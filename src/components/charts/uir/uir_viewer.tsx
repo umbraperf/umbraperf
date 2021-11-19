@@ -154,6 +154,7 @@ class UirViewer extends React.Component<Props, {}> {
             foldingHighlight: true,
             fontSize: 11,
             color: this.props.appContext.accentBlack,
+            glyphMargin: true
         }
 
         const monacoEditor = <div className={styles.monacoEditorContainer}>
@@ -196,12 +197,13 @@ class UirViewer extends React.Component<Props, {}> {
         let glyps: Array<{range: monaco.Range, options: object}> = [];
         eventOccurrences.forEach((elem, index) => {
             if (elem > 0) {
+                console.log(elem);
                 glyps.push(
                     {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            // className: 'myContentClass', line background of range
+                            className: styles.myContentClass, //line background of range
                             glyphMarginClassName: styles.glyphMarginClass // glyph
                         }
                     }

@@ -26,21 +26,19 @@
 }
 
 .elementWrapper{
-    /* flex: 1 1 fit-content; */
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-Content: center;
-    align-items: stretch; 
+    /* align-items: stretch;  */
 }
 
 .chartContainer{
     display: flex;
     justify-content: center;
-    /* flex: 1 1 auto; */
     overflow: hidden;
-    /* max-height: fit-content; */
+    flex-flow: column;
     height: 100%;
 }
 
@@ -58,6 +56,8 @@
 }
 
 .chartTitle{
+    display: flex;
+    justify-content: center;
     flex: 0 0 25px;
     position: relative;
     top: 1px; 

@@ -1,6 +1,10 @@
+// TODO mini spinner!
+
 import * as model from '../../model/';
 import * as Context from '../../app_context';
-import React from 'react';
+import styles from '../../style/utils.module.css';
+import MiniSpinner from './mini_spinner';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 
@@ -14,14 +18,12 @@ interface Props {
     kpis: Array<model.IKpiData> | undefined;
     loadingChartReadableName: Array<model.ChartTypeReadable>;
     queryPlan: object | undefined;
-
 }
+
 
 function StatusIndicator(props: Props) {
 
-    const getStatusString = () => {
-        return "Status: " + getCurrentStatus();
-    }
+    const [loadingDone, setLoadingDone] = useState(true);
 
     const truncateString = (text: string) => {
         const length = 20;
@@ -34,11 +36,11 @@ function StatusIndicator(props: Props) {
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
+            // setLoadingDone(false);
             return `Reading file "${truncateString(props.file.name)}"...`;
         }
         if (!loading && undefined === props.queryPlan) {
             return "Rendering queryplan..."
-
         }
         if ((loading && props.resultLoading[-1] === true) ||
             undefined === props.events ||
@@ -51,6 +53,7 @@ function StatusIndicator(props: Props) {
             return `Rendering "${getLoadingChartName()}"...`
         }
         if (!loading) {
+            // setLoadingDone(true);
             return "Done.";
         }
         return "";
@@ -70,8 +73,15 @@ function StatusIndicator(props: Props) {
         return props.loadingChartReadableName[currentLoadingIndex];
     }
 
+    const getCurrentStatusString = () => {
+        return "Status: " + getCurrentStatus();
+    }
+
     return (
-        <div>{getStatusString()}</div>
+        <div className={styles.statusContainer}>
+            {getCurrentStatusString()}
+            {!loadingDone && <MiniSpinner />}
+        </div>
     );
 }
 

@@ -11,7 +11,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 
-
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
     csvParsingFinished: boolean;

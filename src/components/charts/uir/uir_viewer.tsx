@@ -8,7 +8,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner';
 import * as monaco from 'monaco-editor';
 
-
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
@@ -203,7 +202,7 @@ class UirViewer extends React.Component<Props, {}> {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            className: styles.editorContentClass, //line background of range
+                            // className: this.componentStyles.editorContentClass, //line background of range
                             glyphMarginClassName: styles.glyphMarginClass, // glyph
                         }
                     }

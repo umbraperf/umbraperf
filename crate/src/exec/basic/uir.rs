@@ -129,7 +129,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
-                        aggregated_output_vec.push((str, sum1, sum2, sum3, sum4, op, pipe));
+                        aggregated_output_vec.push((Some(str.unwrap().to_owned()), sum1, sum2, sum3, sum4, op, pipe));
 
                         break;
                     } else {
@@ -148,7 +148,8 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             }
         } else {
             let item = item.1;
-            aggregated_output_vec.push((item.0, item.1, item.2, item.3, item.4, item.5, item.6));
+            let out_str = Some(format!("  {}", item.0.unwrap()));
+            aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
         }
     }
 

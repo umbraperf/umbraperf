@@ -1,4 +1,4 @@
-fn mean(data: &[i32]) -> Option<f32> {
+pub fn mean(data: &[i32]) -> Option<f32> {
     let sum = data.iter().sum::<i32>() as f32;
     let count = data.len();
 
@@ -8,7 +8,7 @@ fn mean(data: &[i32]) -> Option<f32> {
     }
 }
 
-fn std_deviation(data: &[i32]) -> Option<f32> {
+pub fn std_deviation(data: &[i32]) -> Option<f32> {
     match (mean(data), data.len()) {
         (Some(data_mean), count) if count > 0 => {
             let variance = data.iter().map(|value| {

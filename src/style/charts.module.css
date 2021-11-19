@@ -26,7 +26,7 @@
 }
 
 .elementWrapper{
-    height: 100%;
+    flex: 1 1 fit-content;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -37,14 +37,14 @@
 .chartContainer{
     display: flex;
     justify-content: center;
-    flex: 1;
+    flex: 1 1 0;
+    overflow: hidden;
 }
 
 .monacoEditorContainer{
     flex: 1 1 fit-content;
     display: flex;
     flex-flow: column;
-    overflow: hidden;   
 }
 
 .monacoEditor{

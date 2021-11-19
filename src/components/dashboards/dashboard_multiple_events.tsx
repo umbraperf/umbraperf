@@ -22,26 +22,31 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
             </Box>
 
 
-            <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
-                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={4} >
-                    <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                        <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                            <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
-                        </div>
+            <Box clone order={{ xs: 2, sm: 2, lg: 2 }}>
+                <Grid item container >
+                    <Box clone order={{ xs: 1, md: 1, lg: 1 }}>
+                        <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={4} >
+                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
+                                    <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
+                                </div>
+                            </Box>
+                        </Grid>
                     </Box>
-                </Grid>
-            </Box>
-            <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
-                <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={8}>
-                    <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
-                        <div className={styles.dashboardGridCellChartContainer}>
-                            <QueryPlanWrapper />
-                        </div>
+                    <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
+                        <Grid item className={styles.dashboardGridCellItemFullScreenFixedContent} xs={12} md={6} lg={8}>
+                            <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                                <div className={styles.dashboardGridCellChartContainer}>
+                                    <QueryPlanWrapper />
+                                </div>
+                            </Box>
+                        </Grid>
                     </Box>
                 </Grid>
             </Box>
 
-            <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
+
+            <Box clone order={{ xs: 3, md: 3, lg: 3 }}>
                 <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12}>
                     <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                         <div className={styles.dashboardGridCellChartContainer}>

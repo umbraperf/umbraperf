@@ -6,6 +6,7 @@ import { DagreNode, DagreEdge } from './query_plan_wrapper';
 
 
 interface Props {
+    key: number; //trigers complete rerender for repositioning
     height: number;
     width: number;
     nodes: Array<DagreNode>;
@@ -26,7 +27,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
             nodes={this.props.nodes}
             links={this.props.edges}
             config={{
-                rankdir: 'LR',
+                rankdir: this.props.height > this.props.width ? 'TD' : 'LR',
                 ranker: 'network-simplex',
                 // height: "100px",
                 // width: "500px",

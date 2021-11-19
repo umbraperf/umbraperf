@@ -111,7 +111,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 }));
             }, 500);
 
-            child.style.display = 'block';
+            child.style.display = 'flex';
         }
 
     }

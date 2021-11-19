@@ -193,17 +193,19 @@ class UirViewer extends React.Component<Props, {}> {
         console.log(this.props.chartData.event1.length);
         console.log(this.props.chartData.uirLines.length);
 
-        let glyps: Array<{range: monaco.Range, options: object}> = [];
+        let glyps: Array<{ range: monaco.Range, options: object }> = [];
         eventOccurrences.forEach((elem, index) => {
             if (elem > 0) {
                 console.log(elem);
+                const elemColorGroup = Math.floor(elem / 10);
+                console.log(elemColorGroup);
                 glyps.push(
                     {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            // className: this.componentStyles.editorContentClass, //line background of range
-                            glyphMarginClassName: styles.glyphMarginClass, // glyph
+                            className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
+                            glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
                         }
                     }
                 )

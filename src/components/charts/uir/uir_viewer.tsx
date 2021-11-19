@@ -203,8 +203,8 @@ class UirViewer extends React.Component<Props, {}> {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            className: styles.myContentClass, //line background of range
-                            glyphMarginClassName: styles.glyphMarginClass // glyph
+                            className: styles.editorContentClass, //line background of range
+                            glyphMarginClassName: styles.glyphMarginClass, // glyph
                         }
                     }
                 )

@@ -163,6 +163,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const dagreData = this.createDagreNodesLinks(rootNode);
 
         const dagreGraph = React.createElement(QueryPlanViewer, {
+            key: this.state.height + this.state.width,
             height: this.state.height,
             width: this.state.width,
             nodes: dagreData.nodes,

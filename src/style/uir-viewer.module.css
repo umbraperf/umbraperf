@@ -31,13 +31,6 @@
     opacity: 1;
 }
 
-.vegaHeatmapsContainer{
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-
 /* .glyphMarginClass0{
     background: #F4CBB5;
 }

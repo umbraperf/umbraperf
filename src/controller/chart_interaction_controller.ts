@@ -79,7 +79,7 @@ export function resetTimeBucketSelection() {
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
     const chartDataInputChangedGeneral = () => {
-        if (nextProps.events &&
+        if (/* nextProps.events && */
             nextProps.pipelines &&
             nextProps.operators &&
             // nextProps.chartIdCounter === props.chartIdCounter &&

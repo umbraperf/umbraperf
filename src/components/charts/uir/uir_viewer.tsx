@@ -198,14 +198,16 @@ class UirViewer extends React.Component<Props, {}> {
             if (elem > 0) {
                 console.log(elem);
                 const elemColorGroup = Math.floor(elem / 10);
-                console.log(elemColorGroup);
+                const cssClass = this.createCustomCssGlyphClass(elemColorGroup);
                 glyps.push(
                     {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
-                            glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
+                            className: cssClass, //line background of range
+                            glyphMarginClassName: cssClass, // glyph
+                            // className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
+                            // glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
                         }
                     }
                 )
@@ -214,6 +216,15 @@ class UirViewer extends React.Component<Props, {}> {
 
         return glyps;
 
+    }
+
+    createCustomCssGlyphClass(colorGroup: number){
+        const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+        const className = `glyphMarginClass${colorGroup}`;
+        const style = document.createElement('style');
+        style.innerHTML = `.${className} { background: ${color}; }`;
+        document.getElementsByTagName('head')[0].appendChild(style);
+        return className;
     }
 
 }

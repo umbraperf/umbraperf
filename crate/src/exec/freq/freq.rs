@@ -500,8 +500,8 @@ pub fn freq_of_memory(
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
         let three_times = std_deviation * std_deviation * std_deviation;
 
-        let from = mean - std_deviation;
-        let to = mean + std_deviation;
+        let from = mean - (std_deviation / 2.);
+        let to = mean + (std_deviation / 2.);
 
         let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 

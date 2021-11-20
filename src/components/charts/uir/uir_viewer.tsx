@@ -12,6 +12,8 @@ interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
     currentEvent: string | "Default";
+    events: Array<string> | undefined;
+
 }
 
 type Props = model.IUirViewerProps & AppstateProps;
@@ -19,18 +21,26 @@ type Props = model.IUirViewerProps & AppstateProps;
 
 class UirViewer extends React.Component<Props, {}> {
 
+    // editorContRef: React.RefObject<unknown>;
+    editorRef: React.RefObject<unknown>;
+
     constructor(props: Props) {
         super(props);
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
+        this.editorRef = React.createRef();
     }
 
     componentDidMount() {
-        console.log(this.props.chartData);
     }
 
-    componentDidUpdate(){
-        
+    componentDidUpdate(prevProps: Props) {
+
+        if (this.props.currentEvent !== prevProps.currentEvent) {
+            console.log(this.props.currentEvent);
+            this.setMonacoGlyphs();
+        }
+
     }
 
     public render() {
@@ -139,8 +149,10 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
+        this.editorRef = editor;
+        console.log(this.editorRef);
         this.foldAllLines(editor);
-        this.setMonacoGlyphs(editor);
+        this.setMonacoGlyphs();
     }
 
     foldAllLines(editor: any) {
@@ -183,10 +195,12 @@ class UirViewer extends React.Component<Props, {}> {
 
     }
 
-    setMonacoGlyphs(editor: any) {
-        const glyps = this.createEventColorGlyphs(1);
+    setMonacoGlyphs() {
+        const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
+        const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1
+        const glyps = this.createEventColorGlyphs(eventNumber as 1 | 2 | 3 | 4);
         console.log(glyps);
-        const decorations = editor.deltaDecorations(
+        const decorations = (this.editorRef as any).deltaDecorations(
             [], glyps
         );
     }
@@ -237,6 +251,7 @@ class UirViewer extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps) => ({
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IUirViewerData,
     currentEvent: state.currentEvent,
+    events: state.events,
 
 });
 

@@ -91,11 +91,13 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             return false;
         }
     }
-
+// TDOO put down in switch case, mive current event condition to specific chart condition
     if (chartType === model.ChartType.UIR_VIEWER) {
-        return (nextProps.currentView !== props.currentView ||
-            !_.isEqual(nextProps.operators, props.operators) ||
-            !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+        return (nextProps.events &&
+            nextProps.operators &&
+            (nextProps.currentView !== props.currentView ||
+                !_.isEqual(nextProps.operators, props.operators) ||
+                !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple))) ?
             true :
             false;
     } else {

@@ -148,8 +148,14 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             }
         } else {
             let item = item.1;
-            let out_str = Some(format!("  {}", item.0.unwrap()));
-            aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
+            if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
+                let out_str = Some(format!("{}", item.0.unwrap()));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
+            } else {
+                let out_str = Some(format!("  {}", item.0.unwrap()));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
+
+            }
         }
     }
 

@@ -37,6 +37,7 @@ export interface ChartConfiguration {
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
     getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => Array<string>;
+    getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
@@ -130,7 +131,11 @@ export let chartConfiguration: ChartConfiguration = {
         });
 
         return parsedColorValueRange;
+    },
 
+    getOrangeColor: (opacity) => {
+
+        return orangeColorSchemeHex[opacity];
     },
 
     //Hover behaviour: 
@@ -159,4 +164,16 @@ const operatorColorScemeHsl: Array<Array<number>> = [
     [316, 37, 74],
     [22, 25, 50],
     [19, 40, 75],
+]
+
+const orangeColorSchemeHex: Array<string> = [
+    '#EDB596',
+    '#E69F78',
+    '#DD895A',
+    '#d4733e',
+    '#C56937',
+    '#B66031',
+    '#A6562A',
+    '#964D24',
+    '#86431F',
 ]

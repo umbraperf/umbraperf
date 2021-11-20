@@ -130,8 +130,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
-                        aggregated_output_vec.push((Some(current_srcline.to_owned()), sum1, sum2, sum3, sum4, op, pipe));
-                        print_to_js_with_obj(&format!("define output sum {:?} {:?} {:?} {:?}", sum1, sum2, sum3, sum4).into());
+                        aggregated_output_vec.push((Some(current_srcline.to_owned()), round(sum1), round(sum2), round(sum3), round(sum4), op, pipe));
                         break;
                     } else {
                         for event in &unique_events_set {
@@ -141,7 +140,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
                             let percentage = specific / total;
-                            let percentage = f64::trunc((percentage) * 1000.0) / 10.;
+                            //let percentage = f64::trunc((percentage) * 1000.0) / 10.;
                             buffer_percentage.push(percentage)
                         }
                     }
@@ -150,7 +149,6 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         } else {
             let item = item.1;
             let out_str = Some(format!("  {}", item.0.unwrap()));
-            print_to_js_with_obj(&format!("output sum {:?} {:?} {:?} {:?}", item.1, item.2, item.3, item.4).into());
             aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
         }
     }
@@ -204,8 +202,6 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(pipe)),
         ],
     );
-
-    print_to_js_with_obj(&format!("{:?}", out_batch).into());
 
     return out_batch;
 }

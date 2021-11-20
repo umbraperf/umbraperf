@@ -9,7 +9,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js,
@@ -260,6 +260,11 @@ pub fn freq_of_pipelines(
     );
 }
 
+pub enum MEM {
+    DIFF,
+    ABS
+}
+
 pub fn freq_of_memory(
     batch: &RecordBatch,
     column_for_operator: usize,
@@ -267,6 +272,8 @@ pub fn freq_of_memory(
     bucket_size: f64,
     from: f64,
     to: f64,
+    len_of_mem: Option<i64>,
+    mem_en: MEM
 ) {
 
 
@@ -312,10 +319,33 @@ pub fn freq_of_memory(
         bucket_map_count.insert(operator.unwrap(), 0.);
     }
 
+    let divided = if len_of_mem.is_some() {
+        let mut out = 1;
+        for i in 0..len_of_mem.unwrap() {
+            out *= 10;
+        }
+        out
+    } else {
+        10000000000
+    };
+
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
-        let current_memory = (memory_column.value(column_index as usize) / 10000000000) as i32;
+        let current_memory = if matches!(mem_en, MEM::ABS) { (memory_column.value(column_index as usize) / divided) as i32 } else {
+            if i == 0 {
+                0 as i32
+            } else {
+                let value1 = memory_column.value(column_index as usize) / 100000;
+                let value2 = memory_column.value(column_index - 1 as usize) / 100000;
+                let diff = value2 as i64 - value1 as i64 ;
+                print_to_js_with_obj(&format!("diff {:?}", diff).into());
+                diff as i32
+            }
+        };
+        print_to_js_with_obj(&format!("current_memory {:?}", current_memory).into());
         while time_bucket < time.unwrap() {
+            print_to_js_with_obj(&format!("{:?}", "in time bucket < time-unwrap()").into());
+
             for operator in vec_operator {
                 let operator = operator.unwrap();
 
@@ -325,7 +355,7 @@ pub fn freq_of_memory(
                     for _i in 0..times {
                         result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory.try_into().unwrap());
+                        result_mem_operator.push(current_memory);
                         result_builder.push(item.1.to_owned());
                         let current_value = bucket_map_count[operator] + 1.;
                         bucket_map_count.insert(operator, current_value);
@@ -352,7 +382,7 @@ pub fn freq_of_memory(
                         for _i in 0..times {
                             result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
                             result_vec_operator.push(operator);
-                            result_mem_operator.push(current_memory.try_into().unwrap());
+                            result_mem_operator.push(current_memory);
                             result_builder.push(item.1.to_owned());
                             let current_value = bucket_map_count[operator] + 1.;
                             bucket_map_count.insert(operator, current_value);
@@ -376,6 +406,9 @@ pub fn freq_of_memory(
         result_mem_operator,
         result_builder,
     );
+
+    print_to_js_with_obj(&format!("batch {:?}", batch).into());
+
 
     let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
     let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
@@ -453,18 +486,24 @@ pub fn freq_of_memory(
             ],
             vec![
                 Arc::new(Float64Array::from(bucket_vec)),
-                Arc::new(Float64Array::from(freq_vec)),
                 Arc::new(StringArray::from(operator_vec)),
                 Arc::new(Int32Array::from(mem_vec)),
+                Arc::new(Float64Array::from(freq_vec)),
             ],
                
         );
 
-        let mem_column = get_floatarray_column(&single_batch, 2);
-        let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i32)).collect::<Vec<i32>>();
+        let mem_column = get_int32_column(&single_batch, 2);
+        let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i64)).collect::<Vec<i64>>();
   
-        let mean = statistics::mean(&mem_vec);
-        let std_deviation = statistics::std_deviation(&mem_vec);
+        let mean = statistics::mean(&mem_vec).unwrap();
+        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+        let three_times = std_deviation * std_deviation * std_deviation;
+
+        let from = mean - std_deviation;
+        let to = mean + std_deviation;
+
+        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 
 
         print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());

@@ -95,9 +95,9 @@ function EventsButtons(props: Props) {
         if (props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp") {
             return true;
         }
-        if (props.currentView === model.ViewType.DASHBOARD_UIR) {
-            return true;
-        }
+        // if (props.currentView === model.ViewType.DASHBOARD_UIR) {
+        //     return true;
+        // }
         return false;
     }
 

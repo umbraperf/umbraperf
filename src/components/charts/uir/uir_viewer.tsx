@@ -21,7 +21,7 @@ type Props = model.IUirViewerProps & AppstateProps;
 
 class UirViewer extends React.Component<Props, {}> {
 
-    // editorContRef: React.RefObject<unknown>;
+    editorContainerRef: React.RefObject<HTMLDivElement>;
     editorRef: React.RefObject<unknown>;
 
     constructor(props: Props) {
@@ -29,6 +29,7 @@ class UirViewer extends React.Component<Props, {}> {
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
         this.editorRef = React.createRef();
+        this.editorContainerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -177,7 +178,7 @@ class UirViewer extends React.Component<Props, {}> {
 
             <div className={styles.chartTitle}>UIR Profiler</div>
 
-            <div className={styles.monacoEditor}>
+            <div className={styles.monacoEditor} ref={this.editorContainerRef}>
                 <Editor
                     key={this.props.key}
                     defaultLanguage="umbraIntermediateRepresentation"
@@ -230,6 +231,20 @@ class UirViewer extends React.Component<Props, {}> {
                         }
                     }
                 )
+            } else {
+                // TODO not working
+                glyps.push(
+                    {
+                        range: new monaco.Range(index + 1, 1, index + 1, 1),
+                        options: {
+                            isWholeLine: true,
+                            className: styles.glyphMarginClassWhite, //line background of range
+                            glyphMarginClassName: styles.glyphMarginClassWhite, // glyph
+                            // className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
+                            // glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
+                        }
+                    }
+                )
             }
         });
 
@@ -242,7 +257,8 @@ class UirViewer extends React.Component<Props, {}> {
         const className = `glyphMarginClass${colorGroup}`;
         const style = document.createElement('style');
         style.innerHTML = `.${className} { background: ${color}; }`;
-        document.getElementsByTagName('head')[0].appendChild(style);
+        this.editorContainerRef.current!.appendChild(style)
+        // document.getElementsByTagName('head')[0].appendChild(style);
         return className;
     }
 

@@ -150,10 +150,10 @@ class UirViewer extends React.Component<Props, {}> {
             readOnly: true,
             scrollBeyondLastLine: false,
             folding: true,
-            foldingHighlight: true,
+            foldingHighlight: false,
             fontSize: 11,
             color: this.props.appContext.accentBlack,
-            glyphMargin: true
+            glyphMargin: true,
         }
 
         const monacoEditor = <div className={styles.monacoEditorContainer}>

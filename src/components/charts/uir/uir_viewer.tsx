@@ -11,6 +11,7 @@ import * as monaco from 'monaco-editor';
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
+    currentEvent: string | "Default";
 }
 
 type Props = model.IUirViewerProps & AppstateProps;
@@ -26,6 +27,10 @@ class UirViewer extends React.Component<Props, {}> {
 
     componentDidMount() {
         console.log(this.props.chartData);
+    }
+
+    componentDidUpdate(){
+        
     }
 
     public render() {
@@ -231,6 +236,8 @@ class UirViewer extends React.Component<Props, {}> {
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps) => ({
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IUirViewerData,
+    currentEvent: state.currentEvent,
+
 });
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(UirViewer));

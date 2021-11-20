@@ -42,4 +42,11 @@
     height: 100%;
 }
 
+.vegaHeatmapsContainer{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
 

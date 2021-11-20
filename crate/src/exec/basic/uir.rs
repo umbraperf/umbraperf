@@ -39,10 +39,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     for entry in column_srcline.into_iter().enumerate() {
         let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
-        let srcline = hashmap_samplekey_srcline.get(&(entry_srcline_num as u64)).unwrap();
+        let mapping_to_dict_file = hashmap_samplekey_srcline.get(&(entry_srcline_num as u64)).unwrap();
         let current_ev = column_ev_name.value(entry.0);
-        if srcline.contains("dump") || srcline.contains("proxy") {
-            let split = srcline.split_terminator(":").collect::<Vec<&str>>();
+        if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
+            let split = mapping_to_dict_file.split_terminator(":").collect::<Vec<&str>>();
             let srcline_key = split[1];
             if dict.uri_dict.get(srcline_key).is_some() {
                 let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
@@ -56,7 +56,6 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     }
 
     let mut output_vec = Vec::new();
-    let mut buffer_percentage = Vec::new();
     let keys = dict.uri_dict.keys();
     let vec = keys.collect::<Vec<&String>>();
     let mut uirs = vec
@@ -70,6 +69,8 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     // Get srcline, Percentage, op, pipe for every srcline
     for uir in uirs {
         let entry = uir.to_string();
+
+        let mut buffer_percentage = Vec::new();
 
         for event in &unique_events_set {
             let inner_hashmap = hashmap_count.get(event).unwrap();
@@ -130,7 +131,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
                         aggregated_output_vec.push((Some(current_srcline.to_owned()), sum1, sum2, sum3, sum4, op, pipe));
-                        print_to_js_with_obj(&format!("output sum {:?} {:?} {:?} {:?}", sum1, sum2, sum3, sum4).into());
+                        print_to_js_with_obj(&format!("define output sum {:?} {:?} {:?} {:?}", sum1, sum2, sum3, sum4).into());
                         break;
                     } else {
                         for event in &unique_events_set {
@@ -149,11 +150,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         } else {
             let item = item.1;
             let out_str = Some(format!("  {}", item.0.unwrap()));
+            print_to_js_with_obj(&format!("output sum {:?} {:?} {:?} {:?}", item.1, item.2, item.3, item.4).into());
             aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
         }
     }
-
-    print_to_js_with_obj(&format!("output vec {:?}", aggregated_output_vec).into());
 
 
 

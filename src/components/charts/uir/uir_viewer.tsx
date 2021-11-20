@@ -215,10 +215,9 @@ class UirViewer extends React.Component<Props, {}> {
         const eventOccurrences = Array.from(this.props.chartData[eventString]);
         console.log(eventOccurrences);
         eventOccurrences.forEach((elem, index) => {
-            let currentLineGlyphClass= styles.glyphMarginClassWhite;
+            let currentLineGlyphClass = styles.glyphMarginClassWhite;
             if (elem > 0) {
                 const elemColorGroup = Math.floor(elem / 10);
-                console.log(elemColorGroup);
                 currentLineGlyphClass = this.createCustomCssGlyphClass(elemColorGroup);
 
             }
@@ -258,12 +257,19 @@ class UirViewer extends React.Component<Props, {}> {
 
     createCustomCssGlyphClass(colorGroup: number) {
         //return name of correct css class, create class if not yet created
-        const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+        
         const className = `glyphMarginClass${colorGroup}`;
-        const style = document.createElement('style');
-        style.innerHTML = `.${className} { background: ${color}; }`;
-        this.editorContainerRef.current!.appendChild(style)
-        return className;
+        if (this.editorContainerRef.current!.children.namedItem(className)) {
+            return className;
+        } else {
+            const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+            // const className = `glyphMarginClass${colorGroup}`;
+            const style = document.createElement('style');
+            style.setAttribute("id", `glyphMarginClass${colorGroup}`);
+            style.innerHTML = `.${className} { background: ${color}; }`;
+            this.editorContainerRef.current!.appendChild(style);
+            return className;
+        }
     }
 
 }

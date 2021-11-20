@@ -121,12 +121,6 @@
     flex: 1;
 }
 
-.dashboardGridCellChartBoxAutoheightFullheightStretchChartNoHorizontalGrow{
-    composes: dashboardGridCellChartBox;
-    flex: 0 1 auto;
-    height: 100%;
-}
-
 .dashboardGridCellOptionsBox{
     composes: dashboardGridCellBox;
     width: 100%;

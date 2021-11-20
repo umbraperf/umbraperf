@@ -1,6 +1,10 @@
 @value colors: "./export-variables.module.css";
 @value colorSecondary from colors;
 
+:root{
+ --eventOccurrenceColor: colorSecondary;
+}
+
 .monacoEditorContainer{
     flex: 1 1 fit-content;
     display: flex;
@@ -72,6 +76,10 @@
 
 .glyphMarginClass9{
     background: #964D24;
+}
+
+.glyphMarginClass{
+    background: var(--eventOccurrenceColor);
 }
 
 /* .editorContentClass{

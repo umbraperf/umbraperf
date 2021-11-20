@@ -172,9 +172,14 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 {
                     "name": "y",
                     "type": "linear",
-                    domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
-                    domainMin: this.props.chartData.domain.memoryDomain.min,
-                    domainMax: this.props.chartData.domain.memoryDomain.max,
+                    domain: {
+                        data: "table",
+                        field: "memAdr",
+                    },
+                    //TODO this domain?:
+                    // domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
+                    // domainMin: this.props.chartData.domain.memoryDomain.min,
+                    // domainMax: this.props.chartData.domain.memoryDomain.max,
                     "range": "height",
                     "zero": true,
                     "nice": true,

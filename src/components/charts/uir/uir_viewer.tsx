@@ -8,7 +8,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner';
 import * as monaco from 'monaco-editor';
 
-
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
@@ -194,17 +193,21 @@ class UirViewer extends React.Component<Props, {}> {
         console.log(this.props.chartData.event1.length);
         console.log(this.props.chartData.uirLines.length);
 
-        let glyps: Array<{range: monaco.Range, options: object}> = [];
+        let glyps: Array<{ range: monaco.Range, options: object }> = [];
         eventOccurrences.forEach((elem, index) => {
             if (elem > 0) {
                 console.log(elem);
+                const elemColorGroup = Math.floor(elem / 10);
+                const cssClass = this.createCustomCssGlyphClass(elemColorGroup);
                 glyps.push(
                     {
                         range: new monaco.Range(index, 1, index, 1),
                         options: {
                             isWholeLine: true,
-                            className: styles.editorContentClass, //line background of range
-                            glyphMarginClassName: styles.glyphMarginClass, // glyph
+                            className: cssClass, //line background of range
+                            glyphMarginClassName: cssClass, // glyph
+                            // className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
+                            // glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
                         }
                     }
                 )
@@ -213,6 +216,15 @@ class UirViewer extends React.Component<Props, {}> {
 
         return glyps;
 
+    }
+
+    createCustomCssGlyphClass(colorGroup: number){
+        const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+        const className = `glyphMarginClass${colorGroup}`;
+        const style = document.createElement('style');
+        style.innerHTML = `.${className} { background: ${color}; }`;
+        document.getElementsByTagName('head')[0].appendChild(style);
+        return className;
     }
 
 }

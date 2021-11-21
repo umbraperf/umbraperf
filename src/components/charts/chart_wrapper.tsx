@@ -279,14 +279,15 @@ class ChartWrapper extends React.Component<Props, State> {
         }
     }
 
-    renderChartOptions() {
-        let chartOptions;
+    renderChartOptions(): JSX.Element | undefined {
+        //return div with chart options or undefined if there are no chart options
+        let chartOptions = undefined;
         if (this.props.chartType === model.ChartType.MEMORY_ACCESS_HEATMAP_CHART) {
             chartOptions = <HeatmapsDiffToggler />
         }
-        return <div className={styles.chartOptionsContainer}>
+        return chartOptions ? <div className={styles.chartOptionsContainer}>
             {chartOptions}
-        </div>
+        </div> : undefined;
     }
 
 

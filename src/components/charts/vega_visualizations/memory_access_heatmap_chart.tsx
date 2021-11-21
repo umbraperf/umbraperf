@@ -13,6 +13,7 @@ interface AppstateProps {
     appContext: Context.IAppContext;
     operators: Array<string> | undefined;
     chartData: model.IMemoryAccessHeatmapChartData,
+    memoryHeatmapsDifferenceRepresentation: boolean,
 }
 
 type Props = AppstateProps & model.ISwimlanesProps
@@ -112,7 +113,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
 
             title: {
-                text: `Memory Access Heatmap: ${this.props.chartData.heatmapsData[id].operator[0]}`,
+                text: `Memory Access Heatmap${this.props.memoryHeatmapsDifferenceRepresentation ? " (Differences)" : ""}: ${this.props.chartData.heatmapsData[id].operator[0]}`,
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
@@ -236,6 +237,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState, ownProps: model.IMemoryAccessHeatmapChartProps) => ({
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IMemoryAccessHeatmapChartData,
+    memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
 

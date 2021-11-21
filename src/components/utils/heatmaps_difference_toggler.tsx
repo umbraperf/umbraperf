@@ -3,7 +3,7 @@ import * as Context from '../../app_context';
 import Spinner from './spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Button, FormControl, FormControlLabel, FormLabel, Switch } from '@material-ui/core';
+import { FormControl, FormControlLabel, FormLabel, Switch, Typography } from '@material-ui/core';
 import styles from '../../style/utils.module.css';
 
 
@@ -23,7 +23,9 @@ function HeatmapsDiffToggler(props: Props) {
 
     return (
         <div className={styles.HeatmapsDiffTogglerContainer}>
-            <FormControl component="fieldset" variant="standard">
+            <FormControl
+                component="fieldset"
+                variant="standard">
                 <FormControlLabel
                     control={
                         <Switch
@@ -33,7 +35,14 @@ function HeatmapsDiffToggler(props: Props) {
                             size="small"
                         />
                     }
-                    label="Show Memory Access Differences: "
+                    label={
+                        <Typography
+                            className={styles.vegaHeatmapsTogglerLabel}
+                            variant="caption"
+                        >
+                            Show Memory Access Differences:
+                        </Typography>
+                    }
                     labelPlacement="start"
                 />
             </FormControl>

@@ -155,6 +155,8 @@
 
 .togglerLabel{
     color: colorTertiary;
+    font-size: 11px;
+    vertical-align: middle;
 }
 
 @keyframes fadeIn {

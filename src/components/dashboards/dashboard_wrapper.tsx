@@ -14,7 +14,11 @@ interface OwnProps {
 }
 
 interface DashboardWrapperAppstateProps {
+    events: Array<string> | undefined;
+    currentEvent: "Default",
     setCurrentView: (newCurrentView: model.ViewType) => void;
+    setCurrentEvent: (newCurrentEvent: string) => void;
+
 }
 
 type Props = OwnProps & DashboardWrapperAppstateProps;
@@ -39,8 +43,9 @@ class DashboardWrapper extends React.Component<Props, {}> {
             case model.ViewType.DASHBOARD_MULTIPLE_EVENTS:
                 return React.createElement(DashboardMultipleEvents);
             case model.ViewType.DASHBOARD_MEMORY:
-                return React.createElement(DashboardMemoryAccesses);
-            case model.ViewType.DASHBOARD_MEMORY:
+                if (this.props.events?.includes("mem_inst_retired.all_loads")) {
+                    this.props.setCurrentEvent("mem_inst_retired.all_loads");
+                }
                 return React.createElement(DashboardMemoryAccesses);
             case model.ViewType.DASHBOARD_UIR:
                 return React.createElement(DashboardUir);
@@ -58,6 +63,10 @@ class DashboardWrapper extends React.Component<Props, {}> {
     }
 }
 
+const mapStateToProps = (state: model.AppState) => ({
+    events: state.events,
+    currentEvent: state.currentEvent,
+});
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentView: (newCurrentView: model.ViewType) =>
@@ -65,9 +74,14 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
             type: model.StateMutationType.SET_CURRENTVIEW,
             data: newCurrentView,
         }),
+    setCurrentEvent: (newCurrentEvent: string) =>
+        dispatch({
+            type: model.StateMutationType.SET_CURRENTEVENT,
+            data: newCurrentEvent,
+        }),
 });
 
-export default connect(undefined, mapDispatchToProps)(DashboardWrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardWrapper);
 
 
 

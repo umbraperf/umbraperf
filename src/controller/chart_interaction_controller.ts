@@ -140,6 +140,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                 case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
                     return (vegaChartDataInputChangedGeneral() ||
                         nextProps.currentBucketSize !== props.currentBucketSize ||
+                        nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
                         !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                         true :
                         false;

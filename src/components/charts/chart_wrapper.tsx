@@ -38,6 +38,8 @@ export interface ChartWrapperAppstateProps {
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
+    memoryHeatmapsDifferenceRepresentation: boolean,
+
 
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentChart: (newCurrentChart: model.ChartType) => void;
@@ -310,6 +312,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentBucketSize: state.currentBucketSize,
+    memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({

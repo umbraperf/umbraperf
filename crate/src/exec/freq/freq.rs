@@ -276,7 +276,7 @@ pub fn freq_of_memory(
     mem_en: MEM
 ) {
 
-    let mem_column = get_uint_column(&batch, 4);
+   /*  let mem_column = get_uint_column(&batch, 4);
     let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i64)).collect::<Vec<i64>>();
 
     let mean = statistics::mean(&mem_vec).unwrap();
@@ -292,7 +292,7 @@ pub fn freq_of_memory(
 
     let batch = filter_between_int32(4, from_ as f64, to_ as f64, &batch);
 
-    print_to_js_with_obj(&format!("batch {:?}", batch).into());
+    print_to_js_with_obj(&format!("batch {:?}", batch).into()); */
 
     let batch = &sort_batch(&batch, 2, false);
 
@@ -507,6 +507,18 @@ pub fn freq_of_memory(
             ],
                
         );
+
+        let mem_column = get_int32_column(&single_batch, 2);
+        let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i64)).collect::<Vec<i64>>();
+  
+        let mean = statistics::mean(&mem_vec).unwrap();
+        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+        let three_times = std_deviation * std_deviation * std_deviation;
+
+        let from = mean - (std_deviation / 2.);
+        let to = mean + (std_deviation / 2.);
+
+        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 
         print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());
         let min_bucket = arrow::compute::min(bucket).unwrap();

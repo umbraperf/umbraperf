@@ -39,7 +39,7 @@ export type QueryVariant =
     // | RestQuery<RestQueryType.GET_PIPELINE_COUNT, { event: string, timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, bucketSize: number }>
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
-    | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
@@ -59,6 +59,8 @@ export function createBackendQuery(query: QueryVariant) {
 
     const operators = (query.data as any).operators && (query.data as any).operators.length > 0 ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : ' ';
     const operatorsFilter = operators && `/?operator="${operators}"`;
+
+    const memoryAccessesDifferences = (query.data as any).showMemoryAccessesDifferences ? '#DIFF' : '#ABS';
 
     switch (query.type) {
         case BackendQueryType.GET_EVENTS:
@@ -90,7 +92,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter}${timeFilter}/sunburst?pipeline`;
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
-            return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}`;
+            return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}${memoryAccessesDifferences}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline/perc1/perc2/perc3/perc4/op/pipe${timeFilter}/uir?srclines`;
         case BackendQueryType.other:

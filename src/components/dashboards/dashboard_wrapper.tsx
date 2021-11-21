@@ -43,6 +43,7 @@ class DashboardWrapper extends React.Component<Props, {}> {
             case model.ViewType.DASHBOARD_MULTIPLE_EVENTS:
                 return React.createElement(DashboardMultipleEvents);
             case model.ViewType.DASHBOARD_MEMORY:
+                //switch current event to memory loads if available
                 if (this.props.events?.includes("mem_inst_retired.all_loads")) {
                     this.props.setCurrentEvent("mem_inst_retired.all_loads");
                 }

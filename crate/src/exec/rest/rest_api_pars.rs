@@ -153,6 +153,16 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
     let range = split_at_to(split_numop[0]);
 
+    let tes = if let Some(x) = split_numop.get(1) {
+        match *x {
+            "ABS" => MEM::ABS,
+            "DIFF" => MEM::DIFF,
+            _ => MEM::ABS
+        }
+    } else {
+        MEM::ABS
+    };
+
     let _before_colon = 0;
     let after_colon = 1;
     let bucket_size = split_fields_bucket_size[after_colon]
@@ -167,6 +177,6 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         range[0].parse::<f64>().unwrap(),
         range[1].parse::<f64>().unwrap(),
         None,
-        MEM::DIFF
+        tes
     );
 }

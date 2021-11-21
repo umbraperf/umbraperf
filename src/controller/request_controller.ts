@@ -14,8 +14,6 @@ export class RequestController {
 
     public calculateChartData(restQueryType: model.BackendQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
 
-        console.log("request from " + chartType);
-
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({

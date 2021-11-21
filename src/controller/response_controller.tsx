@@ -113,8 +113,6 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.BackendQueryType) {
 
-    //console.log(resultObject.resultTable.getColumn('operator'));
-
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
     let setResultLoading = false;
@@ -284,7 +282,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
             let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
-            //console.log(chartData);
             if (resultObject.resultTable.schema.fields.length === 7) {
                 //domain info received
                 const domainData: model.IMemoryAccessHeatmapChartDomainData = {
@@ -336,7 +333,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.BackendQueryType.GET_GROUPED_UIR_LINES:
 
-            console.log(resultObject.resultTable);
             chartDataElem = model.createChartDataObject(
                 requestId,
                 {

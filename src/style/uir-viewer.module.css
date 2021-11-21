@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorSecondary from colors;
+@value colorAccentBlack, colorSecondary from colors;
 
 /* :root{
  --eventOccurrenceColor: colorSecondary;
@@ -18,10 +18,10 @@
     align-items: center;
 }
 
-.chartTitle{
+.uirViewerTitle{
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
-    flex: 0 0 25px;
     position: relative;
     top: 1px; 
     font-family: 'Segoe UI';
@@ -31,54 +31,17 @@
     opacity: 1;
 }
 
-/* .glyphMarginClass0{
-    background: #F4CBB5;
+.uirViewerTitleTogglerContainer{
+    display: flex;
+    flex-direction: row;
+
 }
 
-.glyphMarginClass1{
-    background: #EDB596;
-}
+.uirViewerToggler{
+    flex: 0 0 fit-content;
 
-.glyphMarginClass2{
-    background: #E69F78;
 }
-
-.glyphMarginClass3{
-    background: #E69F78;
-}
-
-.glyphMarginClass4{
-    background: #DD895A;
-}
-
-.glyphMarginClass5{
-    background: #d4733e;
-}
-
-.glyphMarginClass6{
-    background: #C56937;
-}
-
-.glyphMarginClass7{
-    background: #B66031;
-}
-
-.glyphMarginClass8{
-    background: #A6562A;
-}
-
-.glyphMarginClass9{
-    background: #964D24;
-}
-
-.glyphMarginClass{
-    background: var(--eventOccurrenceColor);
-} */
 
 .glyphMarginClassWhite{
     background: #fff;
 }
-
-/* .editorContentClass{
-    background: black;
-} */

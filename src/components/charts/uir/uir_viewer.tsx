@@ -56,7 +56,23 @@ class UirViewer extends React.Component<Props, State> {
     }
 
     public render() {
-        return this.createMonacoEditor();
+        return <div className={styles.monacoEditorContainer}>
+
+            <div className={styles.uirViewerTitleTogglerContainer}>
+                <div className={styles.uirViewerToggler}>
+                    {this.createUirViewerLinesFoldedToggler()}
+                </div>
+                <div className={styles.uirViewerTitle}>
+                    UIR Profiler
+                </div >
+            </div>
+
+            <div
+                className={styles.monacoEditor}
+                ref={this.editorContainerRef}>
+                {this.createMonacoEditor()}
+            </div>
+        </div >
     }
 
     prepareUirLines() {
@@ -204,34 +220,25 @@ class UirViewer extends React.Component<Props, State> {
             glyphMargin: true,
         }
 
-        const monacoEditor = <div className={styles.monacoEditorContainer}>
-
-            <div
-                className={styles.chartTitle}>
-                <UirLinesFoldedToggler
-                    uirLinesFolded={this.state.linesFolded}
-                    uirViewerHandleLinesFoldedChange={this.toggleFoldAllLines} />
-                UIR Profiler
-            </div>
-
-            <div
-                className={styles.monacoEditor}
-                ref={this.editorContainerRef}>
-                <Editor
-                    key={this.props.key}
-                    defaultLanguage="umbraIntermediateRepresentation"
-                    theme={"uirTheme"}
-                    defaultValue={monacoDefaultValue}
-                    options={monacoOptions}
-                    loading={<Spinner />}
-                    beforeMount={this.handleEditorWillMount}
-                    onMount={this.handleEditorDidMount}
-                />
-            </div>
-        </div>
-
+        const monacoEditor =
+            <Editor
+                key={this.props.key}
+                defaultLanguage="umbraIntermediateRepresentation"
+                theme={"uirTheme"}
+                defaultValue={monacoDefaultValue}
+                options={monacoOptions}
+                loading={<Spinner />}
+                beforeMount={this.handleEditorWillMount}
+                onMount={this.handleEditorDidMount}
+            />
         return monacoEditor;
 
+    }
+
+    createUirViewerLinesFoldedToggler() {
+        return <UirLinesFoldedToggler
+            uirLinesFolded={this.state.linesFolded}
+            uirViewerHandleLinesFoldedChange={this.toggleFoldAllLines} />
     }
 
     setMonacoGlyphs() {

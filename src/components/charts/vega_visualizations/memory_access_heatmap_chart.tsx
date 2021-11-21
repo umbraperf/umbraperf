@@ -26,16 +26,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
     public render() {
         return <div
-            className={styles.vegaHeatmapsContainer}
-        >
-            <div className={styles.vegaHeatmapsTogglerArea}>
-                <HeatmapsDiffToggler />
-            </div>
-
-            <div className={styles.vegaHeatmapsArea}>
-                {this.renderChartPerOperator()}
-            </div>
-
+            className={styles.vegaHeatmapsContainer}>
+            {this.renderChartPerOperator()}
         </div>
     }
 

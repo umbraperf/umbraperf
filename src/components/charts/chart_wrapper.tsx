@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
 
+import HeatmapsDiffToggler from '../utils/heatmaps_difference_toggler';
 import SunburstChart from './vega_visualizations/sunburst_chart';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
@@ -53,7 +54,7 @@ interface State {
     height: number,
 }
 
-let globalInputDataChanged: {[chartId: number]: boolean};
+let globalInputDataChanged: { [chartId: number]: boolean };
 
 class ChartWrapper extends React.Component<Props, State> {
 
@@ -278,6 +279,16 @@ class ChartWrapper extends React.Component<Props, State> {
         }
     }
 
+    renderChartOptions() {
+        let chartOptions;
+        if (this.props.chartType === model.ChartType.MEMORY_ACCESS_HEATMAP_CHART) {
+            chartOptions = <HeatmapsDiffToggler />
+        }
+        return <div className={styles.chartOptionsContainer}>
+            {chartOptions}
+        </div>
+    }
+
 
     public render() {
 
@@ -286,6 +297,7 @@ class ChartWrapper extends React.Component<Props, State> {
         }
 
         return <div className={styles.elementWrapper} ref={this.elementWrapper}>
+            {this.renderChartOptions()}
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={styles.chartContainer}>

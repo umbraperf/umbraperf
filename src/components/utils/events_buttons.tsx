@@ -38,11 +38,11 @@ function EventsButtons(props: Props) {
     //allow for multiple events selection if multiple events dashboard
     useEffect(() => {
 
-        if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
-            if (events.includes("mem_inst_retired.all_loads")) {
-                handleEventButtonClick("mem_inst_retired.all_loads");
-            }
-        }
+        // if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
+        //     if (events.includes("mem_inst_retired.all_loads")) {
+        //         handleEventButtonClick("mem_inst_retired.all_loads");
+        //     }
+        // }
 
         // if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
         //     if (events.includes("cycles:ppp")) {

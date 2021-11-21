@@ -1,4 +1,4 @@
-// TODO mini spinner!
+// TODO fix bug last chart not showing
 
 import * as model from '../../../model';
 import * as Context from '../../../app_context';

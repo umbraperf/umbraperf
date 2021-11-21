@@ -104,6 +104,17 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const visData = this.createVisualizationData(id);
 
+        const yDomain = () => {
+            if (this.props.memoryHeatmapsDifferenceRepresentation) {
+                return {
+                    data: "table",
+                    field: "memAdr",
+                };
+            } else {
+                return [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max];
+            }
+        };
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: 300,
@@ -138,13 +149,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 {
                     "name": "y",
                     "type": "linear",
-                    domain: {
-                        data: "table",
-                        field: "memAdr",
-                    },
-                    // domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
-                    // domainMin: this.props.chartData.domain.memoryDomain.min,
-                    // domainMax: this.props.chartData.domain.memoryDomain.max,
+                    domain: yDomain(),
+                    domainMin: this.props.memoryHeatmapsDifferenceRepresentation ? null : this.props.chartData.domain.memoryDomain.min,
+                    domainMax: this.props.memoryHeatmapsDifferenceRepresentation ? null : this.props.chartData.domain.memoryDomain.max,
                     "range": "height",
                     "zero": true,
                     "nice": true,

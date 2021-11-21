@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, FormControlLabel, FormLabel, Switch, Typography } from '@material-ui/core';
+import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
 import styles from '../../../style/utils.module.css';
 
 

@@ -79,21 +79,21 @@ pub fn filter_between(
 
 pub fn filter_between_int32(
     column_num: usize,
-    filter_from: f64,
-    filter_to: f64,
+    filter_from: i32,
+    filter_to: i32,
     batch: &RecordBatch,
 ) -> RecordBatch {
-    if filter_from < 0. && filter_to < 0. {
+    if filter_from < 0 && filter_to < 0 {
         return batch.to_owned();
     }
 
     let filter_array = batch
         .column(column_num)
         .as_any()
-        .downcast_ref::<UInt64Array>()
+        .downcast_ref::<Int32Array>()
         .unwrap()
         .iter()
-        .map(|value| Some(value.unwrap() >= filter_from as u64 && value.unwrap() <= filter_to as u64))
+        .map(|value| Some(value.unwrap() >= filter_from as i32 && value.unwrap() <= filter_to as i32))
         .collect::<BooleanArray>();
 
     let mut arrays: Vec<ArrayRef> = Vec::new();

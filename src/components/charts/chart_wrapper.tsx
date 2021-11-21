@@ -51,7 +51,7 @@ interface State {
     height: number,
 }
 
-let globalInputDataChanged: boolean;
+let globalInputDataChanged: {[chartId: number]: boolean};
 
 class ChartWrapper extends React.Component<Props, State> {
 
@@ -64,17 +64,20 @@ class ChartWrapper extends React.Component<Props, State> {
             width: 0,
             height: 0,
         };
+        globalInputDataChanged = {
+            ...globalInputDataChanged,
+            [this.props.chartIdCounter]: false,
+        };
         this.props.setChartIdCounter((this.state.chartId) + 1);
-        globalInputDataChanged = false;
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
 
-        globalInputDataChanged = false;
+        globalInputDataChanged[this.state.chartId] = false;
 
         //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
         if (Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)) {
-            globalInputDataChanged = true;
+            globalInputDataChanged[this.state.chartId] = true;
             return true;
         }
 
@@ -114,7 +117,7 @@ class ChartWrapper extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
-        if (globalInputDataChanged) {
+        if (globalInputDataChanged[this.state.chartId] === true) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }

@@ -12,6 +12,8 @@ interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
     currentEvent: string | "Default";
+    events: Array<string> | undefined;
+
 }
 
 type Props = model.IUirViewerProps & AppstateProps;
@@ -19,18 +21,29 @@ type Props = model.IUirViewerProps & AppstateProps;
 
 class UirViewer extends React.Component<Props, {}> {
 
+    editorContainerRef: React.RefObject<HTMLDivElement>;
+    editorRef: React.RefObject<unknown>;
+    globalEventOccurrenceDecorations: string[];
+
+
     constructor(props: Props) {
         super(props);
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
+        this.editorRef = React.createRef();
+        this.editorContainerRef = React.createRef();
+        this.globalEventOccurrenceDecorations = [];
     }
 
     componentDidMount() {
-        console.log(this.props.chartData);
     }
 
-    componentDidUpdate(){
-        
+    componentDidUpdate(prevProps: Props) {
+
+        if (this.props.currentEvent !== prevProps.currentEvent) {
+            this.setMonacoGlyphs();
+        }
+
     }
 
     public render() {
@@ -139,12 +152,15 @@ class UirViewer extends React.Component<Props, {}> {
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
+        this.editorRef = editor;
+        console.log(this.editorRef);
         this.foldAllLines(editor);
-        this.setMonacoGlyphs(editor);
+        this.setMonacoGlyphs();
     }
 
     foldAllLines(editor: any) {
-        editor.trigger('fold', 'editor.foldAll');
+        //TODO enable
+        // editor.trigger('fold', 'editor.foldAll');
     }
 
     createMonacoEditor() {
@@ -165,7 +181,7 @@ class UirViewer extends React.Component<Props, {}> {
 
             <div className={styles.chartTitle}>UIR Profiler</div>
 
-            <div className={styles.monacoEditor}>
+            <div className={styles.monacoEditor} ref={this.editorContainerRef}>
                 <Editor
                     key={this.props.key}
                     defaultLanguage="umbraIntermediateRepresentation"
@@ -183,53 +199,77 @@ class UirViewer extends React.Component<Props, {}> {
 
     }
 
-    setMonacoGlyphs(editor: any) {
-        const glyps = this.createEventColorGlyphs(1);
-        console.log(glyps);
-        const decorations = editor.deltaDecorations(
-            [], glyps
-        );
+    setMonacoGlyphs() {
+        if (this.globalEventOccurrenceDecorations.length === 0) {
+            this.createInitialEventColorGlyphs();
+        } else {
+            this.updateEventColorGlyphs();
+        }
+
     }
 
-    createEventColorGlyphs(event: 1 | 2 | 3 | 4) {
-        const eventString = `event${event}` as "event1" | "event2" | "event3" | "event4";
+    updateEventColorGlyphs() {
+        const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
+        const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1
+        const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
         const eventOccurrences = Array.from(this.props.chartData[eventString]);
-
-        console.log(this.props.chartData.event1.length);
-        console.log(this.props.chartData.uirLines.length);
-
-        let glyps: Array<{ range: monaco.Range, options: object }> = [];
+        console.log(eventOccurrences);
         eventOccurrences.forEach((elem, index) => {
+            let currentLineGlyphClass = styles.glyphMarginClassWhite;
             if (elem > 0) {
-                console.log(elem);
                 const elemColorGroup = Math.floor(elem / 10);
-                const cssClass = this.createCustomCssGlyphClass(elemColorGroup);
-                glyps.push(
-                    {
-                        range: new monaco.Range(index + 1, 1, index + 1, 1),
-                        options: {
-                            isWholeLine: true,
-                            className: cssClass, //line background of range
-                            glyphMarginClassName: cssClass, // glyph
-                            // className: styles[`glyphMarginClass${elemColorGroup}`], //line background of range
-                            // glyphMarginClassName: styles[`glyphMarginClass${elemColorGroup}`], // glyph
-                        }
+                currentLineGlyphClass = this.createCustomCssGlyphClass(elemColorGroup);
+
+            }
+            (this.editorRef as any).deltaDecorations([this.globalEventOccurrenceDecorations[index]], [
+                {
+                    range: new monaco.Range(index + 1, 1, index + 1, 1),
+                    options: {
+                        isWholeLine: true,
+                        className: currentLineGlyphClass,
+                        glyphMarginClassName: currentLineGlyphClass,
                     }
-                )
+                }
+            ]);
+        });
+
+    }
+
+    createInitialEventColorGlyphs() {
+        // create initial white glyphs for each line
+        const initialGlyphs: Array<{ range: monaco.Range, options: object }> = this.props.chartData.uirLines.map((elem, index) => {
+            return {
+                range: new monaco.Range(index + 1, 1, index + 1, 1),
+                options: {
+                    isWholeLine: true,
+                    className: styles.glyphMarginClassWhite,
+                    glyphMarginClassName: styles.glyphMarginClassWhite,
+                }
             }
         });
 
-        return glyps;
+        this.globalEventOccurrenceDecorations = (this.editorRef as any).deltaDecorations(
+            [], initialGlyphs
+        );
 
+        this.updateEventColorGlyphs();
     }
 
     createCustomCssGlyphClass(colorGroup: number) {
-        const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+        //return name of correct css class, create class if not yet created
+        
         const className = `glyphMarginClass${colorGroup}`;
-        const style = document.createElement('style');
-        style.innerHTML = `.${className} { background: ${color}; }`;
-        document.getElementsByTagName('head')[0].appendChild(style);
-        return className;
+        if (this.editorContainerRef.current!.children.namedItem(className)) {
+            return className;
+        } else {
+            const color = model.chartConfiguration.getOrangeColor(colorGroup as any);
+            // const className = `glyphMarginClass${colorGroup}`;
+            const style = document.createElement('style');
+            style.setAttribute("id", `glyphMarginClass${colorGroup}`);
+            style.innerHTML = `.${className} { background: ${color}; }`;
+            this.editorContainerRef.current!.appendChild(style);
+            return className;
+        }
     }
 
 }
@@ -237,6 +277,7 @@ class UirViewer extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps) => ({
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IUirViewerData,
     currentEvent: state.currentEvent,
+    events: state.events,
 
 });
 

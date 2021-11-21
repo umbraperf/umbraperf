@@ -16,7 +16,6 @@ interface Props {
 function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.checked);
         props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
     }
 

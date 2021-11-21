@@ -153,7 +153,6 @@ class UirViewer extends React.Component<Props, {}> {
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
         this.editorRef = editor;
-        console.log(this.editorRef);
         this.foldAllLines(editor);
         this.setMonacoGlyphs();
     }
@@ -213,7 +212,6 @@ class UirViewer extends React.Component<Props, {}> {
         const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1
         const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
         const eventOccurrences = Array.from(this.props.chartData[eventString]);
-        console.log(eventOccurrences);
         eventOccurrences.forEach((elem, index) => {
             let currentLineGlyphClass = styles.glyphMarginClassWhite;
             if (elem > 0) {

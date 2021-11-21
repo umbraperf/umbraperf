@@ -93,9 +93,6 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             (nextProps.currentView !== props.currentView ||
                 !_.isEqual(nextProps.pipelines, props.pipelines) ||
                 !_.isEqual(nextProps.operators, props.operators))) {
-            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(nextProps.currentView !== props.currentView);
-            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(!_.isEqual(nextProps.pipelines, props.pipelines))
-            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(!_.isEqual(nextProps.operators, props.operators))
             return true;
         } else {
             return false;
@@ -105,7 +102,6 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     const isVegaChartDataInputChangedGeneral = () => {
         if (metadataAvailable &&
             (nextProps.currentEvent !== props.currentEvent)) {
-            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(nextProps.currentEvent !== props.currentEvent)
             return true;
         } else {
             return false;

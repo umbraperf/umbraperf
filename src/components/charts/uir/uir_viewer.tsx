@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Editor, { Monaco } from "@monaco-editor/react";
-import Spinner from '../../utils/spinner';
+import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 
 interface AppstateProps {

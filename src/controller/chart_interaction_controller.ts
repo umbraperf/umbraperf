@@ -78,84 +78,104 @@ export function resetTimeBucketSelection() {
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
-    const chartDataInputChangedGeneral = () => {
-        if (nextProps.events &&
-            nextProps.pipelines &&
+    const isMetadataAvailable = () => {
+        if (nextProps.pipelines &&
             nextProps.operators &&
+            nextProps.events) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const isChartDataInputChangedGeneral = () => {
+        if (metadataAvailable &&
             (nextProps.currentView !== props.currentView ||
                 !_.isEqual(nextProps.pipelines, props.pipelines) ||
                 !_.isEqual(nextProps.operators, props.operators))) {
+            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(nextProps.currentView !== props.currentView);
+            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(!_.isEqual(nextProps.pipelines, props.pipelines))
+            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(!_.isEqual(nextProps.operators, props.operators))
             return true;
         } else {
             return false;
         }
     }
 
-    const vegaChartDataInputChangedGeneral = () => {
-        if (nextProps.currentEvent !== props.currentEvent) {
+    const isVegaChartDataInputChangedGeneral = () => {
+        if (metadataAvailable &&
+            (nextProps.currentEvent !== props.currentEvent)) {
+            chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM && console.log(nextProps.currentEvent !== props.currentEvent)
             return true;
         } else {
             return false;
         }
     }
 
-    if (chartDataInputChangedGeneral()) {
+    const metadataAvailable = isMetadataAvailable();
+    const chartDataInputChangedGeneral = isChartDataInputChangedGeneral();
+    const vegaChartDataInputChangedGeneral = isVegaChartDataInputChangedGeneral();
+
+    const chartDataInputChangedChart: () => boolean = () => {
+        switch (chartType) {
+            case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    nextProps.currentBucketSize !== props.currentBucketSize) ?
+                    true :
+                    false;
+            case model.ChartType.SUNBURST_CHART:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+            case model.ChartType.BAR_CHART:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
+            case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    nextProps.currentBucketSize !== props.currentBucketSize ||
+                    !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    nextProps.currentBucketSize !== props.currentBucketSize ||
+                    !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+            case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
+                return (vegaChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    nextProps.currentBucketSize !== props.currentBucketSize ||
+                    nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+            case model.ChartType.UIR_VIEWER:
+                return (!_.isEqual(chartDataInputChangedGeneral ||
+                    nextProps.operators, props.operators) ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
+        }
+        return false;
+    };
+
+    if (chartDataInputChangedChart()) {
         return true;
-    } else {
-        const chartDataInputChangedChart: () => boolean = () => {
-            switch (chartType) {
-                case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        nextProps.currentBucketSize !== props.currentBucketSize) ?
-                        true :
-                        false;
-                case model.ChartType.SUNBURST_CHART:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-                case model.ChartType.BAR_CHART:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-                case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
-                case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        nextProps.currentBucketSize !== props.currentBucketSize ||
-                        !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
-                        !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-                case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
-                case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        nextProps.currentBucketSize !== props.currentBucketSize ||
-                        !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
-                        !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-                case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
-                    return (vegaChartDataInputChangedGeneral() ||
-                        nextProps.currentBucketSize !== props.currentBucketSize ||
-                        nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-                case model.ChartType.UIR_VIEWER:
-                    return (!_.isEqual(nextProps.operators, props.operators) ||
-                        !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                        true :
-                        false;
-            }
-            return false;
-        };
-
-        if (chartDataInputChangedChart()) {
-            return true;
-        }
     }
 
     return false;

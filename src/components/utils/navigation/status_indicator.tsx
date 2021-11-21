@@ -64,6 +64,11 @@ function StatusIndicator(props: Props) {
             if (isLoading === false) {
                 setIsLoading(true);
             }
+            // console.log("----")
+            // console.log(props.resultLoading);
+            // console.log(getLoadingChartName());
+            // console.log(props.loadingChartReadableName)
+            // console.log(Object.values(props.resultLoading).indexOf(true, 0))
             return `Rendering "${getLoadingChartName()}"...`
         }
         if (!loading && Object.keys(props.resultLoading).length > 0) {

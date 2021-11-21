@@ -130,7 +130,6 @@
 .dropdownOptionsContainer{
     composes: optionsContainer;
     flex-direction: row;
-
 }
 
 .appbar{    

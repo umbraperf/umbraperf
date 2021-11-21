@@ -37,7 +37,7 @@ function HeatmapsDiffToggler(props: Props) {
                     }
                     label={
                         <Typography
-                            className={styles.vegaHeatmapsTogglerLabel}
+                            className={styles.togglerLabel}
                             variant="caption"
                         >
                             Show Memory Access Differences:

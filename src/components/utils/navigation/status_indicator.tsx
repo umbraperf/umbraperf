@@ -1,9 +1,9 @@
 // TODO mini spinner!
 
-import * as model from '../../model/';
-import * as Context from '../../app_context';
-import styles from '../../style/utils.module.css';
-import MiniSpinner from './mini_spinner';
+import * as model from '../../../model';
+import * as Context from '../../../app_context';
+import styles from '../../../style/utils.module.css';
+import MiniSpinner from '../spinner/mini_spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 

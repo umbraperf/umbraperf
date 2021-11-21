@@ -2,14 +2,14 @@ import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
 import styles from '../../style/charts.module.css';
-import Spinner from '../utils/spinner';
+import Spinner from '../utils/spinner/spinner';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
 
-import HeatmapsDiffToggler from '../utils/heatmaps_difference_toggler';
+import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
 import SunburstChart from './vega_visualizations/sunburst_chart';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';

@@ -2,7 +2,7 @@ import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
-import Spinner from '../../utils/spinner';
+import Spinner from '../../utils/spinner/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createRef } from 'react';

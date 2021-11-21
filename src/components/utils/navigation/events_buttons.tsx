@@ -1,10 +1,10 @@
-import * as model from '../../model';
-import * as Context from '../../app_context';
-import Spinner from './spinner';
+import * as model from '../../../model';
+import * as Context from '../../../app_context';
+import Spinner from '../spinner/spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
-import styles from '../../style/utils.module.css';
+import styles from '../../../style/utils.module.css';
 
 
 interface Props {

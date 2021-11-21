@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import HeatmapsDiffToggler from '../../utils/heatmaps_difference_toggler';
+import HeatmapsDiffToggler from '../../utils/togglers/heatmaps_difference_toggler';
 
 
 interface AppstateProps {

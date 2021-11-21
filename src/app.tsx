@@ -10,8 +10,8 @@ import '../node_modules/react-resizable/css/styles.css';
 import styles from './style/main-app.module.css';
 import * as Config from './app_config';
 
-import TabPanel from './components/utils/tab_panel';
-import HeaderAppbar from './components/utils/header_appbar';
+import TabPanel from './components/utils/navigation/tab_panel';
+import HeaderAppbar from './components/utils/navigation/header_appbar';
 
 
 function NoMatch() {

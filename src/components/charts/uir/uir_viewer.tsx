@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
+import UirLinesFoldedToggler from '../../utils/togglers/uir_lines_folded_toggler';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -18,8 +19,12 @@ interface AppstateProps {
 
 type Props = model.IUirViewerProps & AppstateProps;
 
+interface State {
+    linesFolded: boolean;
+}
 
-class UirViewer extends React.Component<Props, {}> {
+
+class UirViewer extends React.Component<Props, State> {
 
     editorContainerRef: React.RefObject<HTMLDivElement>;
     editorRef: React.RefObject<unknown>;
@@ -28,8 +33,12 @@ class UirViewer extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
+        this.state = {
+            linesFolded: true,
+        }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
+        this.toggleFoldAllLines = this.toggleFoldAllLines.bind(this);
         this.editorRef = React.createRef();
         this.editorContainerRef = React.createRef();
         this.globalEventOccurrenceDecorations = [];
@@ -38,7 +47,7 @@ class UirViewer extends React.Component<Props, {}> {
     componentDidMount() {
     }
 
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
 
         if (this.props.currentEvent !== prevProps.currentEvent) {
             this.setMonacoGlyphs();
@@ -153,13 +162,32 @@ class UirViewer extends React.Component<Props, {}> {
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
         this.editorRef = editor;
-        this.foldAllLines(editor);
+        this.foldAllLines();
         this.setMonacoGlyphs();
     }
 
-    foldAllLines(editor: any) {
-        //TODO enable
-        // editor.trigger('fold', 'editor.foldAll');
+    toggleFoldAllLines(event: React.ChangeEvent<HTMLInputElement>) {
+        if (event.target.checked) {
+            this.setState((state, props) => ({
+                ...state,
+                linesFolded: true,
+            }));
+            this.foldAllLines();
+        } else {
+            this.setState((state, props) => ({
+                ...state,
+                linesFolded: false,
+            }));
+            this.unFoldAllLines();
+        }
+    }
+
+    foldAllLines() {
+        (this.editorRef as any).trigger('fold', 'editor.foldAll');
+    }
+
+    unFoldAllLines() {
+        (this.editorRef as any).trigger('unfold', 'editor.unfoldAll');
     }
 
     createMonacoEditor() {
@@ -178,9 +206,17 @@ class UirViewer extends React.Component<Props, {}> {
 
         const monacoEditor = <div className={styles.monacoEditorContainer}>
 
-            <div className={styles.chartTitle}>UIR Profiler</div>
+            <div
+                className={styles.chartTitle}>
+                <UirLinesFoldedToggler
+                    uirLinesFolded={this.state.linesFolded}
+                    uirViewerHandleLinesFoldedChange={this.toggleFoldAllLines} />
+                UIR Profiler
+            </div>
 
-            <div className={styles.monacoEditor} ref={this.editorContainerRef}>
+            <div
+                className={styles.monacoEditor}
+                ref={this.editorContainerRef}>
                 <Editor
                     key={this.props.key}
                     defaultLanguage="umbraIntermediateRepresentation"
@@ -255,7 +291,7 @@ class UirViewer extends React.Component<Props, {}> {
 
     createCustomCssGlyphClass(colorGroup: number) {
         //return name of correct css class, create class if not yet created
-        
+
         const className = `glyphMarginClass${colorGroup}`;
         if (this.editorContainerRef.current!.children.namedItem(className)) {
             return className;

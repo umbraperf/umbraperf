@@ -44,11 +44,11 @@ function EventsButtons(props: Props) {
             }
         }
 
-        if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
-            if (events.includes("cycles:ppp")) {
-                handleEventButtonClick("cycles:ppp");
-            }
-        }
+        // if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
+        //     if (events.includes("cycles:ppp")) {
+        //         handleEventButtonClick("cycles:ppp");
+        //     }
+        // }
 
         if (events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS) {
             setMultipleEvents(true);

@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack from colors;
+@value colorTertiary, colorAccentBlack from colors;
 
 :root {
     --labelFonSize: 11px;
@@ -153,6 +153,10 @@
 .statusContainer{
     display: flex;
     
+}
+
+.vegaHeatmapsTogglerLabel{
+    color: colorTertiary;
 }
 
 @keyframes fadeIn {

@@ -51,6 +51,7 @@
 .vegaHeatmapsTogglerArea{
     display: flex;
     justify-content: center;
+    padding-bottom: 10px;
 }
 
 .vegaHeatmapsArea{
@@ -60,9 +61,6 @@
     flex-wrap: wrap;
 }
 
-.vegaHeatmapsTogglerLabel{
-    
-}
 
 
 

@@ -41,6 +41,7 @@ export enum StateMutationType {
     SET_CURRENTTIMEPOSITIONSELECTIONTUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
     SET_CURRENTVIEW = 'SET_CURRENTVIEW',
     SET_QUERYPLAN = 'SET_QUERYPLAN',
+    SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION = 'SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION',
     OTHER = 'OTHER',
 }
 
@@ -73,6 +74,8 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
     | StateMutation<StateMutationType.SET_QUERYPLAN, object>
+    | StateMutation<StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION, boolean>
+
     ;
 
 // The action dispatch
@@ -212,6 +215,11 @@ export class AppStateMutation {
                     ...state,
                     queryPlan: mutation.data,
                 }
+            case StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION:
+                return {
+                    ...state,
+                    memoryHeatmapsDifferenceRepresentation: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileLoading: false,
@@ -241,6 +249,7 @@ export class AppStateMutation {
                     currentTimePositionSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
                     queryPlan: undefined,
+                    memoryHeatmapsDifferenceRepresentation: true,
                 }
         }
     }

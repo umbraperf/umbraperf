@@ -34,6 +34,7 @@ export interface AppState {
     currentTimePositionSelectionTuple: [number, number];
     currentView: ViewType;
     queryPlan: object | undefined;
+    memoryHeatmapsDifferenceRepresentation: boolean;
 }
 
 export function createDefaultState(): AppState {
@@ -65,5 +66,6 @@ export function createDefaultState(): AppState {
         currentTimePositionSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
         queryPlan: undefined,
+        memoryHeatmapsDifferenceRepresentation: true,
     };
 }

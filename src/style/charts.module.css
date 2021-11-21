@@ -45,7 +45,23 @@
 .vegaHeatmapsContainer{
     display: flex;
     justify-content: center;
+    flex-direction: column;
+}
+
+.vegaHeatmapsTogglerArea{
+    display: flex;
+    justify-content: center;
+}
+
+.vegaHeatmapsArea{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
     flex-wrap: wrap;
+}
+
+.vegaHeatmapsTogglerLabel{
+    
 }
 
 

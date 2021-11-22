@@ -42,6 +42,14 @@
 
 }
 
-.glyphMarginClassWhite{
+.glyphClassWhite{
     background: #fff;
+}
+
+.operatorTest{
+    background: blue;
+}
+
+.operatorTest2{
+    background: green;
 }

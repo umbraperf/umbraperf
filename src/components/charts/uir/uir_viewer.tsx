@@ -296,7 +296,6 @@ class UirViewer extends React.Component<Props, State> {
 
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
-            //TODO adjust condition only selected operators
             if (this.state.operatorsColored
                 && this.props.operators!.includes(operator)
                 && operator !== "None"

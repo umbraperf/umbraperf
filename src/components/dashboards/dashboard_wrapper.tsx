@@ -21,7 +21,7 @@ type Props = OwnProps & DashboardWrapperAppstateProps;
 
 class DashboardWrapper extends React.Component<Props, {}> {
 
-    constructor(props: any) {
+    constructor(props: Props) {
         super(props);
         this.props.setCurrentView(model.ViewType.NONE);
     }
@@ -40,8 +40,6 @@ class DashboardWrapper extends React.Component<Props, {}> {
                 return React.createElement(DashboardMultipleEvents);
             case model.ViewType.DASHBOARD_MEMORY:
                 return React.createElement(DashboardMemoryAccesses);
-            case model.ViewType.DASHBOARD_MEMORY:
-                return React.createElement(DashboardMemoryAccesses);
             case model.ViewType.DASHBOARD_UIR:
                 return React.createElement(DashboardUir);
         }
@@ -58,13 +56,12 @@ class DashboardWrapper extends React.Component<Props, {}> {
     }
 }
 
-
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentView: (newCurrentView: model.ViewType) =>
         dispatch({
             type: model.StateMutationType.SET_CURRENTVIEW,
             data: newCurrentView,
-        }),
+        })
 });
 
 export default connect(undefined, mapDispatchToProps)(DashboardWrapper);

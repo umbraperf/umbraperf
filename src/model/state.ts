@@ -1,24 +1,24 @@
 import { ChartDataKeyValue } from "./chart_data_result";
 import { IKpiData, Result, ResultLoading } from "./core_result";
-import { RestQueryType } from "./rest_queries";
+import { BackendQueryType } from "./backend_queries";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-import { ViewType } from "./chart_types";
+import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
-    fileName: string | undefined;
     fileLoading: boolean;
     resultLoading: ResultLoading;
     result: Result | undefined;
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
-    currentChart: string;
+    currentChart: Array<ChartType>;
+    loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    currentRequest: RestQueryType | undefined;
+    currentRequest: BackendQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
@@ -34,18 +34,19 @@ export interface AppState {
     currentTimePositionSelectionTuple: [number, number];
     currentView: ViewType;
     queryPlan: object | undefined;
+    memoryHeatmapsDifferenceRepresentation: boolean;
 }
 
 export function createDefaultState(): AppState {
     return {
-        fileName: undefined,
         fileLoading: false,
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
         csvParsingFinished: false,
         file: undefined,
-        currentChart: "",
+        currentChart: [],
+        loadingChartReadableName: [],
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",
@@ -65,5 +66,6 @@ export function createDefaultState(): AppState {
         currentTimePositionSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
         queryPlan: undefined,
+        memoryHeatmapsDifferenceRepresentation: true,
     };
 }

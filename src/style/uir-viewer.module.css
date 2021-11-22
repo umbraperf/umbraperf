@@ -1,0 +1,49 @@
+@value colors: "./export-variables.module.css";
+@value colorAccentBlack, colorSecondary from colors;
+
+/* :root{
+ --eventOccurrenceColor: colorSecondary;
+} */
+
+.monacoEditorContainer{
+    flex: 1 1 fit-content;
+    display: flex;
+    flex-flow: column;
+}
+
+.monacoEditor{
+    flex: 1 1 fit-content; 
+    height: 100%;
+    width: 100%; 
+    align-items: center;
+}
+
+.uirViewerTitle{
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 1px; 
+    font-family: 'Segoe UI';
+    font-size: 11px;
+    font-weight: bold;
+    color: colorAccentBlack;
+    opacity: 1;
+}
+
+.uirViewerTitleTogglerContainer{
+    display: flex;
+    flex-direction: row;
+
+}
+
+.uirViewerToggler{
+    flex: 0 0 content;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+.glyphClassWhite{
+    background: #fff;
+}
+

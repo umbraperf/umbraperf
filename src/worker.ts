@@ -1,7 +1,7 @@
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';
-import * as RestApi from './model/rest_queries';
+import * as RestApi from './model/backend_queries';
 import * as JSZip from '../node_modules/jszip/';
 
 //worker responses:
@@ -21,7 +21,7 @@ export type WorkerResponse<T, P> = {
 export interface IStoreResultResponseData {
   requestId: number,
   chartData: any,
-  restQueryType: RestApi.RestQueryType,
+  restQueryType: RestApi.BackendQueryType,
   metaRequest: boolean,
 }
 
@@ -48,10 +48,9 @@ export type WorkerRequest<T, P> = {
 
 export interface ICalculateChartDataRequestData {
   readonly requestId: number | undefined;
-  readonly queryMetadata: string,
   readonly restQuery: string,
   readonly metaRequest: boolean,
-  readonly restQueryType: RestApi.RestQueryType;
+  readonly restQueryType: RestApi.BackendQueryType;
 }
 
 export type WorkerRequestVariant =
@@ -74,7 +73,7 @@ let globalFileIdCounter = 0;
 let globalMetaRequest: boolean;
 let globalFileDictionary: IGlobalFileDictionary = {}
 let globalRequestId: number | undefined = undefined;
-let globalRestQueryType: RestApi.RestQueryType | undefined = undefined;
+let globalRestQueryType: RestApi.BackendQueryType | undefined = undefined;
 
 const worker: IWorker = self as any;
 
@@ -120,13 +119,6 @@ function extractQueryPlanFromZip(file: File) {
         },
       )
     }
-
-    // console.log(queryPlanFile);
-    // Object.keys(umbraperfArchiv.files).forEach(function (filename) {
-    //   umbraperfArchiv.files[filename].async('string').then(function (fileData: any) {
-    //     console.log(fileData) // These are your file contents      
-    //   })
-    // })
   })
 
 }

@@ -4,7 +4,7 @@ import { IAppContext } from './app_context';
 import styles from './style/export-variables.module.css';
 import * as model from './model';
 
-import FileUploader from './components/utils/file_uploader';
+import FileUploader from './components/utils/containers/file_uploader';
 import DashboardWrapper from './components/dashboards/dashboard_wrapper';
 
 import BackupIcon from '@material-ui/icons/Backup';

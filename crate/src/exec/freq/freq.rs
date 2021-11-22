@@ -347,8 +347,8 @@ pub fn freq_of_memory(
             if i == 0 {
                 0 as i32
             } else {
-                let current = memory_column.value(column_index as usize) / 100000;
-                let before = memory_column.value(column_index - 1 as usize) / 100000;
+                let current = memory_column.value(column_index as usize);
+                let before = memory_column.value(column_index - 1 as usize);
                 let diff = before as i64 - current as i64 ;
                 diff as i32
             }
@@ -505,8 +505,8 @@ pub fn freq_of_memory(
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
         //let three_times = std_deviation * std_deviation * std_deviation;
 
-        let from = mean - (std_deviation / 2.);
-        let to = mean + (std_deviation / 2.);
+        let from = mean - std_deviation;
+        let to = mean + std_deviation;
 
         let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 

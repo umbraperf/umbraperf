@@ -18,7 +18,7 @@ pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
 }
 
-pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
+pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let column_ev_name = record_batch
         .column(1)
         .as_any()

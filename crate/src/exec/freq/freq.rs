@@ -1,26 +1,20 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, convert::TryInto, sync::Arc};
 
 use arrow::{
     array::{
         Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
         UInt64Array,
     },
-    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
+    datatypes::{DataType, Field, Float64Type, Int32Type, Schema, UInt64Type},
     record_batch::RecordBatch,
 };
 
-use crate::{
-    exec::{
-        basic::{
-            basic::{find_unique_string, sort_batch},
-            filter::{filter_between_int32, filter_between_u64},
-            statistics,
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_util::{
+            create_new_record_batch, send_record_batch_to_js,
         },
-        rest::rest_api::finish_query_exec,
-    },
-    state::state::get_record_batches,
-    utils::record_batch_util::{create_new_record_batch, send_record_batch_to_js},
-};
+    }};
 
 pub enum Freq {
     ABS,
@@ -268,7 +262,7 @@ pub fn freq_of_pipelines(
 
 pub enum MEM {
     DIFF,
-    ABS,
+    ABS
 }
 
 pub fn freq_of_memory(
@@ -279,34 +273,22 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
     len_of_mem: Option<i64>,
-    mem_en: MEM,
+    mem_en: MEM
 ) {
-    let batch = if matches!(mem_en, MEM::DIFF) {
-        let mem_column = get_uint_column(&batch, 4);
-        let mem_vec = mem_column
-            .into_iter()
-            .map(|v| (v.unwrap() as i64))
-            .collect::<Vec<i64>>();
 
-        let mean = statistics::mean(&mem_vec).unwrap();
-        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
-        let three_times = std_deviation * std_deviation * std_deviation;
 
-        let from_ = mean - std_deviation;
-        let to_ = mean + std_deviation;
-        let batch = filter_between_u64(4, from_ as f64, to_ as f64, &batch);
-        batch
-    } else {
-        batch.to_owned()
-    };
+    print_to_js_with_obj(&format!("in it! {:?}", from).into());
 
-    let batch = &sort_batch(&batch, 2, false);
+    let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(batch, column_for_operator);
+    let unique_operator =
+        find_unique_string(batch, column_for_operator);
 
     let unique_operator = &sort_batch(&unique_operator, 0, false);
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
+
+    print_to_js_with_obj(&format!("vec_operator {:?}", vec_operator).into());
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
@@ -339,7 +321,7 @@ pub fn freq_of_memory(
 
     let divided = if len_of_mem.is_some() {
         let mut out = 1;
-        for _i in 0..len_of_mem.unwrap() {
+        for i in 0..len_of_mem.unwrap() {
             out *= 10;
         }
         out
@@ -349,19 +331,21 @@ pub fn freq_of_memory(
 
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
-        let current_memory = if matches!(mem_en, MEM::ABS) {
-            (memory_column.value(column_index as usize) / divided) as i32
-        } else {
+        let current_memory = if matches!(mem_en, MEM::ABS) { (memory_column.value(column_index as usize) / divided) as i32 } else {
             if i == 0 {
                 0 as i32
             } else {
-                let current = memory_column.value(column_index as usize);
-                let before = memory_column.value(column_index - 1 as usize);
-                let diff = current as i64 - before as i64;
+                let value1 = memory_column.value(column_index as usize) / 100000;
+                let value2 = memory_column.value(column_index - 1 as usize) / 100000;
+                let diff = value2 as i64 - value1 as i64 ;
+                print_to_js_with_obj(&format!("diff {:?}", diff).into());
                 diff as i32
             }
         };
+        print_to_js_with_obj(&format!("current_memory {:?}", current_memory).into());
         while time_bucket < time.unwrap() {
+            print_to_js_with_obj(&format!("{:?}", "in time bucket < time-unwrap()").into());
+
             for operator in vec_operator {
                 let operator = operator.unwrap();
 
@@ -423,6 +407,9 @@ pub fn freq_of_memory(
         result_builder,
     );
 
+    print_to_js_with_obj(&format!("batch {:?}", batch).into());
+
+
     let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
     let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
     let max_time = arrow::compute::max(get_floatarray_column(&batch, 0)).unwrap();
@@ -460,6 +447,8 @@ pub fn freq_of_memory(
     let sorted_batch = sort_batch(&batch, 1, false);
     let mut offset = 0.;
     let mut hashmap = HashMap::new();
+
+    print_to_js_with_obj(&format!("entry {:?}", "hi").into());
 
     for entry in vec_operator.into_iter().enumerate() {
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
@@ -501,25 +490,25 @@ pub fn freq_of_memory(
                 Arc::new(Int32Array::from(mem_vec)),
                 Arc::new(Float64Array::from(freq_vec)),
             ],
+               
         );
 
         let mem_column = get_int32_column(&single_batch, 2);
-        let mem_vec = mem_column
-            .into_iter()
-            .map(|v| (v.unwrap() as i64))
-            .collect::<Vec<i64>>();
-
+        let mem_vec = mem_column.into_iter().map(|v| (v.unwrap() as i64)).collect::<Vec<i64>>();
+  
         let mean = statistics::mean(&mem_vec).unwrap();
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
-        //let three_times = std_deviation * std_deviation * std_deviation;
+        let three_times = std_deviation * std_deviation * std_deviation;
 
-        let from = mean - (std_deviation);
-        let to = mean + (std_deviation);
+        let from = mean - (std_deviation / 2.);
+        let to = mean + (std_deviation / 2.);
 
         let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 
+
+        print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());
         let min_bucket = arrow::compute::min(bucket).unwrap();
-        hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+        hashmap.insert((entry.1.unwrap(), min_bucket as usize),single_batch);
 
         offset += len;
     }
@@ -536,4 +525,5 @@ pub fn freq_of_memory(
         let batch = hashmap.get(entry).unwrap();
         send_record_batch_to_js(batch);
     }
+
 }

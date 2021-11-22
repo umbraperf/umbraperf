@@ -1,6 +1,6 @@
 use arrow::record_batch::RecordBatch;
 
-use crate::{exec::{basic::basic, freq::{abs_freq, freq::{MEM, freq_of_memory}, rel_freq}}, utils::string_util::{split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_numop, split_at_to}};
+use crate::{exec::{basic::basic, freq::{abs_freq, freq::{MEM, freq_of_memory}, rel_freq}}, utils::{print_to_cons::print_to_js_with_obj, string_util::{split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_numop, split_at_to}}};
 
 use super::rest_api::find_name;
 
@@ -149,6 +149,9 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         MEM::ABS
     };
 
+    print_to_js_with_obj(&format!("{:?}", split_numop).into());
+    
+
     let _before_colon = 0;
     let after_colon = 1;
     let bucket_size = split_fields_bucket_size[after_colon]
@@ -163,6 +166,6 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         range[0].parse::<f64>().unwrap(),
         range[1].parse::<f64>().unwrap(),
         None,
-        abs_or_diff
+        MEM::DIFF
     );
 }

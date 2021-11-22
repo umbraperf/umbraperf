@@ -275,7 +275,7 @@ pub fn freq_of_memory(
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
-    let batch = if matches!(mem_en, MEM::ABS) {
+    /* let batch = if matches!(mem_en, MEM::ABS) {
         let mem_column = get_uint_column(&batch, 4);
         let mem_vec = mem_column
             .into_iter()
@@ -292,7 +292,7 @@ pub fn freq_of_memory(
         batch
     } else {
         batch.to_owned()
-    };
+    }; */
 
     let batch = &sort_batch(&batch, 2, false);
 
@@ -509,8 +509,8 @@ pub fn freq_of_memory(
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
         let three_times = std_deviation * std_deviation * std_deviation;
 
-        let from = mean - (std_deviation / 2.);
-        let to = mean + (std_deviation / 2.);
+        let from = if matches!(mem_en, MEM::DIFF) { mean - (std_deviation / 2.) } else {mean - (std_deviation )};
+        let to = if matches!(mem_en, MEM::DIFF) { mean + (std_deviation / 2.) } else {mean + (std_deviation )};
 
         let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 

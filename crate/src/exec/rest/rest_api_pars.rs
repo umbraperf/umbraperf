@@ -147,10 +147,7 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         }
     } else {
         MEM::ABS
-    };
-
-    print_to_js_with_obj(&format!("{:?}", split_numop).into());
-    
+    };    
 
     let _before_colon = 0;
     let after_colon = 1;

@@ -52,14 +52,12 @@ class UirViewer extends React.Component<Props, State> {
         this.globalEventOccurrenceDecorations = [];
     }
 
-    componentDidMount() {
-    }
-
     componentDidUpdate(prevProps: Props, prevState: State) {
 
-        //Update glyphs when event or operatorColord changes
+        //Update glyphs when event, currentOperators or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
-            || this.state.operatorsColored !== prevState.operatorsColored) {
+            || this.state.operatorsColored !== prevState.operatorsColored
+            || _.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
             this.setMonacoGlyphs();
         }
 
@@ -298,7 +296,7 @@ class UirViewer extends React.Component<Props, State> {
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
             //TODO adjust condition only selected operators
-            if(this.state.operatorsColored){
+            if(this.state.operatorsColored && (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator))){
                 if ("None" !== operator) {
                     const operatorColorGroup = this.props.operators!.indexOf(operator);
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);

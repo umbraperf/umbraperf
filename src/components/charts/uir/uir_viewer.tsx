@@ -57,7 +57,8 @@ class UirViewer extends React.Component<Props, State> {
         //Update glyphs when event, currentOperators or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColored !== prevState.operatorsColored
-            || _.isEqual(this.props.currentOperator, prevProps.currentOperator)) {
+            || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
+            console.log("here")
             this.setMonacoGlyphs();
         }
 
@@ -217,7 +218,7 @@ class UirViewer extends React.Component<Props, State> {
         (this.editorRef as any).trigger('unfold', 'editor.unfoldAll');
     }
 
-    toggleOperatorsColord(event: React.ChangeEvent<HTMLInputElement>){
+    toggleOperatorsColord(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState((state, props) => ({
             ...state,
             operatorsColored: event.target.checked,
@@ -295,13 +296,13 @@ class UirViewer extends React.Component<Props, State> {
 
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
-            //TODO adjust condition only selected operators
-            if(this.state.operatorsColored && (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator))){
-                if ("None" !== operator) {
-                    const operatorColorGroup = this.props.operators!.indexOf(operator);
-                    elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
-    
-                }
+            if (this.state.operatorsColored
+                && this.props.operators!.includes(operator)
+                && operator !== "None"
+                && (this.props.currentOperator === "All"
+                    || this.props.currentOperator.includes(operator))) {
+                const operatorColorGroup = this.props.operators!.indexOf(operator);
+                elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
             }
 
             (this.editorRef as any).deltaDecorations([this.globalEventOccurrenceDecorations[i]], [
@@ -353,7 +354,6 @@ class UirViewer extends React.Component<Props, State> {
                 color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
             } else if (colorScaleType === "Operator") {
                 color = this.state.operatorColorScale[colorGroup];
-                console.log(color);
             }
             style.innerHTML = `.${className} { background: ${color}; }`;
             this.editorContainerRef.current!.appendChild(style);

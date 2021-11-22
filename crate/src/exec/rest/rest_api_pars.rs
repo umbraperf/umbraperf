@@ -119,20 +119,6 @@ pub fn rel_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
     return rel_freq_specific_pipelines(record_batch, params);
 }
 
-pub fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
-    let split = split_at_comma(params);
-    if split[0].contains("\"") {
-        basic::add_column(record_batch, &split[0].replace("\"", ""), split[1])
-    } else {
-        basic::add_column_float(record_batch, split[0].parse::<f64>().unwrap(), split[1])
-    }
-}
-
-pub fn rename(record_batch: &RecordBatch, params: &str) -> RecordBatch {
-    let split = split_at_comma(params);
-    basic::rename_column(record_batch, split[0], split[1])
-}
-
 pub fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     if params.contains(",") {
         let split = split_at_comma(params);

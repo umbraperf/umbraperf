@@ -2,7 +2,7 @@ use crate::{exec::basic::{basic, count, filter, kpis, uir::uir}, record_batch_ut
 use arrow::record_batch::RecordBatch;
 use std::usize;
 
-use super::rest_api_pars::{abs_freq_pars, add_column, freq_mem, rel_freq_pars, rename, sort};
+use super::rest_api_pars::{abs_freq_pars,freq_mem, rel_freq_pars, sort};
 
 // Find name in Record Batch
 // Panic if error, else usize of column
@@ -67,12 +67,6 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
         match operator {
             "sunburst" => {
                 record_batch = count::count_rows_over_double(&record_batch, 3, 0);
-            }
-            "rename" => {
-                record_batch = rename(&record_batch, params);
-            }
-            "add_column" => {
-                record_batch = add_column(&record_batch, params);
             }
             "distinct" => {
                 record_batch =

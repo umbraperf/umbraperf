@@ -37,7 +37,8 @@ class UirViewer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            linesFolded: true,
+            //TODO set to true
+            linesFolded: false,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
@@ -274,14 +275,11 @@ class UirViewer extends React.Component<Props, State> {
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
             //TODO adjust condition only selected operators
-            // if (operator !== "None") {
-            const operatorColorGroup = this.props.operators!.indexOf(operator);
-            // if (operatorColorGroup !== -1) {
-            // currentLineOperatorGlyphClass = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
-            elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", 10);
+            if ("None" !== operator) {
+                const operatorColorGroup = this.props.operators!.indexOf(operator);
+                elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
 
-            // }
-            // }
+            }
 
             (this.editorRef as any).deltaDecorations([this.globalEventOccurrenceDecorations[i]], [
                 {
@@ -318,10 +316,10 @@ class UirViewer extends React.Component<Props, State> {
     }
 
     createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
-        //return name of correct css class, create class if not yet created
 
+        //return name of correct css class, create class if not yet created
         const className = `glyphClass${colorScaleType}${colorGroup}`;
-        // console.log(this.editorContainerRef.current!.children);
+
         if (this.editorContainerRef.current!.children.namedItem(className)) {
             return className;
         } else {
@@ -330,12 +328,10 @@ class UirViewer extends React.Component<Props, State> {
             let color = "";
             if (colorScaleType === "Event") {
                 color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
-                style.innerHTML = `.${className} { background: ${color}; }`;
             } else if (colorScaleType === "Operator") {
                 color = this.state.operatorColorScale[colorGroup];
-                style.innerHTML = `.${className} { background: #00ff00; }`;
             }
-            // style.innerHTML = `.${className} { background: ${color}; }`;
+            style.innerHTML = `.${className} { background: ${color}; }`;
             this.editorContainerRef.current!.appendChild(style);
             return className;
         }

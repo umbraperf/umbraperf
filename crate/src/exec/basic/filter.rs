@@ -1,4 +1,4 @@
-use arrow::{array::{ArrayRef, BooleanArray, Float64Array, Int32Array, StringArray, UInt64Array}, record_batch::RecordBatch};
+use arrow::{array::{ArrayRef, BooleanArray, Float64Array, Int32Array, StringArray}, record_batch::RecordBatch};
 
 use crate::{
     exec::basic::basic::{find_unique_string, sort_batch},

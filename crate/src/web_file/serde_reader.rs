@@ -1,9 +1,9 @@
-use std::{collections::HashMap, io::BufReader};
+use std::{collections::HashMap};
 
 use serde::Deserialize;
 use serde_json::{Map,Value};
 
-use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
+use super::{parquet_reader::BufferReader};
 use crate::web_file::serde_reader::Value::Number;
 
 #[derive(Deserialize, Debug, Clone)]

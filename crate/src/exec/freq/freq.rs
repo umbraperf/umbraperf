@@ -1,16 +1,15 @@
-use std::{collections::HashMap, convert::TryInto, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
     array::{
         Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
         UInt64Array,
     },
-    datatypes::{DataType, Field, Float64Type, Int32Type, Schema, UInt64Type},
+    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
-        print_to_cons::print_to_js_with_obj,
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between_int32}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js,
         },

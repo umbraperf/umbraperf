@@ -183,7 +183,7 @@ class UirViewer extends React.Component<Props, State> {
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
         this.editorRef = editor;
-        this.foldAllLines();
+        // this.foldAllLines();
         this.setMonacoGlyphs();
     }
 
@@ -330,6 +330,7 @@ class UirViewer extends React.Component<Props, State> {
                 color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
             } else if (colorScaleType === "Operator") {
                 color = this.state.operatorColorScale[colorGroup];
+                console.log(color)
             }
             style.innerHTML = `.${className} { background: ${color}; }`;
             this.editorContainerRef.current!.appendChild(style);

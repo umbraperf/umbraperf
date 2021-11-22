@@ -107,27 +107,20 @@ export let chartConfiguration: ChartConfiguration = {
         const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
 
         const parsedColorValueRange = colorValueRange.map((elem) => {
-            const parsedElem: [string, string, string] = ["", "", ""];
 
-            parsedElem[0] = `${elem[0]}`;
-            parsedElem[2] = `${elem[2]}%`;
-
+            let elemSaturation = elem[1];
             if (higSaturation) {
                 const saturationOffset = 20;
-                const originalSaturation = elem[1];
-                let adjustedSaturation = originalSaturation - saturationOffset;
+                let adjustedSaturation = elemSaturation - saturationOffset;
                 if (adjustedSaturation > 100) {
                     adjustedSaturation = 100;
                 } else if (adjustedSaturation < 0) {
                     adjustedSaturation = 0;
                 }
-                parsedElem[1] = `${adjustedSaturation}%`;
-
-            } else {
-                parsedElem[1] = `${elem[1]}%`;
+                elemSaturation = adjustedSaturation;
             }
 
-            return `hsl(${parsedElem.join()})`;
+            return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
         });
 
         return parsedColorValueRange;

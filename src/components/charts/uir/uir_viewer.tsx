@@ -39,7 +39,7 @@ class UirViewer extends React.Component<Props, State> {
         this.state = {
             //TODO set to true
             linesFolded: false,
-            operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+            operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
@@ -330,6 +330,7 @@ class UirViewer extends React.Component<Props, State> {
                 color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
             } else if (colorScaleType === "Operator") {
                 color = this.state.operatorColorScale[colorGroup];
+                console.log(color);
             }
             style.innerHTML = `.${className} { background: ${color}; }`;
             this.editorContainerRef.current!.appendChild(style);

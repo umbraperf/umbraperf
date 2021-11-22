@@ -186,6 +186,26 @@ class UirViewer extends React.Component<Props, State> {
             }
         });
 
+        //Register a hover provider to umbraIntermediateRepresentation language
+        monaco.languages.registerHoverProvider('umbraIntermediateRepresentation', {
+            provideHover: (model, position) => this.getHoverProviderResult(model, position)
+        });
+    }
+
+    getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position){
+        console.log("hover! ")
+        return {
+            // range: new monaco.Range(
+            //     1,
+            //     1,
+            //     model.getLineCount(),
+            //     model.getLineMaxColumn(model.getLineCount())
+            // ),
+            contents: [
+                { value: '**SOURCE**' },
+                { value: '```html' }
+            ]
+        };
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
@@ -284,14 +304,16 @@ class UirViewer extends React.Component<Props, State> {
 
         for (let i = 0; i < this.props.chartData.uirLines.length; i++) {
 
-            //Default: No glyph
+            //Default: No glyph and no glyph margin hover message
             const elemGlyphClasses = [styles.glyphClassWhite, styles.glyphClassWhite];
+            let glyphMarginHoverMessage = undefined;
 
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
             if (eventOccurence > 0) {
                 const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
+                glyphMarginHoverMessage= `${eventOccurence}%`
             }
 
             //color line glyph for operator
@@ -311,6 +333,8 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
+                        // glyphMarginHoverMessage: { value: 'glyph margin hover message' },
+                        glyphMarginHoverMessage: {value: glyphMarginHoverMessage},
                         className: elemGlyphClasses[1],
                     }
                 }

@@ -347,9 +347,9 @@ pub fn freq_of_memory(
             if i == 0 {
                 0 as i32
             } else {
-                let value1 = memory_column.value(column_index as usize) / 100000;
-                let value2 = memory_column.value(column_index - 1 as usize) / 100000;
-                let diff = value2 as i64 - value1 as i64 ;
+                let current = memory_column.value(column_index as usize) / 100000;
+                let before = memory_column.value(column_index - 1 as usize) / 100000;
+                let diff = before as i64 - current as i64 ;
                 diff as i32
             }
         };

@@ -36,7 +36,7 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => Array<string>;
+    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean, hsla?: number) => Array<string>;
     getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
@@ -102,7 +102,7 @@ export let chartConfiguration: ChartConfiguration = {
     memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 
     //Color scale:
-    getOperatorColorScheme: (domainLength, higSaturation) => {
+    getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
 
         const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
 
@@ -120,6 +120,9 @@ export let chartConfiguration: ChartConfiguration = {
                 elemSaturation = adjustedSaturation;
             }
 
+            if(hsla){
+                return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
+            }
             return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
         });
 

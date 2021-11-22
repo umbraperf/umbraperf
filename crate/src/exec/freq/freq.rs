@@ -9,7 +9,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32, filter_between_u64}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js,
@@ -273,22 +273,34 @@ pub fn freq_of_memory(
     from: f64,
     to: f64,
     len_of_mem: Option<i64>,
-    mem_en: MEM
+    mem_en: MEM,
 ) {
+    let batch = if matches!(mem_en, MEM::ABS) {
+        let mem_column = get_uint_column(&batch, 4);
+        let mem_vec = mem_column
+            .into_iter()
+            .map(|v| (v.unwrap() as i64))
+            .collect::<Vec<i64>>();
 
+        let mean = statistics::mean(&mem_vec).unwrap();
+        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+        let three_times = std_deviation * std_deviation * std_deviation;
 
-    print_to_js_with_obj(&format!("in it! {:?}", from).into());
+        let from_ = mean - std_deviation;
+        let to_ = mean + std_deviation;
+        let batch = filter_between_u64(4, from_ as f64, to_ as f64, &batch);
+        batch
+    } else {
+        batch.to_owned()
+    };
 
-    let batch = &sort_batch(batch, 2, false);
+    let batch = &sort_batch(&batch, 2, false);
 
-    let unique_operator =
-        find_unique_string(batch, column_for_operator);
+    let unique_operator = find_unique_string(batch, column_for_operator);
 
     let unique_operator = &sort_batch(&unique_operator, 0, false);
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
-
-    print_to_js_with_obj(&format!("vec_operator {:?}", vec_operator).into());
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();

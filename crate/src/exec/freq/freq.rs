@@ -350,13 +350,10 @@ pub fn freq_of_memory(
                 let value1 = memory_column.value(column_index as usize) / 100000;
                 let value2 = memory_column.value(column_index - 1 as usize) / 100000;
                 let diff = value2 as i64 - value1 as i64 ;
-                print_to_js_with_obj(&format!("diff {:?}", diff).into());
                 diff as i32
             }
         };
-        print_to_js_with_obj(&format!("current_memory {:?}", current_memory).into());
         while time_bucket < time.unwrap() {
-            print_to_js_with_obj(&format!("{:?}", "in time bucket < time-unwrap()").into());
 
             for operator in vec_operator {
                 let operator = operator.unwrap();

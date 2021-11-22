@@ -92,9 +92,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter}${timeFilter}/sunburst?pipeline`;
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
-            return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}`;
-
-            // return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}${memoryAccessesDifferences}`;
+            return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}${memoryAccessesDifferences}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline/perc1/perc2/perc3/perc4/op/pipe${timeFilter}/uir?srclines`;
         case BackendQueryType.other:

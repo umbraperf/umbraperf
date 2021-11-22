@@ -57,6 +57,7 @@ class UirViewer extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State) {
 
+        //Update glyphs when event or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColored !== prevState.operatorsColored) {
             this.setMonacoGlyphs();

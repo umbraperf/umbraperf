@@ -5,13 +5,14 @@ import styles from '../../../style/utils.module.css';
 
 interface Props {
     uirLinesFolded: boolean,
-    uirViewerHandleLinesFoldedChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    togglerLabelText: string,
+    uirViewerTogglerChangeFunction: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function UirLinesFoldedToggler(props: Props) {
 
-    const handleUirLinesFoldedTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.uirViewerHandleLinesFoldedChange(event);
+    const handleUirTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.uirViewerTogglerChangeFunction(event);
     }
 
 
@@ -24,7 +25,7 @@ function UirLinesFoldedToggler(props: Props) {
                     control={
                         <Switch
                             checked={props.uirLinesFolded}
-                            onChange={handleUirLinesFoldedTogglerChange}
+                            onChange={handleUirTogglerChange}
                             name="HeatmapsDiffToggler"
                             size="small"
                         />
@@ -34,7 +35,7 @@ function UirLinesFoldedToggler(props: Props) {
                             className={styles.togglerLabel}
                             variant="caption"
                         >
-                            Fold Lines: 
+                            {props.togglerLabelText}
                         </Typography>
                     }
                     labelPlacement="start"

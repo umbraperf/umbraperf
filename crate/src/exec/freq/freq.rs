@@ -336,7 +336,7 @@ pub fn freq_of_memory(
 
     let divided = if len_of_mem.is_some() {
         let mut out = 1;
-        for i in 0..len_of_mem.unwrap() {
+        for _i in 0..len_of_mem.unwrap() {
             out *= 10;
         }
         out
@@ -353,13 +353,10 @@ pub fn freq_of_memory(
                 let value1 = memory_column.value(column_index as usize) / 100000;
                 let value2 = memory_column.value(column_index - 1 as usize) / 100000;
                 let diff = value2 as i64 - value1 as i64 ;
-                print_to_js_with_obj(&format!("diff {:?}", diff).into());
                 diff as i32
             }
         };
-        print_to_js_with_obj(&format!("current_memory {:?}", current_memory).into());
         while time_bucket < time.unwrap() {
-            print_to_js_with_obj(&format!("{:?}", "in time bucket < time-unwrap()").into());
 
             for operator in vec_operator {
                 let operator = operator.unwrap();
@@ -422,8 +419,6 @@ pub fn freq_of_memory(
         result_builder,
     );
 
-    print_to_js_with_obj(&format!("batch {:?}", batch).into());
-
 
     let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
     let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
@@ -462,8 +457,6 @@ pub fn freq_of_memory(
     let sorted_batch = sort_batch(&batch, 1, false);
     let mut offset = 0.;
     let mut hashmap = HashMap::new();
-
-    print_to_js_with_obj(&format!("entry {:?}", "hi").into());
 
     for entry in vec_operator.into_iter().enumerate() {
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
@@ -513,14 +506,13 @@ pub fn freq_of_memory(
   
         let mean = statistics::mean(&mem_vec).unwrap();
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
-        let three_times = std_deviation * std_deviation * std_deviation;
+        //let three_times = std_deviation * std_deviation * std_deviation;
 
         let from = mean - (std_deviation / 2.);
         let to = mean + (std_deviation / 2.);
 
         let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
 
-        print_to_js_with_obj(&format!("single batch {:?}", single_batch).into());
         let min_bucket = arrow::compute::min(bucket).unwrap();
         hashmap.insert((entry.1.unwrap(), min_bucket as usize),single_batch);
 

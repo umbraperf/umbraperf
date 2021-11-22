@@ -303,8 +303,6 @@ pub fn freq_of_memory(
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
 
-    print_to_js_with_obj(&format!("vec_operator {:?}", vec_operator).into());
-
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
     let mut result_mem_operator: Vec<i32> = Vec::new();

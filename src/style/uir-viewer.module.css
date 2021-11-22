@@ -38,18 +38,12 @@
 }
 
 .uirViewerToggler{
-    flex: 0 0 fit-content;
-
+    flex: 0 0 content;
+    padding-right: 3px;
+    padding-left: 3px;
 }
 
 .glyphClassWhite{
     background: #fff;
 }
 
-.operatorTest{
-    background: blue;
-}
-
-.operatorTest2{
-    background: green;
-}

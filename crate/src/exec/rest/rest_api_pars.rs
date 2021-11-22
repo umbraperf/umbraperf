@@ -166,6 +166,6 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         range[0].parse::<f64>().unwrap(),
         range[1].parse::<f64>().unwrap(),
         None,
-        MEM::DIFF
+        abs_or_diff
     );
 }

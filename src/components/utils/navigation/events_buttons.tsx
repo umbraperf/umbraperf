@@ -1,10 +1,10 @@
-import * as model from '../../model';
-import * as Context from '../../app_context';
-import Spinner from './spinner';
+import * as model from '../../../model';
+import * as Context from '../../../app_context';
+import Spinner from '../spinner/spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
-import styles from '../../style/utils.module.css';
+import styles from '../../../style/utils.module.css';
 
 
 interface Props {
@@ -33,22 +33,20 @@ function EventsButtons(props: Props) {
         }
     }, []);
 
-    //automatically change event to memory loads if available on change to memory dashboard, 
-    //automatically change event to cycles if available on change to uir dashboard,
     //allow for multiple events selection if multiple events dashboard
     useEffect(() => {
 
-        if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
-            if (events.includes("mem_inst_retired.all_loads")) {
-                handleEventButtonClick("mem_inst_retired.all_loads");
-            }
-        }
+        // if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
+        //     if (events.includes("mem_inst_retired.all_loads")) {
+        //         handleEventButtonClick("mem_inst_retired.all_loads");
+        //     }
+        // }
 
-        if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
-            if (events.includes("cycles:ppp")) {
-                handleEventButtonClick("cycles:ppp");
-            }
-        }
+        // if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
+        //     if (events.includes("cycles:ppp")) {
+        //         handleEventButtonClick("cycles:ppp");
+        //     }
+        // }
 
         if (events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS) {
             setMultipleEvents(true);
@@ -95,9 +93,9 @@ function EventsButtons(props: Props) {
         if (props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp") {
             return true;
         }
-        if (props.currentView === model.ViewType.DASHBOARD_UIR) {
-            return true;
-        }
+        // if (props.currentView === model.ViewType.DASHBOARD_UIR) {
+        //     return true;
+        // }
         return false;
     }
 

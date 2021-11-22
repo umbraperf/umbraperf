@@ -1,11 +1,11 @@
-import * as model from '../../model';
+import * as model from '../../../model';
 import React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withRouter, Link } from 'react-router-dom';
-import { topLevelComponents } from '../../app_config';
+import { topLevelComponents } from '../../../app_config';
 import { useSelector } from 'react-redux';
 
 

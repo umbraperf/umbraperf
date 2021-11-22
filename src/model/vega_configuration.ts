@@ -18,6 +18,9 @@ export interface ChartConfiguration {
     legendTitleFontSize: number;
     legendLabelFontSize: number;
     legendSymbolSize: number;
+    legendDoubleTitleFontSize: number;
+    legendDoubleLabelFontSize: number;
+    legendDoubleSymbolSize: number;
     subtitleFontSize: number;
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
@@ -33,7 +36,8 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean) => Array<string>;
+    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean, hsla?: number) => Array<string>;
+    getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
@@ -75,6 +79,9 @@ export let chartConfiguration: ChartConfiguration = {
     legendTitleFontSize: 9,
     legendLabelFontSize: 8,
     legendSymbolSize: 50,
+    legendDoubleTitleFontSize: 11,
+    legendDoubleLabelFontSize: 10,
+    legendDoubleSymbolSize: 60,
 
     //Value Lables
     sunburstChartValueLabelFontSize: 11,
@@ -95,36 +102,36 @@ export let chartConfiguration: ChartConfiguration = {
     memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 
     //Color scale:
-    getOperatorColorScheme: (domainLength, higSaturation) => {
+    getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
 
         const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
 
         const parsedColorValueRange = colorValueRange.map((elem) => {
-            const parsedElem: [string, string, string] = ["", "", ""];
 
-            parsedElem[0] = `${elem[0]}`;
-            parsedElem[2] = `${elem[2]}%`;
-
+            let elemSaturation = elem[1];
             if (higSaturation) {
                 const saturationOffset = 20;
-                const originalSaturation = elem[1];
-                let adjustedSaturation = originalSaturation - saturationOffset;
+                let adjustedSaturation = elemSaturation - saturationOffset;
                 if (adjustedSaturation > 100) {
                     adjustedSaturation = 100;
                 } else if (adjustedSaturation < 0) {
                     adjustedSaturation = 0;
                 }
-                parsedElem[1] = `${adjustedSaturation}%`;
-
-            } else {
-                parsedElem[1] = `${elem[1]}%`;
+                elemSaturation = adjustedSaturation;
             }
 
-            return `hsl(${parsedElem.join()})`;
+            if(hsla){
+                return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
+            }
+            return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
         });
 
         return parsedColorValueRange;
+    },
 
+    getOrangeColor: (opacity) => {
+
+        return orangeColorSchemeHex[opacity];
     },
 
     //Hover behaviour: 
@@ -153,4 +160,16 @@ const operatorColorScemeHsl: Array<Array<number>> = [
     [316, 37, 74],
     [22, 25, 50],
     [19, 40, 75],
+]
+
+const orangeColorSchemeHex: Array<string> = [
+    '#EDB596',
+    '#E69F78',
+    '#DD895A',
+    '#d4733e',
+    '#C56937',
+    '#B66031',
+    '#A6562A',
+    '#964D24',
+    '#86431F',
 ]

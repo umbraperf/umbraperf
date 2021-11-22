@@ -1,16 +1,15 @@
-import * as model from '../../model';
+import * as model from '../../../model';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
-import styles from '../../style/upload.module.css';
-import Spinner from './spinner';
-import { IAppContext, withAppContext } from '../../app_context';
+import styles from '../../../style/upload.module.css';
+import Spinner from '../spinner/spinner';
+import { IAppContext, withAppContext } from '../../../app_context';
 import { Redirect } from 'react-router-dom';
 
 interface Props {
     appContext: IAppContext;
     file: undefined | File;
-    fileName: string | undefined;
     csvParsingFinished: boolean;
     fileLoading: boolean;
     setFile: (newFile: File) => void;
@@ -122,8 +121,8 @@ class FileUploader extends React.Component<Props, State> {
 
     public render() {
         return <div className={styles.dropzoneContainer}>
-            {/* {this.state.allowRedirect && <Redirect to={"/dashboard-multiple-events"} />} */}
-            {this.state.allowRedirect && <Redirect to={"/dashboard-single-event"} />}
+            {/* {this.state.allowRedirect && <Redirect to={"/dashboard-single-event"} />} */}
+            {this.state.allowRedirect && <Redirect to={"/dashboard-uir"} />}
 
             <Dropzone
                 accept={['.umbraperf']}
@@ -149,7 +148,6 @@ class FileUploader extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
-    fileName: state.fileName,
     csvParsingFinished: state.csvParsingFinished,
     fileLoading: state.fileLoading,
 });

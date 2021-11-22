@@ -1,3 +1,6 @@
+@value colors: "./export-variables.module.css";
+@value colorTertiary, colorAccentBlack from colors;
+
 :root {
     --labelFonSize: 11px;
 }
@@ -127,7 +130,33 @@
 .dropdownOptionsContainer{
     composes: optionsContainer;
     flex-direction: row;
+}
 
+.appbar{    
+    color: white;
+    background: colorAccentBlack;
+}
+
+.appbarToolbar{
+    min-height: 38px;
+    display: flex;
+}
+
+.appbarToolbarStatusContainer{
+    flex: 1;
+    display: flex;
+    justify-content: right;
+    font-size: 12px;
+}
+
+.statusContainer{
+    display: flex;
+}
+
+.togglerLabel{
+    color: colorTertiary;
+    font-size: 11px;
+    vertical-align: middle;
 }
 
 @keyframes fadeIn {

@@ -17,13 +17,10 @@ export type ChartData<T, P> = {
 
 export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART, IBarChartData>
-    | ChartData<ChartType.SWIM_LANES, ISwimlanesData>
-    | ChartData<ChartType.SWIM_LANES_PIPELINES, Array<ISwimlanesData>>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesCombinedData>
     | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesCombinedData>
-    | ChartData<ChartType.DONUT_CHART, IDonutChartData>
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
     | ChartData<ChartType.SUNBURST_CHART, ISunburstChartData>
     | ChartData<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartData>
@@ -55,11 +52,6 @@ export interface ISwimlanesCombinedData {
     bucketsNeg: Array<number>,
     operatorsNeg: Array<string>,
     frequencyNeg: Array<number>,
-}
-
-export interface IDonutChartData {
-    pipeline: Array<string>,
-    count: Array<number>,
 }
 
 export interface IBarChartActivityHistogramData {
@@ -95,5 +87,11 @@ export interface IMemoryAccessHeatmapChartData {
 
 export interface IUirViewerData {
     uirLines: Array<string>;
+    event1: Array<number>;
+    event2: Array<number>;
+    event3: Array<number>;
+    event4: Array<number>;
+    operators: Array<string>;
+    pipelines: Array<string>;
 }
 

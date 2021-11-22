@@ -3,9 +3,9 @@ import React from 'react';
 import styles from '../../style/dashboard.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import EventsButtons from '../utils/events_buttons';
-import KpiContainer from '../utils/kpi_container';
-import DropdownsOptions from '../utils/dropdowns_options';
+import EventsButtons from '../utils/navigation/events_buttons';
+import KpiContainer from '../utils/containers/kpi_container';
+import DropdownsOptions from '../utils/dropdowns/dropdowns_options';
 import { Grid, Box } from '@material-ui/core';
 
 

@@ -2,7 +2,7 @@ import * as Controller from './controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 import { ICalculateChartDataRequestData } from './worker';
-import * as RestApi from './model/rest_queries';
+import * as RestApi from './model/backend_queries';
 
 
 
@@ -25,9 +25,8 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(metadata: string, restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.RestQueryType) {
+    public calculateChartData(restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.BackendQueryType) {
         const requestData: ICalculateChartDataRequestData = {
-            queryMetadata: metadata,
             restQuery: restQuery,
             metaRequest: metaRequest,
             requestId: requestId,

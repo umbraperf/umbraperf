@@ -43,7 +43,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
 
 
             <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
-                <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4}>
+                <Grid item className={styles.dashboardGridCellItemDoubleRow} xs={12} md={6} lg={4}>
                     <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                             <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
@@ -52,7 +52,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 </Grid>
             </Box>
             <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
-                <Grid item container direction="column" className={styles.dashboardDoubleGridCellItem} xs={12} md={12} lg={8}>
+                <Grid item container className={styles.dashboardGridCellItemDoubleRowInnerGridContainer} direction="column" xs={12} md={12} lg={8}>
                     <Grid item className={styles.dashboardGridCellItem}>
                         <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                             <div className={styles.dashboardGridCellChartContainer}>

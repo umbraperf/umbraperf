@@ -2,13 +2,14 @@ import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
 import styles from '../../style/charts.module.css';
-import Spinner from '../utils/spinner';
+import Spinner from '../utils/spinner/spinner';
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
 
+import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
 import SunburstChart from './vega_visualizations/sunburst_chart';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
@@ -38,9 +39,11 @@ export interface ChartWrapperAppstateProps {
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
+    memoryHeatmapsDifferenceRepresentation: boolean,
+
 
     setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 type Props = OwnProps & ChartWrapperAppstateProps;
@@ -51,7 +54,7 @@ interface State {
     height: number,
 }
 
-let globalInputDataChanged: boolean;
+let globalInputDataChanged: { [chartId: number]: boolean };
 
 class ChartWrapper extends React.Component<Props, State> {
 
@@ -64,17 +67,20 @@ class ChartWrapper extends React.Component<Props, State> {
             width: 0,
             height: 0,
         };
+        globalInputDataChanged = {
+            ...globalInputDataChanged,
+            [this.props.chartIdCounter]: false,
+        };
         this.props.setChartIdCounter((this.state.chartId) + 1);
-        globalInputDataChanged = false;
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
 
-        globalInputDataChanged = false;
+        globalInputDataChanged[this.state.chartId] = false;
 
         //rerender only on affected input data changed and if they are available, store if this is the case to avoid checking the condition to fetch the data later twice
         if (Controller.chartRerenderNeeded(nextProps, this.props, this.props.chartType)) {
-            globalInputDataChanged = true;
+            globalInputDataChanged[this.state.chartId] = true;
             return true;
         }
 
@@ -104,7 +110,6 @@ class ChartWrapper extends React.Component<Props, State> {
         }));
 
         if (this.props.csvParsingFinished) {
-            this.props.setCurrentChart(this.props.chartType);
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -115,7 +120,7 @@ class ChartWrapper extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props): void {
         //Controller.newChartDataNeeded(this.props, prevProps, this.props.chartType, this.state.chartId);
-        if (globalInputDataChanged) {
+        if (globalInputDataChanged[this.state.chartId] === true) {
             Controller.requestChartData(this.props.appContext.controller, this.state.chartId, this.props.chartType);
         }
     }
@@ -143,85 +148,126 @@ class ChartWrapper extends React.Component<Props, State> {
                     height: newHeight,
                 }));
 
-                child.style.display = 'block';
+                child.style.display = 'flex';
             }
         }
-
-        console.log(this.state.chartId + " " + this.state.height);
-
     }
 
     createChildChart() {
 
-        const partialChartProps: model.IParcialChartProps = {
+        const partialChartProps: model.ICommonChartProps = {
             key: this.state.chartId + this.state.width + this.state.height,
             chartId: this.state.chartId,
             width: this.state.width,
             chartType: this.props.chartType,
         }
 
+        let specificChart: model.ChartComponentVariant = {} as model.ChartComponentVariant;
+        let chartClass: React.ElementType | undefined = undefined;
+
         switch (this.props.chartType) {
 
             case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
                 const barChartActivityHistogramProps: model.IBarChartActivityHistogramProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(BarChartActivityHistogram, barChartActivityHistogramProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: barChartActivityHistogramProps,
+                };
+                chartClass = BarChartActivityHistogram;
+                break;
 
             case model.ChartType.BAR_CHART:
                 const barChartProps: model.IBarChartProps = {
                     ...partialChartProps,
                     onDashboard: true,
                     height: this.state.height,
-                }
-                return React.createElement(BarChart, barChartProps as any);
-
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: barChartProps,
+                };
+                chartClass = BarChart;
+                break;
 
             case model.ChartType.SUNBURST_CHART:
                 const sunburstProps: model.ISunburstChartProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     doubleRowSize: this.state.height > 400 ? true : false,
-                }
-                return React.createElement(SunburstChart, sunburstProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: sunburstProps,
+                };
+                chartClass = SunburstChart;
+                break;
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
                 const swimLanesMultiplePipelinesProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: false,
-                }
-                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesMultiplePipelinesProps,
+                };
+                chartClass = SwimLanesMultiplePipelines;
+                break;
 
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
                 const swimLanesMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
-                }
-                return React.createElement(SwimLanesMultiplePipelines, swimLanesMultiplePipelinesAbsoluteProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesMultiplePipelinesAbsoluteProps,
+                };
+                chartClass = SwimLanesMultiplePipelines;
+                break;
 
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
                 const swimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
                     ...partialChartProps,
                     height: this.state.height,
                     absoluteValues: true,
-                }
-                return React.createElement(SwimLanesCombinedMultiplePipelines, swimLanesCombinedMultiplePipelinesAbsoluteProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesCombinedMultiplePipelinesAbsoluteProps,
+                };
+                chartClass = SwimLanesCombinedMultiplePipelines;
+                break;
 
             case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
                 const memoryAccessHeatmapChartProps: model.IMemoryAccessHeatmapChartProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(MemoryAccessHeatmapChart, memoryAccessHeatmapChartProps as any);
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: memoryAccessHeatmapChartProps,
+                };
+                chartClass = MemoryAccessHeatmapChart;
+                break;
 
             case model.ChartType.UIR_VIEWER:
                 const uirViewerChartProps: model.IUirViewerProps = {
                     ...partialChartProps,
-                }
-                return React.createElement(UirViewer, uirViewerChartProps as any);
-
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: uirViewerChartProps,
+                };
+                chartClass = UirViewer;
+                break;
         }
+
+        this.props.setCurrentChart(specificChart.type);
+        return React.createElement(chartClass!, specificChart.props as any);
     }
 
     isComponentLoading(): boolean {
@@ -233,6 +279,17 @@ class ChartWrapper extends React.Component<Props, State> {
         }
     }
 
+    renderChartOptions(): JSX.Element | undefined {
+        //return div with chart options or undefined if there are no chart options
+        let chartOptions = undefined;
+        if (this.props.chartType === model.ChartType.MEMORY_ACCESS_HEATMAP_CHART) {
+            chartOptions = <HeatmapsDiffToggler />
+        }
+        return chartOptions ? <div className={styles.chartOptionsContainer}>
+            {chartOptions}
+        </div> : undefined;
+    }
+
 
     public render() {
 
@@ -241,6 +298,7 @@ class ChartWrapper extends React.Component<Props, State> {
         }
 
         return <div className={styles.elementWrapper} ref={this.elementWrapper}>
+            {this.renderChartOptions()}
             {this.isComponentLoading()
                 ? <Spinner />
                 : <div className={styles.chartContainer}>
@@ -267,6 +325,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentBucketSize: state.currentBucketSize,
+    memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
@@ -274,7 +333,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_CHARTIDCOUNTER,
         data: newChartIdCounter,
     }),
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

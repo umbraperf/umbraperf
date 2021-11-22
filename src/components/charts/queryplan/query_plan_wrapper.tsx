@@ -2,7 +2,7 @@ import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
-import Spinner from '../../utils/spinner';
+import Spinner from '../../utils/spinner/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createRef } from 'react';
@@ -11,7 +11,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 
-
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
     csvParsingFinished: boolean;
@@ -19,7 +18,7 @@ export interface QueryPlanWrapperAppstateProps {
     currentView: model.ViewType;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
-    setCurrentChart: (newCurrentChart: string) => void;
+    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 interface State {
@@ -45,12 +44,13 @@ export type DagreEdge = {
     config: object,
 }
 
+type Props = QueryPlanWrapperAppstateProps & model.IQueryPlanProps;
 
-class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, State> {
+class QueryPlanWrapper extends React.Component<Props, State> {
 
     graphContainer = createRef<HTMLDivElement>();
 
-    constructor(props: QueryPlanWrapperAppstateProps) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             height: 0,
@@ -63,7 +63,7 @@ class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, St
         this.handleNodeClick = this.handleNodeClick.bind(this);
     }
 
-    componentDidUpdate(prevProps: QueryPlanWrapperAppstateProps, prevState: State): void {
+    componentDidUpdate(prevProps: Props, prevState: State): void {
         if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
             this.setState((state, props) => ({
                 ...state,
@@ -110,7 +110,7 @@ class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, St
                 }));
             }, 500);
 
-            child.style.display = 'block';
+            child.style.display = 'flex';
         }
 
     }
@@ -162,6 +162,7 @@ class QueryPlanWrapper extends React.Component<QueryPlanWrapperAppstateProps, St
         const dagreData = this.createDagreNodesLinks(rootNode);
 
         const dagreGraph = React.createElement(QueryPlanViewer, {
+            key: this.state.height + this.state.width,
             height: this.state.height,
             width: this.state.width,
             nodes: dagreData.nodes,
@@ -263,7 +264,7 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
+    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
         type: model.StateMutationType.SET_CURRENTCHART,
         data: newCurrentChart,
     }),

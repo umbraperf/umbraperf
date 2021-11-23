@@ -8,6 +8,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirLinesFoldedToggler from '../../utils/togglers/uir_toggler';
+import { FormText } from 'react-bootstrap';
 
 
 interface AppstateProps {
@@ -66,7 +67,7 @@ class UirViewer extends React.Component<Props, State> {
         }
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         //Remove hover provider on leaving component:
         this.state.hoverProviderDispose?.dispose();
     }
@@ -228,13 +229,14 @@ class UirViewer extends React.Component<Props, State> {
         };
     }
 
-    createMarkdownEventsList(eventIndex: number){
-        const markdownEvent1 = `- \`${this.props.events![0]}:\` ${this.props.chartData.event1[eventIndex]}% \n`;
-        const markdownEvent2 = `- \`${this.props.events![1]}:\` ${this.props.chartData.event2[eventIndex]}% \n`;
-        const markdownEvent3 = `- \`${this.props.events![2]}:\` ${this.props.chartData.event3[eventIndex]}% \n`;
-        const markdownEvent4 = `- \`${this.props.events![3]}:\` ${this.props.chartData.event4[eventIndex]}% \n`;
-        return markdownEvent1 + markdownEvent2 + markdownEvent3 + markdownEvent4;
-
+    createMarkdownEventsList(eventIndex: number, boldEvent?: number) {
+        let markdownEventsString = "";
+        for (let i = 0; i < 4; i++) {
+            const boldCharacter = (undefined !== boldEvent && i + 1 === boldEvent) ? "**" : "";
+            const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${boldCharacter} \n`;
+            markdownEventsString += markdownEvent;
+        }
+        return markdownEventsString;
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
@@ -363,7 +365,7 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
-                        glyphMarginHoverMessage: { value: glyphMarginHoverMessage },
+                        glyphMarginHoverMessage: { value: this.createMarkdownEventsList(i, eventNumber) },
                         className: elemGlyphClasses[1],
                     }
                 }

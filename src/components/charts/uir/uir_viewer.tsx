@@ -25,6 +25,7 @@ interface State {
     linesFolded: boolean;
     operatorsColored: boolean;
     operatorColorScale: string[];
+    hoverProviderDispose: monaco.IDisposable | undefined,
 }
 
 
@@ -42,6 +43,7 @@ class UirViewer extends React.Component<Props, State> {
             linesFolded: false,
             operatorsColored: true,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
+            hoverProviderDispose: undefined,
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
@@ -62,7 +64,11 @@ class UirViewer extends React.Component<Props, State> {
             console.log("here")
             this.setMonacoGlyphs();
         }
+    }
 
+    componentWillUnmount(){
+        //Remove hover provider on leaving component:
+        this.state.hoverProviderDispose?.dispose();
     }
 
     public render() {
@@ -191,18 +197,18 @@ class UirViewer extends React.Component<Props, State> {
         });
 
         //Register a hover provider to umbraIntermediateRepresentation language
-        monaco.languages.registerHoverProvider('umbraIntermediateRepresentation', {
+        const dispose = monaco.languages.registerHoverProvider('umbraIntermediateRepresentation', {
             provideHover: (model, position) => this.getHoverProviderResult(model, position)
         });
+        this.setState((state, props) => ({
+            ...state,
+            hoverProviderDispose: dispose,
+        }));
+        // monaco.editor.getModels().forEach(model => model.dispose());
+
     }
 
     getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
-
-        const markdownStringObject: monaco.IMarkdownString = {
-            value: `###### UIR Line: xxx\n<table>test</table>`,
-            supportHtml: true,
-            isTrusted: true,
-        };
 
         const markdownStringHeader: monaco.IMarkdownString = {
             value: `### UIR Line ID: ${position.lineNumber}`,
@@ -331,7 +337,7 @@ class UirViewer extends React.Component<Props, State> {
             if (eventOccurence > 0) {
                 const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage = `${eventOccurence}%`
+                glyphMarginHoverMessage = `###### ${this.props.currentEvent}: ${eventOccurence}%`;
             }
 
             //color line glyph for operator

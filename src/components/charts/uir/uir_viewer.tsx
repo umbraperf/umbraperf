@@ -202,8 +202,8 @@ class UirViewer extends React.Component<Props, State> {
             //     model.getLineMaxColumn(model.getLineCount())
             // ),
             contents: [
-                { value: '**SOURCE**' },
-                { value: '```html' }
+                { value: `${model.getLineContent(5)}` },
+                { value: 'TODO' }
             ]
         };
     }
@@ -333,7 +333,6 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
-                        // glyphMarginHoverMessage: { value: 'glyph margin hover message' },
                         glyphMarginHoverMessage: {value: glyphMarginHoverMessage},
                         className: elemGlyphClasses[1],
                     }

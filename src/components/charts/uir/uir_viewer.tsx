@@ -8,7 +8,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirLinesFoldedToggler from '../../utils/togglers/uir_toggler';
-import { FormText } from 'react-bootstrap';
 
 
 interface AppstateProps {
@@ -40,8 +39,7 @@ class UirViewer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            //TODO set to true
-            linesFolded: false,
+            linesFolded: true,
             operatorsColored: true,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
             hoverProviderDispose: undefined,

@@ -208,12 +208,12 @@ class UirViewer extends React.Component<Props, State> {
             value: `### UIR Line ID: ${position.lineNumber}`,
         };
 
-        const markdownOperator = `- Operator: ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
-        const markdownPipeline = `- Pipeline: ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
-        const markdownEvent1 = `- ${this.props.events![0]}: ${this.props.chartData.event1[position.lineNumber - 1]}% \n`;
-        const markdownEvent2 = `- ${this.props.events![1]}: ${this.props.chartData.event2[position.lineNumber - 1]}% \n`;
-        const markdownEvent3 = `- ${this.props.events![2]}: ${this.props.chartData.event3[position.lineNumber - 1]}% \n`;
-        const markdownEvent4 = `- ${this.props.events![3]}: ${this.props.chartData.event4[position.lineNumber - 1]}% \n`;
+        const markdownOperator = `- \`Operator:\` ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
+        const markdownPipeline = `- \`Pipeline:\` ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
+        const markdownEvent1 = `- \`${this.props.events![0]}:\` ${this.props.chartData.event1[position.lineNumber - 1]}% \n`;
+        const markdownEvent2 = `- \`${this.props.events![1]}:\` ${this.props.chartData.event2[position.lineNumber - 1]}% \n`;
+        const markdownEvent3 = `- \`${this.props.events![2]}:\` ${this.props.chartData.event3[position.lineNumber - 1]}% \n`;
+        const markdownEvent4 = `- \`${this.props.events![3]}:\` ${this.props.chartData.event4[position.lineNumber - 1]}% \n`;
 
 
         const markdownStringBody: monaco.IMarkdownString = {

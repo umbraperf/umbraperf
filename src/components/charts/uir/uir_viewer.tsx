@@ -37,8 +37,7 @@ class UirViewer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            //TODO set to true
-            linesFolded: false,
+            linesFolded: true,
             operatorsColored: true,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
         }

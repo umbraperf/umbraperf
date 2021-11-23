@@ -62,7 +62,6 @@ class UirViewer extends React.Component<Props, State> {
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColored !== prevState.operatorsColored
             || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
-            console.log("here")
             this.setMonacoGlyphs();
         }
     }
@@ -229,14 +228,18 @@ class UirViewer extends React.Component<Props, State> {
         };
     }
 
-    createMarkdownEventsList(eventIndex: number, boldEvent?: number) {
+    createMarkdownEventsList(eventIndex: number, boldEvent?: number, marginGlyphRepresentation?: boolean) {
         let markdownEventsString = "";
         for (let i = 0; i < 4; i++) {
-            const boldCharacter = (undefined !== boldEvent && i + 1 === boldEvent) ? "**" : "";
+            let boldCharacter = "";
+            if (marginGlyphRepresentation && i + 1 === boldEvent) {
+                boldCharacter = "**";
+            }
             const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${boldCharacter} \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;
+
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
@@ -345,7 +348,7 @@ class UirViewer extends React.Component<Props, State> {
             if (eventOccurence > 0) {
                 const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage = `###### ${this.props.currentEvent}: ${eventOccurence}%`;
+                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }
 
             //color line glyph for operator
@@ -365,7 +368,7 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
-                        glyphMarginHoverMessage: { value: this.createMarkdownEventsList(i, eventNumber) },
+                        glyphMarginHoverMessage: glyphMarginHoverMessage,
                         className: elemGlyphClasses[1],
                     }
                 }

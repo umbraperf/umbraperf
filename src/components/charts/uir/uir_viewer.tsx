@@ -9,6 +9,7 @@ import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirLinesFoldedToggler from '../../utils/togglers/uir_toggler';
 
+
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
@@ -105,7 +106,7 @@ class UirViewer extends React.Component<Props, State> {
         // Define new Theme
         monaco.editor.defineTheme('uirTheme', {
             base: 'vs',
-            inherit: false,
+            inherit: true,
             rules: [
                 { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
                 { token: 'seconedLevelKeyword', foreground: this.props.appContext.accentDarkGreen },
@@ -136,6 +137,9 @@ class UirViewer extends React.Component<Props, State> {
                 'editor.rangeHighlightBackground': '#fff',
                 'list.activeSelectionForeground': '#fff',
                 'list.hoverForeground': '#fff',
+
+                "editorHoverWidget.background": '#fff',
+                "editorHoverWidget.border": this.props.appContext.secondaryColor,
             }
         });
     }
@@ -192,19 +196,32 @@ class UirViewer extends React.Component<Props, State> {
         });
     }
 
-    getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position){
-        console.log("hover! ")
+    getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
+
+        const markdownStringObject: monaco.IMarkdownString = {
+            value: `###### UIR Line: xxx\n<table>test</table>`,
+            supportHtml: true,
+            isTrusted: true,
+        };
+
+        const markdownStringHeader: monaco.IMarkdownString = {
+            value: `### UIR Line ID: ${position.lineNumber}`,
+        };
+
+        const markdownOperator = `- Operator: ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
+        const markdownPipeline = `- Pipeline: ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
+        const markdownEvent1 = `- ${this.props.events![0]}: ${this.props.chartData.event1[position.lineNumber - 1]}% \n`;
+        const markdownEvent2 = `- ${this.props.events![1]}: ${this.props.chartData.event2[position.lineNumber - 1]}% \n`;
+        const markdownEvent3 = `- ${this.props.events![2]}: ${this.props.chartData.event3[position.lineNumber - 1]}% \n`;
+        const markdownEvent4 = `- ${this.props.events![3]}: ${this.props.chartData.event4[position.lineNumber - 1]}% \n`;
+
+
+        const markdownStringBody: monaco.IMarkdownString = {
+            value: markdownOperator + markdownPipeline + markdownEvent1 + markdownEvent2 + markdownEvent3 + markdownEvent4,
+        };
+
         return {
-            // range: new monaco.Range(
-            //     1,
-            //     1,
-            //     model.getLineCount(),
-            //     model.getLineMaxColumn(model.getLineCount())
-            // ),
-            contents: [
-                { value: `${model.getLineContent(5)}` },
-                { value: 'TODO' }
-            ]
+            contents: [markdownStringHeader, markdownStringBody]
         };
     }
 
@@ -257,6 +274,7 @@ class UirViewer extends React.Component<Props, State> {
             fontSize: 11,
             color: this.props.appContext.accentBlack,
             glyphMargin: true,
+            fixedOverflowWidgets: true,
         }
 
         const monacoEditor =
@@ -313,7 +331,7 @@ class UirViewer extends React.Component<Props, State> {
             if (eventOccurence > 0) {
                 const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage= `${eventOccurence}%`
+                glyphMarginHoverMessage = `${eventOccurence}%`
             }
 
             //color line glyph for operator
@@ -333,7 +351,7 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
-                        glyphMarginHoverMessage: {value: glyphMarginHoverMessage},
+                        glyphMarginHoverMessage: { value: glyphMarginHoverMessage },
                         className: elemGlyphClasses[1],
                     }
                 }

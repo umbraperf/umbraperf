@@ -216,19 +216,25 @@ class UirViewer extends React.Component<Props, State> {
 
         const markdownOperator = `- \`Operator:\` ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
         const markdownPipeline = `- \`Pipeline:\` ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
-        const markdownEvent1 = `- \`${this.props.events![0]}:\` ${this.props.chartData.event1[position.lineNumber - 1]}% \n`;
-        const markdownEvent2 = `- \`${this.props.events![1]}:\` ${this.props.chartData.event2[position.lineNumber - 1]}% \n`;
-        const markdownEvent3 = `- \`${this.props.events![2]}:\` ${this.props.chartData.event3[position.lineNumber - 1]}% \n`;
-        const markdownEvent4 = `- \`${this.props.events![3]}:\` ${this.props.chartData.event4[position.lineNumber - 1]}% \n`;
+        const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
 
 
         const markdownStringBody: monaco.IMarkdownString = {
-            value: markdownOperator + markdownPipeline + markdownEvent1 + markdownEvent2 + markdownEvent3 + markdownEvent4,
+            value: markdownOperator + markdownPipeline + markdownEvents,
         };
 
         return {
             contents: [markdownStringHeader, markdownStringBody]
         };
+    }
+
+    createMarkdownEventsList(eventIndex: number){
+        const markdownEvent1 = `- \`${this.props.events![0]}:\` ${this.props.chartData.event1[eventIndex]}% \n`;
+        const markdownEvent2 = `- \`${this.props.events![1]}:\` ${this.props.chartData.event2[eventIndex]}% \n`;
+        const markdownEvent3 = `- \`${this.props.events![2]}:\` ${this.props.chartData.event3[eventIndex]}% \n`;
+        const markdownEvent4 = `- \`${this.props.events![3]}:\` ${this.props.chartData.event4[eventIndex]}% \n`;
+        return markdownEvent1 + markdownEvent2 + markdownEvent3 + markdownEvent4;
+
     }
 
     handleEditorDidMount(editor: any, monaco: Monaco) {

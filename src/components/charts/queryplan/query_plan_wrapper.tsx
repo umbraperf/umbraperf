@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
 import { node } from 'webpack';
-import { ConnectionLineType } from 'react-flow-renderer';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
 
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
@@ -55,6 +55,8 @@ export type FlowGraphNode = {
     data: {
         label: string;
     };
+    targetPosition: Position;
+    sourcePosition: Position;
     label: string; //remove
     id: string;
     parent: string; //remove
@@ -273,45 +275,24 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         return flowGraphElements;
     }
 
-    getDagreLayoutedElements(nodes: PlanNode[], edges: PlanEdge[]) {
-
-        // TODO give dagre graph width and height for centering?
-        // TODO give dagre nodes with, height for alignment
-        // TODO place width and height in createReactFlowNodesEdges calculation
-        //TODO rerender on resize?
-        const dagreGraph = new dagre.graphlib.Graph();
-        dagreGraph.setGraph({ rankdir: this.getGraphDirection() });
-        dagreGraph.setDefaultEdgeLabel(function () { return {}; });
-
-        nodes.forEach((node) => {
-            dagreGraph.setNode(node.id, { label: node.label });
-        });
-        edges.forEach((edge => {
-            dagreGraph.setEdge(edge.source, edge.target);
-        }));
-
-        dagre.layout(dagreGraph);
-
-        return dagreGraph;
-    }
-
-
     createReactFlowNodesEdges(nodes: PlanNode[], edges: PlanEdge[]): FlowGraphElements {
-        const dagreGraph = this.getDagreLayoutedElements(nodes, edges);
+        const nodeWidth = 150;
+        const nodeHight= 35;
+        const dagreGraph = this.getDagreLayoutedElements(nodes, edges, nodeWidth, nodeHight);
+
+        const isVertical = this.getGraphDirection() === 'TB';
 
         const reactFlowNodes: FlowGraphNode[] = nodes.map((node) => {
             const nodeWithPosition = dagreGraph.node(node.id);
-            const isVertical = this.getGraphDirection() === 'TB';
             const position = {
-                //TODO node width
-                x: nodeWithPosition.x - 100 / 2 + Math.random() / 1000,
-                y: nodeWithPosition.y - 100 / 2,
+                x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
+                y: nodeWithPosition.y - nodeHight / 2,
             }
             const reactFlowNode = {
                 ...node, //TODO remove
                 data: { label: node.label },
-                // targetPosition: isVertical ? 'top' : 'left',
-                // sourcePosition: isVertical ? 'bottom' : 'right',
+                targetPosition: isVertical ? Position.Top : Position.Left,
+                sourcePosition: isVertical ? Position.Bottom : Position.Right,
                 position,
             }
             return reactFlowNode;
@@ -320,7 +301,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const reactFlowEdges: FlowGraphEdge[] = edges.map((edge) => {
             const reactFlowEdge: FlowGraphEdge = {
-                id: edge.source + "-" + edge.target,
+                id: edge.source + "_" + edge.target,
                 source: edge.source,
                 target: edge.target,
                 type: ConnectionLineType.SmoothStep,
@@ -330,6 +311,25 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         });
 
         return [...reactFlowNodes, ...reactFlowEdges];
+    }
+
+    getDagreLayoutedElements(nodes: PlanNode[], edges: PlanEdge[], nodeWidth: number, nodeHight: number) {
+
+        const dagreGraph = new dagre.graphlib.Graph();
+        dagreGraph.setGraph({ rankdir: this.getGraphDirection() });
+        dagreGraph.setDefaultEdgeLabel(function () { return {}; });
+
+        nodes.forEach((node) => {
+            dagreGraph.setNode(node.id, { label: node.label, width: nodeWidth, height: nodeHight });
+        });
+        edges.forEach((edge => {
+            dagreGraph.setEdge(edge.source, edge.target);
+        }));
+
+        dagre.layout(dagreGraph);
+
+        console.log(dagreGraph);
+        return dagreGraph;
     }
 
     getGraphDirection() {

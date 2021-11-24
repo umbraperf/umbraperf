@@ -1,10 +1,7 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
-import DagreGraph from 'dagre-d3-react';
-import dagre from 'dagre';
 import { FlowGraphElements, PlanNode, PlanEdge } from './query_plan_wrapper';
-import { elementDragControls } from 'framer-motion/types/gestures/drag/VisualElementDragControls';
 import ReactFlow, { ConnectionLineType, ReactFlowProvider } from 'react-flow-renderer';
 
 
@@ -25,8 +22,14 @@ class QueryPlanViewer extends React.Component<Props, {}> {
         super(props);
     }
 
-    mousemove(event: any){
+    mousemove(event: any) {
+        //TODO on catch mouse hover event
         console.log(event)
+    }
+
+    onLoad(reactFlowInstance: any) {
+        //Fit graph to view after load
+        reactFlowInstance.fitView();
     }
 
     createReactFlowGraph() {
@@ -42,36 +45,19 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     onNodeMouseEnter={this.mousemove}
                     onNodeMouseLeave={this.mousemove}
                     onElementClick={undefined}
+                    nodesConnectable={false}
+                    nodesDraggable={true}
                     // onConnect={this.createEdges}
                     // onElementsRemove={onElementsRemove}
                     connectionLineType={ConnectionLineType.SmoothStep}
+                    onLoad={this.onLoad}
                 />
             </ReactFlowProvider>
         </div>
     }
 
     public render() {
-
         return this.createReactFlowGraph();
-        //     return <DagreGraph
-        //         className={styles.dagreGraph}
-        //         nodes={this.props.nodes}
-        //         links={this.props.edges}
-        //         config={{
-        //             rankdir: this.props.height > this.props.width ? 'TD' : 'LR',
-        //             ranker: 'network-simplex',
-        //             // height: "100px",
-        //             // width: "500px",
-        //         }}
-        //         // height={"" + this.props.height}
-        //         // width={"" + this.props.width}
-        //         animate={500}
-        //         shape='rect'
-        //         fitBoundaries={true}
-        //         zoomable={true}
-        //         onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.props.handleNodeClick(event)}
-        //     // onRelationshipClick={e => console.log(e)}
-        //     />
     }
 
 }

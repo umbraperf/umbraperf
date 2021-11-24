@@ -179,6 +179,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 
 export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
     if (props.operators &&
+        props.queryPlan &&
         (props.queryPlan !== prevProps.queryPlan ||
             props.currentView !== prevProps.currentView ||
             width !== prevWidth ||

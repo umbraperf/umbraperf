@@ -25,6 +25,10 @@ class QueryPlanViewer extends React.Component<Props, {}> {
         super(props);
     }
 
+    mousemove(event: any){
+        console.log(event)
+    }
+
     createReactFlowGraph() {
 
         const layoutedElements = this.props.graphElements;
@@ -34,6 +38,10 @@ class QueryPlanViewer extends React.Component<Props, {}> {
             <ReactFlowProvider>
                 <ReactFlow
                     elements={layoutedElements}
+                    onNodeMouseMove={this.mousemove}
+                    onNodeMouseEnter={this.mousemove}
+                    onNodeMouseLeave={this.mousemove}
+                    onElementClick={undefined}
                     // onConnect={this.createEdges}
                     // onElementsRemove={onElementsRemove}
                     connectionLineType={ConnectionLineType.SmoothStep}

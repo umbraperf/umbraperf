@@ -43,17 +43,17 @@
     align-items: center;
 }
 
-.dagreGraph{
-    cursor: grab;
+.reactFlowGraph{
+    /* cursor: grab; */
     padding: var(--dagreGraphPadding);
     box-sizing: border-box;
     height: 100%;
     width: 100%; 
 }
 
-.dagreGraph:active{
+/* .reactFlowGraph:active{
     cursor: grabbing;
-}
+} */
 
 .dagreNode{
     cursor: pointer;

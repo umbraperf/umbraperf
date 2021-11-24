@@ -11,8 +11,8 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
-import { node } from 'webpack';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
+import CSS from 'csstype';
 
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
@@ -36,15 +36,14 @@ export type PlanNode = {
     label: string
     id: string,
     parent: string,
-    class: string,
-    config?: object,
+    cssClass: string,
+    fill: string,
 }
 
 export type PlanEdge = {
     source: string,
     target: string,
-    class: string,
-    config: object,
+    cssClass: string,
 }
 
 export type FlowGraphNode = {
@@ -57,11 +56,9 @@ export type FlowGraphNode = {
     };
     targetPosition: Position;
     sourcePosition: Position;
-    label: string; //remove
     id: string;
-    parent: string; //remove
-    class: string; //remove
-    config?: object | undefined; //remove
+    className: string;
+    style: CSS.Properties;
 }
 
 export type FlowGraphEdge = {
@@ -248,20 +245,18 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        const nodeCornerRadius = "rx: 12; ry: 12";
-
         planData.nodes.push({
             label: root.label!,
             id: root.id!, parent: "",
-            class: nodeClass(root.id!),
-            config: { style: `fill: ${nodeColor(root.id!)}; ${nodeCornerRadius}` }
+            cssClass: nodeClass(root.id!),
+            fill: nodeColor(root.id!),
         })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            planData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}; ${nodeCornerRadius}` } });
-            planData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
+            planData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, cssClass: nodeClass(currentPlanElement.operator), fill: nodeColor(currentPlanElement.operator) });
+            planData.links.push({ source: parent, target: currentPlanElement.operator, cssClass: styles.dagreEdge });
 
             ["input", "left", "right"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {
@@ -277,7 +272,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
     createReactFlowNodesEdges(nodes: PlanNode[], edges: PlanEdge[]): FlowGraphElements {
         const nodeWidth = 150;
-        const nodeHight= 35;
+        const nodeHight = 35;
         const dagreGraph = this.getDagreLayoutedElements(nodes, edges, nodeWidth, nodeHight);
 
         const isVertical = this.getGraphDirection() === 'TB';
@@ -288,12 +283,18 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
                 y: nodeWithPosition.y - nodeHight / 2,
             }
+            console.log("---");
+            console.log(node.id);
+            console.log(node.cssClass);
+
             const reactFlowNode = {
                 ...node, //TODO remove
                 data: { label: node.label },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
+                className: node.cssClass,
+                style: {backgroundColor: node.fill}
             }
             return reactFlowNode;
 

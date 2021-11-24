@@ -22,7 +22,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
     mousemove(event: any) {
         //TODO on catch mouse hover event
-        console.log(event)
+        // console.log(event)
     }
 
     onLoad(reactFlowInstance: any) {
@@ -34,7 +34,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
         const layoutedElements = this.props.graphElements;
 
-        return <div className={styles.dagreGraph}
+        return <div className={styles.reactFlowGraph}
         >
             <ReactFlowProvider>
                 <ReactFlow
@@ -49,6 +49,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     // onElementsRemove={onElementsRemove}
                     connectionLineType={ConnectionLineType.SmoothStep}
                     onLoad={this.onLoad}
+                    // onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.props.handleNodeClick(event)}
                 />
                 <Controls  />
             </ReactFlowProvider>

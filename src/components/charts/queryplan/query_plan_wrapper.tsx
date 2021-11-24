@@ -10,6 +10,9 @@ import _ from 'lodash';
 import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
+import dagre from 'dagre';
+import { node } from 'webpack';
+import { ConnectionLineType } from 'react-flow-renderer';
 
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
@@ -25,11 +28,11 @@ interface State {
     height: number,
     width: number,
     loading: boolean,
-    renderedDagrePlan: JSX.Element | undefined,
-    renderDagrePlan: boolean,
+    renderedFlowPlan: JSX.Element | undefined,
+    renderFlowPlan: boolean,
 }
 
-export type DagreNode = {
+export type PlanNode = {
     label: string
     id: string,
     parent: string,
@@ -37,12 +40,37 @@ export type DagreNode = {
     config?: object,
 }
 
-export type DagreEdge = {
+export type PlanEdge = {
     source: string,
     target: string,
     class: string,
     config: object,
 }
+
+export type FlowGraphNode = {
+    position: {
+        x: number;
+        y: number;
+    };
+    data: {
+        label: string;
+    };
+    label: string; //remove
+    id: string;
+    parent: string; //remove
+    class: string; //remove
+    config?: object | undefined; //remove
+}
+
+export type FlowGraphEdge = {
+    id: string,
+    source: string,
+    target: string,
+    type: ConnectionLineType,
+    animated: true
+}
+
+export type FlowGraphElements = Array<FlowGraphNode | FlowGraphEdge>;
 
 type Props = QueryPlanWrapperAppstateProps & model.IQueryPlanProps;
 
@@ -56,8 +84,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: 0,
             width: 0,
             loading: true,
-            renderedDagrePlan: undefined,
-            renderDagrePlan: true,
+            renderedFlowPlan: undefined,
+            renderFlowPlan: true,
         };
 
         this.handleNodeClick = this.handleNodeClick.bind(this);
@@ -67,7 +95,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
             this.setState((state, props) => ({
                 ...state,
-                renderedDagrePlan: undefined,
+                renderedFlowPlan: undefined,
             }));
             this.createQueryPlan();
         }
@@ -130,7 +158,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 ? <Spinner />
                 : <div id="queryplanContainer" className={styles.queryplanContainer}>
                     <div className={styles.queryplanContainerTitle}>Query Plan</div>
-                    {this.state.renderedDagrePlan}
+                    {this.state.renderedFlowPlan}
                 </div>
             }
         </div>;
@@ -143,38 +171,39 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
             queryplanContent = this.createNoQueryPlanWarning();
         } else {
-            queryplanContent = this.prepareDagrePlan(queryPlanJson);
+            queryplanContent = this.createPlanViewer(queryPlanJson);
         }
         this.setState((state, props) => ({
             ...state,
             loading: false,
-            renderedDagrePlan: queryplanContent,
+            renderedFlowPlan: queryplanContent,
         }));
     }
 
-    prepareDagrePlan(queryplanJson: object) {
+    createPlanViewer(queryplanJson: object) {
 
         const rootNode = {
             label: "RESULT",
             id: "root",
             child: queryplanJson,
         }
-        const dagreData = this.createDagreNodesLinks(rootNode);
+        const flowGraphData = this.createFlowGraphData(rootNode);
 
-        const dagreGraph = React.createElement(QueryPlanViewer, {
+        const planViewer = React.createElement(QueryPlanViewer, {
             key: this.state.height + this.state.width,
             height: this.state.height,
             width: this.state.width,
-            nodes: dagreData.nodes,
-            edges: dagreData.links,
+            graphElements: flowGraphData,
+            // nodes: flowGraphData.nodes,
+            // edges: flowGraphData.links,
             handleNodeClick: this.handleNodeClick,
         } as any);
 
-        return dagreGraph;
+        return planViewer;
     }
 
 
-    handleNodeClick(event: { d3norde: object, original: DagreNode }) {
+    handleNodeClick(event: { d3norde: object, original: PlanNode }) {
         //TODO add pipeline, make pipeline in function in controller obliq
         if (this.props.operators!.includes(event.original.id)) {
             //Only trigger operator selection if operator is in measurement data
@@ -182,11 +211,11 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
     }
 
-    createDagreNodesLinks(root: Partial<DagreNode> & { child: object }) {
+    createFlowGraphData(root: Partial<PlanNode> & { child: object }): FlowGraphElements {
 
-        let dagreData = {
-            nodes: new Array<DagreNode>(),
-            links: new Array<DagreEdge>()
+        let planData = {
+            nodes: new Array<PlanNode>(),
+            links: new Array<PlanEdge>()
         }
 
         const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
@@ -219,13 +248,18 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const nodeCornerRadius = "rx: 12; ry: 12";
 
-        dagreData.nodes.push({ label: root.label!, id: root.id!, parent: "", class: nodeClass(root.id!), config: { style: `fill: ${nodeColor(root.id!)}; ${nodeCornerRadius}` } })
+        planData.nodes.push({
+            label: root.label!,
+            id: root.id!, parent: "",
+            class: nodeClass(root.id!),
+            config: { style: `fill: ${nodeColor(root.id!)}; ${nodeCornerRadius}` }
+        })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            dagreData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}; ${nodeCornerRadius}` } });
-            dagreData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
+            planData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, class: nodeClass(currentPlanElement.operator), config: { style: `fill: ${nodeColor(currentPlanElement.operator)}; ${nodeCornerRadius}` } });
+            planData.links.push({ source: parent, target: currentPlanElement.operator, class: styles.dagreEdge, config: { arrowheadStyle: 'display: none' } });
 
             ["input", "left", "right"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {
@@ -234,8 +268,68 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             });
         }
 
-        return dagreData;
+        const flowGraphElements: FlowGraphElements = this.createReactFlowNodesEdges(planData.nodes, planData.links);
 
+        return flowGraphElements;
+    }
+
+    getDagreLayoutedElements(nodes: PlanNode[], edges: PlanEdge[]) {
+
+        const dagreGraph = new dagre.graphlib.Graph();
+        dagreGraph.setGraph({ rankdir: this.getGraphDirection() });
+        dagreGraph.setDefaultEdgeLabel(function () { return {}; });
+
+        nodes.forEach((node) => {
+            dagreGraph.setNode(node.id, { label: node.label });
+        });
+        edges.forEach((edge => {
+            dagreGraph.setEdge(edge.source, edge.target);
+        }));
+
+        dagre.layout(dagreGraph);
+
+        return dagreGraph;
+    }
+
+
+    createReactFlowNodesEdges(nodes: PlanNode[], edges: PlanEdge[]): FlowGraphElements {
+        const dagreGraph = this.getDagreLayoutedElements(nodes, edges);
+
+        const reactFlowNodes: FlowGraphNode[] = nodes.map((node) => {
+            const nodeWithPosition = dagreGraph.node(node.id);
+            const isVertical = this.getGraphDirection() === 'TB';
+            const position = {
+                //TODO node width
+                x: nodeWithPosition.x - 50 / 2 + Math.random() / 1000,
+                y: nodeWithPosition.y - 50 / 2,
+            }
+            const reactFlowNode = {
+                ...node, //TODO remove
+                data: { label: node.label },
+                // targetPosition: isVertical ? 'top' : 'left',
+                // sourcePosition: isVertical ? 'bottom' : 'right',
+                position,
+            }
+            return reactFlowNode;
+
+        });
+
+        const reactFlowEdges: FlowGraphEdge[] = edges.map((edge) => {
+            const reactFlowEdge: FlowGraphEdge = {
+                id: edge.source + "-" + edge.target,
+                source: edge.source,
+                target: edge.target,
+                type: ConnectionLineType.SmoothStep,
+                animated: true,
+            }
+            return reactFlowEdge;
+        });
+
+        return [...reactFlowNodes, ...reactFlowEdges];
+    }
+
+    getGraphDirection() {
+        return this.state.height > this.state.width ? 'TB' : 'LR';
     }
 
     createNoQueryPlanWarning() {

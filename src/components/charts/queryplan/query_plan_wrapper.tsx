@@ -291,8 +291,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const reactFlowNode = {
                 ...node, //TODO remove
                 data: { label: node.label },
-                targetPosition: isVertical ? Position.Top : Position.Left,
-                sourcePosition: isVertical ? Position.Bottom : Position.Right,
+                targetPosition: isVertical ? Position.Bottom : Position.Right,
+                sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
             }
             return reactFlowNode;
@@ -328,7 +328,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         dagre.layout(dagreGraph);
 
-        console.log(dagreGraph);
         return dagreGraph;
     }
 

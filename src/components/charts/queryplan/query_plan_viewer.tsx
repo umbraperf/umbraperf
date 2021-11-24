@@ -1,16 +1,14 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
-import { FlowGraphElements, PlanNode, PlanEdge } from './query_plan_wrapper';
-import ReactFlow, { ConnectionLineType, ReactFlowProvider } from 'react-flow-renderer';
+import { FlowGraphElements, PlanNode } from './query_plan_wrapper';
+import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
 
 
 interface Props {
     key: number; //trigers complete rerender for repositioning
     height: number;
     width: number;
-    // nodes: Array<PlanNode>;
-    // edges: Array<PlanEdge>;
     graphElements: FlowGraphElements,
     handleNodeClick: (event: { d3norde: object, original: PlanNode }) => void;
 }
@@ -52,6 +50,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     connectionLineType={ConnectionLineType.SmoothStep}
                     onLoad={this.onLoad}
                 />
+                <Controls  />
             </ReactFlowProvider>
         </div>
     }

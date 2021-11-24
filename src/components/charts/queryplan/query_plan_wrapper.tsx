@@ -278,6 +278,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         // TODO give dagre graph width and height for centering?
         // TODO give dagre nodes with, height for alignment
         // TODO place width and height in createReactFlowNodesEdges calculation
+        //TODO rerender on resize?
         const dagreGraph = new dagre.graphlib.Graph();
         dagreGraph.setGraph({ rankdir: this.getGraphDirection() });
         dagreGraph.setDefaultEdgeLabel(function () { return {}; });
@@ -303,8 +304,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const isVertical = this.getGraphDirection() === 'TB';
             const position = {
                 //TODO node width
-                x: nodeWithPosition.x - 1000 / 2 + Math.random() / 1000,
-                y: nodeWithPosition.y - 1000 / 2,
+                x: nodeWithPosition.x - 100 / 2 + Math.random() / 1000,
+                y: nodeWithPosition.y - 100 / 2,
             }
             const reactFlowNode = {
                 ...node, //TODO remove

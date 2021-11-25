@@ -87,7 +87,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             renderFlowPlan: true,
         };
 
-        this.handleNodeClick = this.handleNodeClick.bind(this);
+        this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
@@ -195,18 +195,17 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             graphElements: flowGraphData,
             // nodes: flowGraphData.nodes,
             // edges: flowGraphData.links,
-            handleNodeClick: this.handleNodeClick,
+            handleOperatorSelection: this.handleOperatorSelection,
         } as any);
 
         return planViewer;
     }
 
 
-    handleNodeClick(event: { d3norde: object, original: PlanNode }) {
-        //TODO add pipeline, make pipeline in function in controller obliq
-        if (this.props.operators!.includes(event.original.id)) {
+    handleOperatorSelection(elementId: string) {
+        if (this.props.operators!.includes(elementId)) {
             //Only trigger operator selection if operator is in measurement data
-            Controller.handleOperatorSelection(event.original.id);
+            Controller.handleOperatorSelection(elementId);
         }
     }
 
@@ -294,7 +293,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
                 className: node.cssClass,
-                style: {backgroundColor: node.fill}
+                style: {borderColor: node.fill, borderWidth: '3px', borderRadius: '25px'}
             }
             return reactFlowNode;
 

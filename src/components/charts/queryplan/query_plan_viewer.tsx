@@ -1,7 +1,7 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
-import { FlowGraphElements, PlanNode } from './query_plan_wrapper';
+import { FlowGraphElements, FlowGraphNode, PlanNode } from './query_plan_wrapper';
 import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
 
 
@@ -10,7 +10,7 @@ interface Props {
     height: number;
     width: number;
     graphElements: FlowGraphElements,
-    handleNodeClick: (event: { d3norde: object, original: PlanNode }) => void;
+    handleOperatorSelection: (elementId: string) => void;
 }
 
 class QueryPlanViewer extends React.Component<Props, {}> {
@@ -23,6 +23,10 @@ class QueryPlanViewer extends React.Component<Props, {}> {
     mousemove(event: any) {
         //TODO on catch mouse hover event
         // console.log(event)
+    }
+
+    handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
+        this.props.handleOperatorSelection(element.id);
     }
 
     onLoad(reactFlowInstance: any) {
@@ -39,19 +43,20 @@ class QueryPlanViewer extends React.Component<Props, {}> {
             <ReactFlowProvider>
                 <ReactFlow
                     elements={layoutedElements}
+                    minZoom={0.1}
+                    maxZoom={3}
                     onNodeMouseMove={this.mousemove}
                     onNodeMouseEnter={this.mousemove}
                     onNodeMouseLeave={this.mousemove}
-                    onElementClick={undefined}
                     nodesConnectable={false}
                     nodesDraggable={true}
                     // onConnect={this.createEdges}
                     // onElementsRemove={onElementsRemove}
                     connectionLineType={ConnectionLineType.SmoothStep}
                     onLoad={this.onLoad}
-                    // onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.props.handleNodeClick(event)}
+                    onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
                 />
-                <Controls  />
+                <Controls />
             </ReactFlowProvider>
         </div>
     }

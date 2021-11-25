@@ -319,6 +319,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     borderWidth: '4px',
                     borderRadius: '25px',
                     cursor: node.nodeCursor,
+                    fontSize: '15px',
                 }
             }
             return reactFlowNode;
@@ -334,7 +335,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 type: ConnectionLineType.SmoothStep,
                 animated: true,
                 style: {
-                    stroke: this.props.appContext.accentBlack
+                    stroke: this.props.appContext.accentBlack,
+                    strokeWidth: '2px'
                 },
             }
             return reactFlowEdge;

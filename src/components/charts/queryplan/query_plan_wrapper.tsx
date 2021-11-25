@@ -37,7 +37,8 @@ export type PlanNode = {
     id: string,
     parent: string,
     cssClass: string,
-    fill: string,
+    borderFill: string,
+    backgroundFill: string,
 }
 
 export type PlanEdge = {
@@ -47,6 +48,7 @@ export type PlanEdge = {
 }
 
 export type FlowGraphNode = {
+    id: string;
     position: {
         x: number;
         y: number;
@@ -56,7 +58,6 @@ export type FlowGraphNode = {
     };
     targetPosition: Position;
     sourcePosition: Position;
-    id: string;
     className: string;
     style: CSS.Properties;
 }
@@ -66,7 +67,8 @@ export type FlowGraphEdge = {
     source: string,
     target: string,
     type: ConnectionLineType,
-    animated: true
+    animated: true,
+    style: CSS.Properties,
 }
 
 export type FlowGraphElements = Array<FlowGraphNode | FlowGraphEdge>;
@@ -215,6 +217,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
+        const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
         const nodeClass = (nodeId: string) => {
             if (nodeId === "root") {
@@ -230,15 +233,19 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeColor = (nodeId: string) => {
+            //add 33 to hex color for 10% opacity
+            //return tuple with 0: border color, 1: background color
+            const lowOpacity = "33";
             if (nodeId === "root") {
-                return this.props.appContext.accentBlack;
+                return [this.props.appContext.secondaryColor, '#fff'];
             } else if (!this.props.operators!.includes(nodeId)) {
                 //node does not appear in measurement data
-                return this.props.appContext.tertiaryColor;
+                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + lowOpacity];
             } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
-                return nodeColorScale[this.props.operators!.indexOf(nodeId)];
+                const operatorIndex = this.props.operators!.indexOf(nodeId);
+                return [nodeColorScale[operatorIndex], nodeBackgroundColorScale[operatorIndex]];
             } else {
-                return this.props.appContext.tertiaryColor;
+                return [this.props.appContext.tertiaryColor, '#fff'];
             }
         }
 
@@ -246,14 +253,28 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             label: root.label!,
             id: root.id!, parent: "",
             cssClass: nodeClass(root.id!),
-            fill: nodeColor(root.id!),
+            borderFill: nodeColor(root.id!)[0],
+            backgroundFill: nodeColor(root.id!)[1],
+
         })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            planData.nodes.push({ label: currentPlanElement.operator, id: currentPlanElement.operator, parent: parent, cssClass: nodeClass(currentPlanElement.operator), fill: nodeColor(currentPlanElement.operator) });
-            planData.links.push({ source: parent, target: currentPlanElement.operator, cssClass: styles.dagreEdge });
+            planData.nodes.push({
+                label: currentPlanElement.operator,
+                id: currentPlanElement.operator,
+                parent: parent,
+                cssClass: nodeClass(currentPlanElement.operator),
+                borderFill: nodeColor(currentPlanElement.operator)[0],
+                backgroundFill: nodeColor(currentPlanElement.operator)[1],
+
+            });
+            planData.links.push({
+                source: parent,
+                target: currentPlanElement.operator,
+                cssClass: styles.dagreEdge
+            });
 
             ["input", "left", "right"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {
@@ -280,18 +301,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
                 y: nodeWithPosition.y - nodeHight / 2,
             }
-            console.log("---");
-            console.log(node.id);
-            console.log(node.cssClass);
 
             const reactFlowNode = {
                 id: node.id,
-                data: { label: node.label },
+                data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
                 className: node.cssClass,
-                style: {borderColor: node.fill, borderWidth: '3px', borderRadius: '25px'}
+                style: { borderColor: node.borderFill, backgroundColor: node.backgroundFill, borderWidth: '4px', borderRadius: '25px' }
             }
             return reactFlowNode;
 
@@ -305,6 +323,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 target: edge.source,
                 type: ConnectionLineType.SmoothStep,
                 animated: true,
+                style: { color: this.props.appContext.primaryColor }
             }
             return reactFlowEdge;
         });

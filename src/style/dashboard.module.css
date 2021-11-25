@@ -162,6 +162,7 @@
   @media not all and (min-width: 900px){
 
     .dashboardGridCellChartContainerStaticWidthSmall{
+        width: 100%;
         max-width: var(--chartContainerSmall900StaticWidth);
         display: block;
         margin: 0 auto;

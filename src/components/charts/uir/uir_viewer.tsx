@@ -400,10 +400,18 @@ class UirViewer extends React.Component<Props, State> {
         //return name of correct css class, create class if not yet created dynamically for operator colors
         const className = `glyphClass${glyphClassScaleType}${glyphClassGroupNumber}`;
 
-        if (glyphClassScaleType === "Operator" && !this.editorContainerRef.current!.children.namedItem(className)) {
-            this.addCssClassForGlyphToDom(className, glyphClassGroupNumber);
+        if (glyphClassScaleType === "Operator") {
+            if (!this.editorContainerRef.current!.children.namedItem(className)) {
+                this.addCssClassForGlyphToDom(className, glyphClassGroupNumber);
+            }
+            return className;
+        }else if(glyphClassScaleType == "Event"){
+            const a = styles[className];
+            console.log(a);
+            return a;
+        }else{
+            return "";
         }
-        return className;
 
     }
 

@@ -47,16 +47,21 @@
     background: #fff;
 }
 
-.Group-50 {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3C/svg%3E");
+.glyphClassEvent0 {
+    background: blue;
+    background: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3C/svg%3E");
 }
 
-.Group-51 {
-   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3C/svg%3E");
+.glyphClassEvent1 {
+    background: blue;
+
+   background: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3C/svg%3E");
 }
 
-.Group-52 {
-   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C61.9052 -5.20391e-07 73.4196 4.24792 82.4724 11.9797C91.5252 19.7115 97.522 30.4197 99.3844 42.1783C101.247 53.9369 98.8524 65.9741 92.632 76.1249C86.4116 86.2757 76.7733 93.8739 65.4509 97.5528C54.1284 101.232 41.8648 100.75 30.8658 96.194C19.8669 91.6381 10.8545 83.3071 5.44968 72.6995C0.0448485 62.092 -1.3977 49.904 1.3815 38.3277C4.1607 26.7515 10.9793 16.5468 20.6107 9.54916L50 50L50 0Z' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3Cpath d='M50 0C61.9052 -5.20391e-07 73.4196 4.24792 82.4724 11.9797C91.5252 19.7115 97.522 30.4197 99.3844 42.1783C101.247 53.9369 98.8524 65.9741 92.632 76.1249C86.4116 86.2757 76.7733 93.8739 65.4509 97.5528C54.1284 101.232 41.8648 100.75 30.8658 96.194C19.8669 91.6381 10.8545 83.3071 5.44968 72.6995C0.0448485 62.092 -1.3977 49.904 1.3815 38.3277C4.1607 26.7515 10.9793 16.5468 20.6107 9.54916L50 50L50 0Z' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3C/svg%3E");
+.glyphClassEvent2 {
+    background: blue;
+
+   background: url("data:image/svg+xml;charset=utf8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C61.9052 -5.20391e-07 73.4196 4.24792 82.4724 11.9797C91.5252 19.7115 97.522 30.4197 99.3844 42.1783C101.247 53.9369 98.8524 65.9741 92.632 76.1249C86.4116 86.2757 76.7733 93.8739 65.4509 97.5528C54.1284 101.232 41.8648 100.75 30.8658 96.194C19.8669 91.6381 10.8545 83.3071 5.44968 72.6995C0.0448485 62.092 -1.3977 49.904 1.3815 38.3277C4.1607 26.7515 10.9793 16.5468 20.6107 9.54916L50 50L50 0Z' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3Cpath d='M50 0C61.9052 -5.20391e-07 73.4196 4.24792 82.4724 11.9797C91.5252 19.7115 97.522 30.4197 99.3844 42.1783C101.247 53.9369 98.8524 65.9741 92.632 76.1249C86.4116 86.2757 76.7733 93.8739 65.4509 97.5528C54.1284 101.232 41.8648 100.75 30.8658 96.194C19.8669 91.6381 10.8545 83.3071 5.44968 72.6995C0.0448485 62.092 -1.3977 49.904 1.3815 38.3277C4.1607 26.7515 10.9793 16.5468 20.6107 9.54916L50 50L50 0Z' fill='black'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='black' stroke-width='10'/%3E%3C/svg%3E");
 }
 
 .Group-53 {

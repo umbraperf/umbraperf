@@ -285,7 +285,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             console.log(node.cssClass);
 
             const reactFlowNode = {
-                ...node, //TODO remove
+                id: node.id,
                 data: { label: node.label },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
@@ -299,9 +299,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const reactFlowEdges: FlowGraphEdge[] = edges.map((edge) => {
             const reactFlowEdge: FlowGraphEdge = {
+                //turn around source and target to invert direction of edge animation
                 id: edge.source + "_" + edge.target,
-                source: edge.source,
-                target: edge.target,
+                source: edge.target,
+                target: edge.source,
                 type: ConnectionLineType.SmoothStep,
                 animated: true,
             }

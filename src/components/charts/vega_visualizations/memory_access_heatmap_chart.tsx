@@ -79,7 +79,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                         size: [{ signal: "width" }, { signal: "height" }],
                         x: { "expr": "scale('x', datum.bucket)" },
                         y: { "expr": "scale('y', datum.memAdr)" },
-                        bandwidth: { "signal": "[-1, -1]" },
+                        bandwidth: { "signal": "[5, 5]" },
+                        // bandwidth: { "signal": "[-1, -1]" },
                         as: "grid",
                     },
                     {

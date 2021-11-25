@@ -395,27 +395,47 @@ class UirViewer extends React.Component<Props, State> {
         this.updateColorGlyphs();
     }
 
-    createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
+    createCustomCssGlyphClass(glyphClassScaleType: "Event" | "Operator", glyphClassGroupNumber: number) {
 
-        //return name of correct css class, create class if not yet created
-        const className = `glyphClass${colorScaleType}${colorGroup}`;
+        //return name of correct css class, create class if not yet created dynamically for operator colors
+        const className = `glyphClass${glyphClassScaleType}${glyphClassGroupNumber}`;
 
-        if (this.editorContainerRef.current!.children.namedItem(className)) {
-            return className;
-        } else {
-            const style = document.createElement('style');
-            style.setAttribute("id", className);
-            let color = "";
-            if (colorScaleType === "Event") {
-                color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
-            } else if (colorScaleType === "Operator") {
-                color = this.state.operatorColorScale[colorGroup];
-            }
-            style.innerHTML = `.${className} { background: ${color}; }`;
-            this.editorContainerRef.current!.appendChild(style);
-            return className;
+        if (glyphClassScaleType === "Operator" && !this.editorContainerRef.current!.children.namedItem(className)) {
+            this.addCssClassForGlyphToDom(className, glyphClassGroupNumber);
         }
+        return className;
+
     }
+
+    addCssClassForGlyphToDom(className: string, glyphClassGroupNumber: number) {
+        const style = document.createElement('style');
+        style.setAttribute("id", className);
+        const color = this.state.operatorColorScale[glyphClassGroupNumber];
+        style.innerHTML = `.${className} { background: ${color}; }`;
+        this.editorContainerRef.current!.appendChild(style);
+    }
+
+    // createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
+
+    //     //return name of correct css class, create class if not yet created
+    //     const className = `glyphClass${colorScaleType}${colorGroup}`;
+
+    //     if (this.editorContainerRef.current!.children.namedItem(className)) {
+    //         return className;
+    //     } else {
+    //         const style = document.createElement('style');
+    //         style.setAttribute("id", className);
+    //         let color = "";
+    //         if (colorScaleType === "Event") {
+    //             color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+    //         } else if (colorScaleType === "Operator") {
+    //             color = this.state.operatorColorScale[colorGroup];
+    //         }
+    //         style.innerHTML = `.${className} { background: ${color}; }`;
+    //         this.editorContainerRef.current!.appendChild(style);
+    //         return className;
+    //     }
+    // }
 
 }
 

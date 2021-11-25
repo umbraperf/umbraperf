@@ -38,7 +38,8 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
         const layoutedElements = this.props.graphElements;
 
-        return <div className={styles.reactFlowGraph}
+        return <div
+            className={styles.reactFlowGraph}
         >
             <ReactFlowProvider>
                 <ReactFlow

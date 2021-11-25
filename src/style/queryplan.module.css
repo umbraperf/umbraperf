@@ -44,45 +44,13 @@
 }
 
 .reactFlowGraph{
-    /* cursor: grab; */
+    cursor: grab;
     padding: var(--dagreGraphPadding);
     box-sizing: border-box;
     height: 100%;
     width: 100%; 
 }
 
-/* .reactFlowGraph:active{
+.reactFlowGraph:active{
     cursor: grabbing;
-} */
-
-.dagreNode{
-    cursor: pointer;
-    border: solid;
-    border-color: colorAccentBlack;
-    font-size: small;
-}
-
-.dagreRootNode{
-    cursor: default;
-}
-
-.dagreUnavailableNode{
-    cursor: not-allowed;
-}
-
-.dagreInactiveNode text{
-    fill: colorAccentBlack;
-}
-
-.dagreActiveNode text{
-    fill: white;
-}
-
-.dagreRootNode text{
-    fill: white;
-}
-
-.dagreEdge{
-    stroke: colorAccentBlack;
-    size: 1px;
 }

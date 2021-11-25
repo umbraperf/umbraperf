@@ -36,15 +36,15 @@ export type PlanNode = {
     label: string
     id: string,
     parent: string,
-    cssClass: string,
     borderFill: string,
     backgroundFill: string,
+    nodeCursor: string,
+    isNodeSelectable: boolean,
 }
 
 export type PlanEdge = {
     source: string,
     target: string,
-    cssClass: string,
 }
 
 export type FlowGraphNode = {
@@ -58,8 +58,8 @@ export type FlowGraphNode = {
     };
     targetPosition: Position;
     sourcePosition: Position;
-    className: string;
     style: CSS.Properties;
+    selectable: boolean;
 }
 
 export type FlowGraphEdge = {
@@ -219,16 +219,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
         const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
-        const nodeClass = (nodeId: string) => {
+        const nodeCursor = (nodeId: string) => {
+            //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeId === "root") {
-                return `${styles.dagreNode} ${styles.dagreRootNode}`;
+                return ["default", false];
             } else if (!this.props.operators!.includes(nodeId)) {
                 //node does not appear in measurement data
-                return `${styles.dagreNode} ${styles.dagreUnavailableNode}`;
-            } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
-                return `${styles.dagreNode} ${styles.dagreActiveNode}`;
+                return ["not-allowed", false];
             } else {
-                return `${styles.dagreNode} ${styles.dagreInactiveNode}`;
+                return ["pointer", true];
             }
         }
 
@@ -249,31 +248,36 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
+        const rootCursor = nodeCursor(root.id!);
+        const rootColor = nodeColor(root.id!);
         planData.nodes.push({
             label: root.label!,
             id: root.id!, parent: "",
-            cssClass: nodeClass(root.id!),
-            borderFill: nodeColor(root.id!)[0],
-            backgroundFill: nodeColor(root.id!)[1],
+            nodeCursor: rootCursor[0] as string,
+            isNodeSelectable: rootCursor[1] as boolean,
+            borderFill: rootColor[0],
+            backgroundFill: rootColor[1],
 
         })
         fillGraph(root.child, root.id!)
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
+            const planNodeCursor = nodeCursor(currentPlanElement.operator);
+            const planNodeColor = nodeColor(currentPlanElement.operator);
             planData.nodes.push({
                 label: currentPlanElement.operator,
                 id: currentPlanElement.operator,
                 parent: parent,
-                cssClass: nodeClass(currentPlanElement.operator),
-                borderFill: nodeColor(currentPlanElement.operator)[0],
-                backgroundFill: nodeColor(currentPlanElement.operator)[1],
+                nodeCursor: planNodeCursor[0] as string,
+                isNodeSelectable: planNodeCursor[1] as boolean,
+                borderFill: planNodeColor[0],
+                backgroundFill: planNodeColor[1],
 
             });
             planData.links.push({
                 source: parent,
                 target: currentPlanElement.operator,
-                cssClass: styles.dagreEdge
             });
 
             ["input", "left", "right"].forEach(childType => {
@@ -302,15 +306,20 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 y: nodeWithPosition.y - nodeHight / 2,
             }
 
-            console.log()
             const reactFlowNode = {
                 id: node.id,
                 data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
-                className: node.cssClass,
-                style: { borderColor: node.borderFill, backgroundColor: node.backgroundFill, borderWidth: '4px', borderRadius: '25px' }
+                selectable: node.isNodeSelectable,
+                style: {
+                    borderColor: node.borderFill,
+                    backgroundColor: node.backgroundFill,
+                    borderWidth: '4px',
+                    borderRadius: '25px',
+                    cursor: node.nodeCursor,
+                }
             }
             return reactFlowNode;
 
@@ -324,7 +333,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 target: edge.source,
                 type: ConnectionLineType.SmoothStep,
                 animated: true,
-                style: { stroke: this.props.appContext.accentBlack }
+                style: {
+                    stroke: this.props.appContext.accentBlack
+                },
             }
             return reactFlowEdge;
         });

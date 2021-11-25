@@ -302,6 +302,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 y: nodeWithPosition.y - nodeHight / 2,
             }
 
+            console.log()
             const reactFlowNode = {
                 id: node.id,
                 data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
@@ -323,7 +324,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 target: edge.source,
                 type: ConnectionLineType.SmoothStep,
                 animated: true,
-                style: { color: this.props.appContext.primaryColor }
+                style: { stroke: this.props.appContext.accentBlack }
             }
             return reactFlowEdge;
         });

@@ -242,7 +242,7 @@ class UirViewer extends React.Component<Props, State> {
 
     handleEditorDidMount(editor: any, monaco: Monaco) {
         this.editorRef = editor;
-        // this.foldAllLines();
+        this.foldAllLines();
         this.setMonacoGlyphs();
     }
 

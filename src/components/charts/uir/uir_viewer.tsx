@@ -344,7 +344,8 @@ class UirViewer extends React.Component<Props, State> {
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
             if (eventOccurence > 0) {
-                const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
+                const eventOccurrenceColorGroup = +`${this.props.chartData.isFunction[i]}${Math.floor(eventOccurence / 10)}`;
+                console.log(eventOccurrenceColorGroup);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }

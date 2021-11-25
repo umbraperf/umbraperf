@@ -193,8 +193,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: this.state.height,
             width: this.state.width,
             graphElements: flowGraphData,
-            // nodes: flowGraphData.nodes,
-            // edges: flowGraphData.links,
             handleOperatorSelection: this.handleOperatorSelection,
         } as any);
 

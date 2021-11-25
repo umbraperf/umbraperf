@@ -1,7 +1,7 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
-import { FlowGraphElements, FlowGraphNode, PlanNode } from './query_plan_wrapper';
+import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
 import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
 
 

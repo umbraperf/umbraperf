@@ -11,6 +11,8 @@
     --girdCellItemDoubleRowHeight: calc(2 * var(--mainVisualizationsHeight) + 3 * var(--gridCellBoxPadding) + 3 * var(--gridCellItemPadding));
     --activityHistogramHeight: 84px;
     --movingTransition: all .5s ease-in-out;
+    --gridCellItemFullScreenStretchContentMaxHeight: 600px;
+    --gridCellItemFullScreenStretchContentMinHeight: 200px;
 }
 
 .dashboardGrid{
@@ -46,8 +48,8 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1 1 auto;
-    max-height: 500px;
-    min-height: 200px;
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
+    min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
 }
 
 .dashboardGridCellItemDoubleRow{
@@ -119,6 +121,8 @@
 
 .dashboardGridCellItemFullScreenStretchContentMultiColumnContainer{
     flex: 1;
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
+    min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
 }
 
 .dashboardGridCellOptionsBox{

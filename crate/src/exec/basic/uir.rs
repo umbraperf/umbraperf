@@ -3,11 +3,7 @@ use std::{
     sync::Arc,
 };
 
-use arrow::{
-    array::{Float64Array, Int64Array, StringArray},
-    datatypes::DataType,
-    record_batch::RecordBatch,
-};
+use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, datatypes::DataType, record_batch::RecordBatch};
 
 use crate::{
     state::state::get_serde_dict,
@@ -130,7 +126,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
-                        aggregated_output_vec.push((Some(current_srcline.to_owned()), round(sum1), round(sum2), round(sum3), round(sum4), op, pipe));
+                        aggregated_output_vec.push((Some(current_srcline.to_owned()), round(sum1), round(sum2), round(sum3), round(sum4), op, pipe, 1));
                         break;
                     } else {
                         for event in &unique_events_set {
@@ -150,10 +146,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             let item = item.1;
             if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
                 let out_str = Some(format!("{}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
             } else {
                 let out_str = Some(format!("  {}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
 
             }
         }
@@ -168,6 +164,8 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut perc_4 = Vec::new();
     let mut op = Vec::new();
     let mut pipe = Vec::new();
+    let mut is_function_flag = Vec::new();
+
 
     for input in aggregated_output_vec {
         srcline.push(format!("{}\n",input.0.unwrap()));
@@ -185,10 +183,11 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         } else {
             pipe.push("None");
         }
+        is_function_flag.push(input.7);
     }
 
     let out_batch = create_new_record_batch(
-        vec!["scrline", "perc1", "perc2", "perc3", "perc4", "op", "pipe"],
+        vec!["scrline", "perc1", "perc2", "perc3", "perc4", "op", "pipe", "func_flag"],
         vec![
             DataType::Utf8,
             DataType::Float64,
@@ -197,6 +196,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             DataType::Float64,
             DataType::Utf8,
             DataType::Utf8,
+            DataType::Int32,
         ],
         vec![
             Arc::new(StringArray::from(srcline)),
@@ -206,6 +206,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             Arc::new(Float64Array::from(perc_4)),
             Arc::new(StringArray::from(op)),
             Arc::new(StringArray::from(pipe)),
+            Arc::new(Int32Array::from(is_function_flag)),
         ],
     );
 

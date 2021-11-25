@@ -345,6 +345,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         event4: resultObject.resultTable.getColumn('perc4').toArray(),
                         operators: resultObject.resultTable.getColumn('op').toArray(),
                         pipelines: resultObject.resultTable.getColumn('pipe').toArray(),
+                        isFunction: resultObject.resultTable.getColumn('func_flag').toArray(),
                     }
                 });
             setResultLoading = true;

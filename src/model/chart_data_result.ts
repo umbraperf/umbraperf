@@ -93,5 +93,6 @@ export interface IUirViewerData {
     event4: Array<number>;
     operators: Array<string>;
     pipelines: Array<string>;
+    isFunction: Array<number>;
 }
 

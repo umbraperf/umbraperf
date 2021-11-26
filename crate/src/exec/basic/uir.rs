@@ -5,10 +5,7 @@ use std::{
 
 use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, datatypes::DataType, record_batch::RecordBatch};
 
-use crate::{
-    state::state::get_serde_dict,
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
-};
+use crate::{exec::basic::{basic::sort_batch, filter::{filter_between, filter_between_int32}}, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch}};
 
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
@@ -165,9 +162,12 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut op = Vec::new();
     let mut pipe = Vec::new();
     let mut is_function_flag = Vec::new();
+    let mut srcline_num = Vec::new();
 
 
-    for input in aggregated_output_vec {
+    for input in aggregated_output_vec.into_iter().enumerate() {
+        let num = input.0;
+        let input = input.1;
         srcline.push(format!("{}\n",input.0.unwrap()));
         perc_1.push(input.1);
         perc_2.push(input.2);
@@ -184,10 +184,11 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             pipe.push("None");
         }
         is_function_flag.push(input.7);
+        srcline_num.push(num as i32);
     }
 
     let out_batch = create_new_record_batch(
-        vec!["scrline", "perc1", "perc2", "perc3", "perc4", "op", "pipe", "func_flag"],
+        vec!["scrline", "perc1", "perc2", "perc3", "perc4", "op", "pipe", "func_flag", "srcline_num"],
         vec![
             DataType::Utf8,
             DataType::Float64,
@@ -196,6 +197,7 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             DataType::Float64,
             DataType::Utf8,
             DataType::Utf8,
+            DataType::Int32,
             DataType::Int32,
         ],
         vec![
@@ -207,8 +209,37 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(op)),
             Arc::new(StringArray::from(pipe)),
             Arc::new(Int32Array::from(is_function_flag)),
+            Arc::new(Int32Array::from(srcline_num)),
         ],
     );
 
-    return out_batch;
+    set_uir_record_batches(out_batch);
+
+    let batch = get_uir_record_batches().unwrap().batch.clone();
+
+    return batch;
 }
+
+
+pub fn get_top_functions() -> RecordBatch {
+
+    let batch = get_uir_record_batches().unwrap().batch.clone();
+
+    let only_functions = filter_between_int32(7, 1, 1, &batch);
+    let sort = sort_batch(&only_functions, 1, true);
+
+    sort
+
+}
+
+pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
+
+    let batch = get_uir_record_batches().unwrap().batch.clone();
+
+    let only_functions = filter_between_int32(7, 0, 0, &batch);
+    let sort = sort_batch(&only_functions, ordered_by + 1, true);
+
+    sort
+
+}
+

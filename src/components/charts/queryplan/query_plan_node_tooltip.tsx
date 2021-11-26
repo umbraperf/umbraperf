@@ -30,6 +30,7 @@ class QueryPlanNodeTooltip extends React.Component<Props, {}> {
     }
 
     createNodeWithTooltip() {
+
         const tooltipStyle: CSS.Properties = {
             position: 'fixed',
             top: "" + this.props.positionY,
@@ -37,6 +38,7 @@ class QueryPlanNodeTooltip extends React.Component<Props, {}> {
             borderWidth: '1px',
         }
 
+        
         return <div
             className={styles.queryplanNodeTooltip}
             style={tooltipStyle}

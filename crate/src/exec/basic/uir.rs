@@ -18,6 +18,15 @@ use crate::{
     utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
+#[derive(Clone)]
+pub struct ABSFREQ {
+    abs_freq_1: f64,
+    abs_freq_2: f64,
+    abs_freq_3: f64,
+    abs_freq_4: f64,
+}
+
+#[derive(Clone)]
 pub struct RELFREQ {
     rel_freq_1: f64,
     rel_freq_2: f64,
@@ -27,6 +36,26 @@ pub struct RELFREQ {
 
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
+}
+
+pub fn sum_of_vec(vec: Vec<f64>) -> (f64, f64, f64, f64) {
+    let mut sum1 = 0.;
+    for item in vec.iter().step_by(4) {
+        sum1 += item;
+    }
+    let mut sum2 = 0.;
+    for item in vec.iter().skip(1).step_by(4) {
+        sum2 += item;
+    }
+    let mut sum3 = 0.;
+    for item in vec.iter().skip(2).step_by(4) {
+        sum3 += item;
+    }
+    let mut sum4 = 0.;
+    for item in vec.iter().skip(3).step_by(4) {
+        sum4 += item;
+    }
+    (sum1, sum2, sum3, sum4)
 }
 
 pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
@@ -101,23 +130,22 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         let pipe = dict.pipeline.as_ref();
         let srcline = dict.uir.as_ref();
 
-        output_vec.push((
-            srcline,
-            buffer_percentage[0],
-            buffer_percentage[1],
-            buffer_percentage[2],
-            buffer_percentage[3],
-            op,
-            pipe,
-        ));
+        let abs_freq = ABSFREQ {
+            abs_freq_1: buffer_percentage[0],
+            abs_freq_2: buffer_percentage[1],
+            abs_freq_3: buffer_percentage[2],
+            abs_freq_4: buffer_percentage[3],
+        };
+
+        output_vec.push((srcline, abs_freq, op, pipe));
     }
 
     // Special treatment for functions with define, declare and aggregated output
     let mut aggregated_output_vec = Vec::new();
     for item in output_vec.clone().into_iter().enumerate() {
         let iter = item.0;
-        let current_srcline = item.1;
-        let current_srcline = current_srcline.0.unwrap();
+        let item = item.1;
+        let current_srcline = item.0.unwrap();
         if current_srcline.contains("define") || current_srcline.contains("declare") {
             let mut buffer_percentage = Vec::new();
             for item in output_vec.clone().into_iter().enumerate() {
@@ -125,32 +153,20 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                     let str = item.1;
                     let str = str.0;
                     if str.unwrap().contains("define") || str.unwrap().contains("declare") {
-                        let mut sum1 = 0.;
-                        for item in buffer_percentage.iter().step_by(4) {
-                            sum1 += item;
-                        }
-                        let mut sum2 = 0.;
-                        for item in buffer_percentage.iter().skip(1).step_by(4) {
-                            sum2 += item;
-                        }
-                        let mut sum3 = 0.;
-                        for item in buffer_percentage.iter().skip(2).step_by(4) {
-                            sum3 += item;
-                        }
-                        let mut sum4 = 0.;
-                        for item in buffer_percentage.iter().skip(3).step_by(4) {
-                            sum4 += item;
-                        }
+                        let (sum1, sum2, sum3, sum4) = sum_of_vec(buffer_percentage);
 
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
+                        let abs_freq = ABSFREQ {
+                            abs_freq_1: round(sum1),
+                            abs_freq_2: round(sum2),
+                            abs_freq_3: round(sum3),
+                            abs_freq_4: round(sum4),
+                        };
                         aggregated_output_vec.push((
                             Some(current_srcline.to_owned()),
-                            round(sum1),
-                            round(sum2),
-                            round(sum3),
-                            round(sum4),
+                            abs_freq,
                             op,
                             pipe,
                             1,
@@ -164,22 +180,18 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
                             let percentage = specific / total;
-                            //let percentage = f64::trunc((percentage) * 1000.0) / 10.;
                             buffer_percentage.push(percentage)
                         }
                     }
                 }
             }
         } else {
-            let item = item.1;
             if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
                 let out_str = Some(format!("{}", item.0.unwrap()));
-                aggregated_output_vec
-                    .push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, 0));
             } else {
                 let out_str = Some(format!("  {}", item.0.unwrap()));
-                aggregated_output_vec
-                    .push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
+                aggregated_output_vec.push((out_str, item.1, item.2, item.3, 0));
             }
         }
     }
@@ -191,58 +203,63 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut total_3 = 0.;
     let mut total_4 = 0.;
     for item in aggregated_output_vec {
-
         if item.0.clone().unwrap().contains("define") {
-            total_1 = item.1;
-            total_2 = item.2;
-            total_3 = item.3;
-            total_4 =item.4;
-            let rel_freq = RELFREQ { rel_freq_1: 0., rel_freq_2: 0., rel_freq_3: 0., rel_freq_4: 0.};
-            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, item.5, item.6, item.7, rel_freq));
+            total_1 = item.1.abs_freq_1;
+            total_2 = item.1.abs_freq_2;
+            total_3 = item.1.abs_freq_3;
+            total_4 = item.1.abs_freq_1;
+            let rel_freq = RELFREQ {
+                rel_freq_1: 0.,
+                rel_freq_2: 0.,
+                rel_freq_3: 0.,
+                rel_freq_4: 0.,
+            };
+            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         } else {
-            let rel_freq = RELFREQ { rel_freq_1: item.1 / total_1, rel_freq_2: item.2 / total_2, rel_freq_3: item.3 / total_3, rel_freq_4: item.4 / total_4};
-            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, item.5, item.6, item.7, rel_freq));
+            let rel_freq = RELFREQ {
+                rel_freq_1: item.1.abs_freq_1 / total_1,
+                rel_freq_2: item.1.abs_freq_2 / total_2,
+                rel_freq_3: item.1.abs_freq_3 / total_3,
+                rel_freq_4: item.1.abs_freq_4 / total_4,
+            };
+            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         }
     }
 
     let mut srcline = Vec::new();
-    let mut perc_1 = Vec::new();
-    let mut perc_2 = Vec::new();
-    let mut perc_3 = Vec::new();
-    let mut perc_4 = Vec::new();
+    let (mut perc_1, mut perc_2, mut perc_3, mut perc_4) =
+        (Vec::new(), Vec::new(), Vec::new(), Vec::new());
     let mut op = Vec::new();
     let mut pipe = Vec::new();
     let mut is_function_flag = Vec::new();
     let mut srcline_num = Vec::new();
-    let mut rel_perc_1 = Vec::new();
-    let mut rel_perc_2 = Vec::new();
-    let mut rel_perc_3 = Vec::new();
-    let mut rel_perc_4 = Vec::new();
+    let (mut rel_perc_1, mut rel_perc_2, mut rel_perc_3, mut rel_perc_4) =
+        (Vec::new(), Vec::new(), Vec::new(), Vec::new());
 
     for input in aggregated_output_vec_2.into_iter().enumerate() {
         let num = input.0;
         let input = input.1;
         srcline.push(format!("{}\n", input.0.unwrap()));
-        perc_1.push(input.1);
-        perc_2.push(input.2);
-        perc_3.push(input.3);
-        perc_4.push(input.4);
-        if let Some(operator) = input.5 {
+        perc_1.push(input.1.abs_freq_1);
+        perc_2.push(input.1.abs_freq_2);
+        perc_3.push(input.1.abs_freq_3);
+        perc_4.push(input.1.abs_freq_4);
+        if let Some(operator) = input.2 {
             op.push(operator.as_str());
         } else {
             op.push("None");
         }
-        if let Some(pipeline) = input.6 {
+        if let Some(pipeline) = input.3 {
             pipe.push(pipeline.as_str());
         } else {
             pipe.push("None");
         }
-        is_function_flag.push(input.7);
+        is_function_flag.push(input.4);
         srcline_num.push(num as i32);
-        rel_perc_1.push(input.8.rel_freq_1);
-        rel_perc_2.push(input.8.rel_freq_2);
-        rel_perc_3.push(input.8.rel_freq_3);
-        rel_perc_4.push(input.8.rel_freq_4);
+        rel_perc_1.push(input.5.rel_freq_1);
+        rel_perc_2.push(input.5.rel_freq_2);
+        rel_perc_3.push(input.5.rel_freq_3);
+        rel_perc_4.push(input.5.rel_freq_4);
     }
 
     let out_batch = create_new_record_batch(

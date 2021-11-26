@@ -114,7 +114,8 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch = get_top_functions();
             }
             "top(srclines)" => {
-                record_batch = get_top_srclines(0);
+                let order = params.parse::<i32>().unwrap();
+                record_batch = get_top_srclines(order as usize);
             }
             _ => {
                 panic!("Not supported operator!");

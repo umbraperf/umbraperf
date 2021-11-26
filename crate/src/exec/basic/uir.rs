@@ -3,9 +3,27 @@ use std::{
     sync::Arc,
 };
 
-use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, datatypes::DataType, record_batch::RecordBatch};
+use arrow::{
+    array::{Float64Array, Int32Array, Int64Array, StringArray},
+    datatypes::DataType,
+    record_batch::RecordBatch,
+};
 
-use crate::{exec::basic::{basic::sort_batch, filter::{filter_between, filter_between_int32}}, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch}};
+use crate::{
+    exec::basic::{
+        basic::sort_batch,
+        filter::{filter_between, filter_between_int32},
+    },
+    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+};
+
+pub struct RELFREQ {
+    rel_freq_1: f64,
+    rel_freq_2: f64,
+    rel_freq_3: f64,
+    rel_freq_4: f64,
+}
 
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
@@ -32,10 +50,14 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     for entry in column_srcline.into_iter().enumerate() {
         let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
-        let mapping_to_dict_file = hashmap_samplekey_srcline.get(&(entry_srcline_num as u64)).unwrap();
+        let mapping_to_dict_file = hashmap_samplekey_srcline
+            .get(&(entry_srcline_num as u64))
+            .unwrap();
         let current_ev = column_ev_name.value(entry.0);
         if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
-            let split = mapping_to_dict_file.split_terminator(":").collect::<Vec<&str>>();
+            let split = mapping_to_dict_file
+                .split_terminator(":")
+                .collect::<Vec<&str>>();
             let srcline_key = split[1];
             if dict.uri_dict.get(srcline_key).is_some() {
                 let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
@@ -123,7 +145,16 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         let op = dict.op.as_ref();
                         let pipe = dict.pipeline.as_ref();
-                        aggregated_output_vec.push((Some(current_srcline.to_owned()), round(sum1), round(sum2), round(sum3), round(sum4), op, pipe, 1));
+                        aggregated_output_vec.push((
+                            Some(current_srcline.to_owned()),
+                            round(sum1),
+                            round(sum2),
+                            round(sum3),
+                            round(sum4),
+                            op,
+                            pipe,
+                            1,
+                        ));
                         break;
                     } else {
                         for event in &unique_events_set {
@@ -143,16 +174,36 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             let item = item.1;
             if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
                 let out_str = Some(format!("{}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
+                aggregated_output_vec
+                    .push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
             } else {
                 let out_str = Some(format!("  {}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
-
+                aggregated_output_vec
+                    .push((out_str, item.1, item.2, item.3, item.4, item.5, item.6, 0));
             }
         }
     }
 
+    let mut aggregated_output_vec_2 = Vec::new();
 
+    let mut total_1 = 0.;
+    let mut total_2 = 0.;
+    let mut total_3 = 0.;
+    let mut total_4 = 0.;
+    for item in aggregated_output_vec {
+
+        if item.0.clone().unwrap().contains("define") {
+            total_1 = item.1;
+            total_2 = item.2;
+            total_3 = item.3;
+            total_4 =item.4;
+            let rel_freq = RELFREQ { rel_freq_1: 0., rel_freq_2: 0., rel_freq_3: 0., rel_freq_4: 0.};
+            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, item.5, item.6, item.7, rel_freq));
+        } else {
+            let rel_freq = RELFREQ { rel_freq_1: item.1 / total_1, rel_freq_2: item.2 / total_2, rel_freq_3: item.3 / total_3, rel_freq_4: item.4 / total_4};
+            aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, item.5, item.6, item.7, rel_freq));
+        }
+    }
 
     let mut srcline = Vec::new();
     let mut perc_1 = Vec::new();
@@ -163,12 +214,15 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut pipe = Vec::new();
     let mut is_function_flag = Vec::new();
     let mut srcline_num = Vec::new();
+    let mut rel_perc_1 = Vec::new();
+    let mut rel_perc_2 = Vec::new();
+    let mut rel_perc_3 = Vec::new();
+    let mut rel_perc_4 = Vec::new();
 
-
-    for input in aggregated_output_vec.into_iter().enumerate() {
+    for input in aggregated_output_vec_2.into_iter().enumerate() {
         let num = input.0;
         let input = input.1;
-        srcline.push(format!("{}\n",input.0.unwrap()));
+        srcline.push(format!("{}\n", input.0.unwrap()));
         perc_1.push(input.1);
         perc_2.push(input.2);
         perc_3.push(input.3);
@@ -185,10 +239,28 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         }
         is_function_flag.push(input.7);
         srcline_num.push(num as i32);
+        rel_perc_1.push(input.8.rel_freq_1);
+        rel_perc_2.push(input.8.rel_freq_2);
+        rel_perc_3.push(input.8.rel_freq_3);
+        rel_perc_4.push(input.8.rel_freq_4);
     }
 
     let out_batch = create_new_record_batch(
-        vec!["scrline", "perc1", "perc2", "perc3", "perc4", "op", "pipe", "func_flag", "srcline_num"],
+        vec![
+            "scrline",
+            "perc1",
+            "perc2",
+            "perc3",
+            "perc4",
+            "op",
+            "pipe",
+            "func_flag",
+            "srcline_num",
+            "rel_perc_1",
+            "rel_perc_2",
+            "rel_perc_3",
+            "rel_perc_4",
+        ],
         vec![
             DataType::Utf8,
             DataType::Float64,
@@ -199,6 +271,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             DataType::Utf8,
             DataType::Int32,
             DataType::Int32,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
         ],
         vec![
             Arc::new(StringArray::from(srcline)),
@@ -210,6 +286,10 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(pipe)),
             Arc::new(Int32Array::from(is_function_flag)),
             Arc::new(Int32Array::from(srcline_num)),
+            Arc::new(Float64Array::from(rel_perc_1)),
+            Arc::new(Float64Array::from(rel_perc_2)),
+            Arc::new(Float64Array::from(rel_perc_3)),
+            Arc::new(Float64Array::from(rel_perc_4)),
         ],
     );
 
@@ -220,26 +300,20 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     return batch;
 }
 
-
 pub fn get_top_functions() -> RecordBatch {
-
     let batch = get_uir_record_batches().unwrap().batch.clone();
 
     let only_functions = filter_between_int32(7, 1, 1, &batch);
     let sort = sort_batch(&only_functions, 1, true);
 
     sort
-
 }
 
 pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
-
     let batch = get_uir_record_batches().unwrap().batch.clone();
 
     let only_functions = filter_between_int32(7, 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);
 
     sort
-
 }
-

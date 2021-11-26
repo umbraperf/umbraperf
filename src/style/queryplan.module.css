@@ -54,3 +54,21 @@
 .reactFlowGraph:active{
     cursor: grabbing;
 }
+
+.queryplanNodeTooltip{
+	opacity: 1;
+	animation-name: fadeInQueryplanNodeTooltip;
+    animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 1s;
+}
+
+
+@keyframes queryplanNodeTooltip {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

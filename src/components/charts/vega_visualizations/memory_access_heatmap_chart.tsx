@@ -100,20 +100,21 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const visData = this.createVisualizationData(id);
 
-        const yDomain = (): { domain: {} | [], domainDifMid?: number } => {
+        const yDomain = (): { domain: any, domainMax?: number, domainMin?: number } => {
             if (this.props.memoryHeatmapsDifferenceRepresentation) {
                 return {
                     domain: [
                         { signal: "((abs(extentMemAdr[0]) > abs(extentMemAdr[1]) || (extentMemAdr[0] == extentMemAdr[1] && extentMemAdr[0] <= 0))) ? extentMemAdr[0] : -extentMemAdr[1]" },
                         { signal: "((abs(extentMemAdr[0]) > abs(extentMemAdr[1]) || (extentMemAdr[0] == extentMemAdr[1] && extentMemAdr[0] <= 0))) ? abs(extentMemAdr[0]) : extentMemAdr[1]" }
                     ],
+                    domainMax: undefined,
+                    domainMin: undefined,
                 };
             } else {
                 return {
-                    domain: {
-                        data: "table",
-                        field: "memAdr",
-                    },
+                    domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
+                    domainMax: this.props.chartData.domain.memoryDomain.max,
+                    domainMin: this.props.chartData.domain.memoryDomain.min,
                 };
             }
         };
@@ -153,6 +154,8 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                     "name": "y",
                     "type": "linear",
                     domain: yDomain().domain,
+                    domainMax: yDomain().domainMax,
+                    domainMin: yDomain().domainMin,
                     "range": "height",
                     "zero": true,
                     "nice": true,

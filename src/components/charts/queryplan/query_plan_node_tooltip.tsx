@@ -6,8 +6,9 @@ import CSS from 'csstype';
 
 
 interface Props {
-    positionX: string,
-    positionY: string,
+    positionX: number,
+    positionY: number,
+    nodeId: string,
     // key: number; //trigers complete rerender for repositioning
     // height: number;
     // width: number;
@@ -22,19 +23,27 @@ class QueryPlanNodeTooltip extends React.Component<Props, {}> {
         super(props);
     }
 
+    createTooltipContent() {
+        return <span>
+            {this.props.nodeId}
+        </span>
+    }
+
     createNodeWithTooltip() {
+
         const tooltipStyle: CSS.Properties = {
             position: 'fixed',
-            top: this.props.positionY,
+            top: "" + this.props.positionY,
             border: 'solid',
             borderWidth: '1px',
         }
 
+        
         return <div
-            className={"queryplanNodeTooltip"}
+            className={styles.queryplanNodeTooltip}
             style={tooltipStyle}
         >
-            TEST TOOLTIP
+            {this.createTooltipContent()}
         </div>
     }
 

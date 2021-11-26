@@ -13,7 +13,6 @@ import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
-import { Tooltip } from '@material-ui/core';
 import { QueryplanNodeData } from './query_plan_node';
 
 export interface QueryPlanWrapperAppstateProps {
@@ -306,20 +305,16 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
                 y: nodeWithPosition.y - nodeHight / 2,
             }
-            const style: CSS.Properties =  {
-                padding: '5px',
+            const style: CSS.Properties = {
                 border: 'solid',
-                width: '125px',
-                height: '25px',
+                width: '130px',
+                height: '30px',
                 borderWidth: '4px',
                 borderRadius: '25px',
                 backgroundColor: node.backgroundFill,
                 borderColor: node.borderFill,
                 cursor: node.nodeCursor,
                 fontSize: '15px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
             }
 
             const reactFlowNode: FlowGraphNode = {
@@ -327,8 +322,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 data: {
                     label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
                     nodeStyle: {
-
-                        
                     }
                 },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
@@ -337,7 +330,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 selectable: node.isNodeSelectable,
                 type: 'queryplanNode',
                 style,
-                // type: node.id.includes("tablescan") ? "input" : (node.id.includes("RESULT") ? "output" : "default"),
+                // type: node.id.includes("tablescan") ? "input" : (node.id.includes("root") ? "output" : "default"),
             }
             return reactFlowNode;
 

@@ -1,10 +1,9 @@
 import { Tooltip } from '@material-ui/core';
-import { PinDropSharp } from '@material-ui/icons';
-import { Data } from 'apache-arrow';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
 import CSS from 'csstype';
+import styles from '../../../style/queryplan.module.css';
 
 export type QueryplanNodeData = {
     label: string,
@@ -23,12 +22,17 @@ interface QueryplanNodeProps {
 
 export default memo(function QueryplanNode(props: QueryplanNodeProps) {
 
+    const handleStyle = (handlerType: "source" | "target"): CSS.Properties => {
+        return {
+            background: context!.accentBlack,
+            visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && props.id.includes("tablescan"))) ? "hidden" : "visible",
+        }           
+    }
     const context = useContext(ctx);
 
     const createNodeContent = () => {
         return <div
-            className={"queryplanNode"}
-            style={{width: '100%', height: '100%'}}
+            className={styles.queryplanNodeBody}
         >
             {props.data.label}
         </div>
@@ -43,12 +47,14 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
             <Handle
                 type="target"
                 position={props.targetPosition}
-                style={{ background: context!.accentBlack }}
+                style={handleStyle("target")}
+                isConnectable={false}
             />
             <Handle
                 type="source"
                 position={props.sourcePosition}
-                style={{ background: context!.accentBlack }}
+                style={handleStyle("source")}
+                isConnectable={false}
             />
         </>
     );

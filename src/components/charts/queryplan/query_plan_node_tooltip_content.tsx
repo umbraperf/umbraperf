@@ -35,24 +35,23 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
                     {/* <TableContainer className={styles.queryplanNodeTooltipTableContainer} component={Paper}> */}
                     <Table
-                        className={styles.queryplanNodeTooltipTable}
                         size="small"
                         aria-label="a dense table">
                         <TableHead>
                             <TableRow>
-                                <TableCell align="right">No.</TableCell>
-                                <TableCell>UIR Line</TableCell>
-                                <TableCell align="right">Freq.</TableCell>
+                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} width="5%" align="right">No.</TableCell>
+                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} width="85%" align="left">UIR Line</TableCell>
+                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} width="10%" align="right">Freq.</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {tableRows.map((row) => (
                                 <TableRow key={row.lineNumber}>
-                                    <TableCell align="right">{row.lineNumber}</TableCell>
-                                    <TableCell component="th" scope="row">
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="5%" component="td" align="right">{row.lineNumber}</TableCell>
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="85%" component="th" align="left" scope="row">
                                         {row.uirLine}
                                     </TableCell>
-                                    <TableCell align="right">{row.eventOccurrence}</TableCell>
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="10%" component="td" align="right">{row.eventOccurrence}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -69,7 +68,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         return <div>
             <Typography color="secondary">{this.props.operatorName}</Typography>
             <Typography className={styles.queryplanNodeTooltipSubtitle} variant="caption">{`Most expensive UIR lines caused by ${this.props.operatorName}:`}</Typography>
-            
+
             {this.createContentTable()}
         </div >
     }

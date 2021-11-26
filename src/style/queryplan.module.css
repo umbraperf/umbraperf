@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack from colors;
+@value colorAccentBlack, colorTertiary from colors;
 
 :root {
     --dagreGraphPadding: 2px;
@@ -72,7 +72,12 @@
     font-size: 6px;
 }
 
-.queryplanNodeTooltipTable{
-    font-size: 6px;
-    color: green !important;
+.queryplanNodeTooltipTableCellContent{
+    font-size: 11px;
+    color: colorTertiary;
+}
+
+.queryplanNodeTooltipTableCellHead{
+    font-size: 12px;
+
 }

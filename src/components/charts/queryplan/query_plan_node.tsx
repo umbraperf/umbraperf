@@ -1,9 +1,10 @@
-import { Tooltip } from '@material-ui/core';
+import { styled, Theme, Tooltip, TooltipProps, withStyles } from '@material-ui/core';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
 import CSS from 'csstype';
 import styles from '../../../style/queryplan.module.css';
+import QueryPlanNodeTooltip from './query_plan_node_tooltip';
 
 export type QueryplanNodeData = {
     label: string,
@@ -19,6 +20,17 @@ interface QueryplanNodeProps {
     targetPosition: Position,
 }
 
+//Adjust material UI tooltip
+const HtmlTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+        backgroundColor: '#f5f5f9',
+        color: 'rgba(0, 0, 0, 0.87)',
+        maxWidth: 220,
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #dadde9',
+    },
+}))(Tooltip);
+
 
 export default memo(function QueryplanNode(props: QueryplanNodeProps) {
 
@@ -26,8 +38,9 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
         return {
             background: context!.accentBlack,
             visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && props.id.includes("tablescan"))) ? "hidden" : "visible",
-        }           
+        }
     }
+
     const context = useContext(ctx);
 
     const createNodeContent = () => {
@@ -40,9 +53,15 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
 
     return (
         <>
-            <Tooltip title="Add" placement="top">
+            <HtmlTooltip
+                title={<React.Fragment>
+                    <QueryPlanNodeTooltip />
+                </React.Fragment>
+                }
+                placement="top"
+            >
                 {createNodeContent()}
-            </Tooltip>
+            </HtmlTooltip>
 
             <Handle
                 type="target"

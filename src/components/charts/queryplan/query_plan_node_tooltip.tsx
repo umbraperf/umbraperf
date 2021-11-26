@@ -1,19 +1,11 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
-import { Tooltip } from '@material-ui/core';
-import CSS from 'csstype';
+import { Typography } from '@material-ui/core';
 
 
 
 interface Props {
-    positionX: number,
-    positionY: number,
-    nodeId: string,
-    // key: number; //trigers complete rerender for repositioning
-    // height: number;
-    // width: number;
-    // graphElements: FlowGraphElements,
-    // handleOperatorSelection: (elementId: string) => void;
+
 }
 
 class QueryPlanNodeTooltip extends React.Component<Props, {}> {
@@ -23,28 +15,13 @@ class QueryPlanNodeTooltip extends React.Component<Props, {}> {
         super(props);
     }
 
-    createTooltipContent() {
-        return <span>
-            {this.props.nodeId}
-        </span>
-    }
 
     createNodeTooltip() {
-
-        const tooltipStyle: CSS.Properties = {
-            position: 'fixed',
-            top: "" + this.props.positionY+"px",
-
-        }
-
-        console.log(this.props.positionX)
-        console.log(tooltipStyle)
-        return <div
-            style={tooltipStyle}
-            className={styles.queryplanNodeTooltip}
-        >
-            {this.createTooltipContent()}
-        </div>
+        return <div>
+            <Typography color="inherit">Tooltip with HTML</Typography>
+            <em>{"And here's"}</em> <b>{'some'}</b> <u>{'amazing content'}</u>.{' '}
+            {"It's very engaging. Right?"}
+        </div >
     }
 
     public render() {

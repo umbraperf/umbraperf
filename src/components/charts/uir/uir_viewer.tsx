@@ -344,7 +344,10 @@ class UirViewer extends React.Component<Props, State> {
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
             if (eventOccurence > 0) {
-                const eventOccurrenceColorGroup = +`${this.props.chartData.isFunction[i]}${Math.floor(eventOccurence / 10)}`;
+                const eventOccurrenceColorGroup = `${this.props.chartData.isFunction[i]}${Math.floor(eventOccurence / 10)}`;
+                console.log("-------");
+                console.log(this.props.chartData.isFunction[i]);
+                console.log(Math.floor(eventOccurence / 10));
                 console.log(eventOccurrenceColorGroup);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
@@ -396,14 +399,14 @@ class UirViewer extends React.Component<Props, State> {
         this.updateColorGlyphs();
     }
 
-    createCustomCssGlyphClass(glyphClassScaleType: "Event" | "Operator", glyphClassGroupNumber: number) {
+    createCustomCssGlyphClass(glyphClassScaleType: "Event" | "Operator", glyphClassGroupNumber: number | string) {
 
         //return name of correct css class, create class if not yet created dynamically for operator colors
         const className = `glyphClass${glyphClassScaleType}${glyphClassGroupNumber}`;
 
         if (glyphClassScaleType === "Operator") {
             if (!this.editorContainerRef.current!.children.namedItem(className)) {
-                this.addCssClassForGlyphToDom(className, glyphClassGroupNumber);
+                this.addCssClassForGlyphToDom(className, glyphClassGroupNumber as number);
             }
             return className;
         }else if(glyphClassScaleType == "Event"){

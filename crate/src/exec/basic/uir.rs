@@ -58,7 +58,7 @@ pub fn sum_of_vec(vec: Vec<f64>) -> (f64, f64, f64, f64) {
     (sum1, sum2, sum3, sum4)
 }
 
-pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
+pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let column_ev_name = record_batch
         .column(1)
         .as_any()
@@ -126,18 +126,18 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         }
 
         let dict = dict.uri_dict.get(&entry).unwrap();
-        let op = dict.op.as_ref();
-        let pipe = dict.pipeline.as_ref();
-        let srcline = dict.uir.as_ref();
 
-        let abs_freq = ABSFREQ {
-            abs_freq_1: buffer_percentage[0],
-            abs_freq_2: buffer_percentage[1],
-            abs_freq_3: buffer_percentage[2],
-            abs_freq_4: buffer_percentage[3],
-        };
-
-        output_vec.push((srcline, abs_freq, op, pipe));
+        output_vec.push((
+            dict.uir.as_ref(),
+            ABSFREQ {
+                abs_freq_1: buffer_percentage[0],
+                abs_freq_2: buffer_percentage[1],
+                abs_freq_3: buffer_percentage[2],
+                abs_freq_4: buffer_percentage[3],
+            },
+            dict.op.as_ref(),
+            dict.pipeline.as_ref(),
+        ));
     }
 
     // Special treatment for functions with define, declare and aggregated output
@@ -154,21 +154,17 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                     let str = str.0;
                     if str.unwrap().contains("define") || str.unwrap().contains("declare") {
                         let (sum1, sum2, sum3, sum4) = sum_of_vec(buffer_percentage);
-
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
-                        let op = dict.op.as_ref();
-                        let pipe = dict.pipeline.as_ref();
-                        let abs_freq = ABSFREQ {
-                            abs_freq_1: round(sum1),
-                            abs_freq_2: round(sum2),
-                            abs_freq_3: round(sum3),
-                            abs_freq_4: round(sum4),
-                        };
                         aggregated_output_vec.push((
                             Some(current_srcline.to_owned()),
-                            abs_freq,
-                            op,
-                            pipe,
+                            ABSFREQ {
+                                abs_freq_1: round(sum1),
+                                abs_freq_2: round(sum2),
+                                abs_freq_3: round(sum3),
+                                abs_freq_4: round(sum4),
+                            },
+                            dict.op.as_ref(),
+                            dict.pipeline.as_ref(),
                             1,
                         ));
                         break;
@@ -187,21 +183,28 @@ pub fn uir(file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             }
         } else {
             if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
-                let out_str = Some(format!("{}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, 0));
+                aggregated_output_vec.push((
+                    Some(format!("{}", item.0.unwrap())),
+                    item.1,
+                    item.2,
+                    item.3,
+                    0,
+                ));
             } else {
-                let out_str = Some(format!("  {}", item.0.unwrap()));
-                aggregated_output_vec.push((out_str, item.1, item.2, item.3, 0));
+                aggregated_output_vec.push((
+                    Some(format!("  {}", item.0.unwrap())),
+                    item.1,
+                    item.2,
+                    item.3,
+                    0,
+                ));
             }
         }
     }
 
     let mut aggregated_output_vec_2 = Vec::new();
 
-    let mut total_1 = 0.;
-    let mut total_2 = 0.;
-    let mut total_3 = 0.;
-    let mut total_4 = 0.;
+    let (mut total_1, mut total_2, mut total_3, mut total_4) = (0., 0., 0., 0.);
     for item in aggregated_output_vec {
         if item.0.clone().unwrap().contains("define") {
             total_1 = item.1.abs_freq_1;

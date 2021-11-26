@@ -4,11 +4,10 @@ import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
 import CSS from 'csstype';
 import styles from '../../../style/queryplan.module.css';
-import QueryPlanNodeTooltip from './query_plan_node_tooltip';
+import QueryPlanNodeTooltipContent from './query_plan_node_tooltip_content';
 
 export type QueryplanNodeData = {
     label: string,
-    nodeStyle: CSS.Properties,
 }
 
 interface QueryplanNodeProps {
@@ -55,7 +54,9 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
         <>
             <HtmlTooltip
                 title={<React.Fragment>
-                    <QueryPlanNodeTooltip />
+                    <QueryPlanNodeTooltipContent
+                        operatorName={props.data.label}
+                    />
                 </React.Fragment>
                 }
                 placement="top"

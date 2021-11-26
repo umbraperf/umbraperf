@@ -4,6 +4,11 @@ import _ from 'lodash';
 import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
 import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
 
+interface State{
+    isNodeHover: true,
+    tooltipPositionX: string,
+    tooltipPositionY: string,
+}
 
 interface Props {
     key: number; //trigers complete rerender for repositioning
@@ -20,9 +25,17 @@ class QueryPlanViewer extends React.Component<Props, {}> {
         super(props);
     }
 
-    mousemove(event: any) {
+    handleNodeMouseEnter(event: any) {
         //TODO on catch mouse hover event
         // console.log(event)
+    }
+
+    handleNodeMouseLeave(event: any){
+
+    }
+
+    createNodeTooltip(){
+        
     }
 
     handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
@@ -36,19 +49,18 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
     createReactFlowGraph() {
 
-        const layoutedElements = this.props.graphElements;
+        console.log(this.props.graphElements);
 
         return <div
             className={styles.reactFlowGraph}
         >
             <ReactFlowProvider>
                 <ReactFlow
-                    elements={layoutedElements}
+                    elements={this.props.graphElements}
                     minZoom={0.1}
                     maxZoom={3}
-                    onNodeMouseMove={this.mousemove}
-                    onNodeMouseEnter={this.mousemove}
-                    onNodeMouseLeave={this.mousemove}
+                    onNodeMouseEnter={this.handleNodeMouseEnter}
+                    onNodeMouseLeave={this.handleNodeMouseLeave}
                     nodesConnectable={false}
                     nodesDraggable={true}
                     // onConnect={this.createEdges}
@@ -59,6 +71,8 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                 />
                 <Controls />
             </ReactFlowProvider>
+
+            {this.createNodeTooltip()}
         </div>
     }
 

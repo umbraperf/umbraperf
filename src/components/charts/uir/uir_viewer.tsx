@@ -345,10 +345,6 @@ class UirViewer extends React.Component<Props, State> {
             const eventOccurence = (this.props.chartData[eventString])[i];
             if (eventOccurence > 0) {
                 const eventOccurrenceColorGroup = `${this.props.chartData.isFunction[i]}${Math.floor(eventOccurence / 10)}`;
-                console.log("-------");
-                console.log(this.props.chartData.isFunction[i]);
-                console.log(Math.floor(eventOccurence / 10));
-                console.log(eventOccurrenceColorGroup);
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }
@@ -410,9 +406,7 @@ class UirViewer extends React.Component<Props, State> {
             }
             return className;
         }else if(glyphClassScaleType == "Event"){
-            const a = styles[className];
-            console.log(a);
-            return a;
+            return styles[className];
         }else{
             return "";
         }

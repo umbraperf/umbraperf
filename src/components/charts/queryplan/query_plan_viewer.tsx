@@ -3,11 +3,13 @@ import React from 'react';
 import _ from 'lodash';
 import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
 import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
+import QueryPlanNodeTooltip from './query_plan_node_tooltip';
 
-interface State{
-    isNodeHover: true,
-    tooltipPositionX: string,
-    tooltipPositionY: string,
+interface State {
+    isNodeHover: boolean,
+    tooltipPositionX: number | undefined,
+    tooltipPositionY: number | undefined,
+    hoverNodeId: string,
 }
 
 interface Props {
@@ -18,24 +20,49 @@ interface Props {
     handleOperatorSelection: (elementId: string) => void;
 }
 
-class QueryPlanViewer extends React.Component<Props, {}> {
+class QueryPlanViewer extends React.Component<Props, State> {
 
 
     constructor(props: Props) {
         super(props);
+        this.state = {
+            isNodeHover: false,
+            tooltipPositionX: undefined,
+            tooltipPositionY: undefined,
+            hoverNodeId: "",
+        }
+
+        this.handleNodeMouseEnter = this.handleNodeMouseEnter.bind(this);
+        this.handleNodeMouseLeave = this.handleNodeMouseLeave.bind(this);
     }
 
-    handleNodeMouseEnter(event: any) {
-        //TODO on catch mouse hover event
-        // console.log(event)
+    handleNodeMouseEnter(event: React.MouseEvent, element: FlowGraphNode) {
+        if (false === this.state.isNodeHover) {
+            this.setState((state, props) => ({
+                ...state,
+                isNodeHover: true,
+                tooltipPositionX: element.position.x,
+                tooltipPositionY: element.position.y,
+                hoverNodeId: element.id,
+            }))
+        }
     }
 
-    handleNodeMouseLeave(event: any){
-
+    handleNodeMouseLeave(event: React.MouseEvent, element: FlowGraphNode) {
+        if (true === this.state.isNodeHover) {
+            this.setState((state, props) => ({
+                ...state,
+                isNodeHover: false,
+            }))
+        }
     }
 
-    createNodeTooltip(){
-        
+    createNodeTooltip() {
+        return this.state.isNodeHover && <QueryPlanNodeTooltip
+            positionX={this.state.tooltipPositionX!}
+            positionY={this.state.tooltipPositionY!}
+            nodeId={this.state.hoverNodeId}
+        />
     }
 
     handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
@@ -59,12 +86,10 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     elements={this.props.graphElements}
                     minZoom={0.1}
                     maxZoom={3}
-                    onNodeMouseEnter={this.handleNodeMouseEnter}
-                    onNodeMouseLeave={this.handleNodeMouseLeave}
+                    onNodeMouseEnter={(event, element) => this.handleNodeMouseEnter(event, element as FlowGraphNode)}
+                    onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
                     nodesConnectable={false}
                     nodesDraggable={true}
-                    // onConnect={this.createEdges}
-                    // onElementsRemove={onElementsRemove}
                     connectionLineType={ConnectionLineType.SmoothStep}
                     onLoad={this.onLoad}
                     onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}

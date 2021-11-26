@@ -56,19 +56,30 @@
 }
 
 .queryplanNodeTooltip{
+
+    border-style: solid;
+    width: 100px;
+    height: 200px;
+    border-radius: 2px;
+    z-index: 1;
+
 	opacity: 1;
-	animation-name: fadeInQueryplanNodeTooltip;
+    background-color: white;
+    padding: 5px;
+
+
+	/* animation-name: fadeInQueryplanNodeTooltip;
     animation-iteration-count: 1;
 	animation-timing-function: ease-in;
-	animation-duration: 1s;
-}
+	animation-duration: 1s;*/
+} 
 
 
-@keyframes queryplanNodeTooltip {
+/* @keyframes queryplanNodeTooltip {
 	0% {
 		opacity: 0;
 	}
 	100% {
 		opacity: 1;
 	}
-}
+} */

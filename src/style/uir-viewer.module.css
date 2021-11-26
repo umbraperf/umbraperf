@@ -1,9 +1,6 @@
 @value colors: "./export-variables.module.css";
 @value colorAccentBlack, colorSecondary from colors;
 
-/* :root{
- --eventOccurrenceColor: colorSecondary;
-} */
 
 .monacoEditorContainer{
     flex: 1 1 fit-content;
@@ -47,17 +44,29 @@
     background: #fff;
 }
 
+.glyphClassEventCommon{
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-size: 80%;
+}
+
 .glyphClassEvent00{
-    background-color: blue;
+    /* TEST */
+    /* background: colorSecondary; */
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-size: 80%;
+    background: darkgoldenrod;
+    mask-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915C87.9316 15.7556 94.2899 24.507 97.5528 34.5491C100.816 44.5913 100.816 55.4087 97.5528 65.4508C94.2899 75.493 87.9316 84.2444 79.3893 90.4508C70.8469 96.6573 60.559 100 50 100C39.441 100 29.1531 96.6573 20.6107 90.4509C12.0684 84.2444 5.71007 75.493 2.44717 65.4509C-0.815725 55.4087 -0.815725 44.5913 2.44717 34.5492L50 50L50 0Z' fill='black'/%3E%3C/svg%3E");
 }
 
 .glyphClassEvent01{
-    background-color: blue;
-}
+    composes: glyphClassEventCommon;
+    background-image: url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='blue'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='blue' stroke-width='10'/%3E%3C/svg%3E");}
 
-.glyphClassEvent02{
-    background-color: blue;
-}
+.glyphClassEvent02{  
+    composes: glyphClassEventCommon;  
+    background-image: url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='blue'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='blue' stroke-width='10'/%3E%3C/svg%3E");}
 
 .glyphClassEvent03{
     background-color: blue;

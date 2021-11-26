@@ -13,6 +13,8 @@ import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
+import { Tooltip } from '@material-ui/core';
+import { QueryplanNodeData } from './query_plan_node';
 
 export interface QueryPlanWrapperAppstateProps {
     appContext: Context.IAppContext;
@@ -53,14 +55,12 @@ export type FlowGraphNode = {
         x: number;
         y: number;
     };
-    data: {
-        label: string;
-    };
+    data: QueryplanNodeData;
     targetPosition: Position;
     sourcePosition: Position;
-    style: CSS.Properties;
     selectable: boolean;
     type: string,
+    style: CSS.Properties;
 }
 
 export type FlowGraphEdge = {
@@ -306,24 +306,38 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
                 y: nodeWithPosition.y - nodeHight / 2,
             }
+            const style: CSS.Properties =  {
+                padding: '5px',
+                border: 'solid',
+                width: '125px',
+                height: '25px',
+                borderWidth: '4px',
+                borderRadius: '25px',
+                backgroundColor: node.backgroundFill,
+                borderColor: node.borderFill,
+                cursor: node.nodeCursor,
+                fontSize: '15px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }
 
-            const reactFlowNode = {
+            const reactFlowNode: FlowGraphNode = {
                 id: node.id,
-                // data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
-                data: { label: node.label },
+                data: {
+                    label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
+                    nodeStyle: {
+
+                        
+                    }
+                },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
                 selectable: node.isNodeSelectable,
-                style: {
-                    borderColor: node.borderFill,
-                    backgroundColor: node.backgroundFill,
-                    borderWidth: '4px',
-                    borderRadius: '25px',
-                    cursor: node.nodeCursor,
-                    fontSize: '15px',
-                },
-                type: node.id.includes("tablescan") ? "input" : (node.id.includes("RESULT") ? "output" : "default"),
+                type: 'queryplanNode',
+                style,
+                // type: node.id.includes("tablescan") ? "input" : (node.id.includes("RESULT") ? "output" : "default"),
             }
             return reactFlowNode;
 

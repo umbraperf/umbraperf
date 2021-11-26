@@ -29,26 +29,26 @@ class QueryPlanNodeTooltip extends React.Component<Props, {}> {
         </span>
     }
 
-    createNodeWithTooltip() {
+    createNodeTooltip() {
 
         const tooltipStyle: CSS.Properties = {
             position: 'fixed',
-            top: "" + this.props.positionY,
-            border: 'solid',
-            borderWidth: '1px',
+            top: "" + this.props.positionY+"px",
+
         }
 
-        
+        console.log(this.props.positionX)
+        console.log(tooltipStyle)
         return <div
-            className={styles.queryplanNodeTooltip}
             style={tooltipStyle}
+            className={styles.queryplanNodeTooltip}
         >
             {this.createTooltipContent()}
         </div>
     }
 
     public render() {
-        return this.createNodeWithTooltip();
+        return this.createNodeTooltip();
     }
 
 }

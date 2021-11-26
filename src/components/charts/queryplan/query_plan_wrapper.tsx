@@ -317,18 +317,19 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 fontSize: '15px',
             }
 
+            const data: QueryplanNodeData = {
+                label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
+            }
+
             const reactFlowNode: FlowGraphNode = {
                 id: node.id,
-                data: {
-                    label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
-                },
+                data,
+                position,
+                style,
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
-                position,
                 selectable: node.isNodeSelectable,
                 type: 'queryplanNode',
-                style,
-                // type: node.id.includes("tablescan") ? "input" : (node.id.includes("root") ? "output" : "default"),
             }
             return reactFlowNode;
 

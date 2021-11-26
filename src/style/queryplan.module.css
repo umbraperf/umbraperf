@@ -63,31 +63,16 @@
     align-items: center;
 }
 
-.queryplanNodeTooltip{
+.queryplanNodeTooltipSubtitle{
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
 
-    border-style: solid;
-    width: 100px;
-    height: 200px;
-    border-radius: 2px;
-    z-index: 1;
+.queryplanNodeTooltipTableContainer{
+    font-size: 6px;
+}
 
-	opacity: 1;
-    background-color: white;
-    padding: 5px;
-
-
-	/* animation-name: fadeInQueryplanNodeTooltip;
-    animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 1s;*/
-} 
-
-
-/* @keyframes queryplanNodeTooltip {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-} */
+.queryplanNodeTooltipTable{
+    font-size: 6px;
+    color: green !important;
+}

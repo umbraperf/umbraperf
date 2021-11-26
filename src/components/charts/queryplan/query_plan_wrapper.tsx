@@ -60,6 +60,7 @@ export type FlowGraphNode = {
     sourcePosition: Position;
     style: CSS.Properties;
     selectable: boolean;
+    type: string,
 }
 
 export type FlowGraphEdge = {
@@ -308,7 +309,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             const reactFlowNode = {
                 id: node.id,
-                data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
+                // data: { label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label },
+                data: { label: node.label },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,
                 position,
@@ -320,7 +322,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     borderRadius: '25px',
                     cursor: node.nodeCursor,
                     fontSize: '15px',
-                }
+                },
+                type: node.id.includes("tablescan") ? "input" : (node.id.includes("RESULT") ? "output" : "default"),
             }
             return reactFlowNode;
 

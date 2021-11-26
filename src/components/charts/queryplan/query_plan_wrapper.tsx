@@ -321,8 +321,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 id: node.id,
                 data: {
                     label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
-                    nodeStyle: {
-                    }
                 },
                 targetPosition: isVertical ? Position.Bottom : Position.Right,
                 sourcePosition: isVertical ? Position.Top : Position.Left,

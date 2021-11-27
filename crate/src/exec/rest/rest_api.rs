@@ -111,7 +111,13 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch = uir(get_file_size().unwrap(), record_batch);
             }
             "top(srclines)" => {
-                let order = params.parse::<i32>().unwrap();
+                let order = match params {
+                    "cycles::ppp" => 0,
+                    "" => 1,
+                    "f" => 2,
+                    "ff" => 3,
+                    &_ => 0
+                };
                 record_batch = get_top_srclines(record_batch, order as usize);
             }
             _ => {

@@ -113,9 +113,9 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
             "top(srclines)" => {
                 let order = match params {
                     "cycles::ppp" => 0,
-                    "" => 1,
-                    "f" => 2,
-                    "ff" => 3,
+                    "l1-cache-misses" => 1,
+                    "l3-cache-misses" => 2,
+                    "mem_inst_retired.all_loads" => 3,
                     &_ => 0
                 };
                 record_batch = get_top_srclines(record_batch, order as usize);

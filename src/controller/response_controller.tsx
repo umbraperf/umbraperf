@@ -2,6 +2,7 @@ import * as ArrowTable from "../../node_modules/apache-arrow/table";
 import * as model from "../model";
 import { store, appContext } from '../app_config';
 import * as RequestController from "./request_controller";
+import _ from "lodash";
 
 
 export function setCsvReadingFinished() {
@@ -24,7 +25,6 @@ export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Ta
 
     //store result of current request in redux store result variable 
     const resultObject: model.Result = model.createResultObject(requestId, rustResult, queryPlan);
-    console.log(resultObject);
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULT,
@@ -360,13 +360,16 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             toggleResultLoadingFlag = true;
             break;
 
-        case model.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR:
+        case model.BackendQueryType.GET_QUERYPLAN_DATA:
 
             let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} };
 
             if(resultObject.queryPlan){
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
+                console.log("hier 10")
             } else if(resultObject.rustResultTable.length !== 0){
+                // TODO condition
+                console.log("hier 11")
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
                     //TODO rust result
                 }
@@ -381,9 +384,13 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         ...queryplanDataElem,
                     }
                 });
-            if (queryplanDataElem.queryplanData && queryplanDataElem.nodeTooltipData) {
+
+            if (!_.isEmpty(queryplanDataElem.queryplanData) && !_.isEmpty(queryplanDataElem.nodeTooltipData)) {
+                //TODO condition
                 toggleResultLoadingFlag = true;
+                console.log(queryplanDataElem)
             }
+
             break;
     }
 

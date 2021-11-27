@@ -319,8 +319,8 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
     return record_batch.slice(0, max);
 }
 
-pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
-    let batch = get_uir_record_batches().unwrap().batch.clone();
+pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
+    let batch = uir(0, record_batch);
 
     let only_functions = filter_between_int32(7, 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);

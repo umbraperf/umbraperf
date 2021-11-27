@@ -230,10 +230,14 @@ class UirViewer extends React.Component<Props, State> {
         let markdownEventsString = "";
         for (let i = 0; i < 4; i++) {
             let boldCharacter = "";
+            let relativeEventString = "";
             if (marginGlyphRepresentation && i + 1 === boldEvent) {
                 boldCharacter = "**";
             }
-            const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${boldCharacter} \n`;
+            if(this.props.chartData.isFunction[eventIndex] === 0){
+                relativeEventString = ` (Function Share: ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%)`
+            }
+            const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${boldCharacter} \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;
@@ -334,7 +338,7 @@ class UirViewer extends React.Component<Props, State> {
         const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
         const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1;
         const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
-        const relativeEventString = `relEvent${eventNumber}` as "relEvent1" | "relEvent1" | "relEvent1" | "relEvent1";
+        const relativeFunctionEventString = `relEvent${eventNumber}` as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4";
 
         for (let i = 0; i < this.props.chartData.uirLines.length; i++) {
 
@@ -344,12 +348,12 @@ class UirViewer extends React.Component<Props, State> {
 
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
-            const relativeFunctionEventOccurence = (this.props.chartData[relativeEventString])[i];
 
             if (eventOccurence > 0) {
                 const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
+                const relativeFunctionEventOccurence = (this.props.chartData[relativeFunctionEventString])[i];
                 const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence)/10);
-                const eventOccurrenceColorGroup = `${eventOccurenceRelAbsColorGroup}`;
+                const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }

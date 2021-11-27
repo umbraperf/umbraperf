@@ -8,7 +8,7 @@ use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, compute:
 use crate::{exec::basic::{
         basic::sort_batch,
         filter::{filter_between_int32},
-    }, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{record_batch_util::{self, create_new_record_batch}}};
+    }, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::{self, create_new_record_batch}}};
 
 use super::{basic::find_unique_string, filter::filter_with};
 
@@ -310,6 +310,8 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let batch = get_uir_record_batches().unwrap().batch.clone();
 
+    get_top_srclines(0);
+
     return batch;
 }
 
@@ -339,6 +341,10 @@ pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
         vec.push(get_max_top_five(filter));
     }
 
-    record_batch_util::concat_record_batches(vec)
+    let batch = record_batch_util::convert_without_mapping(vec);
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
+
+    batch
 
 }

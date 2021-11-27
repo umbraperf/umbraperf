@@ -313,10 +313,10 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     return batch;
 }
 
-pub fn get_max_top_five(recordBatch: RecordBatch) -> RecordBatch {
-    let num_rows = recordBatch.num_rows();
+pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
+    let num_rows = record_batch.num_rows();
     let max = 5.min(num_rows);
-    return recordBatch.slice(0, max);
+    return record_batch.slice(0, max);
 }
 
 pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {

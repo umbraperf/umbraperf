@@ -102,11 +102,9 @@ export interface IUirViewerData {
 }
 
 export interface IQueryPlanNodeTooltipData {
+    uirLineNumbers: Array<number>;
     uirLines: Array<string>;
-    event1: Array<number>;
-    event2: Array<number>;
-    event3: Array<number>;
-    event4: Array<number>;
+    eventOccurrences: Array<number>;
     operators: Array<string>;
 }
 

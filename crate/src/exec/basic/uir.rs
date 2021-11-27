@@ -310,8 +310,6 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let batch = get_uir_record_batches().unwrap().batch.clone();
 
-    get_top_srclines(0);
-
     return batch;
 }
 
@@ -334,10 +332,13 @@ pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
     .downcast_ref::<StringArray>()
     .unwrap();
 
+    let mut unique = unique.into_iter().map(|e | e.unwrap().to_string()).collect::<Vec<String>>();
+    unique.sort();
+
     let mut vec = Vec::new();
     vec.push(get_max_top_five(sort.clone()));
     for entry in unique {
-        let filter = filter_with(5, vec![entry.unwrap()], &sort);
+        let filter = filter_with(5, vec![&entry], &sort);
         vec.push(get_max_top_five(filter));
     }
 

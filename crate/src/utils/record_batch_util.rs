@@ -114,7 +114,7 @@ pub fn convert_without_mapping(batches: Vec<RecordBatch>) -> RecordBatch {
         columns.push(concat_array.unwrap());
     }
 
-    let batch = create_record_batch(batches[0].schema(), columns)
+    create_record_batch(batches[0].schema(), columns)
 }
 
 pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {

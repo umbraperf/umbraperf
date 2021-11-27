@@ -42,7 +42,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_DATA, {}>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_DATA, {event: string, timeBucketFrame: [number, number]}>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -96,9 +96,10 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
             return `bucket/operator/mem/freq${eventFilter}${timeFilter}/heatmap?${bucketSize}!${time}${memoryAccessesDifferences}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
-            return `scrline/perc1/perc2/perc3/perc4/op/pipe/func_flag${timeFilter}/uir?srclines`;
+            return `scrline/perc1/perc2/perc3/perc4/op/pipe/func_flag/rel_perc1/rel_perc2/rel_perc3/rel_perc4${timeFilter}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_DATA:
-            return `op/scrline/perc1/perc2/perc3/perc4/top(srclines)?0`;
+            console.log(`op/scrline/perc1/perc2/perc3/perc4${timeFilter}/top(srclines)?${event}`);
+            return `op/scrline/perc1/perc2/perc3/perc4${timeFilter}/top(srclines)?${event}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

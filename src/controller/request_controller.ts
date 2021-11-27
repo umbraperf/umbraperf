@@ -202,7 +202,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_QUERYPLAN_DATA;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { },
+                data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
     }

@@ -175,7 +175,7 @@ class UirViewer extends React.Component<Props, State> {
             fourthLevelKeyword: {
                 uirString: /".*"/,
                 uirNumber: /0x[a-zA-Z0-9]+/,
-                //TODO further number in vim file?
+                uirNumberHex: /(0x)\d+/,
             }
 
         }
@@ -334,6 +334,7 @@ class UirViewer extends React.Component<Props, State> {
         const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
         const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1;
         const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
+        const relativeEventString = `relEvent${eventNumber}` as "relEvent1" | "relEvent1" | "relEvent1" | "relEvent1";
 
         for (let i = 0; i < this.props.chartData.uirLines.length; i++) {
 
@@ -343,8 +344,12 @@ class UirViewer extends React.Component<Props, State> {
 
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
+            const relativeFunctionEventOccurence = (this.props.chartData[relativeEventString])[i];
+
             if (eventOccurence > 0) {
-                const eventOccurrenceColorGroup = `${this.props.chartData.isFunction[i]}${Math.floor(eventOccurence / 10)}`;
+                const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
+                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence)/10);
+                const eventOccurrenceColorGroup = `${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }

@@ -361,14 +361,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             break;
 
         case model.BackendQueryType.GET_QUERYPLAN_DATA:
-            console.log("here 0")
             let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} as model.IQueryPlanNodeTooltipData };
 
             if (resultObject.queryPlan) {
-                console.log("here 1")
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
             } else if (resultObject.rustResultTable.length !== 0) {
-                console.log("here 2")
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
                     uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
                     eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),

@@ -364,6 +364,16 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let op = StringArray::from(batch.column(5).data().clone());
     let srcline_num = Int32Array::from(batch.column(8).data().clone());
 
+
+    let mut op_vec = Vec::new();
+    for entry in op.into_iter().enumerate() {
+        if entry.0 < 5 {
+            op_vec.push("root");
+        } else {
+            op_vec.push(entry.1.unwrap());
+        }
+    }
+
     let out_batch = create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num"],
         vec![
@@ -375,7 +385,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         vec![
             Arc::new(srcline),
             Arc::new(perc),
-            Arc::new(op),
+            Arc::new(StringArray::from(op_vec)),
             Arc::new(srcline_num),
         ],
     );

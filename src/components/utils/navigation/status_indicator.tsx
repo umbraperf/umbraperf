@@ -17,7 +17,6 @@ interface Props {
     operators: Array<string> | undefined;
     kpis: Array<model.IKpiData> | undefined;
     loadingChartReadableName: Array<model.ChartTypeReadable>;
-    queryPlan: object | undefined;
 }
 
 
@@ -44,12 +43,7 @@ function StatusIndicator(props: Props) {
             }
             return `Reading file "${truncateString(props.file.name)}"...`;
         }
-        if (!loading && undefined === props.queryPlan) {
-            if (isLoading === false) {
-                setIsLoading(true);
-            }
-            return "Rendering queryplan..."
-        }
+
         if ((loading && props.resultLoading[-1] === true) ||
             undefined === props.events ||
             undefined === props.pipelines ||
@@ -110,7 +104,6 @@ const mapStateToProps = (state: model.AppState) => ({
     operators: state.operators,
     kpis: state.kpis,
     loadingChartReadableName: state.loadingChartReadableName,
-    queryPlan: state.queryPlan,
 });
 
 

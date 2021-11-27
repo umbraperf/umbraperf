@@ -162,8 +162,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     false;
             case model.ChartType.UIR_VIEWER:
                 return (chartDataInputChangedGeneral ||
-                    nextProps.operators, props.operators) ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.QUERY_PLAN:

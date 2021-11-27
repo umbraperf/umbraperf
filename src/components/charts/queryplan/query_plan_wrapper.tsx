@@ -2,7 +2,6 @@ import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
-import Spinner from '../../utils/spinner/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createRef } from 'react';
@@ -17,8 +16,6 @@ import { QueryplanNodeData } from './query_plan_node';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
-    //TODO add to chart data in redux 
-    queryPlan: object | undefined;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
@@ -27,8 +24,6 @@ export interface AppstateProps {
 type Props = model.IQueryPlanProps & AppstateProps;
 
 interface State {
-    // height: number,
-    // width: number,
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
@@ -82,8 +77,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            // height: 0,
-            // width: 0,
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
@@ -92,54 +85,20 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
-    // componentDidUpdate(prevProps: Props, prevState: State): void {
-        //TODO 
-        // if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
-        //     this.setState((state, props) => ({
-        //         ...state,
-        //         renderedFlowPlan: undefined,
-        //     }));
-        //     this.createQueryPlan();
-        // }
-    // }
-
-
-    // componentDidMount() {
-
-        // this.setState((state, props) => ({
-        //     ...state,
-        //     width: this.graphContainer.current!.offsetWidth,
-        //     height: this.graphContainer.current!.offsetHeight,
-        // }));
-
-        // this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
-
-    // }
-
-
-    isComponentLoading(): boolean {
-        if (!this.props.queryPlan) {
-            return true;
-        } else {
-            return false;
-        }
+    componentDidMount() {
+        this.createQueryPlan();
     }
 
     public render() {
 
-        return <div ref={this.graphContainer} className={styles.elementWrapper}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div id="queryplanContainer" className={styles.queryplanContainer}>
-                    <div className={styles.queryplanContainerTitle}>Query Plan</div>
-                    {this.state.renderedFlowPlan}
-                </div>
-            }
-        </div>;
+        return <div id="queryplanContainer" className={styles.queryplanContainer}>
+            <div className={styles.queryplanContainerTitle}>Query Plan</div>
+            {this.state.renderedFlowPlan}
+        </div>
     }
 
     createQueryPlan() {
-        const queryPlanJson = this.props.queryPlan;
+        const queryPlanJson = this.props.chartData.queryplanData;
         let queryplanContent: JSX.Element;
 
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
@@ -367,12 +326,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps) => ({
-    queryPlan: state.queryPlan,
     currentOperator: state.currentOperator,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
 });
-
 
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(QueryPlanWrapper));

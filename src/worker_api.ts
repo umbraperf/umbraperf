@@ -56,16 +56,20 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
-            const requestId = messageData.requestId;
+            const resultRequestId = messageData.requestId;
             const resultChartData = messageData.chartData;
-            const restQueryType = messageData.restQueryType;
-            const arrowResultTable = ArrowTable.Table.from(resultChartData);
+            const resultArrowTable = ArrowTable.Table.from(resultChartData);
+            const resultRestQueryType = messageData.restQueryType;
             const metaRequest = messageData.metaRequest;
-            Controller.storeResultFromRust(requestId, arrowResultTable, metaRequest, restQueryType);
+            Controller.storeResultFromRust(resultRequestId, resultArrowTable, metaRequest, resultRestQueryType);
             break;
 
         case model.WorkerResponseType.STORE_QUERYPLAN:
-            Controller.storeQueryPlan(messageData);
+            // Controller.storeQueryPlan(messageData);
+            const queryPlanData = messageData.queryPlanData;
+            const queryPlanRequestId = messageData.requestId;
+            const queryPlanRestQueryType = messageData.restQueryType;
+            Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanRestQueryType, queryPlanData);
             break;
 
         default:

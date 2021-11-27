@@ -41,8 +41,6 @@ export interface ChartWrapperAppstateProps {
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
-    
-
 
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentChart: (newCurrentChart: model.ChartType) => void;
@@ -267,17 +265,17 @@ class ChartWrapper extends React.Component<Props, State> {
                 chartClass = UirViewer;
                 break;
 
-            // case model.ChartType.QUERY_PLAN:
-            //     const queryPlanChartProps: model.IQueryPlanProps = {
-            //         ...partialChartProps,
-            //         height: this.state.height,
-            //     };
-            //     specificChart = {
-            //         type: this.props.chartType,
-            //         props: queryPlanChartProps,
-            //     };
-            //     chartClass = QueryPlan;
-            //     break;
+            case model.ChartType.QUERY_PLAN:
+                const queryPlanChartProps: model.IQueryPlanProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: queryPlanChartProps,
+                };
+                chartClass = QueryPlan;
+                break;
         }
 
         this.props.setCurrentChart(specificChart.type);

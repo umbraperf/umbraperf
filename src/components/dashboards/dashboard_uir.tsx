@@ -36,7 +36,6 @@ class DashboardUir extends React.Component<{}, {}> {
                             <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                                 <div className={styles.dashboardGridCellChartContainer}>
                                     <ChartWrapper chartType={model.ChartType.QUERY_PLAN} />
-                                    {/* <QueryPlanWrapper /> */}
                                 </div>
                             </Box>
                         </Grid>

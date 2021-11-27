@@ -18,7 +18,6 @@ import { QueryplanNodeData } from './query_plan_node';
 export interface AppstateProps {
     appContext: Context.IAppContext;
     //TODO add to chart data in redux 
-    queryPlan: object | undefined;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
@@ -93,53 +92,48 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     // componentDidUpdate(prevProps: Props, prevState: State): void {
-        //TODO 
-        // if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
-        //     this.setState((state, props) => ({
-        //         ...state,
-        //         renderedFlowPlan: undefined,
-        //     }));
-        //     this.createQueryPlan();
-        // }
+    //TODO 
+    // if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
+    //     this.setState((state, props) => ({
+    //         ...state,
+    //         renderedFlowPlan: undefined,
+    //     }));
+    //     this.createQueryPlan();
+    // }
     // }
 
 
     // componentDidMount() {
 
-        // this.setState((state, props) => ({
-        //     ...state,
-        //     width: this.graphContainer.current!.offsetWidth,
-        //     height: this.graphContainer.current!.offsetHeight,
-        // }));
+    // this.setState((state, props) => ({
+    //     ...state,
+    //     width: this.graphContainer.current!.offsetWidth,
+    //     height: this.graphContainer.current!.offsetHeight,
+    // }));
 
-        // this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
+    // this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
 
     // }
 
 
-    isComponentLoading(): boolean {
-        if (!this.props.queryPlan) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // isComponentLoading(): boolean {
+    //     if (!this.props.queryPlan) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     public render() {
 
-        return <div ref={this.graphContainer} className={styles.elementWrapper}>
-            {this.isComponentLoading()
-                ? <Spinner />
-                : <div id="queryplanContainer" className={styles.queryplanContainer}>
-                    <div className={styles.queryplanContainerTitle}>Query Plan</div>
-                    {this.state.renderedFlowPlan}
-                </div>
-            }
-        </div>;
+        return <div id="queryplanContainer" className={styles.queryplanContainer}>
+            <div className={styles.queryplanContainerTitle}>Query Plan</div>
+            {this.state.renderedFlowPlan}
+        </div>
     }
 
     createQueryPlan() {
-        const queryPlanJson = this.props.queryPlan;
+        const queryPlanJson = this.props.chartData.queryplanData;
         let queryplanContent: JSX.Element;
 
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {

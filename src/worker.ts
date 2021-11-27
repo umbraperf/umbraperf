@@ -25,10 +25,16 @@ export interface IStoreResultResponseData {
   metaRequest: boolean,
 }
 
+export interface IStoreQueryplanResponseData {
+  requestId: number,
+  queryPlanData: object,
+  restQueryType: RestApi.BackendQueryType,
+}
+
 export type WorkerResponseVariant =
   WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, number> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
-  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, Object>
+  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, IStoreQueryplanResponseData>
   ;
 
 
@@ -105,7 +111,11 @@ function extractQueryPlanFromZip(file: File) {
       worker.postMessage({
         messageId: 201,
         type: WorkerResponseType.STORE_QUERYPLAN,
-        data: { "error": "no queryplan" },
+        data: {
+          requestId: globalRequestId!,
+          queryPlanData: { "error": "no queryplan" },
+          restQueryType: globalRestQueryType!,
+        },
       });
     } else {
       queryPlanFile.async('string').then(
@@ -114,7 +124,11 @@ function extractQueryPlanFromZip(file: File) {
           worker.postMessage({
             messageId: 201,
             type: WorkerResponseType.STORE_QUERYPLAN,
-            data: queryPlanFileDataJson,
+            data: {
+              requestId: globalRequestId!,
+              queryPlanData: queryPlanFileDataJson,
+              restQueryType: globalRestQueryType!,
+            },
           });
         },
       )
@@ -164,7 +178,6 @@ worker.onmessage = (message) => {
 
       globalFileDictionary[globalFileIdCounter] = messageData as File;
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
-      extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter]);
       globalFileIdCounter++;
       break;
 
@@ -172,6 +185,10 @@ worker.onmessage = (message) => {
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
       globalRestQueryType = (messageData as ICalculateChartDataRequestData).restQueryType;
+      if (globalRestQueryType === RestApi.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR) {
+        // extract queryplan from zip if queryplan tooltip query is send to request
+        extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter]);
+      }
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery);
       break;
 

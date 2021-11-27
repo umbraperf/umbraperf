@@ -165,13 +165,13 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
-            // case model.ChartType.QUERY_PLAN:
-            //     return (evenChartDataInputChangedGeneral ||
-            //         chartDataInputChangedGeneral ||
-            //         !_.isEqual(nextProps.operators, props.operators) ||
-            //         !_.isEqual(nextProps.currentOperator, props.currentOperator)) ?
-            //     true :
-            //     false;
+            case model.ChartType.QUERY_PLAN:
+                return (evenChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    !_.isEqual(nextProps.operators, props.operators) ||
+                    !_.isEqual(nextProps.currentOperator, props.currentOperator)) ?
+                true :
+                false;
         }
         return false;
     };

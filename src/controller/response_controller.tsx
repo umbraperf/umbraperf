@@ -348,6 +348,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         event2: resultObject.rustResultTable.getColumn('perc2').toArray(),
                         event3: resultObject.rustResultTable.getColumn('perc3').toArray(),
                         event4: resultObject.rustResultTable.getColumn('perc4').toArray(),
+                        relEvent1: resultObject.rustResultTable.getColumn('rel_perc1').toArray(),
+                        relEvent2: resultObject.rustResultTable.getColumn('rel_perc2').toArray(),
+                        relEvent3: resultObject.rustResultTable.getColumn('rel_perc3').toArray(),
+                        relEvent4: resultObject.rustResultTable.getColumn('rel_perc4').toArray(),
                         operators: resultObject.rustResultTable.getColumn('op').toArray(),
                         pipelines: resultObject.rustResultTable.getColumn('pipe').toArray(),
                         isFunction: resultObject.rustResultTable.getColumn('func_flag').toArray(),
@@ -358,14 +362,19 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.BackendQueryType.GET_QUERYPLAN_DATA:
 
-            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} };
+            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} as model.IQueryPlanNodeTooltipData };
 
             if(resultObject.queryPlan){
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
             } else if(resultObject.rustResultTable.length !== 0){
-                // TODO condition
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
-                    //TODO rust result
+                    //TODO correct columns, correct data
+                    uirLines: [],
+                    event1: [],
+                    event2: [],
+                    event3: [],
+                    event4: [],
+                    operators: []
                 }
                 queryplanDataElem.nodeTooltipData = nodeTooltipData;
             }
@@ -379,8 +388,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     }
                 });
 
-            if (!_.isEmpty(queryplanDataElem.queryplanData) /* && !_.isEmpty(queryplanDataElem.nodeTooltipData) */) {
-                //TODO condition
+            if (!_.isEmpty(queryplanDataElem.queryplanData) && !_.isEmpty(queryplanDataElem.nodeTooltipData)) {
                 toggleResultLoadingFlag = true;
             }
 

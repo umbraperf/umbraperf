@@ -2,7 +2,6 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
-import QueryPlanWrapper from '../charts/queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 
 
@@ -36,7 +35,8 @@ class DashboardUir extends React.Component<{}, {}> {
                         <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12} md={12} lg={3} >
                             <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                                 <div className={styles.dashboardGridCellChartContainer}>
-                                    <QueryPlanWrapper />
+                                    <ChartWrapper chartType={model.ChartType.QUERY_PLAN} />
+                                    {/* <QueryPlanWrapper /> */}
                                 </div>
                             </Box>
                         </Grid>

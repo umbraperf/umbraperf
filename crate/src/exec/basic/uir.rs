@@ -3,20 +3,14 @@ use std::{
     sync::Arc,
 };
 
-use arrow::{
-    array::{Float64Array, Int32Array, Int64Array, StringArray},
-    datatypes::DataType,
-    record_batch::RecordBatch,
-};
+use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, compute::filter, datatypes::DataType, record_batch::RecordBatch};
 
-use crate::{
-    exec::basic::{
+use crate::{exec::basic::{
         basic::sort_batch,
         filter::{filter_between_int32},
-    },
-    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{record_batch_util::create_new_record_batch},
-};
+    }, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{record_batch_util::{self, create_new_record_batch}}};
+
+use super::{basic::find_unique_string, filter::filter_with};
 
 #[derive(Clone)]
 pub struct ABSFREQ {
@@ -319,13 +313,10 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     return batch;
 }
 
-pub fn get_top_functions() -> RecordBatch {
-    let batch = get_uir_record_batches().unwrap().batch.clone();
-
-    let only_functions = filter_between_int32(7, 1, 1, &batch);
-    let sort = sort_batch(&only_functions, 1, true);
-
-    sort
+pub fn get_max_top_five(recordBatch: RecordBatch) -> RecordBatch {
+    let num_rows = recordBatch.num_rows();
+    let max = 5.min(num_rows);
+    return recordBatch.slice(0, max);
 }
 
 pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
@@ -334,5 +325,20 @@ pub fn get_top_srclines(ordered_by: usize) -> RecordBatch {
     let only_functions = filter_between_int32(7, 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);
 
-    sort
+    let unique = find_unique_string(&sort, 5);
+    let unique = unique
+    .column(0)
+    .as_any()
+    .downcast_ref::<StringArray>()
+    .unwrap();
+
+    let mut vec = Vec::new();
+    vec.push(get_max_top_five(sort.clone()));
+    for entry in unique {
+        let filter = filter_with(5, vec![entry.unwrap()], &sort);
+        vec.push(get_max_top_five(filter));
+    }
+
+    record_batch_util::concat_record_batches(vec)
+
 }

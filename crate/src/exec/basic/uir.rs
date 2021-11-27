@@ -3,12 +3,21 @@ use std::{
     sync::Arc,
 };
 
-use arrow::{array::{Float64Array, Int32Array, Int64Array, StringArray}, compute::filter, datatypes::DataType, record_batch::RecordBatch};
+use arrow::{
+    array::{Float64Array, Int32Array, Int64Array, StringArray},
+    compute::filter,
+    datatypes::DataType,
+    record_batch::RecordBatch,
+};
 
-use crate::{exec::basic::{
-        basic::sort_batch,
-        filter::{filter_between_int32},
-    }, state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::{self, create_new_record_batch}}};
+use crate::{
+    exec::basic::{basic::sort_batch, filter::filter_between_int32},
+    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
+    utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_util::{self, create_new_record_batch},
+    },
+};
 
 use super::{basic::find_unique_string, filter::filter_with};
 
@@ -327,19 +336,25 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let unique = find_unique_string(&sort, 5);
     let unique = unique
-    .column(0)
-    .as_any()
-    .downcast_ref::<StringArray>()
-    .unwrap();
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
 
-    let mut unique = unique.into_iter().map(|e | e.unwrap().to_string()).collect::<Vec<String>>();
+    let mut unique = unique
+        .into_iter()
+        .map(|e| e.unwrap().to_string())
+        .collect::<Vec<String>>();
     unique.sort();
 
     let mut vec = Vec::new();
     vec.push(get_max_top_five(sort.clone()));
     for entry in unique {
-        let filter = filter_with(5, vec![&entry], &sort);
-        vec.push(get_max_top_five(filter));
+        if entry.contains("None") {
+        } else {
+            let filter = filter_with(5, vec![&entry], &sort);
+            vec.push(get_max_top_five(filter));
+        }
     }
 
     let batch = record_batch_util::convert_without_mapping(vec);
@@ -349,14 +364,8 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let op = StringArray::from(batch.column(5).data().clone());
     let srcline_num = Int32Array::from(batch.column(8).data().clone());
 
-
     let out_batch = create_new_record_batch(
-        vec![
-            "scrline",
-            "perc",
-            "op",
-            "srcline_num",
-        ],
+        vec!["scrline", "perc", "op", "srcline_num"],
         vec![
             DataType::Utf8,
             DataType::Float64,
@@ -374,5 +383,4 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     print_to_js_with_obj(&format!("{:?}", out_batch).into());
 
     out_batch
-
 }

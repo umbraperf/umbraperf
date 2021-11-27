@@ -33,11 +33,6 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
     createReactFlowGraph() {
 
-        const controlSytle: CSS.Properties = {
-            // position: 'absolute',
-            // top: '-120px',
-        }
-
         const nodeTypes = {
             queryplanNode: QueryplanNode,
         };
@@ -59,16 +54,11 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
                     nodeTypes={nodeTypes}
                 >
-                    <Controls
-
-                        style={controlSytle}
-                    />
+                    <Controls/>
                 </ReactFlow>
 
 
             </ReactFlowProvider>
-
-            {/* {this.createNodeTooltip()} */}
         </div>
     }
 

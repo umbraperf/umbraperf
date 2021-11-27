@@ -26,7 +26,6 @@ export class WorkerAPI {
     }
 
     public calculateChartData(restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.BackendQueryType) {
-        console.log("request: " + requestId)
         const requestData: ICalculateChartDataRequestData = {
             restQuery: restQuery,
             metaRequest: metaRequest,
@@ -70,8 +69,6 @@ worker.addEventListener('message', message => {
             const queryPlanData = messageData.queryPlanData;
             const queryPlanRequestId = messageData.requestId;
             const queryPlanRestQueryType = messageData.restQueryType;
-            console.log(queryPlanData)
-            window.alert("store qplan")
             Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanRestQueryType, queryPlanData);
             break;
 

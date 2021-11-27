@@ -38,7 +38,6 @@ export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Ta
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
     if (!metaRequest) {
-        console.log("hier1!")
         storeChartDataFromRust(requestId, resultObject, restQueryType);
     }
 }
@@ -46,13 +45,10 @@ export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Ta
 //extract events, statistics and pipelines from result table, store them to app state, set current event and current pipelines
 function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
-    console.log(restQueryType)
     switch (restQueryType) {
 
         case model.BackendQueryType.GET_EVENTS:
-            console.log("hier3")
             const events = store.getState().result?.rustResultTable.getColumn('ev_name').toArray();
-            console.log(events)
             store.dispatch({
                 type: model.StateMutationType.SET_EVENTS,
                 data: events,
@@ -366,10 +362,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
             if(resultObject.queryPlan){
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
-                console.log("hier 10")
             } else if(resultObject.rustResultTable.length !== 0){
                 // TODO condition
-                console.log("hier 11")
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
                     //TODO rust result
                 }
@@ -385,10 +379,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     }
                 });
 
-            if (!_.isEmpty(queryplanDataElem.queryplanData) && !_.isEmpty(queryplanDataElem.nodeTooltipData)) {
+            if (!_.isEmpty(queryplanDataElem.queryplanData) /* && !_.isEmpty(queryplanDataElem.nodeTooltipData) */) {
                 //TODO condition
                 toggleResultLoadingFlag = true;
-                console.log(queryplanDataElem)
             }
 
             break;

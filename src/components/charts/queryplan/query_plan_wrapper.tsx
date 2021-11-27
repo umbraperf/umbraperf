@@ -91,38 +91,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
-    // componentDidUpdate(prevProps: Props, prevState: State): void {
-    //TODO 
-    // if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
-    //     this.setState((state, props) => ({
-    //         ...state,
-    //         renderedFlowPlan: undefined,
-    //     }));
-    //     this.createQueryPlan();
-    // }
-    // }
-
-
-    // componentDidMount() {
-
-    // this.setState((state, props) => ({
-    //     ...state,
-    //     width: this.graphContainer.current!.offsetWidth,
-    //     height: this.graphContainer.current!.offsetHeight,
-    // }));
-
-    // this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
-
-    // }
-
-
-    // isComponentLoading(): boolean {
-    //     if (!this.props.queryPlan) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+    componentDidMount() {
+        this.createQueryPlan();
+    }
 
     public render() {
 
@@ -365,7 +336,6 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps)
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
 });
-
 
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(QueryPlanWrapper));

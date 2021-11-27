@@ -98,9 +98,6 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline/perc1/perc2/perc3/perc4/op/pipe/func_flag${timeFilter}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_DATA:
-            console.log("------------------------")
-            console.log("did new queryplan query:")
-            console.log("op/scrline/perc1/perc2/perc3/perc4/top(srclines)?0")
             return `op/scrline/perc1/perc2/perc3/perc4/top(srclines)?0`;
         case BackendQueryType.other:
             return 'error - bad request to backend';

@@ -176,16 +176,16 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.REGISTER_FILE:
 
+      globalFileIdCounter++;
       globalFileDictionary[globalFileIdCounter] = messageData as File;
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
-      globalFileIdCounter++;
       break;
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
       globalRestQueryType = (messageData as ICalculateChartDataRequestData).restQueryType;
-      if (globalRestQueryType === RestApi.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR) {
+      if (globalRestQueryType === RestApi.BackendQueryType.GET_QUERYPLAN_DATA) {
         // extract queryplan from zip if queryplan tooltip query is send to request
         extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter]);
       }

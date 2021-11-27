@@ -199,7 +199,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
 
         case model.ChartType.QUERY_PLAN:
-            restQueryType = model.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR;
+            restQueryType = model.BackendQueryType.GET_QUERYPLAN_DATA;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
                 data: { },

@@ -2,7 +2,6 @@ import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
-import Spinner from '../../utils/spinner/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createRef } from 'react';
@@ -17,7 +16,6 @@ import { QueryplanNodeData } from './query_plan_node';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
-    //TODO add to chart data in redux 
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
@@ -26,8 +24,6 @@ export interface AppstateProps {
 type Props = model.IQueryPlanProps & AppstateProps;
 
 interface State {
-    // height: number,
-    // width: number,
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
@@ -81,8 +77,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            // height: 0,
-            // width: 0,
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,

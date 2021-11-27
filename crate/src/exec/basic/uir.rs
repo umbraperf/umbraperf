@@ -222,10 +222,10 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         } else {
             let rel_freq = RELFREQ {
-                rel_freq_1: item.1.abs_freq_1 / total_1,
-                rel_freq_2: item.1.abs_freq_2 / total_2,
-                rel_freq_3: item.1.abs_freq_3 / total_3,
-                rel_freq_4: item.1.abs_freq_4 / total_4,
+                rel_freq_1: (item.1.abs_freq_1 / total_1) * 100.,
+                rel_freq_2: (item.1.abs_freq_2 / total_2) * 100.,
+                rel_freq_3: (item.1.abs_freq_3 / total_3) * 100.,
+                rel_freq_4: (item.1.abs_freq_4 / total_4) * 100.,
             };
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         }

@@ -361,7 +361,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps) => ({
-    queryPlan: state.queryPlan,
     currentOperator: state.currentOperator,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,

@@ -41,8 +41,6 @@ export interface ChartWrapperAppstateProps {
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
-    
-
 
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentChart: (newCurrentChart: model.ChartType) => void;

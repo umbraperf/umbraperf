@@ -18,20 +18,13 @@ export function setCsvReadingFinished() {
     RequestController.requestMetadata(appContext.controller);
 }
 
-export function storeQueryPlan(queryPlanJson: object) {
 
-    if (queryPlanJson) {
-        store.dispatch({
-            type: model.StateMutationType.SET_QUERYPLAN,
-            data: queryPlanJson,
-        });
-    }
-}
 
-export function storeResultFromRust(requestId: number, result: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType) {
+export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType, queryPlan?: object) {
 
     //store result of current request in redux store result variable 
-    const resultObject: model.Result = model.createResultObject(requestId, result);
+    const resultObject: model.Result = model.createResultObject(requestId, rustResult, queryPlan);
+    console.log(resultObject);
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULT,
@@ -45,6 +38,7 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 
     //append new result to redux store chartDataArray and extract chart data for regarding chart type:
     if (!metaRequest) {
+        console.log("hier1!")
         storeChartDataFromRust(requestId, resultObject, restQueryType);
     }
 }
@@ -52,10 +46,13 @@ export function storeResultFromRust(requestId: number, result: ArrowTable.Table<
 //extract events, statistics and pipelines from result table, store them to app state, set current event and current pipelines
 function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
+    console.log(restQueryType)
     switch (restQueryType) {
 
         case model.BackendQueryType.GET_EVENTS:
-            const events = store.getState().result?.resultTable.getColumn('ev_name').toArray();
+            console.log("hier3")
+            const events = store.getState().result?.rustResultTable.getColumn('ev_name').toArray();
+            console.log(events)
             store.dispatch({
                 type: model.StateMutationType.SET_EVENTS,
                 data: events,
@@ -73,7 +70,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             break;
 
         case model.BackendQueryType.GET_PIPELINES:
-            const pipelines = store.getState().result?.resultTable.getColumn('pipeline').toArray();
+            const pipelines = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_PIPELINES,
                 data: pipelines,
@@ -81,7 +78,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             break;
 
         case model.BackendQueryType.GET_OPERATORS:
-            const operators = store.getState().result?.resultTable.getColumn('operator').toArray();
+            const operators = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_OPERATORS,
                 data: operators,
@@ -89,11 +86,11 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             break;
 
         case model.BackendQueryType.GET_STATISTICS:
-            const numberSamplesKpi: model.IKpiData = { id: "noSamples", title: "Total Samples Recorded", value: store.getState().result?.resultTable.getColumnAt(0)!.toArray() };
-            const numberPipelinesKpi: model.IKpiData = { id: "noPipelines", title: "Number of Pipelines", value: store.getState().result?.resultTable.getColumnAt(1)!.toArray() };
-            const numberOperatorsKpi: model.IKpiData = { id: "noOperators", title: "Number of Operators", value: store.getState().result?.resultTable.getColumnAt(2)!.toArray() };
-            const executionTimeKpi: model.IKpiData = { id: "execTime", title: "Query Execution Time", value: store.getState().result?.resultTable.getColumnAt(3)!.toArray() };
-            const errorRateKpi: model.IKpiData = { id: "errRate", title: "Sample Error Rate", value: store.getState().result?.resultTable.getColumnAt(4)!.toArray() };
+            const numberSamplesKpi: model.IKpiData = { id: "noSamples", title: "Total Samples Recorded", value: store.getState().result?.rustResultTable.getColumnAt(0)!.toArray() };
+            const numberPipelinesKpi: model.IKpiData = { id: "noPipelines", title: "Number of Pipelines", value: store.getState().result?.rustResultTable.getColumnAt(1)!.toArray() };
+            const numberOperatorsKpi: model.IKpiData = { id: "noOperators", title: "Number of Operators", value: store.getState().result?.rustResultTable.getColumnAt(2)!.toArray() };
+            const executionTimeKpi: model.IKpiData = { id: "execTime", title: "Query Execution Time", value: store.getState().result?.rustResultTable.getColumnAt(3)!.toArray() };
+            const errorRateKpi: model.IKpiData = { id: "errRate", title: "Sample Error Rate", value: store.getState().result?.rustResultTable.getColumnAt(4)!.toArray() };
             const kpis = new Array<model.IKpiData>(numberSamplesKpi, numberPipelinesKpi, numberOperatorsKpi, executionTimeKpi, errorRateKpi);
 
             store.dispatch({
@@ -109,6 +106,18 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
     });
 
 }
+
+// export function storeQueryPlanData(queryPlanJson: object, requestId: number) {
+
+//     let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} }; 
+
+//     if (queryPlanJson) {
+//         store.dispatch({
+//             type: model.StateMutationType.SET_QUERYPLAN,
+//             data: queryPlanJson,
+//         });
+//     }
+// }
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.BackendQueryType) {
@@ -126,8 +135,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.BAR_CHART,
                     data: {
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('count').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('count').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -174,9 +183,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -189,9 +198,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -204,12 +213,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
-                        bucketsNeg: resultObject.resultTable.getColumn('bucketNEG').toArray(),
-                        operatorsNeg: resultObject.resultTable.getColumn('operatorNEG').toArray(),
-                        frequencyNeg: resultObject.resultTable.getColumn('relfreqNEG').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
+                        bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
+                        operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
+                        frequencyNeg: resultObject.rustResultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -222,12 +231,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE,
                     data: {
-                        buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                        operators: resultObject.resultTable.getColumn('operator').toArray(),
-                        frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
-                        bucketsNeg: resultObject.resultTable.getColumn('bucketNEG').toArray(),
-                        operatorsNeg: resultObject.resultTable.getColumn('operatorNEG').toArray(),
-                        frequencyNeg: resultObject.resultTable.getColumn('absfreqNEG').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
+                        bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
+                        operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
+                        frequencyNeg: resultObject.rustResultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -254,8 +263,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
                     data: {
-                        timeBucket: resultObject.resultTable.getColumn('bucket').toArray(),
-                        occurrences: resultObject.resultTable.getColumn('absfreq').toArray(),
+                        timeBucket: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        occurrences: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -268,10 +277,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.SUNBURST_CHART,
                     data: {
-                        operator: resultObject.resultTable.getColumn('operator').toArray(),
-                        pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
-                        opOccurrences: resultObject.resultTable.getColumn('opcount').toArray(),
-                        pipeOccurrences: resultObject.resultTable.getColumn('pipecount').toArray(),
+                        operator: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        pipeline: resultObject.rustResultTable.getColumn('pipeline').toArray(),
+                        opOccurrences: resultObject.rustResultTable.getColumn('opcount').toArray(),
+                        pipeOccurrences: resultObject.rustResultTable.getColumn('pipecount').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -282,35 +291,35 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
             let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
-            if (resultObject.resultTable.schema.fields.length === 7) {
+            if (resultObject.rustResultTable.schema.fields.length === 7) {
                 //domain info received
                 const domainData: model.IMemoryAccessHeatmapChartDomainData = {
                     memoryDomain: {
-                        max: resultObject.resultTable.getColumn('max_mem').data.values[0],
-                        min: resultObject.resultTable.getColumn('min_mem').data.values[0],
+                        max: resultObject.rustResultTable.getColumn('max_mem').data.values[0],
+                        min: resultObject.rustResultTable.getColumn('min_mem').data.values[0],
                     },
                     timeDomain: {
-                        max: resultObject.resultTable.getColumn('max_time').data.values[0],
-                        min: resultObject.resultTable.getColumn('min_time').data.values[0],
+                        max: resultObject.rustResultTable.getColumn('max_time').data.values[0],
+                        min: resultObject.rustResultTable.getColumn('min_time').data.values[0],
                     },
                     frequencyDomain: {
-                        max: resultObject.resultTable.getColumn('max_freq').data.values[0],
-                        min: resultObject.resultTable.getColumn('min_freq').data.values[0],
+                        max: resultObject.rustResultTable.getColumn('max_freq').data.values[0],
+                        min: resultObject.rustResultTable.getColumn('min_freq').data.values[0],
                     },
-                    numberOperators: resultObject.resultTable.getColumn('num_op').data.values[0]
+                    numberOperators: resultObject.rustResultTable.getColumn('num_op').data.values[0]
                 }
                 chartData = {
                     domain: domainData,
                     heatmapsData: [], //need for reset stored heatmaps array on new data
                 }
 
-            } else if (resultObject.resultTable.schema.fields.length === 4) {
+            } else if (resultObject.rustResultTable.schema.fields.length === 4) {
                 //single heatmap chart data received
                 const singleChartData: model.IMemoryAccessHeatmapChartSingleData = {
-                    operator: resultObject.resultTable.getColumn('operator').toArray(),
-                    buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-                    memoryAdress: resultObject.resultTable.getColumn('mem').toArray(),
-                    occurrences: resultObject.resultTable.getColumn('freq').toArray(),
+                    operator: resultObject.rustResultTable.getColumn('operator').toArray(),
+                    buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                    memoryAdress: resultObject.rustResultTable.getColumn('mem').toArray(),
+                    occurrences: resultObject.rustResultTable.getColumn('freq').toArray(),
                 }
                 chartData = {
                     ...chartData,
@@ -338,14 +347,14 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 {
                     chartType: model.ChartType.UIR_VIEWER,
                     data: {
-                        uirLines: resultObject.resultTable.getColumn('scrline').toArray(),
-                        event1: resultObject.resultTable.getColumn('perc1').toArray(),
-                        event2: resultObject.resultTable.getColumn('perc2').toArray(),
-                        event3: resultObject.resultTable.getColumn('perc3').toArray(),
-                        event4: resultObject.resultTable.getColumn('perc4').toArray(),
-                        operators: resultObject.resultTable.getColumn('op').toArray(),
-                        pipelines: resultObject.resultTable.getColumn('pipe').toArray(),
-                        isFunction: resultObject.resultTable.getColumn('func_flag').toArray(),
+                        uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
+                        event1: resultObject.rustResultTable.getColumn('perc1').toArray(),
+                        event2: resultObject.rustResultTable.getColumn('perc2').toArray(),
+                        event3: resultObject.rustResultTable.getColumn('perc3').toArray(),
+                        event4: resultObject.rustResultTable.getColumn('perc4').toArray(),
+                        operators: resultObject.rustResultTable.getColumn('op').toArray(),
+                        pipelines: resultObject.rustResultTable.getColumn('pipe').toArray(),
+                        isFunction: resultObject.rustResultTable.getColumn('func_flag').toArray(),
                     }
                 });
             toggleResultLoadingFlag = true;
@@ -353,16 +362,28 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR:
 
+            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} };
+
+            if(resultObject.queryPlan){
+                queryplanDataElem.queryplanData = resultObject.queryPlan;
+            } else if(resultObject.rustResultTable.length !== 0){
+                const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
+                    //TODO rust result
+                }
+                queryplanDataElem.nodeTooltipData = nodeTooltipData;
+            }
+
             chartDataElem = model.createChartDataObject(
                 requestId,
                 {
                     chartType: model.ChartType.QUERY_PLAN,
                     data: {
-                        nodeTooltipData: {},
-                        queryplanData: undefined,
+                        ...queryplanDataElem,
                     }
                 });
-            toggleResultLoadingFlag = true;
+            if (queryplanDataElem.queryplanData && queryplanDataElem.nodeTooltipData) {
+                toggleResultLoadingFlag = true;
+            }
             break;
     }
 

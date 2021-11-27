@@ -344,8 +344,35 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let batch = record_batch_util::convert_without_mapping(vec);
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
+    let srcline = StringArray::from(batch.column(0).data().clone());
+    let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
+    let op = StringArray::from(batch.column(5).data().clone());
+    let srcline_num = Int32Array::from(batch.column(8).data().clone());
 
-    batch
+
+    let out_batch = create_new_record_batch(
+        vec![
+            "scrline",
+            "perc",
+            "op",
+            "srcline_num",
+        ],
+        vec![
+            DataType::Utf8,
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Int32,
+        ],
+        vec![
+            Arc::new(srcline),
+            Arc::new(perc),
+            Arc::new(op),
+            Arc::new(srcline_num),
+        ],
+    );
+
+    print_to_js_with_obj(&format!("{:?}", out_batch).into());
+
+    out_batch
 
 }

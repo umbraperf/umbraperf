@@ -368,13 +368,10 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
             } else if(resultObject.rustResultTable.length !== 0){
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
-                    //TODO correct columns, correct data
-                    uirLines: [],
-                    event1: [],
-                    event2: [],
-                    event3: [],
-                    event4: [],
-                    operators: []
+                    uirLineNumbers: resultObject.rustResultTable.getColumn('scrline_num').toArray(),
+                    uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
+                    eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),
+                    operators: resultObject.rustResultTable.getColumn('op').toArray(),
                 }
                 queryplanDataElem.nodeTooltipData = nodeTooltipData;
             }

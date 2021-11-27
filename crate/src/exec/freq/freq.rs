@@ -1,15 +1,15 @@
-use std::{collections::HashMap, convert::TryInto, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
     array::{
         Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
         UInt64Array,
     },
-    datatypes::{DataType, Field, Float64Type, Int32Type, Schema, UInt64Type},
+    datatypes::{DataType, Float64Type, Int32Type, Schema, UInt64Type},
     record_batch::RecordBatch,
 };
 
-use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between, filter_between_int32, filter_between_u64}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
+use crate::{exec::{basic::{basic::{find_unique_string, sort_batch}, filter::{filter_between_int32, filter_between_u64}, statistics}, rest::rest_api::finish_query_exec}, state::state::get_record_batches, utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::{
             create_new_record_batch, send_record_batch_to_js,
@@ -333,7 +333,7 @@ pub fn freq_of_memory(
 
     let divided = if len_of_mem.is_some() {
         let mut out = 1;
-        for i in 0..len_of_mem.unwrap() {
+        for _i in 0..len_of_mem.unwrap() {
             out *= 10;
         }
         out
@@ -507,7 +507,6 @@ pub fn freq_of_memory(
   
         let mean = statistics::mean(&mem_vec).unwrap();
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
-        let three_times = std_deviation * std_deviation * std_deviation;
 
         let from = if matches!(mem_en, MEM::DIFF) { mean - (std_deviation / 2.) } else {mean - (std_deviation )};
         let to = if matches!(mem_en, MEM::DIFF) { mean + (std_deviation / 2.) } else {mean + (std_deviation )};

@@ -12,10 +12,10 @@ use arrow::{
 use crate::{
     exec::basic::{
         basic::sort_batch,
-        filter::{filter_between, filter_between_int32},
+        filter::{filter_between_int32},
     },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+    utils::{record_batch_util::create_new_record_batch},
 };
 
 #[derive(Clone)]
@@ -110,7 +110,6 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<&str>>();
     unique_events_set.sort();
 
-    // Get srcline, Percentage, op, pipe for every srcline
     for uir in uirs {
         let entry = uir.to_string();
 

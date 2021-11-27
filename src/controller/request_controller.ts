@@ -197,6 +197,14 @@ export function requestChartData(controller: RequestController, chartId: number,
                 data: { timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
+
+        case model.ChartType.QUERY_PLAN:
+            restQueryType = model.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR;
+            restQuery = model.createBackendQuery({
+                type: restQueryType,
+                data: { },
+            });
+            break;
     }
 
     controller.calculateChartData(restQueryType, restQuery, false, chartId, chartType);

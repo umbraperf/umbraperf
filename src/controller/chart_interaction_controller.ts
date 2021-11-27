@@ -1,7 +1,7 @@
 import * as model from "../model";
 import { store } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
-import { QueryPlanWrapperAppstateProps } from '../components/charts/queryplan/query_plan_wrapper';
+// import { QueryPlanWrapperAppstateProps } from '../components/charts/queryplan/query_plan_wrapper';
 import _ from "lodash";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
@@ -99,7 +99,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
         }
     }
 
-    const isVegaChartDataInputChangedGeneral = () => {
+    const isEventChartDataInputChangedGeneral = () => {
         if (metadataAvailable &&
             (nextProps.currentEvent !== props.currentEvent)) {
             return true;
@@ -110,31 +110,31 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 
     const metadataAvailable = isMetadataAvailable();
     const chartDataInputChangedGeneral = isChartDataInputChangedGeneral();
-    const vegaChartDataInputChangedGeneral = isVegaChartDataInputChangedGeneral();
+    const evenChartDataInputChangedGeneral = isEventChartDataInputChangedGeneral();
 
     const chartDataInputChangedChart: () => boolean = () => {
         switch (chartType) {
             case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize) ?
                     true :
                     false;
             case model.ChartType.SUNBURST_CHART:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.BAR_CHART:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
@@ -144,7 +144,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     false;
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
@@ -153,7 +153,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     true :
                     false;
             case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
-                return (vegaChartDataInputChangedGeneral ||
+                return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
@@ -161,11 +161,18 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     true :
                     false;
             case model.ChartType.UIR_VIEWER:
-                return (!_.isEqual(chartDataInputChangedGeneral ||
+                return (chartDataInputChangedGeneral ||
                     nextProps.operators, props.operators) ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ?
                     true :
                     false;
+            case model.ChartType.QUERY_PLAN:
+                return (evenChartDataInputChangedGeneral ||
+                    chartDataInputChangedGeneral ||
+                    !_.isEqual(nextProps.operators, props.operators) ||
+                    !_.isEqual(nextProps.currentOperator, props.currentOperator)) ?
+                true :
+                false;
         }
         return false;
     };
@@ -177,18 +184,19 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     return false;
 }
 
-export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
-    if (props.operators &&
-        props.queryPlan &&
-        (props.queryPlan !== prevProps.queryPlan ||
-            props.currentView !== prevProps.currentView ||
-            width !== prevWidth ||
-            !_.isEqual(props.operators, prevProps.operators) ||
-            !_.isEqual(props.currentOperator, prevProps.currentOperator))) {
-        return true;
-    } else {
-        return false;
-    }
-}
+// export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
+//     if (props.operators &&
+//         props.queryPlan &&
+        // TODO queryplan comparison necessare?
+//         (props.queryPlan !== prevProps.queryPlan ||
+//             props.currentView !== prevProps.currentView ||
+//             width !== prevWidth ||
+//             !_.isEqual(props.operators, prevProps.operators) ||
+//             !_.isEqual(props.currentOperator, prevProps.currentOperator))) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 

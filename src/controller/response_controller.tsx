@@ -115,7 +115,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
-    let setResultLoading = false;
+    let toggleResultLoadingFlag = false;
 
     switch (requestType) {
 
@@ -130,7 +130,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('count').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         // case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
@@ -179,7 +179,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         case model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
@@ -194,7 +194,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequency: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         case model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
@@ -212,7 +212,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequencyNeg: resultObject.resultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         case model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
@@ -230,7 +230,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         frequencyNeg: resultObject.resultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         // case model.RestQueryType.GET_PIPELINE_COUNT:
@@ -258,7 +258,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         occurrences: resultObject.resultTable.getColumn('absfreq').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         case model.BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
@@ -274,7 +274,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         pipeOccurrences: resultObject.resultTable.getColumn('pipecount').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
             break;
 
         case model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
@@ -319,7 +319,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
                 if (chartData.heatmapsData.length === chartData.domain.numberOperators) {
                     // set result loading to true only if data for all operators arrived
-                    setResultLoading = true;
+                    toggleResultLoadingFlag = true;
                 }
             }
 
@@ -348,7 +348,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                         isFunction: resultObject.resultTable.getColumn('func_flag').toArray(),
                     }
                 });
-            setResultLoading = true;
+            toggleResultLoadingFlag = true;
+            break;
+
+        case model.BackendQueryType.GET_TOP_UIR_LINES_PER_OPERATOR:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.QUERY_PLAN,
+                    data: {
+                        nodeTooltipData: {},
+                        queryplanData: undefined,
+                    }
+                });
+            toggleResultLoadingFlag = true;
             break;
     }
 
@@ -358,7 +372,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
         data: chartDataCollection,
     });
 
-    if (setResultLoading) {
+    if (toggleResultLoadingFlag) {
         store.dispatch({
             type: model.StateMutationType.SET_RESULTLOADING,
             data: { key: requestId, value: false },

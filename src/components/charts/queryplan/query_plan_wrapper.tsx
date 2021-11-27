@@ -15,19 +15,20 @@ import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
 
-export interface QueryPlanWrapperAppstateProps {
+export interface AppstateProps {
     appContext: Context.IAppContext;
-    csvParsingFinished: boolean;
+    //TODO add to chart data in redux 
     queryPlan: object | undefined;
-    currentView: model.ViewType;
     currentOperator: Array<string> | "All";
     operators: Array<string> | undefined;
-    setCurrentChart: (newCurrentChart: model.ChartType) => void;
+    chartData: model.IQueryPlanData,
 }
 
+type Props = model.IQueryPlanProps & AppstateProps;
+
 interface State {
-    height: number,
-    width: number,
+    // height: number,
+    // width: number,
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
@@ -73,7 +74,6 @@ export type FlowGraphEdge = {
 
 export type FlowGraphElements = Array<FlowGraphNode | FlowGraphEdge>;
 
-type Props = QueryPlanWrapperAppstateProps & model.IQueryPlanProps;
 
 class QueryPlanWrapper extends React.Component<Props, State> {
 
@@ -82,8 +82,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            height: 0,
-            width: 0,
+            // height: 0,
+            // width: 0,
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
@@ -92,60 +92,33 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-        if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
-            this.setState((state, props) => ({
-                ...state,
-                renderedFlowPlan: undefined,
-            }));
-            this.createQueryPlan();
-        }
-    }
+    // componentDidUpdate(prevProps: Props, prevState: State): void {
+        //TODO 
+        // if (Controller.queryPlanRerenderNeeded(this.props, prevProps, this.state.width, prevState.width)) {
+        //     this.setState((state, props) => ({
+        //         ...state,
+        //         renderedFlowPlan: undefined,
+        //     }));
+        //     this.createQueryPlan();
+        // }
+    // }
 
 
-    componentDidMount() {
+    // componentDidMount() {
 
-        this.setState((state, props) => ({
-            ...state,
-            width: this.graphContainer.current!.offsetWidth,
-            height: this.graphContainer.current!.offsetHeight,
-        }));
+        // this.setState((state, props) => ({
+        //     ...state,
+        //     width: this.graphContainer.current!.offsetWidth,
+        //     height: this.graphContainer.current!.offsetHeight,
+        // }));
 
-        this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
+        // this.props.setCurrentChart(model.ChartType.QUERY_PLAN);
 
-        addEventListener('resize', (event) => {
-            this.resizeListener();
-        });
+    // }
 
-
-    }
-
-    resizeListener() {
-        if (!this.graphContainer) return;
-
-        const child = this.graphContainer.current;
-        if (child) {
-            const newWidth = child.offsetWidth;
-
-            child.style.display = 'none';
-
-            let resizingTimeoutId = undefined;
-            clearTimeout(resizingTimeoutId);
-            resizingTimeoutId = setTimeout(() => {
-                this.setState((state, props) => ({
-                    ...state,
-                    width: newWidth,
-                    //  renderedDagrePlan: undefined,
-                }));
-            }, 500);
-
-            child.style.display = 'flex';
-        }
-
-    }
 
     isComponentLoading(): boolean {
-        if (!this.props.queryPlan || !this.props.operators) {
+        if (!this.props.queryPlan) {
             return true;
         } else {
             return false;
@@ -191,9 +164,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const flowGraphData = this.createFlowGraphData(rootNode);
 
         const planViewer = React.createElement(QueryPlanViewer, {
-            key: this.state.height + this.state.width,
-            height: this.state.height,
-            width: this.state.width,
+            key: this.props.height + this.props.width,
+            height: this.props.height,
+            width: this.props.width,
             graphElements: flowGraphData,
             handleOperatorSelection: this.handleOperatorSelection,
         } as any);
@@ -373,7 +346,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     getGraphDirection() {
-        return this.state.height > this.state.width ? 'TB' : 'LR';
+        return this.props.height > this.props.width ? 'TB' : 'LR';
     }
 
     createNoQueryPlanWarning() {
@@ -393,20 +366,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 }
 
 
-const mapStateToProps = (state: model.AppState) => ({
-    csvParsingFinished: state.csvParsingFinished,
+const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps) => ({
     queryPlan: state.queryPlan,
-    currentView: state.currentView,
     currentOperator: state.currentOperator,
     operators: state.operators,
-});
-
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
+    chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(QueryPlanWrapper));
+
+export default connect(mapStateToProps, undefined)(Context.withAppContext(QueryPlanWrapper));

@@ -391,7 +391,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             if (!_.isEmpty(queryplanDataElem.queryplanData) && !_.isEmpty(queryplanDataElem.nodeTooltipData)) {
                 toggleResultLoadingFlag = true;
             }
-
             break;
     }
 

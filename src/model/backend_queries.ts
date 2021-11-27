@@ -98,8 +98,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline/perc1/perc2/perc3/perc4/op/pipe/func_flag/rel_perc1/rel_perc2/rel_perc3/rel_perc4${timeFilter}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_DATA:
-            console.log(`op/scrline/perc1/perc2/perc3/perc4${timeFilter}/top(srclines)?${event}`);
-            return `op/scrline/perc1/perc2/perc3/perc4${timeFilter}/top(srclines)?${event}`;
+            return `scrline/perc/op/srcline_num${timeFilter}/top(srclines)?${event}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

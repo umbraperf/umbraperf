@@ -22,10 +22,6 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         super(props);
     }
 
-    componentDidMount() {
-        console.log(this.props.tooltipData);
-    }
-
     createContentTable() {
 
         function DenseTable(tooltipData: QueryplanNodeTooltip) {

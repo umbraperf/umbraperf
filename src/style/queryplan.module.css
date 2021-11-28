@@ -68,17 +68,38 @@
     margin-bottom: 3px;
 }
 
+.queryplanNodeTooltipTableCell{
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+
+}
+
 .queryplanNodeTooltipTableCellContent{
     font-size: 11px;
     color: colorTertiary;
     white-space: nowrap;
-    max-width: 100%;
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+.queryplanNodeTooltipTableCellContentUirNumber{
+    composes: queryplanNodeTooltipTableCellContent;
+}
+
+.queryplanNodeTooltipTableCellContentUirLine{
+    composes: queryplanNodeTooltipTableCellContent;
+    width: 215px;
+}
+
+.queryplanNodeTooltipTableCellContentUirFreq{
+    composes: queryplanNodeTooltipTableCellContent;
+}
+
 .queryplanNodeTooltipTableCellHead{
+    composes: queryplanNodeTooltipTableCell;
     font-size: 12px;
 
 }

@@ -44,7 +44,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
             let tableRows = [];
             for (let i = 0; i < 5; i++) {
-                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 30), tooltipData.eventOccurrences[i] + "%"))
+                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 40), tooltipData.eventOccurrences[i] + "%"))
             }
 
             return (
@@ -62,11 +62,21 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
                         <TableBody>
                             {tableRows.map((row) => (
                                 <TableRow key={row.lineNumber}>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="5%" component="td" align="right">{row.lineNumber}</TableCell>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="85%" component="th" align="left" scope="row">
-                                        {row.uirLine}
+                                    <TableCell width="5%" component="td" align="right">
+                                        <div className={styles.queryplanNodeTooltipTableCellContent}>
+                                            {row.lineNumber}
+                                        </div>
                                     </TableCell>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCellContent} width="10%" component="td" align="right">{row.eventOccurrence}</TableCell>
+                                    <TableCell width="85%" component="th" align="left" scope="row">
+                                        <div className={styles.queryplanNodeTooltipTableCellContent}>
+                                            {row.uirLine}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell width="10%" component="td" align="right">
+                                        <div className={styles.queryplanNodeTooltipTableCellContent}>
+                                            {row.eventOccurrence}
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

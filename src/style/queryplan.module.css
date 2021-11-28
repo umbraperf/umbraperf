@@ -72,6 +72,10 @@
     font-size: 11px;
     color: colorTertiary;
     white-space: nowrap;
+    max-width: 100%;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .queryplanNodeTooltipTableCellHead{

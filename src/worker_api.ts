@@ -27,10 +27,10 @@ export class WorkerAPI {
 
     public calculateChartData(restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.BackendQueryType) {
         const requestData: ICalculateChartDataRequestData = {
-            restQuery: restQuery,
+            backendQuery: restQuery,
             metaRequest: metaRequest,
             requestId: requestId,
-            restQueryType: restQueryType,
+            backendQueryType: restQueryType,
         }
 
         this.worker.postMessage({
@@ -48,6 +48,8 @@ worker.addEventListener('message', message => {
 
     const messageType = message.data.type;
     const messageData = message.data.data;
+
+    console.log(messageData.restQueryType);
 
     switch (messageType) {
 

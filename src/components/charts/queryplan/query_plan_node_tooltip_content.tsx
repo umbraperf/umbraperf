@@ -43,8 +43,8 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             }
 
             let tableRows = [];
-            for (let i = 0; i < 3/* tooltipData.uirLineNumber.length */; i++) {
-                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 25), tooltipData.eventOccurrences[i] + "%"))
+            for (let i = 0; i < 5; i++) {
+                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 30), tooltipData.eventOccurrences[i] + "%"))
             }
 
             return (

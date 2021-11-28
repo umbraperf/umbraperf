@@ -11,7 +11,7 @@
     --girdCellItemDoubleRowHeight: calc(2 * var(--mainVisualizationsHeight) + 3 * var(--gridCellBoxPadding) + 3 * var(--gridCellItemPadding));
     --activityHistogramHeight: 84px;
     --movingTransition: all .5s ease-in-out;
-    --gridCellItemFullScreenStretchContentMaxHeight: 600px;
+    --gridCellItemFullScreenStretchContentMaxHeight: 700px;
     --gridCellItemFullScreenStretchContentMinHeight: 200px;
 }
 

@@ -2,7 +2,7 @@ import * as Controller from './controller';
 import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
 import { ICalculateChartDataRequestData } from './worker';
-import * as RestApi from './model/backend_queries';
+import * as BackendApi from './model/backend_queries';
 
 
 
@@ -25,12 +25,12 @@ export class WorkerAPI {
 
     }
 
-    public calculateChartData(restQuery: string, requestId: number, metaRequest: boolean, restQueryType: RestApi.BackendQueryType) {
+    public calculateChartData(backendQuery: string, requestId: number, metaRequest: boolean, backendQueryType: BackendApi.BackendQueryType) {
         const requestData: ICalculateChartDataRequestData = {
-            backendQuery: restQuery,
+            backendQuery: backendQuery,
             metaRequest: metaRequest,
             requestId: requestId,
-            backendQueryType: restQueryType,
+            backendQueryType: backendQueryType,
         }
 
         this.worker.postMessage({
@@ -49,7 +49,7 @@ worker.addEventListener('message', message => {
     const messageType = message.data.type;
     const messageData = message.data.data;
 
-    console.log(messageData.restQueryType);
+    console.log(messageData.backendQueryType);
 
     switch (messageType) {
 
@@ -61,17 +61,17 @@ worker.addEventListener('message', message => {
             const resultRequestId = messageData.requestId;
             const resultChartData = messageData.chartData;
             const resultArrowTable = ArrowTable.Table.from(resultChartData);
-            const resultRestQueryType = messageData.restQueryType;
+            const resultBackendQueryType = messageData.backendQueryType;
             const metaRequest = messageData.metaRequest;
-            Controller.storeResultFromRust(resultRequestId, resultArrowTable, metaRequest, resultRestQueryType);
+            Controller.storeResultFromRust(resultRequestId, resultArrowTable, metaRequest, resultBackendQueryType);
             break;
 
         case model.WorkerResponseType.STORE_QUERYPLAN:
             // Controller.storeQueryPlan(messageData);
             const queryPlanData = messageData.queryPlanData;
             const queryPlanRequestId = messageData.requestId;
-            const queryPlanRestQueryType = messageData.restQueryType;
-            Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanRestQueryType, queryPlanData);
+            const queryPlanBackendQueryType = messageData.backendQueryType;
+            Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanBackendQueryType, queryPlanData);
             break;
 
         default:

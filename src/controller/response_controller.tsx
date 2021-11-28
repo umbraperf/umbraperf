@@ -372,7 +372,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     operators: resultObject.rustResultTable.getColumn('op').toArray(),
                     uirLineNumbers: resultObject.rustResultTable.getColumn('srcline_num').toArray(),
                 }
-                console.log(nodeTooltipData)
                 queryplanDataElem.nodeTooltipData = nodeTooltipData;
             }
 

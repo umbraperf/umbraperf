@@ -49,8 +49,6 @@ worker.addEventListener('message', message => {
     const messageType = message.data.type;
     const messageData = message.data.data;
 
-    console.log(messageData.backendQueryType);
-
     switch (messageType) {
 
         case model.WorkerResponseType.CSV_READING_FINISHED:

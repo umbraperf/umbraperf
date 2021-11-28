@@ -1,13 +1,14 @@
-import { styled, Theme, Tooltip, TooltipProps, withStyles } from '@material-ui/core';
+import { Theme, Tooltip, TooltipProps, withStyles } from '@material-ui/core';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
 import CSS from 'csstype';
 import styles from '../../../style/queryplan.module.css';
-import QueryPlanNodeTooltipContent from './query_plan_node_tooltip_content';
+import QueryPlanNodeTooltipContent, { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
 
 export type QueryplanNodeData = {
     label: string,
+    tooltipData: QueryplanNodeTooltip,
 }
 
 interface QueryplanNodeProps {
@@ -56,6 +57,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
                 title={<React.Fragment>
                     <QueryPlanNodeTooltipContent
                         operatorName={props.data.label}
+                        tooltipData={props.data.tooltipData}
                     />
                 </React.Fragment>
                 }

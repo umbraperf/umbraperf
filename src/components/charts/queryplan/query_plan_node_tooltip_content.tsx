@@ -3,11 +3,16 @@ import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
 
-
+export type QueryplanNodeTooltip = {
+    uirLines: Array<string>,
+    uirLineNumber: Array<number>,
+    eventOccurrences: Array<number>,
+}
 
 interface Props {
     appContext: Context.IAppContext;
     operatorName: string,
+    tooltipData: QueryplanNodeTooltip,
 }
 
 class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
@@ -17,23 +22,33 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         super(props);
     }
 
+    componentDidMount() {
+        console.log(this.props.tooltipData);
+    }
+
     createContentTable() {
 
-        function DenseTable() {
+        function DenseTable(tooltipData: QueryplanNodeTooltip) {
 
             function createData(lineNumber: number, uirLine: string, eventOccurrence: string) {
                 return { lineNumber, uirLine, eventOccurrence };
             }
 
+            function truncateUirLine(uirLine: string, length: number) {
+                if (uirLine.length > length) {
+                    return uirLine.substring(0, length - 1) + "...";
+                } else {
+                    return uirLine;
+                }
+            }
+
             let tableRows = [];
-            for (let i = 0; i < 5; i++) {
-                tableRows.push(createData(i + 1, "testXXXtest", "xx%"))
+            for (let i = 0; i < 3/* tooltipData.uirLineNumber.length */; i++) {
+                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 25), tooltipData.eventOccurrences[i] + "%"))
             }
 
             return (
-                <Paper className={styles.queryplanNodeTooltipTableContainer}>
-
-                    {/* <TableContainer className={styles.queryplanNodeTooltipTableContainer} component={Paper}> */}
+                <Paper>
                     <Table
                         size="small"
                         aria-label="a dense table">
@@ -61,7 +76,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         }
 
 
-        return DenseTable();
+        return DenseTable(this.props.tooltipData);
     }
 
     createNodeTooltip() {

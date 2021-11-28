@@ -68,10 +68,6 @@
     margin-bottom: 3px;
 }
 
-.queryplanNodeTooltipTableContainer{
-    font-size: 6px;
-}
-
 .queryplanNodeTooltipTableCellContent{
     font-size: 11px;
     color: colorTertiary;

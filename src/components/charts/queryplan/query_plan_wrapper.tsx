@@ -13,6 +13,7 @@ import dagre from 'dagre';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
+import { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
@@ -37,6 +38,7 @@ export type PlanNode = {
     backgroundFill: string,
     nodeCursor: string,
     isNodeSelectable: boolean,
+    tooltipData: QueryplanNodeTooltip,
 }
 
 export type PlanEdge = {
@@ -180,8 +182,27 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
+        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltip => {
+            const tooltipUirLines: string[] = [];
+            const tooltipUirLineNumbers: number[] = [];
+            const tooltipUirOccurrences: number[] = [];
+            this.props.chartData.nodeTooltipData.operators.forEach((operator, index) => {
+                if(operator === nodeId){
+                    tooltipUirLines.push(this.props.chartData.nodeTooltipData.uirLines[index]);
+                    tooltipUirLineNumbers.push(this.props.chartData.nodeTooltipData.uirLineNumbers[index]);
+                    tooltipUirOccurrences.push(this.props.chartData.nodeTooltipData.eventOccurrences[index]);
+                }
+            });
+            return{
+                uirLines: tooltipUirLines,
+                uirLineNumber: tooltipUirLineNumbers,
+                eventOccurrences: tooltipUirOccurrences,
+            }
+        }
+
         const rootCursor = nodeCursor(root.id!);
         const rootColor = nodeColor(root.id!);
+        const rootTooltipData = nodeTooltipData(root.id!);
         planData.nodes.push({
             label: root.label!,
             id: root.id!, parent: "",
@@ -189,14 +210,16 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             isNodeSelectable: rootCursor[1] as boolean,
             borderFill: rootColor[0],
             backgroundFill: rootColor[1],
-
+            tooltipData: rootTooltipData,
         })
-        fillGraph(root.child, root.id!)
+        fillGraph(root.child, root.id!);
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
             const planNodeCursor = nodeCursor(currentPlanElement.operator);
             const planNodeColor = nodeColor(currentPlanElement.operator);
+            const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
+
             planData.nodes.push({
                 label: currentPlanElement.operator,
                 id: currentPlanElement.operator,
@@ -205,7 +228,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 isNodeSelectable: planNodeCursor[1] as boolean,
                 borderFill: planNodeColor[0],
                 backgroundFill: planNodeColor[1],
-
+                tooltipData: planNodeTooltipData,
             });
             planData.links.push({
                 source: parent,
@@ -251,6 +274,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             const data: QueryplanNodeData = {
                 label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
+                tooltipData: node.tooltipData,
             }
 
             const reactFlowNode: FlowGraphNode = {

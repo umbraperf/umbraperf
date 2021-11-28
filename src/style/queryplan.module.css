@@ -71,6 +71,7 @@
 .queryplanNodeTooltipTableCellContent{
     font-size: 11px;
     color: colorTertiary;
+    white-space: nowrap;
 }
 
 .queryplanNodeTooltipTableCellHead{

@@ -260,7 +260,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             pipe.push("None");
         }
         is_function_flag.push(input.4);
-        srcline_num.push(num as i32);
+        srcline_num.push((num as i32) + 1);
         rel_perc_1.push(input.5.rel_freq_1);
         rel_perc_2.push(input.5.rel_freq_2);
         rel_perc_3.push(input.5.rel_freq_3);

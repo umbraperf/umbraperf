@@ -2,7 +2,6 @@ import React from 'react';
 import * as model from '../../model';
 import styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
-import QueryPlanWrapper from '../charts/queryplan/query_plan_wrapper';
 import { Grid, Box } from '@material-ui/core';
 
 
@@ -35,7 +34,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            <QueryPlanWrapper />
+                            <ChartWrapper chartType={model.ChartType.QUERY_PLAN} />
                         </div>
                     </Box>
                 </Grid>

@@ -73,9 +73,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
-    | StateMutation<StateMutationType.SET_QUERYPLAN, object>
     | StateMutation<StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION, boolean>
-
     ;
 
 // The action dispatch
@@ -210,11 +208,6 @@ export class AppStateMutation {
                     ...state,
                     currentView: mutation.data,
                 }
-            case StateMutationType.SET_QUERYPLAN:
-                return {
-                    ...state,
-                    queryPlan: mutation.data,
-                }
             case StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION:
                 return {
                     ...state,
@@ -248,7 +241,6 @@ export class AppStateMutation {
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
-                    queryPlan: undefined,
                     memoryHeatmapsDifferenceRepresentation: true,
                 }
         }

@@ -1,46 +1,69 @@
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
-import DagreGraph from 'dagre-d3-react';
-import { DagreNode, DagreEdge } from './query_plan_wrapper';
+import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
+import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
+import QueryplanNode from './query_plan_node';
+import CSS from 'csstype';
 
 
 interface Props {
     key: number; //trigers complete rerender for repositioning
     height: number;
     width: number;
-    nodes: Array<DagreNode>;
-    edges: Array<DagreEdge>;
-    handleNodeClick: (event: { d3norde: object, original: DagreNode }) => void;
+    graphElements: FlowGraphElements,
+    handleOperatorSelection: (elementId: string) => void;
 }
 
 class QueryPlanViewer extends React.Component<Props, {}> {
+
 
     constructor(props: Props) {
         super(props);
     }
 
-    public render() {
+    handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
+        this.props.handleOperatorSelection(element.id);
+    }
 
-        return <DagreGraph
-            className={styles.dagreGraph}
-            nodes={this.props.nodes}
-            links={this.props.edges}
-            config={{
-                rankdir: this.props.height > this.props.width ? 'TD' : 'LR',
-                ranker: 'network-simplex',
-                // height: "100px",
-                // width: "500px",
-            }}
-            // height={"" + this.props.height}
-            // width={"" + this.props.width}
-            animate={500}
-            shape='rect'
-            fitBoundaries={true}
-            zoomable={true}
-            onNodeClick={(event: { d3norde: object, original: DagreNode }) => this.props.handleNodeClick(event)}
-        // onRelationshipClick={e => console.log(e)}
-        />
+    onLoad(reactFlowInstance: any) {
+        //Fit graph to view after load
+        reactFlowInstance.fitView();
+    }
+
+    createReactFlowGraph() {
+
+        const nodeTypes = {
+            queryplanNode: QueryplanNode,
+        };
+
+        return <div
+            className={styles.reactFlowGraph}
+        >
+            <ReactFlowProvider>
+                <ReactFlow
+                    elements={this.props.graphElements}
+                    minZoom={0.1}
+                    maxZoom={3}
+                    // onNodeMouseEnter={(event, element) => this.handleNodeMouseEnter(event, element as FlowGraphNode)}
+                    // onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
+                    nodesConnectable={false}
+                    nodesDraggable={true}
+                    connectionLineType={ConnectionLineType.SmoothStep}
+                    onLoad={this.onLoad}
+                    onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
+                    nodeTypes={nodeTypes}
+                >
+                    <Controls/>
+                </ReactFlow>
+
+
+            </ReactFlowProvider>
+        </div>
+    }
+
+    public render() {
+        return this.createReactFlowGraph();
     }
 
 }

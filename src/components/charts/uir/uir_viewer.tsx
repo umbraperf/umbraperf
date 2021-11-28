@@ -9,6 +9,7 @@ import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirLinesFoldedToggler from '../../utils/togglers/uir_toggler';
 
+
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IUirViewerData,
@@ -24,6 +25,7 @@ interface State {
     linesFolded: boolean;
     operatorsColored: boolean;
     operatorColorScale: string[];
+    hoverProviderDispose: monaco.IDisposable | undefined,
 }
 
 
@@ -40,6 +42,7 @@ class UirViewer extends React.Component<Props, State> {
             linesFolded: true,
             operatorsColored: true,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
+            hoverProviderDispose: undefined,
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
@@ -57,10 +60,13 @@ class UirViewer extends React.Component<Props, State> {
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColored !== prevState.operatorsColored
             || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
-            console.log("here")
             this.setMonacoGlyphs();
         }
+    }
 
+    componentWillUnmount() {
+        //Remove hover provider on leaving component:
+        this.state.hoverProviderDispose?.dispose();
     }
 
     public render() {
@@ -104,7 +110,7 @@ class UirViewer extends React.Component<Props, State> {
         // Define new Theme
         monaco.editor.defineTheme('uirTheme', {
             base: 'vs',
-            inherit: false,
+            inherit: true,
             rules: [
                 { token: 'topLevelKeyword', foreground: this.props.appContext.secondaryColor },
                 { token: 'seconedLevelKeyword', foreground: this.props.appContext.accentDarkGreen },
@@ -135,6 +141,9 @@ class UirViewer extends React.Component<Props, State> {
                 'editor.rangeHighlightBackground': '#fff',
                 'list.activeSelectionForeground': '#fff',
                 'list.hoverForeground': '#fff',
+
+                "editorHoverWidget.background": '#fff',
+                "editorHoverWidget.border": this.props.appContext.secondaryColor,
             }
         });
     }
@@ -166,7 +175,7 @@ class UirViewer extends React.Component<Props, State> {
             fourthLevelKeyword: {
                 uirString: /".*"/,
                 uirNumber: /0x[a-zA-Z0-9]+/,
-                //TODO further number in vim file?
+                uirNumberHex: /(0x)\d+/,
             }
 
         }
@@ -184,6 +193,54 @@ class UirViewer extends React.Component<Props, State> {
                 root: tokenizerRoot
             }
         });
+
+        //Register a hover provider to umbraIntermediateRepresentation language
+        const dispose = monaco.languages.registerHoverProvider('umbraIntermediateRepresentation', {
+            provideHover: (model, position) => this.getHoverProviderResult(model, position)
+        });
+        this.setState((state, props) => ({
+            ...state,
+            hoverProviderDispose: dispose,
+        }));
+        // monaco.editor.getModels().forEach(model => model.dispose());
+
+    }
+
+    getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
+
+        const markdownStringHeader: monaco.IMarkdownString = {
+            value: `### UIR Line ID: ${position.lineNumber}`,
+        };
+
+        const markdownOperator = `- \`Operator:\` ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
+        const markdownPipeline = `- \`Pipeline:\` ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
+        const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
+
+
+        const markdownStringBody: monaco.IMarkdownString = {
+            value: markdownOperator + markdownPipeline + markdownEvents,
+        };
+
+        return {
+            contents: [markdownStringHeader, markdownStringBody]
+        };
+    }
+
+    createMarkdownEventsList(eventIndex: number, boldEvent?: number, marginGlyphRepresentation?: boolean) {
+        let markdownEventsString = "";
+        for (let i = 0; i < 4; i++) {
+            let boldCharacter = "";
+            let relativeEventString = "";
+            if (marginGlyphRepresentation && i + 1 === boldEvent) {
+                boldCharacter = "**";
+            }
+            if(this.props.chartData.isFunction[eventIndex] === 0){
+                relativeEventString = ` (Function Share: ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%)`
+            }
+            const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${boldCharacter} \n`;
+            markdownEventsString += markdownEvent;
+        }
+        return markdownEventsString;
 
     }
 
@@ -236,6 +293,7 @@ class UirViewer extends React.Component<Props, State> {
             fontSize: 11,
             color: this.props.appContext.accentBlack,
             glyphMargin: true,
+            fixedOverflowWidgets: true,
         }
 
         const monacoEditor =
@@ -280,17 +338,24 @@ class UirViewer extends React.Component<Props, State> {
         const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
         const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1;
         const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
+        const relativeFunctionEventString = `relEvent${eventNumber}` as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4";
 
         for (let i = 0; i < this.props.chartData.uirLines.length; i++) {
 
-            //Default: No glyph
+            //Default: No glyph and no glyph margin hover message
             const elemGlyphClasses = [styles.glyphClassWhite, styles.glyphClassWhite];
+            let glyphMarginHoverMessage = undefined;
 
             // color margin glyph for event
             const eventOccurence = (this.props.chartData[eventString])[i];
+
             if (eventOccurence > 0) {
-                const eventOccurrenceColorGroup = Math.floor(eventOccurence / 10);
+                const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
+                const relativeFunctionEventOccurence = (this.props.chartData[relativeFunctionEventString])[i];
+                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence)/10);
+                const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
+                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }
 
             //color line glyph for operator
@@ -310,6 +375,7 @@ class UirViewer extends React.Component<Props, State> {
                     options: {
                         isWholeLine: true,
                         glyphMarginClassName: elemGlyphClasses[0],
+                        glyphMarginHoverMessage: glyphMarginHoverMessage,
                         className: elemGlyphClasses[1],
                     }
                 }
@@ -338,27 +404,53 @@ class UirViewer extends React.Component<Props, State> {
         this.updateColorGlyphs();
     }
 
-    createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
+    createCustomCssGlyphClass(glyphClassScaleType: "Event" | "Operator", glyphClassGroupNumber: number | string) {
 
-        //return name of correct css class, create class if not yet created
-        const className = `glyphClass${colorScaleType}${colorGroup}`;
+        //return name of correct css class, create class if not yet created dynamically for operator colors
+        const className = `glyphClass${glyphClassScaleType}${glyphClassGroupNumber}`;
 
-        if (this.editorContainerRef.current!.children.namedItem(className)) {
-            return className;
-        } else {
-            const style = document.createElement('style');
-            style.setAttribute("id", className);
-            let color = "";
-            if (colorScaleType === "Event") {
-                color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
-            } else if (colorScaleType === "Operator") {
-                color = this.state.operatorColorScale[colorGroup];
+        if (glyphClassScaleType === "Operator") {
+            if (!this.editorContainerRef.current!.children.namedItem(className)) {
+                this.addCssClassForGlyphToDom(className, glyphClassGroupNumber as number);
             }
-            style.innerHTML = `.${className} { background: ${color}; }`;
-            this.editorContainerRef.current!.appendChild(style);
             return className;
+        }else if(glyphClassScaleType == "Event"){
+            return styles[className];
+        }else{
+            return "";
         }
+
     }
+
+    addCssClassForGlyphToDom(className: string, glyphClassGroupNumber: number) {
+        const style = document.createElement('style');
+        style.setAttribute("id", className);
+        const color = this.state.operatorColorScale[glyphClassGroupNumber];
+        style.innerHTML = `.${className} { background: ${color}; }`;
+        this.editorContainerRef.current!.appendChild(style);
+    }
+
+    // createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
+
+    //     //return name of correct css class, create class if not yet created
+    //     const className = `glyphClass${colorScaleType}${colorGroup}`;
+
+    //     if (this.editorContainerRef.current!.children.namedItem(className)) {
+    //         return className;
+    //     } else {
+    //         const style = document.createElement('style');
+    //         style.setAttribute("id", className);
+    //         let color = "";
+    //         if (colorScaleType === "Event") {
+    //             color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+    //         } else if (colorScaleType === "Operator") {
+    //             color = this.state.operatorColorScale[colorGroup];
+    //         }
+    //         style.innerHTML = `.${className} { background: ${color}; }`;
+    //         this.editorContainerRef.current!.appendChild(style);
+    //         return className;
+    //     }
+    // }
 
 }
 

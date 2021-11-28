@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack from colors;
+@value colorAccentBlack, colorTertiary from colors;
 
 :root {
     --dagreGraphPadding: 2px;
@@ -43,7 +43,7 @@
     align-items: center;
 }
 
-.dagreGraph{
+.reactFlowGraph{
     cursor: grab;
     padding: var(--dagreGraphPadding);
     box-sizing: border-box;
@@ -51,38 +51,55 @@
     width: 100%; 
 }
 
-.dagreGraph:active{
+.reactFlowGraph:active{
     cursor: grabbing;
 }
 
-.dagreNode{
-    cursor: pointer;
-    border: solid;
-    border-color: colorAccentBlack;
-    font-size: small;
+.queryplanNodeBody{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.dagreRootNode{
-    cursor: default;
+.queryplanNodeTooltipSubtitle{
+    margin-top: 10px;
+    margin-bottom: 3px;
 }
 
-.dagreUnavailableNode{
-    cursor: not-allowed;
+.queryplanNodeTooltipTableCell{
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+
 }
 
-.dagreInactiveNode text{
-    fill: colorAccentBlack;
+.queryplanNodeTooltipTableCellContent{
+    font-size: 11px;
+    color: colorTertiary;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.dagreActiveNode text{
-    fill: white;
+.queryplanNodeTooltipTableCellContentUirNumber{
+    composes: queryplanNodeTooltipTableCellContent;
 }
 
-.dagreRootNode text{
-    fill: white;
+.queryplanNodeTooltipTableCellContentUirLine{
+    composes: queryplanNodeTooltipTableCellContent;
+    width: 215px;
 }
 
-.dagreEdge{
-    stroke: colorAccentBlack;
-    size: 1px;
+.queryplanNodeTooltipTableCellContentUirFreq{
+    composes: queryplanNodeTooltipTableCellContent;
+}
+
+.queryplanNodeTooltipTableCellHead{
+    composes: queryplanNodeTooltipTableCell;
+    font-size: 12px;
+
 }

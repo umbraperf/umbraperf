@@ -203,6 +203,14 @@ class SunburstChart extends React.Component<Props, {}> {
                     on: [
                         { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', [datum.operator, datum.parent], null)" }
                     ]
+                },
+                {
+                    name: "cursor",
+                    value: "default",
+                    on: [
+                        { events: { type: "mouseover", marktype: "arc" }, update: { value: "pointer" } },
+                        { events: "arc:mouseout", update: { value: "default" } }
+                    ]
                 }
             ],
 

@@ -96,6 +96,27 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     mapping_with_dict(batch)
 }
 
+pub fn convert_without_mapping(batches: Vec<RecordBatch>) -> RecordBatch {
+    let number_columns = batches[0].num_columns() as i32;
+    let mut to_concat_array = Vec::new();
+
+    for i in 0..number_columns {
+        let mut array_vec = Vec::new();
+        for batch in &batches {
+            array_vec.push(batch.column(i as usize).as_ref());
+        }
+        to_concat_array.push(array_vec);
+    }
+
+    let mut columns = Vec::new();
+    for array in to_concat_array {
+        let concat_array = arrow::compute::kernels::concat::concat(&array);
+        columns.push(concat_array.unwrap());
+    }
+
+    create_record_batch(batches[0].schema(), columns)
+}
+
 pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     let serde = get_serde_dict().unwrap();
 

@@ -65,7 +65,9 @@ export type ISwimlanesProps = ICommonChartProps & {
 
 export type IMemoryAccessHeatmapChartProps = ICommonChartProps;
 
-export type IQueryPlanProps = {};
+export type IQueryPlanProps = ICommonChartProps & {
+    height: number;
+};
 
 export type IUirViewerProps = ICommonChartProps;
 

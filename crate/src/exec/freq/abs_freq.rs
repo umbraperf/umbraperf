@@ -146,12 +146,14 @@ pub fn abs_freq_with_pipelines_with_double_events(
     vec.push(events[0]);
     let f_batch = filter::filter_with(1, vec, batch);
 
-    let mut vec1 = Vec::new();
-    let mut vec2 = Vec::new();
-    let mut vec3 = Vec::new();
-    let mut vec4 = Vec::new();
-    let mut vec5 = Vec::new();
-    let mut vec6 = Vec::new();
+    let (mut vec1, mut vec2, mut vec3, mut vec4, mut vec5, mut vec6) = (
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+    );
 
     let first_filter_batch = abs_freq_of_pipelines(
         &f_batch,

@@ -61,7 +61,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                     {
                         type: "extent",
                         field: "occurrences",
-                        signal: "extent"
+                        signal: "extentOccurrences"
+                    },
+                    {
+                        type: "extent",
+                        field: "memAdr",
+                        signal: "extentMemAdr"
                     }
                 ]
             },
@@ -74,14 +79,15 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                         size: [{ signal: "width" }, { signal: "height" }],
                         x: { "expr": "scale('x', datum.bucket)" },
                         y: { "expr": "scale('y', datum.memAdr)" },
-                        bandwidth: { "signal": "[-1, -1]" },
+                        bandwidth: { "signal": "[5, 5]" },
+                        // bandwidth: { "signal": "[-1, -1]" },
                         as: "grid",
                     },
                     {
                         type: "heatmap",
                         field: "grid",
                         resolve: "shared",
-                        color: { "expr": `scale('density', (datum.$value/datum.$max) * extent[1])` },
+                        color: { "expr": `scale('density', (datum.$value/datum.$max) * extentOccurrences[1])` },
                         opacity: 1
                     }
                 ]
@@ -94,14 +100,22 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const visData = this.createVisualizationData(id);
 
-        const yDomain = () => {
+        const yDomain = (): { domain: any, domainMax?: number, domainMin?: number } => {
             if (this.props.memoryHeatmapsDifferenceRepresentation) {
                 return {
-                    data: "table",
-                    field: "memAdr",
+                    domain: [
+                        { signal: "((abs(extentMemAdr[0]) > abs(extentMemAdr[1]) || (extentMemAdr[0] == extentMemAdr[1] && extentMemAdr[0] <= 0))) ? extentMemAdr[0] : -extentMemAdr[1]" },
+                        { signal: "((abs(extentMemAdr[0]) > abs(extentMemAdr[1]) || (extentMemAdr[0] == extentMemAdr[1] && extentMemAdr[0] <= 0))) ? abs(extentMemAdr[0]) : extentMemAdr[1]" }
+                    ],
+                    domainMax: undefined,
+                    domainMin: undefined,
                 };
             } else {
-                return [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max];
+                return {
+                    domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
+                    domainMax: this.props.chartData.domain.memoryDomain.max,
+                    domainMin: this.props.chartData.domain.memoryDomain.min,
+                };
             }
         };
 
@@ -139,9 +153,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 {
                     "name": "y",
                     "type": "linear",
-                    domain: yDomain(),
-                    domainMin: this.props.memoryHeatmapsDifferenceRepresentation ? null : this.props.chartData.domain.memoryDomain.min,
-                    domainMax: this.props.memoryHeatmapsDifferenceRepresentation ? null : this.props.chartData.domain.memoryDomain.max,
+                    domain: yDomain().domain,
+                    domainMax: yDomain().domainMax,
+                    domainMin: yDomain().domainMin,
                     "range": "height",
                     "zero": true,
                     "nice": true,
@@ -151,7 +165,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                     "name": "density",
                     "type": "linear",
                     "range": { "scheme": "Viridis" },
-                    "domain": [0, { "signal": "extent[1]" }],
+                    "domain": [0, { "signal": "extentOccurrences[1]" }],
                     // domain: [0, this.props.chartData.domain.frequencyDomain.max],
                     "zero": true,
                 }
@@ -199,7 +213,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                             "x": { "value": 0 },
                             "y": { "value": 0 },
                             "image": [
-                                { "test": "extent[1] > 0", "field": "image" },
+                                { "test": "extentOccurrences[1] > 0", "field": "image" },
                             ],
                             "width": { "signal": "width" },
                             "height": { "signal": "height" },
@@ -219,7 +233,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                     "titlePadding": 4,
                     "gradientLength": { "signal": "height - 20" },
                     "labelOpacity": [
-                        { "test": "extent[1] > 0", "value": 1 },
+                        { "test": "extentOccurrences[1] > 0", "value": 1 },
                         { "value": 0 }
                     ]
                 }

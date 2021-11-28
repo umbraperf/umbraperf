@@ -25,6 +25,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.SUNBURST_CHART, ISunburstChartData>
     | ChartData<ChartType.MEMORY_ACCESS_HEATMAP_CHART, IMemoryAccessHeatmapChartData>
     | ChartData<ChartType.UIR_VIEWER, IUirViewerData>
+    | ChartData<ChartType.QUERY_PLAN, IQueryPlanData>
     ;
 
 export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
@@ -91,7 +92,24 @@ export interface IUirViewerData {
     event2: Array<number>;
     event3: Array<number>;
     event4: Array<number>;
+    relEvent1: Array<number>;
+    relEvent2: Array<number>;
+    relEvent3: Array<number>;
+    relEvent4: Array<number>;
     operators: Array<string>;
     pipelines: Array<string>;
+    isFunction: Array<number>;
+}
+
+export interface IQueryPlanNodeTooltipData {
+    uirLineNumbers: Array<number>;
+    uirLines: Array<string>;
+    eventOccurrences: Array<number>;
+    operators: Array<string>;
+}
+
+export interface IQueryPlanData {
+    queryplanData: object | undefined;
+    nodeTooltipData: IQueryPlanNodeTooltipData;
 }
 

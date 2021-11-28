@@ -120,7 +120,7 @@ export let chartConfiguration: ChartConfiguration = {
                 elemSaturation = adjustedSaturation;
             }
 
-            if(hsla){
+            if (hsla) {
                 return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
             }
             return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
@@ -130,6 +130,8 @@ export let chartConfiguration: ChartConfiguration = {
     },
 
     getOrangeColor: (opacity) => {
+        //depreciated
+        //TODO remove, not used
 
         return orangeColorSchemeHex[opacity];
     },
@@ -163,6 +165,8 @@ const operatorColorScemeHsl: Array<Array<number>> = [
 ]
 
 const orangeColorSchemeHex: Array<string> = [
+    //depreciated
+    //TODO remove, not used
     '#EDB596',
     '#E69F78',
     '#DD895A',

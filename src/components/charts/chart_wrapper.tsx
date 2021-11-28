@@ -17,6 +17,7 @@ import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multipl
 import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
 import UirViewer from './uir/uir_viewer';
+import QueryPlan from './queryplan/query_plan_wrapper';
 
 
 interface OwnProps {
@@ -40,7 +41,6 @@ export interface ChartWrapperAppstateProps {
     currentTimeBucketSelectionTuple: [number, number],
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
-
 
     setChartIdCounter: (newChartIdCounter: number) => void;
     setCurrentChart: (newCurrentChart: model.ChartType) => void;
@@ -263,6 +263,18 @@ class ChartWrapper extends React.Component<Props, State> {
                     props: uirViewerChartProps,
                 };
                 chartClass = UirViewer;
+                break;
+
+            case model.ChartType.QUERY_PLAN:
+                const queryPlanChartProps: model.IQueryPlanProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: queryPlanChartProps,
+                };
+                chartClass = QueryPlan;
                 break;
         }
 

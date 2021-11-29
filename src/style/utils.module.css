@@ -47,30 +47,34 @@
     composes: dropdownSelectorContainer;
 }
 
-/* .profilesDropdownSelectorControl{
-    height: 20px;
+.profilesDropdownSelectorControl{
     /* height: 30px;
     border-color: white;
     background-color: white;
     max-height: 20px;
     overflow: hidden;
-    color: white; 
+    color: white;  */
 }
 
 .profilesDropdownSelector{
-    width: 200px;
-    height: 30px;
+    font-size: 8px;
+    max-height: 20px;
+    color: white;
 }
 
 .profilesDropdownSelectorLabel{
+
 }
 
 .profilesDropdownSelectorContainer{
     position: absolute;
     right: 300px;
     width: 100px;
-} */
+}
 
+.profilesDropdownSelectorItem{
+
+}
 
 .pipelinesSelectorArea{
     display: block;

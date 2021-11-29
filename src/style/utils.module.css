@@ -47,14 +47,14 @@
     composes: dropdownSelectorContainer;
 }
 
-.profilesDropdownSelectorControl{
+/* .profilesDropdownSelectorControl{
     height: 20px;
     /* height: 30px;
     border-color: white;
     background-color: white;
     max-height: 20px;
     overflow: hidden;
-    color: white; */
+    color: white; 
 }
 
 .profilesDropdownSelector{
@@ -69,7 +69,7 @@
     position: absolute;
     right: 300px;
     width: 100px;
-}
+} */
 
 
 .pipelinesSelectorArea{

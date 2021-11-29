@@ -57,14 +57,28 @@ function ProfilesDropdown(props: Props) {
     };
 
 
-    const classes = useStyles();
-    const menuClasses = useMenuPropsStyles();
+    // const classes = useStyles();
+    // const menuClasses = useMenuPropsStyles();
 
     return (
 
         <div className={styles.profilesDropdownSelectorContainer}>
-
-            test
+            <div>
+                <Select
+                    className={styles.profilesDropdownSelector}
+                    // labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    MenuProps={{
+                        classes: {
+                            paper: styles.profilesDropdownSelectorItem
+                        }
+                    }}
+                >
+                    {profiles.map((elem, index) =>
+                        (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)
+                    )}
+                </Select>
+            </div>
             {/* <div className={styles.profilesDropdownSelectorContainer}>
             <FormControl
                 className={styles.profilesDropdownSelectorControl}

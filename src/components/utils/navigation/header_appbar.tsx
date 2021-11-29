@@ -19,8 +19,8 @@ function HeaderAppbar() {
                 </Typography>
 
                 <div className={styles.appbarToolbarOptionsContainer}>
-{/*                     <ProfilesDropdown />
- */}                    <StatusIndicator />
+                    <ProfilesDropdown />
+                    <StatusIndicator />
                 </div>
             </Toolbar>
         </AppBar>

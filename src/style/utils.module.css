@@ -47,16 +47,28 @@
     composes: dropdownSelectorContainer;
 }
 
+.profilesDropdownSelectorControl{
+    height: 20px;
+    /* height: 30px;
+    border-color: white;
+    background-color: white;
+    max-height: 20px;
+    overflow: hidden;
+    color: white; */
+}
+
 .profilesDropdownSelector{
-    composes: dropdownSelector;
+    width: 200px;
+    height: 30px;
 }
 
 .profilesDropdownSelectorLabel{
-    composes: dropdownSelectorLabel;
 }
 
 .profilesDropdownSelectorContainer{
-    composes: dropdownSelectorContainer;
+    position: absolute;
+    right: 300px;
+    width: 100px;
 }
 
 
@@ -154,7 +166,7 @@
     display: flex;
 }
 
-.appbarToolbarStatusContainer{
+.appbarToolbarOptionsContainer{
     flex: 1;
     display: flex;
     justify-content: right;

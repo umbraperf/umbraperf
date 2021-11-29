@@ -47,6 +47,18 @@
     composes: dropdownSelectorContainer;
 }
 
+.profilesDropdownSelector{
+    composes: dropdownSelector;
+}
+
+.profilesDropdownSelectorLabel{
+    composes: dropdownSelectorLabel;
+}
+
+.profilesDropdownSelectorContainer{
+    composes: dropdownSelectorContainer;
+}
+
 
 .pipelinesSelectorArea{
     display: block;

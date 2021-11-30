@@ -59,7 +59,8 @@
 .profilesDropdownSelector{
     font-size: 8px;
     max-height: 20px;
-    color: white;
+    color: white !important;
+    border-color: white;
 }
 
 .profilesDropdownSelectorLabel{

@@ -15,36 +15,36 @@ interface AppstateProps {
 
 type Props = AppstateProps;
 
-const useMenuPropsStyles = makeStyles({
-    select: {
-        "& ul": {
-            backgroundColor: "#cccccc",
-        },
-        "& li": {
-            fontSize: 1,
-        },
-    }
-});
+// const useMenuPropsStyles = makeStyles({
+//     select: {
+//         "& ul": {
+//             backgroundColor: "#cccccc",
+//         },
+//         "& li": {
+//             fontSize: 1,
+//         },
+//     }
+// });
 
-const useStyles = makeStyles({
-    select: {
-        '&:before': {
-            borderColor: 'white',
-        },
-        '&:after': {
-            borderColor: 'white',
-        },
-        '&:not(.Mui-disabled):hover::before': {
-            borderColor: 'white',
-        },
-    },
-    icon: {
-        fill: 'white',
-    },
-    root: {
-        color: 'white',
-    },
-});
+// const useStyles = makeStyles({
+//     select: {
+//         '&:before': {
+//             borderColor: 'white',
+//         },
+//         '&:after': {
+//             borderColor: 'white',
+//         },
+//         '&:not(.Mui-disabled):hover::before': {
+//             borderColor: 'white',
+//         },
+//     },
+//     icon: {
+//         fill: 'white',
+//     },
+//     root: {
+//         color: 'white',
+//     },
+// });
 
 function ProfilesDropdown(props: Props) {
 
@@ -67,11 +67,18 @@ function ProfilesDropdown(props: Props) {
                 <Select
                     className={styles.profilesDropdownSelector}
                     // labelId="demo-simple-select-label"
+                    // color="secondary"
                     id="demo-simple-select"
-                    variant="outlined"
+                    variant="standard"
                     MenuProps={{
                         classes: {
                             paper: styles.profilesDropdownSelectorItem
+                        }
+                    }}
+                    inputProps={{
+                        classes: {
+                            icon: styles.profilesDropdownSelectorIcon,
+                            // root: classes.root,
                         }
                     }}
                     defaultValue={profiles[0]}

@@ -5,7 +5,7 @@ import CachedIcon from '@material-ui/icons/Cached';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
 
-enum ProfileType {
+export enum ProfileType {
     OVERVIEW = "OVERVIEW",
     MEMORY_BEHAVIOUR = "MEMORY_BEHAVIOUR",
     DETAIL_ANALYSIS = "DETAIL_ANALYSIS",

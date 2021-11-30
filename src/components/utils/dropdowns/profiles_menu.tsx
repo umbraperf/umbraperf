@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller/chart_interaction_controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -48,11 +49,6 @@ function ProfilesMenu(props: Props) {
         },
     }))(MenuItem);
 
-    // const profiles = [
-    //     //get from redux store -> object with icon and text
-    //     "Standard (Overview)", "Memory Behaviour", "Detailed Analysis", "UIR Analysis", "Cache Behaviour"
-    // ];
-
     const menuProfiles = props.profiles.map((elem, index) => (
         <>
             <ListItemIcon>
@@ -75,7 +71,8 @@ function ProfilesMenu(props: Props) {
         </>
     ));
 
-    const handleOnItemClick = (elem: string) => {
+    const handleOnItemClick = (index: number) => {
+        // Controller.
         // props.setCurrentInterpolation(elem);
         handleClose();
     };
@@ -120,7 +117,7 @@ function ProfilesMenu(props: Props) {
                 {menuProfiles.map((elem, index) =>
                 (<StyledMenuItem
                     className={styles.profilesMenuItem}
-                    onClick={() => handleOnItemClick(" ")}
+                    onClick={() => handleOnItemClick(index)}
                     key={index}
                 >
                     {elem}

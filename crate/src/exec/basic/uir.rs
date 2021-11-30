@@ -365,10 +365,26 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let mut vec = Vec::new();
     vec.push(get_max_top_five(sort.clone()));
+    let mut vec_sum = Vec::new();
+
+    vec_sum.push(0.);
+    vec_sum.push(0.);  
+    vec_sum.push(0.);  
+    vec_sum.push(0.);  
+    vec_sum.push(0.); 
     for entry in unique {
         if entry.contains("None") {
         } else {
             let filter = filter_with(5, vec![&entry], &sort);
+            print_to_js_with_obj(&format!("{:?}", filter).into());
+            let column = filter.column(ordered_by + 1).as_any().downcast_ref::<Float64Array>().unwrap();
+            let sum = arrow::compute::sum(column).unwrap();
+            print_to_js_with_obj(&format!("{:?}", sum).into());
+            vec_sum.push(sum);
+            vec_sum.push(sum);  
+            vec_sum.push(sum);  
+            vec_sum.push(sum);  
+            vec_sum.push(sum);    
             vec.push(get_max_top_five(filter));
         }
     }
@@ -379,6 +395,11 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
     let op = StringArray::from(batch.column(5).data().clone());
     let srcline_num = Int32Array::from(batch.column(8).data().clone());
+    let total = Float64Array::from(vec_sum);
+    print_to_js_with_obj(&format!("{:?}", op).into());
+
+    print_to_js_with_obj(&format!("{:?}", total).into());
+
 
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {
@@ -390,22 +411,22 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     }
 
     let out_batch = create_new_record_batch(
-        vec!["scrline", "perc", "op", "srcline_num"],
+        vec!["scrline", "perc", "op", "srcline_num", "total"],
         vec![
             DataType::Utf8,
             DataType::Float64,
             DataType::Utf8,
             DataType::Int32,
+            DataType::Float64,
         ],
         vec![
             Arc::new(srcline),
             Arc::new(perc),
             Arc::new(StringArray::from(op_vec)),
             Arc::new(srcline_num),
+            Arc::new(total),
         ],
     );
-
-    print_to_js_with_obj(&format!("{:?}", out_batch).into());
 
     out_batch
 }

@@ -51,8 +51,6 @@ export type ProfileVariant =
     | Profile<ProfileType.DETAIL_ANALYSIS, typeof ProfileIcon.DETAIL_ANALYSIS, ProfileTitle.DETAIL_ANALYSIS, ProfileDescription.DETAIL_ANALYSIS>
     | Profile<ProfileType.UIR_ANALYSIS, typeof ProfileIcon.UIR_ANALYSIS, ProfileTitle.UIR_ANALYSIS, ProfileDescription.UIR_ANALYSIS>
     | Profile<ProfileType.CACHE_ANALYSIS, typeof ProfileIcon.CACHE_ANALYSIS, ProfileTitle.CACHE_ANALYSIS, ProfileDescription.CACHE_ANALYSIS>
-
-
     ;
 
 export function createProfiles(): ProfileVariant[] {
@@ -62,6 +60,30 @@ export function createProfiles(): ProfileVariant[] {
             icon: ProfileIcon.OVERVIEW,
             readableName: ProfileTitle.OVERVIEW,
             description: ProfileDescription.OVERVIEW,
+        },
+        {
+            type: ProfileType.MEMORY_BEHAVIOUR,
+            icon: ProfileIcon.MEMORY_BEHAVIOUR,
+            readableName: ProfileTitle.MEMORY_BEHAVIOUR,
+            description: ProfileDescription.MEMORY_BEHAVIOUR,
+        },
+        {
+            type: ProfileType.DETAIL_ANALYSIS,
+            icon: ProfileIcon.DETAIL_ANALYSIS,
+            readableName: ProfileTitle.DETAIL_ANALYSIS,
+            description: ProfileDescription.DETAIL_ANALYSIS,
+        },
+        {
+            type: ProfileType.UIR_ANALYSIS,
+            icon: ProfileIcon.UIR_ANALYSIS,
+            readableName: ProfileTitle.UIR_ANALYSIS,
+            description: ProfileDescription.UIR_ANALYSIS,
+        },
+        {
+            type: ProfileType.CACHE_ANALYSIS,
+            icon: ProfileIcon.CACHE_ANALYSIS,
+            readableName: ProfileTitle.CACHE_ANALYSIS,
+            description: ProfileDescription.CACHE_ANALYSIS,
         }
     ]
     return profiles;

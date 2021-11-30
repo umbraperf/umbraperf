@@ -1,8 +1,8 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
-import React, { useState } from 'react';
+import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Button, FormControl, InputLabel, ListItemIcon, ListItemText, makeStyles, Menu, MenuProps, Select, Typography, withStyles } from '@material-ui/core';
+import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
@@ -58,12 +58,16 @@ function ProfilesDropdown(props: Props) {
     const menuProfiles = profiles.map((elem, index) => (
         <>
             <ListItemIcon>
-                <KeyboardArrowDownIcon fontSize="small" />
+                <KeyboardArrowDownIcon className={styles.profilesMenuItemContentIcon} fontSize="small" />
             </ListItemIcon>
-            <ListItemText>{elem}</ListItemText>
-            <Typography variant="body2">
-                ⌘C
-            </Typography>
+            <ListItemText>
+                <Typography
+                    className={styles.profilesMenuItemContentText}
+                    variant="body2">
+                    {elem}
+                </Typography>
+            </ListItemText>
+
         </>
     ));
 
@@ -100,15 +104,23 @@ function ProfilesDropdown(props: Props) {
                 Change profile
             </Button>
             <StyledMenu
+                classes={{ paper: styles.profilesMenuPaper }}
                 id="profileMenu"
                 anchorEl={anchorEl}
                 getContentAnchorEl={null}
                 keepMounted
                 open={isOpen}
                 onClose={handleClose}
+                onMouseLeave={handleClose}
             >
                 {menuProfiles.map((elem, index) =>
-                    (<StyledMenuItem onClick={() => handleOnItemClick(profiles[index])} key={index}>{elem}</StyledMenuItem>)
+                (<StyledMenuItem
+                    className={styles.profilesMenuItem}
+                    onClick={() => handleOnItemClick(profiles[index])}
+                    key={index}
+                >
+                    {elem}
+                </StyledMenuItem>)
                 )}
             </StyledMenu>
         </div>

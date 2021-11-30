@@ -34,6 +34,7 @@ export interface AppState {
     currentTimePositionSelectionTuple: [number, number];
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
+    
 }
 
 export function createDefaultState(): AppState {

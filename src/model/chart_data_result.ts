@@ -1,4 +1,4 @@
-import { ChartType } from '../model';
+import { ChartType } from '.';
 
 export interface ChartDataKeyValue {
     [chartId: number]: ChartDataObject;

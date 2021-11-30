@@ -14,6 +14,7 @@ export * from './backend_queries';
 export * from './vega_configuration';
 export * from './chart_types';
 export * from './backend_queries';
+export * from './profiles';
 
 // XXX Conditional
 import storeDev from './store_dev';

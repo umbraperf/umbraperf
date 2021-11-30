@@ -2,8 +2,9 @@ import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Typography, withStyles } from '@material-ui/core';
+import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Tooltip, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import InfoIcon from '@material-ui/icons/Info';
 import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
@@ -17,9 +18,9 @@ interface Props {
 function ProfilesMenu(props: Props) {
 
     const StyledMenu = withStyles({
-        paper: {
-            border: '1px solid #d3d4d5',
-        },
+        // paper: {
+        //     border: '1px solid #d3d4d5',
+        // },
     })((props: MenuProps) => (
         <Menu
             elevation={0}
@@ -47,23 +48,30 @@ function ProfilesMenu(props: Props) {
         },
     }))(MenuItem);
 
-    const profiles = [
-        //get from redux store -> object with icon and text
-        "Standard (Overview)", "Memory Behaviour", "Detailed Analysis", "UIR Analysis", "Cache Behaviour"
-    ];
+    // const profiles = [
+    //     //get from redux store -> object with icon and text
+    //     "Standard (Overview)", "Memory Behaviour", "Detailed Analysis", "UIR Analysis", "Cache Behaviour"
+    // ];
 
-    const menuProfiles = profiles.map((elem, index) => (
+    const menuProfiles = props.profiles.map((elem, index) => (
         <>
             <ListItemIcon>
-                <KeyboardArrowDownIcon className={styles.profilesMenuItemContentIcon} fontSize="small" />
+                {React.createElement(elem.icon, { className: styles.profilesMenuItemContentIcon, fontSize: "small"})}
+                {/* <KeyboardArrowDownIcon className={styles.profilesMenuItemContentIcon} fontSize="small" /> */}
             </ListItemIcon>
             <ListItemText>
                 <Typography
                     className={styles.profilesMenuItemContentText}
                     variant="body2">
-                    {elem}
+                    {elem.readableName}
                 </Typography>
             </ListItemText>
+            <ListItemIcon>
+                <Tooltip title={elem.description}>
+                    <InfoIcon className={styles.profilesMenuItemContentIconInfo} fontSize="small" />
+                </Tooltip>
+
+            </ListItemIcon>
 
         </>
     ));
@@ -94,11 +102,11 @@ function ProfilesMenu(props: Props) {
                 aria-controls="profileMenu"
                 aria-haspopup="true"
                 onClick={handleClick}
-                onMouseOver={handleClick}
+                // onMouseOver={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
             >
-                Change profile
+                {props.currentProfile}
             </Button>
             <StyledMenu
                 classes={{ paper: styles.profilesMenuPaper }}
@@ -113,7 +121,7 @@ function ProfilesMenu(props: Props) {
                 {menuProfiles.map((elem, index) =>
                 (<StyledMenuItem
                     className={styles.profilesMenuItem}
-                    onClick={() => handleOnItemClick(profiles[index])}
+                    onClick={() => handleOnItemClick(" ")}
                     key={index}
                 >
                     {elem}

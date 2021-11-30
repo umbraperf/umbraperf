@@ -64,6 +64,10 @@
     justify-content: center;
 }
 
+.profilesMenuButton:hover{
+    background-color: colorSecondary;
+}
+
 .profilesMenuItem:hover{
     background-color: colorSecondary;
 }
@@ -81,9 +85,19 @@
     composes: profilesMenuItemContent;
 }
 
+.profilesMenuItemContentIconInfo{
+    composes: profilesMenuItemContentIcon;
+    float: right;
+    /* position: relative;
+    left: 20px; */
+}
+
 .profilesMenuPaper{
     background-color: colorAccentBlack;
     border-style: hidden;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+
 }
 
 .pipelinesSelectorArea{

@@ -222,10 +222,26 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         } else {
             let rel_freq = RELFREQ {
-                rel_freq_1: round(item.1.abs_freq_1 / total_1),
-                rel_freq_2: round(item.1.abs_freq_2 / total_2),
-                rel_freq_3: round(item.1.abs_freq_3 / total_3),
-                rel_freq_4: round(item.1.abs_freq_4 / total_4),
+                rel_freq_1: if total_1 == 0. {
+                    0.
+                } else {
+                    round(item.1.abs_freq_1 / total_1)
+                },
+                rel_freq_2: if total_2 == 0. {
+                    0.
+                } else {
+                    round(item.1.abs_freq_2 / total_2)
+                },
+                rel_freq_3: if total_3 == 0. {
+                    0.
+                } else {
+                    round(item.1.abs_freq_3 / total_3)
+                },
+                rel_freq_4: if total_4 == 0. {
+                    0.
+                } else {
+                    round(item.1.abs_freq_4 / total_4)
+                },
             };
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         }
@@ -363,7 +379,6 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
     let op = StringArray::from(batch.column(5).data().clone());
     let srcline_num = Int32Array::from(batch.column(8).data().clone());
-
 
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {

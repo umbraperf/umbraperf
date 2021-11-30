@@ -68,11 +68,13 @@ function ProfilesDropdown(props: Props) {
                     className={styles.profilesDropdownSelector}
                     // labelId="demo-simple-select-label"
                     id="demo-simple-select"
+                    variant="outlined"
                     MenuProps={{
                         classes: {
                             paper: styles.profilesDropdownSelectorItem
                         }
                     }}
+                    defaultValue={profiles[0]}
                 >
                     {profiles.map((elem, index) =>
                         (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)

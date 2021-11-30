@@ -47,38 +47,21 @@
     composes: dropdownSelectorContainer;
 }
 
-.profilesDropdownSelectorControl{
-    /* height: 30px;
-    border-color: white;
-    background-color: white;
-    max-height: 20px;
-    overflow: hidden;
-    color: white;  */
-}
-
-.profilesDropdownSelector{
-    font-size: var(--labelFonSize);
-    max-height: 20px;
-    color: white;
-    width: 100%;
-}
-
-.profilesDropdownSelectorLabel{
-
-}
-
-.profilesDropdownSelectorIcon{
-    fill: white;
-}
-
-.profilesDropdownSelectorContainer{
+.profilesMenuContainer{
     position: absolute;
     right: 300px;
     width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.profilesDropdownSelectorItem{
-
+.profilesMenuButton{
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pipelinesSelectorArea{

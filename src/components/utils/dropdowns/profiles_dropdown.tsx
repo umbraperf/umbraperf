@@ -1,8 +1,9 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
-import React from 'react';
+import React, { useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import { FormControl, InputLabel, makeStyles, Select } from '@material-ui/core';
+import { Button, FormControl, InputLabel, ListItemIcon, ListItemText, makeStyles, Menu, MenuProps, Select, Typography, withStyles } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
@@ -15,113 +16,101 @@ interface AppstateProps {
 
 type Props = AppstateProps;
 
-// const useMenuPropsStyles = makeStyles({
-//     select: {
-//         "& ul": {
-//             backgroundColor: "#cccccc",
-//         },
-//         "& li": {
-//             fontSize: 1,
-//         },
-//     }
-// });
-
-// const useStyles = makeStyles({
-//     select: {
-//         '&:before': {
-//             borderColor: 'white',
-//         },
-//         '&:after': {
-//             borderColor: 'white',
-//         },
-//         '&:not(.Mui-disabled):hover::before': {
-//             borderColor: 'white',
-//         },
-//     },
-//     icon: {
-//         fill: 'white',
-//     },
-//     root: {
-//         color: 'white',
-//     },
-// });
 
 function ProfilesDropdown(props: Props) {
 
+    const StyledMenu = withStyles({
+        paper: {
+            border: '1px solid #d3d4d5',
+        },
+    })((props: MenuProps) => (
+        <Menu
+            elevation={0}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+            }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+            }}
+            {...props}
+        />
+    ));
+
+    const StyledMenuItem = withStyles((theme) => ({
+        root: {
+            '&:focus': {
+                backgroundColor: props.appContext.secondaryColor,
+                '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+                    color: theme.palette.common.white,
+                },
+            },
+        },
+    }))(MenuItem);
+
     const profiles = [
+        //get from redux store -> object with icon and text
         "Standard (Overview)", "Memory Behaviour", "Detailed Analysis", "UIR Analysis", "Cache Behaviour"
     ];
 
+    const menuProfiles = profiles.map((elem, index) => (
+        <>
+            <ListItemIcon>
+                <KeyboardArrowDownIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{elem}</ListItemText>
+            <Typography variant="body2">
+                ⌘C
+            </Typography>
+        </>
+    ));
+
     const handleOnItemClick = (elem: string) => {
         // props.setCurrentInterpolation(elem);
+        handleClose();
     };
 
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-    // const classes = useStyles();
-    // const menuClasses = useMenuPropsStyles();
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setIsOpen(true);
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setIsOpen(false);
+        setAnchorEl(null);
+    };
 
     return (
 
-        <div className={styles.profilesDropdownSelectorContainer}>
-            <div>
-                <Select
-                    className={styles.profilesDropdownSelector}
-                    // labelId="demo-simple-select-label"
-                    // color="secondary"
-                    id="demo-simple-select"
-                    variant="standard"
-                    MenuProps={{
-                        classes: {
-                            paper: styles.profilesDropdownSelectorItem
-                        }
-                    }}
-                    inputProps={{
-                        classes: {
-                            icon: styles.profilesDropdownSelectorIcon,
-                            // root: classes.root,
-                        }
-                    }}
-                    defaultValue={profiles[0]}
-                >
-                    {profiles.map((elem, index) =>
-                        (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)
-                    )}
-                </Select>
-            </div>
-            {/* <div className={styles.profilesDropdownSelectorContainer}>
-            <FormControl
-                className={styles.profilesDropdownSelectorControl}
-                fullWidth
-                size='small'
-                variant='outlined'>
-                <InputLabel id="profiles-selector-label" className={styles.profilesDropdownSelectorLabel} style={{ color: props.appContext.tertiaryColor }} >Interpolation: </InputLabel>
-                <Select
-                    inputProps={{
-                        classes: {
-                            icon: classes.icon,
-                            root: classes.root,
-                        },
-                    }}
-                    MenuProps={{
-                        classes: {
-                            paper: menuClasses.select
-                        }
-                    }}
-                    className={classes.select}
-                    // className={styles.profilesDropdownSelector}
-                    color="secondary"
-                    labelId="profiles-selector-label"
-                    id="profiles-selector"
-/*                     value={profiles[1]}
-                    disabled={false /* disable while csv loading }
-                >
-                    {profiles.map((elem, index) =>
-                        (<MenuItem onClick={() => handleOnItemClick(elem)} key={index} value={elem}>{elem}</MenuItem>)
-                    )}
-                </Select>
-            </FormControl >
-        </div> */
-            }
+        <div className={styles.profilesMenuContainer}>
+            <Button
+                className={styles.profilesMenuButton}
+                aria-controls="profileMenu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                onMouseOver={handleClick}
+                size="small"
+                endIcon={<KeyboardArrowDownIcon />}
+            >
+                Change profile
+            </Button>
+            <StyledMenu
+                id="profileMenu"
+                anchorEl={anchorEl}
+                getContentAnchorEl={null}
+                keepMounted
+                open={isOpen}
+                onClose={handleClose}
+            >
+                {menuProfiles.map((elem, index) =>
+                    (<StyledMenuItem onClick={() => handleOnItemClick(profiles[index])} key={index}>{elem}</StyledMenuItem>)
+                )}
+            </StyledMenu>
         </div>
 
     );

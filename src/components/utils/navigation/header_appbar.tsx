@@ -2,7 +2,7 @@ import React from 'react';
 import styles from "../../../style/utils.module.css";
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import StatusIndicator from './status_indicator';
-import ProfilesDropdown from './../dropdowns/profiles_dropdown';
+import ProfilesDropdown from '../dropdowns/profiles_menu';
 
 function HeaderAppbar() {
 

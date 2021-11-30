@@ -8,16 +8,13 @@ import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 
-interface AppstateProps {
+interface Props {
     appContext: Context.IAppContext;
-    // currentInterpolation: String;
-    //setCurrentInterpolation: (newCurrentInterpolation: String) => void;
+    currentProfile: model.ProfileType;
+    profiles: Array<model.ProfileVariant>;
 }
 
-type Props = AppstateProps;
-
-
-function ProfilesDropdown(props: Props) {
+function ProfilesMenu(props: Props) {
 
     const StyledMenu = withStyles({
         paper: {
@@ -130,13 +127,9 @@ function ProfilesDropdown(props: Props) {
 
 const mapStateToProps = (state: model.AppState) => ({
     // currentInterpolation: state.currentInterpolation,
+    currentProfile: state.currentProfile,
+    profiles: state.profiles,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    // setCurrentInterpolation: (newCurrentInterpolation: String) => dispatch({
-    //     type: model.StateMutationType.SET_CURRENTINTERPOLATION,
-    //     data: newCurrentInterpolation,
-    // }),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(ProfilesDropdown));
+export default connect(mapStateToProps)(Context.withAppContext(ProfilesMenu));

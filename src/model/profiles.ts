@@ -14,11 +14,11 @@ export enum ProfileType {
 }
 
 const ProfileIcon = {
-    OVERVIEW: React.createElement(AppsIcon),
-    MEMORY_BEHAVIOUR: React.createElement(MemoryIcon),
-    DETAIL_ANALYSIS: React.createElement(SearchIcon),
-    UIR_ANALYSIS: React.createElement(CodeIcon),
-    CACHE_ANALYSIS: React.createElement(CachedIcon),
+    OVERVIEW: AppsIcon,
+    MEMORY_BEHAVIOUR: MemoryIcon,
+    DETAIL_ANALYSIS: SearchIcon,
+    UIR_ANALYSIS: CodeIcon,
+    CACHE_ANALYSIS: CachedIcon,
 }
 
 export enum ProfileTitle {

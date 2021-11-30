@@ -68,6 +68,14 @@
     background-color: colorSecondary;
 }
 
+.profilesMenuPaper{
+    background-color: colorAccentBlack;
+    border-style: hidden;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    width: 250px;
+}
+
 .profilesMenuItem:hover{
     background-color: colorSecondary;
 }
@@ -78,7 +86,8 @@
 
 .profilesMenuItemContentText{
     composes: profilesMenuItemContent;
-    font-size: 11px !important;
+    font-size: 11px;
+    padding-left: 10px;
 }
 
 .profilesMenuItemContentIcon{
@@ -87,17 +96,8 @@
 
 .profilesMenuItemContentIconInfo{
     composes: profilesMenuItemContentIcon;
-    float: right;
-    /* position: relative;
-    left: 20px; */
-}
-
-.profilesMenuPaper{
-    background-color: colorAccentBlack;
-    border-style: hidden;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-
+    font-size: 15px;
+    padding-left: 15px;
 }
 
 .pipelinesSelectorArea{

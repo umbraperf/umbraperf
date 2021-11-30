@@ -68,9 +68,8 @@ function ProfilesMenu(props: Props) {
             </ListItemText>
             <ListItemIcon>
                 <Tooltip title={elem.description}>
-                    <InfoIcon className={styles.profilesMenuItemContentIconInfo} fontSize="small" />
+                    <InfoIcon className={styles.profilesMenuItemContentIconInfo} />
                 </Tooltip>
-
             </ListItemIcon>
 
         </>

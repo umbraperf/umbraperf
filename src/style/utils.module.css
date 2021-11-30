@@ -57,20 +57,24 @@
 }
 
 .profilesDropdownSelector{
-    font-size: 8px;
+    font-size: var(--labelFonSize);
     max-height: 20px;
-    color: white !important;
-    border-color: white;
+    color: white;
+    width: 100%;
 }
 
 .profilesDropdownSelectorLabel{
 
 }
 
+.profilesDropdownSelectorIcon{
+    fill: white;
+}
+
 .profilesDropdownSelectorContainer{
     position: absolute;
     right: 300px;
-    width: 100px;
+    width: 150px;
 }
 
 .profilesDropdownSelectorItem{
@@ -176,10 +180,12 @@
     display: flex;
     justify-content: right;
     font-size: 12px;
+    align-items: center;
 }
 
 .statusContainer{
     display: flex;
+    font-size: var(--labelFonSize);
 }
 
 .togglerLabel{

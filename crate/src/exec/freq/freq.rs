@@ -366,7 +366,16 @@ pub fn freq_of_memory(
             continue 'outer;
         }
         let current_memory = if matches!(mem_en, MEM::ABS) {
-            (memory_column.value(i as usize) / divided) as i32
+            let number = memory_column.value(i as usize);
+            if number.to_string().chars().count() < 7 {
+                continue 'outer;
+            }
+            let string = number.to_string().split_off(6);
+            if string.chars().count() != 9 {
+                continue 'outer;
+            }
+            string.parse::<i32>().unwrap()
+
         } else {
             let value1 = memory_column.value(i as usize);
 
@@ -387,7 +396,7 @@ pub fn freq_of_memory(
                     for _i in 0..times {
                         result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory);
+                        result_mem_operator.push(*item.0);
                         result_builder.push(item.1.to_owned());
                         let current_value = bucket_map_count[operator] + 1.;
                         bucket_map_count.insert(operator, current_value);
@@ -413,7 +422,7 @@ pub fn freq_of_memory(
                     for _i in 0..times {
                         result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory);
+                        result_mem_operator.push(*item.0);
                         result_builder.push(item.1.to_owned());
                         let current_value = bucket_map_count[operator] + 1.;
                         bucket_map_count.insert(operator, current_value);

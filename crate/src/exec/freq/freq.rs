@@ -349,12 +349,12 @@ pub fn freq_of_memory(
         }
         out
     } else {
-        10000000000
+        1
     };
 
     'outer: for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(i as usize);
-        if i == 0 && matches!(mem_en, MEM::ABS) {
+        if i == 0 && matches!(mem_en, MEM::DIFF) {
             continue 'outer;
         } 
         let value_earlier_index = get_earlier_entry(&batch, i, current_operator, column_for_operator);
@@ -542,7 +542,7 @@ pub fn freq_of_memory(
             .map(|v| (v.unwrap() as i64))
             .collect::<Vec<i64>>();
 
-        let mean = statistics::mean(&mem_vec).unwrap();
+        /* let mean = statistics::mean(&mem_vec).unwrap();
         let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
 
         let from = if matches!(mem_en, MEM::DIFF) {
@@ -556,7 +556,7 @@ pub fn freq_of_memory(
             mean + (std_deviation)
         };
 
-        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
+        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch); */
 
         let min_bucket = arrow::compute::min(bucket).unwrap();
         hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);

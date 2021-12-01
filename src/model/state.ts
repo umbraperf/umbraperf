@@ -1,6 +1,4 @@
-import { ChartDataKeyValue } from "./chart_data_result";
-import { IKpiData, Result, ResultLoading } from "./core_result";
-import { BackendQueryType } from "./backend_queries";
+import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
@@ -34,6 +32,8 @@ export interface AppState {
     currentTimePositionSelectionTuple: [number, number];
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
+    currentProfile: ProfileType;
+    profiles: Array<ProfileVariant>;
 }
 
 export function createDefaultState(): AppState {
@@ -65,5 +65,7 @@ export function createDefaultState(): AppState {
         currentTimePositionSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
         memoryHeatmapsDifferenceRepresentation: true,
+        currentProfile: ProfileType.OVERVIEW,
+        profiles: createProfiles(),
     };
 }

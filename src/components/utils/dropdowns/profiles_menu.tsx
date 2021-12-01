@@ -14,6 +14,8 @@ interface Props {
     appContext: Context.IAppContext;
     currentProfile: model.ProfileType;
     profiles: Array<model.ProfileVariant>;
+    events: Array<string> | undefined;
+    currentView: model.ViewType;
 }
 
 function ProfilesMenu(props: Props) {
@@ -69,8 +71,8 @@ function ProfilesMenu(props: Props) {
         setAnchorEl(null);
     };
 
-    // const isMenuSiabled = 
-    //TODO disable on csv parsind and events not loaded 
+    const isMenuDisabled =  undefined === props.events || model.ViewType.UPLOAD === props.currentView;  
+
     return (
 
         <div className={styles.profilesMenuContainer}>
@@ -82,7 +84,7 @@ function ProfilesMenu(props: Props) {
                 onClick={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
-                disabled={true}
+                disabled={isMenuDisabled}
             >
                 {props.currentProfile}
             </Button>
@@ -122,9 +124,10 @@ function ProfilesMenu(props: Props) {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    // currentInterpolation: state.currentInterpolation,
     currentProfile: state.currentProfile,
     profiles: state.profiles,
+    events: state.events,
+    currentView: state.currentView,
 });
 
 

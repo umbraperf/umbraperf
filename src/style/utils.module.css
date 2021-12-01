@@ -46,16 +46,6 @@
 .bucketsizeDropdownSelectorContainer{
     composes: dropdownSelectorContainer;
 }
-
-.profilesMenuContainer{
-    position: absolute;
-    right: 300px;
-    width: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .profilesMenuButton{
     color: white;
     font-size: 10px;
@@ -202,9 +192,21 @@
     align-items: center;
 }
 
+.profilesMenuContainer{
+    flex-basis: 0;
+    padding-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .statusContainer{
+    justify-content: right;
     display: flex;
     font-size: var(--labelFonSize);
+    flex-basis: 300px;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .togglerLabel{
@@ -240,6 +242,18 @@
         composes: eventButtonsArea;
         width: 300px;
     } 
+
+    .statusContainer{
+        display: none;
+    }
+
+    .profilesMenuContainer{
+        composes: profilesMenuContainer;
+        flex: 1;
+        padding-right: 10px;
+        justify-content: right;
+    }
+    
 
 }
 

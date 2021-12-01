@@ -35,7 +35,6 @@ function ProfilesMenu(props: Props) {
         <>
             <ListItemIcon>
                 {React.createElement(elem.icon, { className: styles.profilesMenuItemContentIcon, fontSize: "small" })}
-                {/* <KeyboardArrowDownIcon className={styles.profilesMenuItemContentIcon} fontSize="small" /> */}
             </ListItemIcon>
             <ListItemText>
                 <Typography
@@ -45,7 +44,16 @@ function ProfilesMenu(props: Props) {
                 </Typography>
             </ListItemText>
             <ListItemIcon>
-                <Tooltip title={elem.description}>
+                <Tooltip
+                    title={
+                        <Typography
+                            className={styles.profilesMenuItemContentInfoTooltipContent}
+                            variant="body2">
+                            {elem.description}
+                        </Typography>
+                    }
+                    className={styles.profilesMenuItemContentInfoTooltip}
+                >
                     <InfoIcon className={styles.profilesMenuItemContentIconInfo} />
                 </Tooltip>
             </ListItemIcon>
@@ -85,7 +93,7 @@ function ProfilesMenu(props: Props) {
         return index === currentSelectedProfileIndex;
     }
 
-    const isMenuDisabled =  undefined === props.events || model.ViewType.UPLOAD === props.currentView;  
+    const isMenuDisabled = undefined === props.events || model.ViewType.UPLOAD === props.currentView;
 
     return (
 

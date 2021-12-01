@@ -95,6 +95,10 @@
     padding-left: 15px;
 }
 
+.profilesMenuItemContentInfoTooltipContent{
+    font-size: 13px;
+}
+
 .pipelinesSelectorArea{
     display: block;
     margin: 10px;

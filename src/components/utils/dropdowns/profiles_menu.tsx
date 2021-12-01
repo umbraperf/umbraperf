@@ -71,6 +71,11 @@ function ProfilesMenu(props: Props) {
         setAnchorEl(null);
     };
 
+    const getReadableProfileName = () => {
+        const currentProfileIndex = props.profiles.findIndex((elem) => (elem.type === props.currentProfile));
+        return props.profiles[currentProfileIndex].readableName;
+    }
+
     const isMenuDisabled =  undefined === props.events || model.ViewType.UPLOAD === props.currentView;  
 
     return (
@@ -86,7 +91,7 @@ function ProfilesMenu(props: Props) {
                 endIcon={<KeyboardArrowDownIcon />}
                 disabled={isMenuDisabled}
             >
-                {props.currentProfile}
+                {getReadableProfileName()}
             </Button>
 
             <Menu

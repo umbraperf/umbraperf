@@ -16,7 +16,7 @@ export function changeProfile(newProfile: model.ProfileType) {
         case model.ProfileType.CACHE_ANALYSIS:
             break;
 
-        case model.ProfileType.UIR_ANALYSIS;
+        case model.ProfileType.UIR_ANALYSIS:
             break;
 
     }

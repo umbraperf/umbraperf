@@ -1,5 +1,6 @@
 import * as model from '../model';
 import { store } from '../app_config';
+import history from '../history';
 
 
 export function changeProfile(newProfile: model.ProfileType) {
@@ -13,6 +14,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
+            // history.push("/upload");
             break;
 
         case model.ProfileType.DETAIL_ANALYSIS:

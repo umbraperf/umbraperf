@@ -1,4 +1,6 @@
 import * as model from '../model';
+import { store } from '../app_config';
+
 
 export function changeProfile(newProfile: model.ProfileType) {
 
@@ -30,4 +32,52 @@ export function changeProfile(newProfile: model.ProfileType) {
 
     }
 
+}
+
+function setAppstateProfile(profile: model.ProfileType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTPROFILE,
+        data: profile,
+    });
+}
+
+function setAppstateEvent(event: string) {
+    const events = store.getState().events;
+    if (events && events.includes(event)) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENTEVENT,
+            data: event,
+        });
+    }
+}
+
+function setAppstateMultipleEvent(event1: string, event2: string) {
+    const events = store.getState().events;
+    if (events && events.includes(event1) && events.includes(event2)) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+            data: [event1, event2],
+        });
+    }
+}
+
+function setAppstateView(view: model.ViewType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTVIEW,
+        data: view,
+    });
+}
+
+function setAppstateInterpolation(interpolation: string) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTINTERPOLATION,
+        data: interpolation,
+    });
+}
+
+function setAppstateBucketSize(bucketSize: number) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
+        data: bucketSize,
+    });
 }

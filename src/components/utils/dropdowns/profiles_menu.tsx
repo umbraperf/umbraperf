@@ -69,6 +69,8 @@ function ProfilesMenu(props: Props) {
         setAnchorEl(null);
     };
 
+    // const isMenuSiabled = 
+    //TODO disable on csv parsind and events not loaded 
     return (
 
         <div className={styles.profilesMenuContainer}>

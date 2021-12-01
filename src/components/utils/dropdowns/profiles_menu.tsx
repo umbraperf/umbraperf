@@ -1,5 +1,5 @@
 import * as model from '../../../model';
-import * as Controller from '../../../controller/chart_interaction_controller';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -18,26 +18,6 @@ interface Props {
 
 function ProfilesMenu(props: Props) {
 
-    const StyledMenu = withStyles({
-        // paper: {
-        //     border: '1px solid #d3d4d5',
-        // },
-    })((props: MenuProps) => (
-        <Menu
-            elevation={0}
-            getContentAnchorEl={null}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-            }}
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-            }}
-            {...props}
-        />
-    ));
-
     const StyledMenuItem = withStyles((theme) => ({
         root: {
             '&:focus': {
@@ -52,7 +32,7 @@ function ProfilesMenu(props: Props) {
     const menuProfiles = props.profiles.map((elem, index) => (
         <>
             <ListItemIcon>
-                {React.createElement(elem.icon, { className: styles.profilesMenuItemContentIcon, fontSize: "small"})}
+                {React.createElement(elem.icon, { className: styles.profilesMenuItemContentIcon, fontSize: "small" })}
                 {/* <KeyboardArrowDownIcon className={styles.profilesMenuItemContentIcon} fontSize="small" /> */}
             </ListItemIcon>
             <ListItemText>
@@ -72,8 +52,7 @@ function ProfilesMenu(props: Props) {
     ));
 
     const handleOnItemClick = (index: number) => {
-        // Controller.
-        // props.setCurrentInterpolation(elem);
+        Controller.changeProfile(props.profiles[index].type);
         handleClose();
     };
 
@@ -98,13 +77,13 @@ function ProfilesMenu(props: Props) {
                 aria-controls="profileMenu"
                 aria-haspopup="true"
                 onClick={handleClick}
-                // onMouseOver={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
             >
                 {props.currentProfile}
             </Button>
-            <StyledMenu
+
+            <Menu
                 classes={{ paper: styles.profilesMenuPaper }}
                 id="profileMenu"
                 anchorEl={anchorEl}
@@ -113,6 +92,15 @@ function ProfilesMenu(props: Props) {
                 open={isOpen}
                 onClose={handleClose}
                 onMouseLeave={handleClose}
+                elevation={0}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
             >
                 {menuProfiles.map((elem, index) =>
                 (<StyledMenuItem
@@ -123,7 +111,7 @@ function ProfilesMenu(props: Props) {
                     {elem}
                 </StyledMenuItem>)
                 )}
-            </StyledMenu>
+            </Menu>
         </div>
 
     );

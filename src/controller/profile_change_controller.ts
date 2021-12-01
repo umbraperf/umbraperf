@@ -8,26 +8,47 @@ export function changeProfile(newProfile: model.ProfileType) {
 
         case model.ProfileType.OVERVIEW:
             console.log("new profile: overview")
+            setAppstateProfile(model.ProfileType.OVERVIEW);
+            setAppstateEvent("cycles:ppp");
+            setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
+            setAppstateBucketSize(1);
+            setAppstateInterpolation("basis");
             break;
 
         case model.ProfileType.DETAIL_ANALYSIS:
             console.log("new profile: detail")
-
+            setAppstateProfile(model.ProfileType.DETAIL_ANALYSIS);
+            setAppstateEvent("cycles:ppp");
+            setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
+            setAppstateBucketSize(0.5);
+            setAppstateInterpolation("step");
             break;
 
         case model.ProfileType.MEMORY_BEHAVIOUR:
             console.log("new profile: memory")
-
+            setAppstateProfile(model.ProfileType.MEMORY_BEHAVIOUR);
+            setAppstateEvent("mem_inst_retired.all_loads");
+            setAppstateView(model.ViewType.DASHBOARD_MEMORY);
+            setAppstateBucketSize(1);
+            setAppstateInterpolation("basis");
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:
             console.log("new profile: cache")
-
+            setAppstateProfile(model.ProfileType.CACHE_ANALYSIS);
+            setAppstateMultipleEvent("l1-cache-misses", "l3-cache-misses");
+            setAppstateView(model.ViewType.DASHBOARD_MULTIPLE_EVENTS);
+            setAppstateBucketSize(1);
+            setAppstateInterpolation("basis");
             break;
 
         case model.ProfileType.UIR_ANALYSIS:
             console.log("new profile: uir")
-
+            setAppstateProfile(model.ProfileType.UIR_ANALYSIS);
+            setAppstateEvent("cycles:ppp");
+            setAppstateView(model.ViewType.DASHBOARD_UIR);
+            setAppstateBucketSize(1);
+            setAppstateInterpolation("basis");
             break;
 
     }

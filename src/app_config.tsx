@@ -65,6 +65,7 @@ export const materialUiTheme = createTheme({
 });
 
 interface ITopLevelComponent {
+    viewType: model.ViewType;
     path: string;
     sidebarName: string;
     component: JSX.Element;
@@ -72,30 +73,35 @@ interface ITopLevelComponent {
 }
 export const topLevelComponents: Array<ITopLevelComponent> = [
     {
+        viewType: model.ViewType.UPLOAD,
         path: '/upload',
         sidebarName: 'Upload File',
         component: <FileUploader />,
         icon: () => { return (<BackupIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_SINGLE_EVENT,
         path: '/dashboard-single-event',
         sidebarName: 'Dashboard (Single Event)',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT} />,
         icon: () => { return (<DashboardIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_MULTIPLE_EVENTS,
         path: '/dashboard-multiple-events',
         sidebarName: 'Dashboard (Multiple Events)',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS} />,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_MEMORY,
         path: '/dashboard-memory-accesses',
         sidebarName: 'Dashboard (Memory Accesses)',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY} />,
         icon: () => { return (<SdStorageIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_UIR,
         path: '/dashboard-uir',
         sidebarName: 'Dashboard (UIR)',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR} />,

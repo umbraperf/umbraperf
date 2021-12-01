@@ -1,5 +1,5 @@
 import * as model from '../model';
-import { store } from '../app_config';
+import { store, topLevelComponents } from '../app_config';
 import history from '../history';
 
 
@@ -14,7 +14,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            // history.push("/upload");
+            redirectToView(model.ViewType.DASHBOARD_SINGLE_EVENT);
             break;
 
         case model.ProfileType.DETAIL_ANALYSIS:
@@ -24,6 +24,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
             setAppstateBucketSize(0.5);
             setAppstateInterpolation("step");
+            redirectToView(model.ViewType.DASHBOARD_SINGLE_EVENT);
             break;
 
         case model.ProfileType.MEMORY_BEHAVIOUR:
@@ -33,6 +34,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_MEMORY);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
+            redirectToView(model.ViewType.DASHBOARD_MEMORY);
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:
@@ -42,6 +44,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_MULTIPLE_EVENTS);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
+            redirectToView(model.ViewType.DASHBOARD_MULTIPLE_EVENTS);
             break;
 
         case model.ProfileType.UIR_ANALYSIS:
@@ -51,6 +54,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             setAppstateView(model.ViewType.DASHBOARD_UIR);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
+            redirectToView(model.ViewType.DASHBOARD_UIR);
             break;
 
     }
@@ -103,4 +107,9 @@ function setAppstateBucketSize(bucketSize: number) {
         type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
         data: bucketSize,
     });
+}
+
+function redirectToView(viewType: model.ViewType) {
+    const viewPath = topLevelComponents.find((elem) => elem.viewType === viewType)?.path;
+    history.push(viewPath as string);
 }

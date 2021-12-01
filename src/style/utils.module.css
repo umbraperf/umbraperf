@@ -71,7 +71,7 @@
     width: 250px;
 }
 
-.profilesMenuItem:hover{
+.profilesMenuItem:hover, .profilesMenuItem:hover:focus{
     background-color: colorSecondary;
 }
 

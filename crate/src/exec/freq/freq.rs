@@ -64,6 +64,11 @@ pub fn create_freq_bucket(
     )
 }
 
+pub fn round(to_round: f64) -> f64 {
+    return f64::trunc((to_round) * 100.0) / 100.0; 
+}
+
+
 pub fn create_mem_bucket(
     record_batch: &RecordBatch,
     column_for_operator: usize,
@@ -162,12 +167,12 @@ pub fn freq_of_pipelines(
 
     let mut time_bucket;
     if from == -1. {
-        time_bucket = 0.;
+        time_bucket = 0. + bucket_size;
     } else {
-        time_bucket = from;
+        time_bucket = from + bucket_size;
     }
 
-    time_bucket = f64::trunc(time_bucket);
+    //time_bucket = f64::trunc(time_bucket);
     let mut column_index = 0;
 
     let mut bucket_map = HashMap::new();
@@ -185,7 +190,7 @@ pub fn freq_of_pipelines(
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
-                result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
 
                 if matches!(freq, Freq::ABS) {
@@ -229,10 +234,9 @@ pub fn freq_of_pipelines(
         }
 
         if i == time_column.len() - 1 {
-            while time_bucket < to {
                 for operator in vec_operator {
                     let operator = operator.unwrap();
-                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                    result_bucket.push(round(round(time_bucket) - bucket_size));
                     result_vec_operator.push(operator);
                     let bucket = bucket_map.to_owned();
                     if matches!(freq, Freq::ABS) {
@@ -253,7 +257,7 @@ pub fn freq_of_pipelines(
                     bucket_map.insert(operator, 0.0);
                 }
                 time_bucket += bucket_size;
-            }
+            
         }
 
         column_index += 1;
@@ -325,9 +329,9 @@ pub fn freq_of_memory(
 
     let mut time_bucket;
     if from == -1. {
-        time_bucket = 0.;
+        time_bucket = 0. + bucket_size;
     } else {
-        time_bucket = from;
+        time_bucket = from + bucket_size;
     }
 
     time_bucket = f64::trunc(time_bucket);
@@ -381,7 +385,7 @@ pub fn freq_of_memory(
                 for item in frequenzy {
                     let times = *item.1 as i32;
                     for _i in 0..times {
-                        result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                        result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
                         result_mem_operator.push(current_memory);
                         result_builder.push(item.1.to_owned());
@@ -400,26 +404,23 @@ pub fn freq_of_memory(
         inner_hashmap.insert(current_memory, inner_hashmap[&current_memory] + 1.);
 
         if i == time_column.len() - 1 {
-            while time_bucket < to {
-                for operator in vec_operator {
-                    let operator = operator.unwrap();
+            for operator in vec_operator {
+                let operator = operator.unwrap();
 
-                    let frequenzy = bucket_map.get(operator).unwrap();
-                    for item in frequenzy {
-                        let times = *item.1 as i32;
-                        for _i in 0..times {
-                            result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
-                            result_vec_operator.push(operator);
-                            result_mem_operator.push(current_memory);
-                            result_builder.push(item.1.to_owned());
-                            let current_value = bucket_map_count[operator] + 1.;
-                            bucket_map_count.insert(operator, current_value);
-                        }
+                let frequenzy = bucket_map.get(operator).unwrap();
+                for item in frequenzy {
+                    let times = *item.1 as i32;
+                    for _i in 0..times {
+                        result_bucket.push(round(round(time_bucket) - bucket_size));
+                        result_vec_operator.push(operator);
+                        result_mem_operator.push(current_memory);
+                        result_builder.push(item.1.to_owned());
+                        let current_value = bucket_map_count[operator] + 1.;
+                        bucket_map_count.insert(operator, current_value);
                     }
-                    // reset bucket_map
-                    bucket_map.insert(operator, HashMap::new());
                 }
-                time_bucket += bucket_size;
+                // reset bucket_map
+                bucket_map.insert(operator, HashMap::new());
             }
         }
 

@@ -76,11 +76,13 @@ function ProfilesMenu(props: Props) {
         <div className={styles.profilesMenuContainer}>
             <Button
                 className={styles.profilesMenuButton}
+                classes={{ disabled: styles.profilesMenuButtonDisabled }}
                 aria-controls="profileMenu"
                 aria-haspopup="true"
                 onClick={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
+                disabled={true}
             >
                 {props.currentProfile}
             </Button>

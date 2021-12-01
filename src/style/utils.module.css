@@ -58,6 +58,10 @@
     background-color: colorSecondary;
 }
 
+.profilesMenuButtonDisabled{
+    color: colorTertiary !important;
+}
+
 .profilesMenuPaper{
     background-color: colorAccentBlack;
     border-style: hidden;
@@ -111,6 +115,7 @@
     composes: optionsContainer;
     flex-direction: column;
 }
+
 .eventButtonsArea{
     display: flex;
     flex-direction: row;

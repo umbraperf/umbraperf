@@ -71,9 +71,18 @@ function ProfilesMenu(props: Props) {
         setAnchorEl(null);
     };
 
+    const getProfileIndex = (profileType: model.ProfileType) => {
+        return props.profiles.findIndex((elem) => (elem.type === profileType));
+    }
+
     const getReadableProfileName = () => {
-        const currentProfileIndex = props.profiles.findIndex((elem) => (elem.type === props.currentProfile));
-        return props.profiles[currentProfileIndex].readableName;
+        const profileIndex = getProfileIndex(props.currentProfile);
+        return props.profiles[profileIndex].readableName;
+    }
+
+    const isProfileIndexSelected = (index: number) => {
+        const currentSelectedProfileIndex = getProfileIndex(props.currentProfile);
+        return index === currentSelectedProfileIndex;
     }
 
     const isMenuDisabled =  undefined === props.events || model.ViewType.UPLOAD === props.currentView;  
@@ -117,6 +126,7 @@ function ProfilesMenu(props: Props) {
                 (<StyledMenuItem
                     className={styles.profilesMenuItem}
                     onClick={() => handleOnItemClick(index)}
+                    selected={isProfileIndexSelected(index)}
                     key={index}
                 >
                     {elem}

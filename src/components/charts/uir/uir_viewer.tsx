@@ -7,7 +7,7 @@ import _ from 'lodash';
 import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
-import UirLinesFoldedToggler from '../../utils/togglers/uir_toggler';
+import UirToggler from '../../utils/togglers/uir_toggler';
 
 
 interface AppstateProps {
@@ -23,7 +23,7 @@ type Props = model.IUirViewerProps & AppstateProps;
 
 interface State {
     linesFolded: boolean;
-    operatorsColored: boolean;
+    operatorsColorHidden: boolean;
     operatorColorScale: string[];
     hoverProviderDispose: monaco.IDisposable | undefined,
 }
@@ -40,14 +40,14 @@ class UirViewer extends React.Component<Props, State> {
         super(props);
         this.state = {
             linesFolded: true,
-            operatorsColored: true,
+            operatorsColorHidden: false,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
             hoverProviderDispose: undefined,
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
         this.toggleFoldAllLines = this.toggleFoldAllLines.bind(this);
-        this.toggleOperatorsColord = this.toggleOperatorsColord.bind(this);
+        this.toggleOperatorsColorHidden = this.toggleOperatorsColorHidden.bind(this);
 
         this.editorRef = React.createRef();
         this.editorContainerRef = React.createRef();
@@ -58,7 +58,7 @@ class UirViewer extends React.Component<Props, State> {
 
         //Update glyphs when event, currentOperators or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
-            || this.state.operatorsColored !== prevState.operatorsColored
+            || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
             || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
             this.setMonacoGlyphs();
         }
@@ -274,10 +274,10 @@ class UirViewer extends React.Component<Props, State> {
         (this.editorRef as any).trigger('unfold', 'editor.unfoldAll');
     }
 
-    toggleOperatorsColord(event: React.ChangeEvent<HTMLInputElement>) {
+    toggleOperatorsColorHidden(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState((state, props) => ({
             ...state,
-            operatorsColored: event.target.checked,
+            operatorsColorHidden: event.target.checked,
         }));
     }
 
@@ -312,17 +312,17 @@ class UirViewer extends React.Component<Props, State> {
     }
 
     createUirViewerLinesFoldedToggler() {
-        return <UirLinesFoldedToggler
-            uirLinesFolded={this.state.linesFolded}
+        return <UirToggler
+            togglerState={this.state.linesFolded}
             togglerLabelText={"Fold Lines"}
             uirViewerTogglerChangeFunction={this.toggleFoldAllLines} />
     }
 
     createUirViewerOperatorColoredToggler() {
-        return <UirLinesFoldedToggler
-            uirLinesFolded={this.state.operatorsColored}
-            togglerLabelText={"Show Operators: "}
-            uirViewerTogglerChangeFunction={this.toggleOperatorsColord} />
+        return <UirToggler
+            togglerState={this.state.operatorsColorHidden}
+            togglerLabelText={"Hide Operators"}
+            uirViewerTogglerChangeFunction={this.toggleOperatorsColorHidden} />
     }
 
     setMonacoGlyphs() {
@@ -360,7 +360,7 @@ class UirViewer extends React.Component<Props, State> {
 
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
-            if (this.state.operatorsColored
+            if (!this.state.operatorsColorHidden
                 && this.props.operators!.includes(operator)
                 && operator !== "None"
                 && (this.props.currentOperator === "All"

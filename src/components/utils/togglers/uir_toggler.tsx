@@ -4,12 +4,12 @@ import styles from '../../../style/utils.module.css';
 
 
 interface Props {
-    uirLinesFolded: boolean,
+    togglerState: boolean,
     togglerLabelText: string,
     uirViewerTogglerChangeFunction: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function UirLinesFoldedToggler(props: Props) {
+function UirToggler(props: Props) {
 
     const handleUirTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.uirViewerTogglerChangeFunction(event);
@@ -24,7 +24,7 @@ function UirLinesFoldedToggler(props: Props) {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={props.uirLinesFolded}
+                            checked={props.togglerState}
                             onChange={handleUirTogglerChange}
                             name="HeatmapsDiffToggler"
                             size="small"
@@ -46,4 +46,4 @@ function UirLinesFoldedToggler(props: Props) {
 }
 
 
-export default UirLinesFoldedToggler;
+export default UirToggler;

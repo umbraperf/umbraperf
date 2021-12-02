@@ -33,14 +33,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
         let vegaElements = new Array<JSX.Element>();
         this.props.chartData.heatmapsData.forEach((elem, index) => {
             if (elem.operator.length > 0 && !(elem.operator.length === 1 && elem.buckets[0] === -1)) {
-                // if (elem.operator.length > 0 && !(elem.operator.length === 1 && elem.memoryAdress[0] === 0)) {
-                // console.log("-----")
-                // console.log(index)
-                // console.log(elem.operator)
-                // console.log(elem.memoryAdress)
-                // console.log(elem.buckets)
-                // console.log(elem.occurrences)
-
                 const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
                 vegaElements.push(vegaElement);
             }

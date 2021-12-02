@@ -54,7 +54,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
                     nodeTypes={nodeTypes}
                 >
-                    <Controls/>
+                    <Controls className={styles.reactFlowControls}/>
                 </ReactFlow>
 
 

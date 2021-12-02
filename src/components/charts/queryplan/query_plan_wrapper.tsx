@@ -10,7 +10,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
-import { ConnectionLineType, Position } from 'react-flow-renderer';
+import { ArrowHeadType, ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
 import { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
@@ -65,7 +65,7 @@ export type FlowGraphEdge = {
     source: string,
     target: string,
     type: ConnectionLineType,
-    animated: true,
+    animated: boolean,
     style: CSS.Properties,
 }
 
@@ -297,12 +297,12 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 id: edge.source + "_" + edge.target,
                 source: edge.target,
                 target: edge.source,
-                type: ConnectionLineType.SmoothStep,
-                animated: true,
+                type: ConnectionLineType.Bezier,
                 style: {
-                    stroke: this.props.appContext.accentBlack,
-                    strokeWidth: '2px'
+                    stroke: this.props.appContext.tertiaryColor,
+                    strokeWidth: '3px'
                 },
+                animated: false,
             }
             return reactFlowEdge;
         });

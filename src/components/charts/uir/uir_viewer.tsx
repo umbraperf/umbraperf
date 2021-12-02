@@ -208,36 +208,35 @@ class UirViewer extends React.Component<Props, State> {
 
     getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
 
-        const markdownStringHeader: monaco.IMarkdownString = {
-            value: `### UIR Line ID: ${position.lineNumber}`,
-        };
+        const markdownStringHeader = `#### UIR Line: ${position.lineNumber}  \n`;
+  
 
-        const markdownOperator = `- \`Operator:\` ${this.props.chartData.operators[position.lineNumber - 1]} \n`;
-        const markdownPipeline = `- \`Pipeline:\` ${this.props.chartData.pipelines[position.lineNumber - 1]} \n`;
+        const markdownOperator = `- **Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
+        const markdownPipeline = `- **Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
         const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
 
 
-        const markdownStringBody: monaco.IMarkdownString = {
-            value: markdownOperator + markdownPipeline + markdownEvents,
+        const markdownString: monaco.IMarkdownString = {
+            value: markdownStringHeader + markdownOperator + markdownPipeline + markdownEvents,
         };
 
         return {
-            contents: [markdownStringHeader, markdownStringBody]
+            contents: [markdownString]
         };
     }
 
-    createMarkdownEventsList(eventIndex: number, boldEvent?: number, marginGlyphRepresentation?: boolean) {
+    createMarkdownEventsList(eventIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
         let markdownEventsString = "";
         for (let i = 0; i < 4; i++) {
-            let boldCharacter = "";
+            let italicCharacter = "";
             let relativeEventString = "";
-            if (marginGlyphRepresentation && i + 1 === boldEvent) {
-                boldCharacter = "**";
+            if (marginGlyphRepresentation && i + 1 === italicEvent) {
+                italicCharacter = "*";
             }
             if(this.props.chartData.isFunction[eventIndex] === 0){
-                relativeEventString = ` (Function Share: ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%)`
+                relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
             }
-            const markdownEvent = `- ${boldCharacter}\`${this.props.events![i]}:\` ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${boldCharacter} \n`;
+            const markdownEvent = `- ${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;

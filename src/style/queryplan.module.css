@@ -55,6 +55,15 @@
     cursor: grabbing;
 }
 
+.reactFlowControls{
+    opacity: 50%;
+    transition: opacity 0.5s;
+}
+
+.reactFlowControls:hover{
+    opacity: 100%;
+}
+
 .queryplanNodeBody{
     height: 100%;
     width: 100%;
@@ -101,5 +110,4 @@
 .queryplanNodeTooltipTableCellHead{
     composes: queryplanNodeTooltipTableCell;
     font-size: 12px;
-
 }

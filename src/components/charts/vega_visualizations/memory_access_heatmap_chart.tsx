@@ -32,7 +32,15 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     renderChartPerOperator() {
         let vegaElements = new Array<JSX.Element>();
         this.props.chartData.heatmapsData.forEach((elem, index) => {
-            if (elem.operator.length > 0) {
+            if (elem.operator.length > 0 && !(elem.operator.length === 1 && elem.buckets[0] === -1)) {
+                // if (elem.operator.length > 0 && !(elem.operator.length === 1 && elem.memoryAdress[0] === 0)) {
+                // console.log("-----")
+                // console.log(index)
+                // console.log(elem.operator)
+                // console.log(elem.memoryAdress)
+                // console.log(elem.buckets)
+                // console.log(elem.occurrences)
+
                 const vegaElement = <Vega className={`vegaMemoryHeatmapRelative-${index}`} key={index} spec={this.createVisualizationSpec(index)} />
                 vegaElements.push(vegaElement);
             }
@@ -100,7 +108,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const visData = this.createVisualizationData(id);
 
-        const yDomain = (): { domain: any, domainMax?: number, domainMin?: number } => {
+        const yDomain = (): { domain: any, domainMax?: object, domainMin?: object } => {
             if (this.props.memoryHeatmapsDifferenceRepresentation) {
                 return {
                     domain: [
@@ -112,9 +120,14 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 };
             } else {
                 return {
-                    domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
-                    domainMax: this.props.chartData.domain.memoryDomain.max,
-                    domainMin: this.props.chartData.domain.memoryDomain.min,
+                    domain: {
+                        data: "table",
+                        field: "memAdr",
+                    },
+                    domainMin: { signal: "extentMemAdr[0]" }
+                    // domain: [this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max],
+                    // domainMax: this.props.chartData.domain.memoryDomain.max,
+                    // domainMin: this.props.chartData.domain.memoryDomain.min,
                 };
             }
         };

@@ -89,7 +89,9 @@ function StatusIndicator(props: Props) {
 
     return (
         <div className={styles.statusContainer}>
-            {getCurrentStatusString()}
+            <div className={styles.statusString}>
+                {getCurrentStatusString()}
+            </div>
             {isLoading && <MiniSpinner />}
         </div>
     );

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { AppContextProvider } from './app_context';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
+import { Route, Router, Switch, useLocation, Redirect, Link } from 'react-router-dom';
+import history from "./history";
 import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
+
 
 import './globals.css';
 import '../node_modules/react-grid-layout/css/styles.css';
@@ -35,8 +37,7 @@ export default function App() {
             <ReduxProvider store={Config.store}>
                 <StylesProvider injectFirst={true}>
                     <MuiThemeProvider theme={Config.materialUiTheme}>
-                        <BrowserRouter>
-
+                        <Router history={history}>
                             <div className={`app ${styles.app}`}>
 
                                 <div className={styles.appHeader}>
@@ -69,7 +70,7 @@ export default function App() {
 
                             </div>
 
-                        </BrowserRouter>
+                        </Router>
                     </MuiThemeProvider>
                 </StylesProvider>
             </ReduxProvider>

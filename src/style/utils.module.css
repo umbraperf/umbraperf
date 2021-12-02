@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorTertiary, colorAccentBlack from colors;
+@value colorSecondary, colorTertiary, colorAccentBlack from colors;
 
 :root {
     --labelFonSize: 11px;
@@ -46,7 +46,58 @@
 .bucketsizeDropdownSelectorContainer{
     composes: dropdownSelectorContainer;
 }
+.profilesMenuButton{
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+}
 
+.profilesMenuButton:hover{
+    background-color: colorSecondary;
+}
+
+.profilesMenuButtonDisabled{
+    color: colorTertiary !important;
+}
+
+.profilesMenuPaper{
+    background-color: colorAccentBlack;
+    border-style: hidden;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    width: 250px;
+}
+
+.profilesMenuItem:hover, .profilesMenuItem:hover:focus{
+    background-color: colorSecondary;
+}
+
+.profilesMenuItemContent{
+    color: white;
+}
+
+.profilesMenuItemContentText{
+    composes: profilesMenuItemContent;
+    font-size: 11px;
+    padding-left: 10px;
+}
+
+.profilesMenuItemContentIcon{
+    composes: profilesMenuItemContent;
+}
+
+.profilesMenuItemContentIconInfo{
+    composes: profilesMenuItemContentIcon;
+    font-size: 15px;
+    padding-left: 15px;
+}
+
+.profilesMenuItemContentInfoTooltipContent{
+    font-size: 13px;
+}
 
 .pipelinesSelectorArea{
     display: block;
@@ -69,6 +120,7 @@
     composes: optionsContainer;
     flex-direction: column;
 }
+
 .eventButtonsArea{
     display: flex;
     flex-direction: row;
@@ -142,15 +194,29 @@
     display: flex;
 }
 
-.appbarToolbarStatusContainer{
+.appbarToolbarOptionsContainer{
     flex: 1;
     display: flex;
     justify-content: right;
     font-size: 12px;
+    align-items: center;
+}
+
+.profilesMenuContainer{
+    flex-basis: 0;
+    padding-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .statusContainer{
+    justify-content: right;
     display: flex;
+    font-size: var(--labelFonSize);
+    flex-basis: 300px;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .togglerLabel{
@@ -186,6 +252,23 @@
         composes: eventButtonsArea;
         width: 300px;
     } 
+
+    .statusContainer{
+        composes: statusContainer;
+        flex-basis: 50px;
+    }
+
+    .statusString{
+        display: none;
+    }
+
+    .profilesMenuContainer{
+        composes: profilesMenuContainer;
+        flex: 1;
+        padding-right: 10px;
+        justify-content: right;
+    }
+    
 
 }
 

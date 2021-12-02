@@ -1,9 +1,5 @@
-import { AppState } from './state';
-import { IKpiData, Result } from "./core_result";
-import { BackendQueryType } from './backend_queries';
-import { ChartDataKeyValue } from './chart_data_result';
+import { AppState, createProfiles, ProfileType, IKpiData, Result, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable } from '.';
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-import { ViewType, ChartType, ChartTypeReadable } from './chart_types';
 
 
 /// A mutation
@@ -42,6 +38,7 @@ export enum StateMutationType {
     SET_CURRENTVIEW = 'SET_CURRENTVIEW',
     SET_QUERYPLAN = 'SET_QUERYPLAN',
     SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION = 'SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION',
+    SET_CURRENTPROFILE = 'SET_CURRENTPROFILE',
     OTHER = 'OTHER',
 }
 
@@ -74,6 +71,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION, boolean>
+    | StateMutation<StateMutationType.SET_CURRENTPROFILE, ProfileType>
     ;
 
 // The action dispatch
@@ -213,6 +211,11 @@ export class AppStateMutation {
                     ...state,
                     memoryHeatmapsDifferenceRepresentation: mutation.data,
                 }
+            case StateMutationType.SET_CURRENTPROFILE:
+                return {
+                    ...state,
+                    currentProfile: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
                     fileLoading: false,
@@ -242,6 +245,8 @@ export class AppStateMutation {
                     currentTimePositionSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
                     memoryHeatmapsDifferenceRepresentation: true,
+                    currentProfile: ProfileType.OVERVIEW,
+                    profiles: createProfiles(),
                 }
         }
     }

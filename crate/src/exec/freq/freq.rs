@@ -497,7 +497,7 @@ pub fn freq_of_memory(
                     DataType::Float64,
                 ],
                 vec![
-                    Arc::new(Float64Array::from(vec![0.])),
+                    Arc::new(Float64Array::from(vec![-1.])),
                     Arc::new(StringArray::from(vec![entry.1.unwrap()])),
                     Arc::new(Int32Array::from(vec![0])),
                     Arc::new(Float64Array::from(vec![0.])),

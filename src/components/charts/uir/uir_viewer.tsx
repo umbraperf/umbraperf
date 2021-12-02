@@ -208,16 +208,14 @@ class UirViewer extends React.Component<Props, State> {
 
     getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
 
-        const markdownStringHeader = `#### UIR Line: ${position.lineNumber}  \n`;
-  
-
+        const markdownUirLine = `- **UIR Line:** ${position.lineNumber}  \n`;
         const markdownOperator = `- **Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
         const markdownPipeline = `- **Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
         const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
 
 
         const markdownString: monaco.IMarkdownString = {
-            value: markdownStringHeader + markdownOperator + markdownPipeline + markdownEvents,
+            value: markdownUirLine + markdownOperator + markdownPipeline + markdownEvents,
         };
 
         return {

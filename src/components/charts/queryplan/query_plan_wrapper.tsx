@@ -14,7 +14,6 @@ import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
 import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
-import { LiveTvOutlined } from '@material-ui/icons';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
@@ -29,6 +28,7 @@ interface State {
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
+    currentUirOperators: Array<string>,
 }
 
 export type PlanNode = {
@@ -83,12 +83,25 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
+            currentUirOperators: this.getCurrentUirOperators(),
         };
 
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
+    getCurrentUirOperators(): string[] {
+        //TODO move logic to activity histogram, store active UIR operators after time selection in redux
+        let currentUirOperators: string[] = [];
+        this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
+            if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
+                currentUirOperators.push(elem);
+            }
+        });
+        return currentUirOperators;
+    }
+
     componentDidMount() {
+        console.log(this.props.chartData.nodeTooltipData.operatorTotalFrequency)
         this.createQueryPlan();
     }
 
@@ -154,12 +167,20 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
         const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
+        const isNodeUnavailable = (nodeId: string) => {
+            return !(this.props.operators!.includes(nodeId) && this.state.currentUirOperators.includes(nodeId))
+        }
+
+        const isNodeSelected = (nodeId: string) => {
+            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId);
+        }
+
         const nodeCursor = (nodeId: string) => {
             //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeId === "root") {
                 return ["default", false];
-            } else if (!this.props.operators!.includes(nodeId)) {
-                //node does not appear in measurement data
+            } else if (isNodeUnavailable(nodeId)) {
+                //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
                 return ["pointer", true];
@@ -171,14 +192,17 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             //return tuple with 0: border color, 1: background color
             const lowOpacity = "33";
             if (nodeId === "root") {
+                //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (!this.props.operators!.includes(nodeId)) {
-                //node does not appear in measurement data
+            } else if (isNodeUnavailable(nodeId)) {
+                //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + lowOpacity];
-            } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
+            } else if (isNodeSelected(nodeId)) {
+                //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
                 return [nodeColorScale[operatorIndex], nodeBackgroundColorScale[operatorIndex]];
             } else {
+                //inactive node
                 return [this.props.appContext.tertiaryColor, '#fff'];
             }
         }
@@ -189,14 +213,14 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const tooltipUirOccurrences: number[] = [];
             let tooltipUirTotalOccurrences: number = 0;
             this.props.chartData.nodeTooltipData.operators.forEach((operator: string, index: number) => {
-                if(operator === nodeId){
+                if (operator === nodeId) {
                     tooltipUirLines.push(this.props.chartData.nodeTooltipData.uirLines[index]);
                     tooltipUirLineNumbers.push(this.props.chartData.nodeTooltipData.uirLineNumbers[index]);
                     tooltipUirOccurrences.push(this.props.chartData.nodeTooltipData.eventOccurrences[index]);
                     if (tooltipUirTotalOccurrences === 0) tooltipUirTotalOccurrences = this.props.chartData.nodeTooltipData.operatorTotalFrequency[index];
                 }
             });
-            return{
+            return {
                 uirLines: tooltipUirLines,
                 uirLineNumber: tooltipUirLineNumbers,
                 eventOccurrences: tooltipUirOccurrences,

@@ -1,8 +1,7 @@
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
-import LowPriorityIcon from '@material-ui/icons/LowPriority';
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
 
 export type QueryplanNodeTooltipData = {
     uirLines: Array<string>,
@@ -89,7 +88,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
     createTotalSumLine() {
         return <Typography
             className={styles.queryplanNodeTooltipSubtitle}
-            variant="body2"
+            variant="subtitle2"
         >
             Total Frequency: {this.props.tooltipData.totalEventOccurrence}%
 

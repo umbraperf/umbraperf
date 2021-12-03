@@ -378,7 +378,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             let filter = filter_with(5, vec![&entry], &sort);
             print_to_js_with_obj(&format!("{:?}", filter).into());
             let column = filter.column(ordered_by + 1).as_any().downcast_ref::<Float64Array>().unwrap();
-            let sum = arrow::compute::sum(column).unwrap();
+            let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
             print_to_js_with_obj(&format!("{:?}", sum).into());
             vec_sum.push(sum);
             vec_sum.push(sum);  

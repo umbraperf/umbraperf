@@ -52,42 +52,42 @@
 
 .glyphClassEvent00{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C56.3354 20 62.5081 22.0056 67.6336 25.7295L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent01{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915C87.9316 15.7556 94.2899 24.507 97.5528 34.5491L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C56.3354 20 62.5081 22.0056 67.6336 25.7295C72.759 29.4533 76.574 34.7042 78.5317 40.7295L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent02{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C57.8905 -3.44906e-07 65.669 1.86745 72.6995 5.44967C79.73 9.03189 85.8129 14.2272 90.4508 20.6107C95.0888 26.9943 98.1501 34.3849 99.3844 42.1783C100.619 49.9717 99.9911 57.9465 97.5528 65.4509L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C54.7343 20 59.4014 21.1205 63.6197 23.2698C67.838 25.4191 71.4878 28.5363 74.2705 32.3664C77.0533 36.1966 78.89 40.6309 79.6306 45.307C80.3713 49.983 79.9947 54.7679 78.5317 59.2705L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent03{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915C87.9316 15.7556 94.2899 24.507 97.5528 34.5491C100.816 44.5913 100.816 55.4087 97.5528 65.4509C94.2899 75.493 87.9316 84.2444 79.3893 90.4509L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C56.3354 20 62.5081 22.0056 67.6336 25.7295C72.759 29.4533 76.574 34.7042 78.5317 40.7295C80.4894 46.7548 80.4894 53.2452 78.5317 59.2705C76.574 65.2958 72.759 70.5467 67.6336 74.2705L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent04{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C56.5661 -2.87013e-07 63.0679 1.29329 69.1342 3.80602C75.2004 6.31876 80.7124 10.0017 85.3553 14.6447C89.9983 19.2876 93.6812 24.7995 96.194 30.8658C98.7067 36.9321 100 43.4339 100 50C100 56.5661 98.7067 63.0679 96.194 69.1342C93.6812 75.2005 89.9983 80.7124 85.3553 85.3553C80.7124 89.9983 75.2004 93.6812 69.1342 96.194C63.0679 98.7067 56.5661 100 50 100L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C53.9397 20 57.8407 20.776 61.4805 22.2836C65.1203 23.7913 68.4274 26.001 71.2132 28.7868C73.999 31.5726 76.2087 34.8797 77.7164 38.5195C79.224 42.1593 80 46.0603 80 50C80 53.9397 79.224 57.8407 77.7164 61.4805C76.2087 65.1203 73.999 68.4274 71.2132 71.2132C68.4274 73.999 65.1203 76.2087 61.4805 77.7164C57.8407 79.224 53.9397 80 50 80L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent05{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C57.8905 -3.44906e-07 65.669 1.86745 72.6995 5.44967C79.73 9.03189 85.8129 14.2272 90.4508 20.6107C95.0888 26.9943 98.1501 34.3849 99.3844 42.1783C100.619 49.9716 99.9911 57.9465 97.5528 65.4508C95.1145 72.9552 90.9348 79.7759 85.3553 85.3553C79.7759 90.9348 72.9552 95.1145 65.4509 97.5528C57.9465 99.9911 49.9717 100.619 42.1783 99.3844C34.3849 98.1501 26.9943 95.0888 20.6107 90.4509L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C54.7343 20 59.4014 21.1205 63.6197 23.2698C67.838 25.4191 71.4878 28.5363 74.2705 32.3664C77.0533 36.1966 78.89 40.6309 79.6306 45.307C80.3713 49.983 79.9947 54.7679 78.5317 59.2705C77.0687 63.7731 74.5609 67.8655 71.2132 71.2132C67.8655 74.5609 63.7731 77.0687 59.2705 78.5317C54.7679 79.9947 49.983 80.3713 45.307 79.6307C40.6309 78.89 36.1966 77.0533 32.3664 74.2705L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent06{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C59.2211 -4.03068e-07 68.2626 2.54997 76.1249 7.36799C83.9872 12.186 90.364 19.0844 94.5503 27.3005C98.7366 35.5165 100.569 44.7303 99.8459 53.9229C99.1224 63.1156 95.8709 71.9292 90.4509 79.3893C85.0308 86.8493 77.6534 92.6652 69.1342 96.194C60.615 99.7227 51.2859 100.827 42.1783 99.3844C33.0707 97.9419 24.5394 94.0089 17.5276 88.0203C10.5158 82.0317 5.29666 74.2207 2.44718 65.4509L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C55.5327 20 60.9576 21.53 65.675 24.4208C70.3923 27.3116 74.2184 31.4506 76.7302 36.3803C79.242 41.3099 80.3416 46.8382 79.9075 52.3538C79.4734 57.8694 77.5225 63.1575 74.2705 67.6336C71.0185 72.1096 66.592 75.5991 61.4805 77.7164C56.369 79.8336 50.7715 80.4962 45.307 79.6307C39.8424 78.7652 34.7236 76.4054 30.5166 72.8122C26.3095 69.219 23.178 64.5324 21.4683 59.2705L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent07{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915C87.9316 15.7556 94.2899 24.507 97.5528 34.5491C100.816 44.5913 100.816 55.4087 97.5528 65.4508C94.2899 75.493 87.9316 84.2444 79.3893 90.4508C70.8469 96.6573 60.559 100 50 100C39.441 100 29.1531 96.6573 20.6107 90.4509C12.0684 84.2444 5.71007 75.493 2.44717 65.4509C-0.815725 55.4087 -0.815725 44.5913 2.44717 34.5492L50 50L50 0Z' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Cpath d='M50 20C56.3354 20 62.5081 22.0056 67.6336 25.7295C72.759 29.4533 76.574 34.7042 78.5317 40.7295C80.4894 46.7548 80.4894 53.2452 78.5317 59.2705C76.574 65.2958 72.759 70.5467 67.6336 74.2705C62.5081 77.9944 56.3354 80 50 80C43.6646 80 37.4919 77.9944 32.3664 74.2705C27.241 70.5467 23.426 65.2958 21.4683 59.2705C19.5106 53.2452 19.5106 46.7548 21.4683 40.7295L50 50L50 20Z' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent08{
@@ -97,7 +97,7 @@
 
 .glyphClassEvent09{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='%23919191'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3Ccircle r='30' transform='matrix(1 0 0 -1 50 50)' fill='%23919191'/%3E%3Ccircle r='25' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
 .glyphClassEvent10{

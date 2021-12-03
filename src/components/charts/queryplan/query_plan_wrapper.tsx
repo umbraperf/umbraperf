@@ -304,7 +304,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 type: ConnectionLineType.Bezier,
                 style: {
                     stroke: this.props.appContext.tertiaryColor,
-                    strokeWidth: '3px'
+                    strokeWidth: '1px'
                 },
                 animated: false,
             }

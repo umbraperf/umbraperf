@@ -72,6 +72,16 @@
     align-items: center;
 }
 
+.queryplanNodeTooltip{
+    background-color: white;
+    color: colorAccentBlack;
+    width: 300px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: colorTertiary;
+    border-radius: 7px;
+}
+
 .queryplanNodeTooltipSubtitle{
     margin-top: 10px;
     margin-bottom: 3px;
@@ -87,7 +97,7 @@
 
 .queryplanNodeTooltipTableCellContent{
     font-size: 11px;
-    color: colorTertiary;
+    color: colorAccentBlack;
     white-space: nowrap;
     display: block;
     overflow: hidden;

@@ -82,18 +82,21 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             );
         }
 
-
         return DenseTable(this.props.tooltipData);
+    }
+
+    createTotalSumLine() {
+        return <Typography className={styles.queryplanNodeTooltipSubtitle} variant="body2">{`Total Frequency: ${this.props.tooltipData.totalEventOccurrence}%`}</Typography>
     }
 
     createNodeTooltip() {
         return <div>
-            <Typography color="secondary">{this.props.operatorName}</Typography>
-            <Typography className={styles.queryplanNodeTooltipSubtitle} variant="caption">{`Most expensive UIR lines caused by ${this.props.operatorName}:`}</Typography>
+            {/* <Typography color="secondary">{this.props.operatorName}</Typography>
+            <Typography className={styles.queryplanNodeTooltipSubtitle} variant="caption">{`Most expensive UIR lines caused by ${this.props.operatorName}:`}</Typography> */}
 
             {this.createContentTable()}
-{/*             //TODO TOTAL FREQUENCY ROW
- */}        </div >
+            {this.createTotalSumLine()}
+        </div >
     }
 
     public render() {

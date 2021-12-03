@@ -1,4 +1,4 @@
-import { Theme, Tooltip, TooltipProps, withStyles } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
@@ -19,18 +19,6 @@ interface QueryplanNodeProps {
     sourcePosition: Position,
     targetPosition: Position,
 }
-
-//Adjust material UI tooltip
-const HtmlTooltip = withStyles((theme: Theme) => ({
-    tooltip: {
-        backgroundColor: '#f5f5f9',
-        color: 'rgba(0, 0, 0, 0.87)',
-        width: 300,
-        fontSize: theme.typography.pxToRem(12),
-        border: '1px solid #dadde9',
-    },
-}))(Tooltip);
-
 
 export default memo(function QueryplanNode(props: QueryplanNodeProps) {
 
@@ -53,7 +41,8 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
 
     return (
         <>
-            <HtmlTooltip
+            <Tooltip
+                classes={{ tooltip: styles.queryplanNodeTooltip }}
                 title={<React.Fragment>
                     <QueryPlanNodeTooltipContent
                         operatorName={props.data.label}
@@ -64,7 +53,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
                 placement="top"
             >
                 {createNodeContent()}
-            </HtmlTooltip>
+            </Tooltip>
 
             <Handle
                 type="target"

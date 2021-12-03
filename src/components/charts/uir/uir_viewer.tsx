@@ -8,6 +8,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
+import '../../../style/uir-view-monaco-editor.css';
 
 
 interface AppstateProps {
@@ -134,16 +135,16 @@ class UirViewer extends React.Component<Props, State> {
                 //tertiary color:
                 'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
                 'editor.lineHighlightBorder': lightColor(this.props.appContext.tertiaryColor),
-                'foreground': this.props.appContext.tertiaryColor,
+                // 'foreground': this.props.appContext.tertiaryColor, makes tooltip text gray
                 'editor.selectionHighlightBackground': lightColor(this.props.appContext.tertiaryColor),
+                // 'editorHoverWidget.border': this.props.appContext.tertiaryColor,
 
                 //white color:
                 'editor.rangeHighlightBackground': '#fff',
                 'list.activeSelectionForeground': '#fff',
                 'list.hoverForeground': '#fff',
+                'editorHoverWidget.background': '#fff',
 
-                "editorHoverWidget.background": '#fff',
-                "editorHoverWidget.border": this.props.appContext.secondaryColor,
             }
         });
     }
@@ -208,9 +209,9 @@ class UirViewer extends React.Component<Props, State> {
 
     getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
 
-        const markdownUirLine = `- **UIR Line:** ${position.lineNumber}  \n`;
-        const markdownOperator = `- **Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
-        const markdownPipeline = `- **Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
+        const markdownUirLine = `**UIR Line:** ${position.lineNumber}  \n`;
+        const markdownOperator = `**Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
+        const markdownPipeline = `**Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
         const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
 
 
@@ -234,7 +235,7 @@ class UirViewer extends React.Component<Props, State> {
             if(this.props.chartData.isFunction[eventIndex] === 0){
                 relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
             }
-            const markdownEvent = `- ${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
+            const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;

@@ -188,7 +188,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const tooltipUirLineNumbers: number[] = [];
             const tooltipUirOccurrences: number[] = [];
             let tooltipUirTotalOccurrences: number = 0;
-            this.props.chartData.nodeTooltipData.operators.forEach((operator, index) => {
+            this.props.chartData.nodeTooltipData.operators.forEach((operator: string, index: number) => {
                 if(operator === nodeId){
                     tooltipUirLines.push(this.props.chartData.nodeTooltipData.uirLines[index]);
                     tooltipUirLineNumbers.push(this.props.chartData.nodeTooltipData.uirLineNumbers[index]);

@@ -4,11 +4,11 @@ import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
 import CSS from 'csstype';
 import styles from '../../../style/queryplan.module.css';
-import QueryPlanNodeTooltipContent, { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
+import QueryPlanNodeTooltipContent, { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
 
 export type QueryplanNodeData = {
     label: string,
-    tooltipData: QueryplanNodeTooltip,
+    tooltipData: QueryplanNodeTooltipData,
 }
 
 interface QueryplanNodeProps {

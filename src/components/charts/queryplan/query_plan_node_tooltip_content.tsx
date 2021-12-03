@@ -3,16 +3,17 @@ import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
 
-export type QueryplanNodeTooltip = {
+export type QueryplanNodeTooltipData = {
     uirLines: Array<string>,
     uirLineNumber: Array<number>,
     eventOccurrences: Array<number>,
+    totalEventOccurrence: number,
 }
 
 interface Props {
     appContext: Context.IAppContext;
     operatorName: string,
-    tooltipData: QueryplanNodeTooltip,
+    tooltipData: QueryplanNodeTooltipData,
 }
 
 class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
@@ -24,7 +25,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
     createContentTable() {
 
-        function DenseTable(tooltipData: QueryplanNodeTooltip) {
+        function DenseTable(tooltipData: QueryplanNodeTooltipData) {
 
             function createData(lineNumber: number, uirLine: string, eventOccurrence: string) {
                 return { lineNumber, uirLine, eventOccurrence };
@@ -91,7 +92,8 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             <Typography className={styles.queryplanNodeTooltipSubtitle} variant="caption">{`Most expensive UIR lines caused by ${this.props.operatorName}:`}</Typography>
 
             {this.createContentTable()}
-        </div >
+{/*             //TODO TOTAL FREQUENCY ROW
+ */}        </div >
     }
 
     public render() {

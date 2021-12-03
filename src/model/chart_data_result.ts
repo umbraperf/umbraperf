@@ -105,6 +105,7 @@ export interface IQueryPlanNodeTooltipData {
     uirLineNumbers: Array<number>;
     uirLines: Array<string>;
     eventOccurrences: Array<number>;
+    operatorTotalFrequency: Array<number>;
     operators: Array<string>;
 }
 

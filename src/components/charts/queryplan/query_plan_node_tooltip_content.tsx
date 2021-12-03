@@ -2,6 +2,7 @@ import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
+import LowPriorityIcon from '@material-ui/icons/LowPriority';
 
 export type QueryplanNodeTooltipData = {
     uirLines: Array<string>,
@@ -25,7 +26,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
     createContentTable() {
 
-        function DenseTable(tooltipData: QueryplanNodeTooltipData) {
+        const DenseTable = (tooltipData: QueryplanNodeTooltipData) => {
 
             function createData(lineNumber: number, uirLine: string, eventOccurrence: string) {
                 return { lineNumber, uirLine, eventOccurrence };
@@ -41,7 +42,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
             let tableRows = [];
             for (let i = 0; i < 5; i++) {
-                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 60), tooltipData.eventOccurrences[i] + "%"))
+                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 65), tooltipData.eventOccurrences[i] + "%"))
             }
 
             return (
@@ -86,14 +87,17 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
     }
 
     createTotalSumLine() {
-        return <Typography className={styles.queryplanNodeTooltipSubtitle} variant="body2">{`Total Frequency: ${this.props.tooltipData.totalEventOccurrence}%`}</Typography>
+        return <Typography
+            className={styles.queryplanNodeTooltipSubtitle}
+            variant="body2"
+        >
+            Total Frequency: {this.props.tooltipData.totalEventOccurrence}%
+
+        </Typography>
     }
 
     createNodeTooltip() {
         return <div>
-            {/* <Typography color="secondary">{this.props.operatorName}</Typography>
-            <Typography className={styles.queryplanNodeTooltipSubtitle} variant="caption">{`Most expensive UIR lines caused by ${this.props.operatorName}:`}</Typography> */}
-
             {this.createContentTable()}
             {this.createTotalSumLine()}
         </div >

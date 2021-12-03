@@ -10,10 +10,11 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
-import { ArrowHeadType, ConnectionLineType, Position } from 'react-flow-renderer';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
-import { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
+import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
+import { LiveTvOutlined } from '@material-ui/icons';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
@@ -38,7 +39,7 @@ export type PlanNode = {
     backgroundFill: string,
     nodeCursor: string,
     isNodeSelectable: boolean,
-    tooltipData: QueryplanNodeTooltip,
+    tooltipData: QueryplanNodeTooltipData,
 }
 
 export type PlanEdge = {
@@ -182,21 +183,24 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltip => {
+        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
             const tooltipUirLines: string[] = [];
             const tooltipUirLineNumbers: number[] = [];
             const tooltipUirOccurrences: number[] = [];
+            let tooltipUirTotalOccurrences: number = 0;
             this.props.chartData.nodeTooltipData.operators.forEach((operator, index) => {
                 if(operator === nodeId){
                     tooltipUirLines.push(this.props.chartData.nodeTooltipData.uirLines[index]);
                     tooltipUirLineNumbers.push(this.props.chartData.nodeTooltipData.uirLineNumbers[index]);
                     tooltipUirOccurrences.push(this.props.chartData.nodeTooltipData.eventOccurrences[index]);
+                    if (tooltipUirTotalOccurrences === 0) tooltipUirTotalOccurrences = this.props.chartData.nodeTooltipData.operatorTotalFrequency[index];
                 }
             });
             return{
                 uirLines: tooltipUirLines,
                 uirLineNumber: tooltipUirLineNumbers,
                 eventOccurrences: tooltipUirOccurrences,
+                totalEventOccurrence: tooltipUirTotalOccurrences,
             }
         }
 

@@ -371,6 +371,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),
                     operators: resultObject.rustResultTable.getColumn('op').toArray(),
                     uirLineNumbers: resultObject.rustResultTable.getColumn('srcline_num').toArray(),
+                    operatorTotalFrequency: resultObject.rustResultTable.getColumn('total').toArray(),
                 }
                 queryplanDataElem.nodeTooltipData = nodeTooltipData;
             }

@@ -169,7 +169,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                 return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.operators, props.operators) ||
-                    !_.isEqual(nextProps.currentOperator, props.currentOperator)) ?
+                    !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                 true :
                 false;
         }

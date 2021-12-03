@@ -83,8 +83,11 @@
 }
 
 .queryplanNodeTooltipSubtitle{
+    text-align: right;
     margin-top: 10px;
     margin-bottom: 3px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 .queryplanNodeTooltipTableCell{
@@ -96,7 +99,7 @@
 }
 
 .queryplanNodeTooltipTableCellContent{
-    font-size: 11px;
+    font-size: 10px;
     color: colorAccentBlack;
     white-space: nowrap;
     display: block;

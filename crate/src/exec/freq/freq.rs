@@ -353,7 +353,7 @@ pub fn freq_of_memory(
         }
         out
     } else {
-        1
+        1000000000
     };
 
     'outer: for (i, time) in time_column.into_iter().enumerate() {
@@ -366,7 +366,8 @@ pub fn freq_of_memory(
             continue 'outer;
         }
         let current_memory = if matches!(mem_en, MEM::ABS) {
-            (memory_column.value(i as usize) / divided) as i32
+            let mem = (memory_column.value(i as usize) / divided) as i32;
+            mem
         } else {
             let value1 = memory_column.value(i as usize);
 
@@ -387,7 +388,7 @@ pub fn freq_of_memory(
                     for _i in 0..times {
                         result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory);
+                        result_mem_operator.push(*item.0);
                         result_builder.push(item.1.to_owned());
                         let current_value = bucket_map_count[operator] + 1.;
                         bucket_map_count.insert(operator, current_value);
@@ -413,7 +414,7 @@ pub fn freq_of_memory(
                     for _i in 0..times {
                         result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory);
+                        result_mem_operator.push(*item.0);
                         result_builder.push(item.1.to_owned());
                         let current_value = bucket_map_count[operator] + 1.;
                         bucket_map_count.insert(operator, current_value);
@@ -488,7 +489,7 @@ pub fn freq_of_memory(
                     DataType::Float64,
                 ],
                 vec![
-                    Arc::new(Float64Array::from(vec![0.])),
+                    Arc::new(Float64Array::from(vec![-1.])),
                     Arc::new(StringArray::from(vec![entry.1.unwrap()])),
                     Arc::new(Int32Array::from(vec![0])),
                     Arc::new(Float64Array::from(vec![0.])),

@@ -353,7 +353,7 @@ pub fn freq_of_memory(
         }
         out
     } else {
-        1
+        1000000000
     };
 
     'outer: for (i, time) in time_column.into_iter().enumerate() {
@@ -366,16 +366,8 @@ pub fn freq_of_memory(
             continue 'outer;
         }
         let current_memory = if matches!(mem_en, MEM::ABS) {
-            let number = memory_column.value(i as usize);
-            if number.to_string().chars().count() < 7 {
-                continue 'outer;
-            }
-            let string = number.to_string().split_off(6);
-            if string.chars().count() != 9 {
-                continue 'outer;
-            }
-            string.parse::<i32>().unwrap()
-
+            let mem = (memory_column.value(i as usize) / divided) as i32;
+            mem
         } else {
             let value1 = memory_column.value(i as usize);
 

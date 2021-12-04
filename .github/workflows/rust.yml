@@ -2,9 +2,9 @@ name: Umbra-Profiler Release Process
 
 on:
   push:
-    branches: [ refac-queryplan ]
+    branches: [ master ]
   pull_request:
-    branches: [ refac-queryplan ]
+    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always

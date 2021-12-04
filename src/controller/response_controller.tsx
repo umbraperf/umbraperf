@@ -94,6 +94,15 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
                 data: kpis,
             });
             break;
+
+        case model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
+            const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
+            console.log(operatorsTimeframe);
+            // store.dispatch({
+            //     type: model.StateMutationType.SET_OPERATORS,
+            //     data: operators,
+            // });
+            break;
     }
 
     store.dispatch({

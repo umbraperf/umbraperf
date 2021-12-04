@@ -9,6 +9,7 @@ export enum BackendQueryType {
     GET_PIPELINES = "GET_PIPELINES",
     GET_OPERATORS = "GET_OPERATORS",
     GET_STATISTICS = "GET_STATISTICS",
+    GET_OPERATORS_IN_TIMEFRAME = "GET_OPERATORS_IN_TIMEFRAME",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
     // GET_REL_OP_DISTR_PER_BUCKET = "GET_REL_OP_DISTR_PER_BUCKET",
     // GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE = "GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE",
@@ -30,6 +31,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINES, {}>
     | BackendQuery<BackendQueryType.GET_OPERATORS, { event: string }>
     | BackendQuery<BackendQueryType.GET_STATISTICS, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_OPERATORS_IN_TIMEFRAME, { event: string, timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     // | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET, { event: string, bucketSize: number }>
     // | RestQuery<RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE, { event: string, bucketSize: number }>
@@ -42,7 +44,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_DATA, {event: string, timeBucketFrame: [number, number]}>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_DATA, { event: string, timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -73,6 +75,8 @@ export function createBackendQuery(query: QueryVariant) {
             return `operator${eventFilter}/count?operator/sort?count,desc`;
         case BackendQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
+        case BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
+            return `operator${eventFilter}${timeFilter}/count?operator`;
         case BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count${eventFilter}${pipelinesFilter}${timeFilter}/count?operator/sort?operator`;
         // case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:

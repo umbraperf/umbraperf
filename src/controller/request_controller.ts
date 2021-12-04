@@ -94,6 +94,16 @@ export function requestStatistics(controller: RequestController) {
         }), true);
 }
 
+//request operators arry of active operators in current selected timeframe
+export function requestActiveOperatorsTimeframe(controller: RequestController) {
+    controller.calculateChartData(
+        model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
+        model.createBackendQuery({
+            type: model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+        }), true);
+}
+
 //request data for chart visualizations
 export function requestChartData(controller: RequestController, chartId: number, chartType: model.ChartType) {
 

@@ -1,8 +1,8 @@
 import * as model from "../model";
-import { store } from '../app_config';
+import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
-// import { QueryPlanWrapperAppstateProps } from '../components/charts/queryplan/query_plan_wrapper';
 import _ from "lodash";
+import { requestActiveOperatorsTimeframe } from ".";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
@@ -70,10 +70,12 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
         data: selectedPosition,
     });
+    requestActiveOperatorsTimeframe(appContext.controller);
 }
 
 export function resetTimeBucketSelection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
+    requestActiveOperatorsTimeframe(appContext.controller);
 }
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
@@ -171,8 +173,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     !_.isEqual(nextProps.operators, props.operators) ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
-                true :
-                false;
+                    true :
+                    false;
         }
         return false;
     };

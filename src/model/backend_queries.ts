@@ -1,3 +1,4 @@
+import { LaptopWindows } from "@material-ui/icons";
 
 export type BackendQuery<T, P> = {
     readonly type: T;
@@ -76,7 +77,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_STATISTICS:
             return `count${timeFilter}${pipelinesFilter}${eventFilter}/basic_count?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?pipeline&&count${timeFilter}${pipelinesFilter}${eventFilter}/count(distinct)?operator&&count${timeFilter}${pipelinesFilter}${eventFilter}/max(time)?time&&count${timeFilter}${pipelinesFilter}${eventFilter}/relative?operator`;
         case BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
-            return `operator${eventFilter}${timeFilter}/count?operator`;
+            return `operator${eventFilter}${timeFilter}/distinct?operator`;
         case BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count${eventFilter}${pipelinesFilter}${timeFilter}/count?operator/sort?operator`;
         // case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:

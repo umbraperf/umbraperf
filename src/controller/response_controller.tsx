@@ -98,10 +98,10 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
         case model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
             const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             console.log(operatorsTimeframe);
-            // store.dispatch({
-            //     type: model.StateMutationType.SET_OPERATORS,
-            //     data: operators,
-            // });
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENTOPERATORTIMEFRAME,
+                data: operatorsTimeframe,
+            });
             break;
     }
 

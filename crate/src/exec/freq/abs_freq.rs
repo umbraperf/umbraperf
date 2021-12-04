@@ -14,7 +14,7 @@ use crate::{
         },
         freq::freq::create_freq_bucket,
     },
-    utils::record_batch_util::create_new_record_batch,
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
 use super::freq;
@@ -96,13 +96,13 @@ pub fn abs_freq_of_event(
         column_index += 1;
     }
 
-    let batch = create_freq_bucket(
-        &batch,
-        column_for_event,
-        result_bucket,
-        result_vec_event,
-        result_builder,
-        freq::Freq::ABS,
+    let batch = create_new_record_batch(
+        vec!["bucket", "absfreq"],
+        vec![DataType::Float64, DataType::Float64],
+        vec![
+            Arc::new(Float64Array::from(result_bucket)),
+            Arc::new(Float64Array::from(result_builder)),
+        ],
     );
 
     batch

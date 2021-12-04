@@ -103,8 +103,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     // }
 
     componentDidMount() {
-        console.log(this.props.chartData.nodeTooltipData.operatorTotalFrequency)
         this.createQueryPlan();
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (!_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe)) {
+            this.updateQueryPlan();
+        }
     }
 
     public render() {
@@ -113,6 +118,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             <div className={styles.queryplanContainerTitle}>Query Plan</div>
             {this.state.renderedFlowPlan}
         </div>
+    }
+
+    updateQueryPlan() {
+        this.setState((state, props) => ({
+            ...state,
+            loading: true,
+            renderedFlowPlan: undefined,
+        }));
+        this.createQueryPlan();
     }
 
     createQueryPlan() {
@@ -171,6 +185,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const isNodeUnavailable = (nodeId: string) => {
             console.log(this.props.currentOperatorTimeframe);
+            console.log(this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId));
             //TODO not working
             return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }

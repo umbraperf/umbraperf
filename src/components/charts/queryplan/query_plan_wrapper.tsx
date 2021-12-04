@@ -171,6 +171,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const isNodeUnavailable = (nodeId: string) => {
             console.log(this.props.currentOperatorTimeframe);
+            //TODO not working
             return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }
 

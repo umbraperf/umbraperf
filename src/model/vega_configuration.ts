@@ -43,6 +43,7 @@ export interface ChartConfiguration {
     memoryChartYLabelSeparation: number,
     memoryChartXLabelSeparation: number,
     memoryChartTooltip: string,
+    colorLowOpacityHex: string,
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -139,6 +140,8 @@ export let chartConfiguration: ChartConfiguration = {
     //Hover behaviour: 
     hoverFillOpacity: 0.5,
 
+    //Color properties:
+    colorLowOpacityHex: "33",
 }
 
 const operatorColorScemeHsl: Array<Array<number>> = [

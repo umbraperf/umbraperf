@@ -234,7 +234,7 @@ class UirViewer extends React.Component<Props, State> {
             if (marginGlyphRepresentation && i + 1 === italicEvent) {
                 italicCharacter = "*";
             }
-            if(this.props.chartData.isFunction[eventIndex] === 0){
+            if (this.props.chartData.isFunction[eventIndex] === 0) {
                 relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
             }
             const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
@@ -352,7 +352,7 @@ class UirViewer extends React.Component<Props, State> {
             if (eventOccurence > 0) {
                 const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
                 const relativeFunctionEventOccurence = (this.props.chartData[relativeFunctionEventString])[i];
-                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence)/10);
+                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
                 const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
@@ -360,14 +360,17 @@ class UirViewer extends React.Component<Props, State> {
 
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
-            if (!this.state.operatorsColorHidden
-                && this.props.operators!.includes(operator)
-                && operator !== "None"
-                && (this.props.currentOperator === "All"
-                    || this.props.currentOperator.includes(operator))) {
-                const operatorColorGroup = this.props.operators!.indexOf(operator);
-                elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
+            if (!this.state.operatorsColorHidden && operator !== "None") {
+                if (!(this.props.operators!.includes(operator) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(operator)))) {
+                    //node not available, not in sample or nor in time selection
+                    elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", -1);
+                } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator)) {
+                    //node available and selected
+                    const operatorColorGroup = this.props.operators!.indexOf(operator);
+                    elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
+                }
             }
+
 
             (this.editorRef as any).deltaDecorations([this.globalEventOccurrenceDecorations[i]], [
                 {
@@ -414,43 +417,25 @@ class UirViewer extends React.Component<Props, State> {
                 this.addCssClassForGlyphToDom(className, glyphClassGroupNumber as number);
             }
             return className;
-        }else if(glyphClassScaleType == "Event"){
+        } else if (glyphClassScaleType == "Event") {
             return styles[className];
-        }else{
-            return "";
         }
+        return "";
 
     }
 
     addCssClassForGlyphToDom(className: string, glyphClassGroupNumber: number) {
         const style = document.createElement('style');
         style.setAttribute("id", className);
-        const color = this.state.operatorColorScale[glyphClassGroupNumber];
+        let color = "";
+        if (glyphClassGroupNumber === -1) {
+            color = this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex;
+        } else {
+            color = this.state.operatorColorScale[glyphClassGroupNumber];
+        }
         style.innerHTML = `.${className} { background: ${color}; }`;
         this.editorContainerRef.current!.appendChild(style);
     }
-
-    // createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
-
-    //     //return name of correct css class, create class if not yet created
-    //     const className = `glyphClass${colorScaleType}${colorGroup}`;
-
-    //     if (this.editorContainerRef.current!.children.namedItem(className)) {
-    //         return className;
-    //     } else {
-    //         const style = document.createElement('style');
-    //         style.setAttribute("id", className);
-    //         let color = "";
-    //         if (colorScaleType === "Event") {
-    //             color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
-    //         } else if (colorScaleType === "Operator") {
-    //             color = this.state.operatorColorScale[colorGroup];
-    //         }
-    //         style.innerHTML = `.${className} { background: ${color}; }`;
-    //         this.editorContainerRef.current!.appendChild(style);
-    //         return className;
-    //     }
-    // }
 
 }
 

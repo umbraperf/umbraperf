@@ -182,9 +182,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
         const isNodeUnavailable = (nodeId: string) => {
-            console.log(this.props.currentOperatorTimeframe);
-            console.log(this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId));
-            //TODO not working
             return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }
 
@@ -207,13 +204,12 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeColor = (nodeId: string) => {
             //add 33 to hex color for 10% opacity
             //return tuple with 0: border color, 1: background color
-            const lowOpacity = "33";
             if (nodeId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
             } else if (isNodeUnavailable(nodeId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
-                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + lowOpacity];
+                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
             } else if (isNodeSelected(nodeId)) {
                 //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);

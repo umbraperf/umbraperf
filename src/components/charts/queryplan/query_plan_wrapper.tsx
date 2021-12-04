@@ -91,7 +91,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     // getCurrentUirOperators(): string[] {
-    //     //TODO move logic to activity histogram, store active UIR operators after time selection in redux
     //     let currentUirOperators: string[] = [];
     //     this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
     //         if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {

@@ -18,8 +18,10 @@ import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
 export interface AppstateProps {
     appContext: Context.IAppContext;
     currentOperator: Array<string> | "All";
+    currentOperatorTimeframe: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
+
 }
 
 type Props = model.IQueryPlanProps & AppstateProps;
@@ -28,7 +30,7 @@ interface State {
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
-    currentUirOperators: Array<string>,
+    // currentUirOperators: Array<string>,
 }
 
 export type PlanNode = {
@@ -83,22 +85,22 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
-            currentUirOperators: this.getCurrentUirOperators(),
+            // currentUirOperators: this.getCurrentUirOperators(),
         };
 
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
-    getCurrentUirOperators(): string[] {
-        //TODO move logic to activity histogram, store active UIR operators after time selection in redux
-        let currentUirOperators: string[] = [];
-        this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
-            if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
-                currentUirOperators.push(elem);
-            }
-        });
-        return currentUirOperators;
-    }
+    // getCurrentUirOperators(): string[] {
+    //     //TODO move logic to activity histogram, store active UIR operators after time selection in redux
+    //     let currentUirOperators: string[] = [];
+    //     this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
+    //         if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
+    //             currentUirOperators.push(elem);
+    //         }
+    //     });
+    //     return currentUirOperators;
+    // }
 
     componentDidMount() {
         console.log(this.props.chartData.nodeTooltipData.operatorTotalFrequency)
@@ -168,7 +170,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
         const isNodeUnavailable = (nodeId: string) => {
-            return !(this.props.operators!.includes(nodeId) && this.state.currentUirOperators.includes(nodeId))
+            console.log(this.props.currentOperatorTimeframe);
+            return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }
 
         const isNodeSelected = (nodeId: string) => {
@@ -381,6 +384,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps)
     currentOperator: state.currentOperator,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
+    currentOperatorTimeframe: state.currentOperatorTimeframe,
 });
 
 

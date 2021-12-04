@@ -61,6 +61,7 @@ class UirViewer extends React.Component<Props, State> {
         //Update glyphs when event, currentOperators or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
+            || !(_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe))
             || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
             this.setMonacoGlyphs();
         }
@@ -136,9 +137,9 @@ class UirViewer extends React.Component<Props, State> {
                 //tertiary color:
                 'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
                 'editor.lineHighlightBorder': lightColor(this.props.appContext.tertiaryColor),
-                // 'foreground': this.props.appContext.tertiaryColor, makes tooltip text gray
+                // 'foreground': this.props.appContext.tertiaryColor, makes tooltip text grey, moved to css
                 'editor.selectionHighlightBackground': lightColor(this.props.appContext.tertiaryColor),
-                // 'editorHoverWidget.border': this.props.appContext.tertiaryColor,
+                // 'editorHoverWidget.border': this.props.appContext.tertiaryColor, makes tooltip border grey, moved to css
 
                 //white color:
                 'editor.rangeHighlightBackground': '#fff',

@@ -14,7 +14,7 @@ use crate::{
         },
         freq::freq::create_freq_bucket,
     },
-    utils::record_batch_util::create_new_record_batch,
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
 use super::freq;
@@ -37,6 +37,7 @@ pub fn abs_freq_of_event(
 
     let mut result_bucket = Vec::new();
     let mut result_vec_event = Vec::new();
+    let mut result_vec_op = Vec::new();
     let mut result_builder = Vec::new();
 
     let mut time_bucket = bucket_size;
@@ -52,6 +53,11 @@ pub fn abs_freq_of_event(
         .as_any()
         .downcast_ref::<Float64Array>()
         .unwrap();
+    let operator_column = batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
 
     let mut bucket_map = HashMap::new();
     for event in vec_event {
@@ -62,6 +68,7 @@ pub fn abs_freq_of_event(
 
     for (i, time) in time_column.into_iter().enumerate() {
         let current_event = event_column.value(column_index as usize);
+        let current_operator = operator_column.value(column_index as usize);
 
         while time_bucket < time.unwrap() {
             for event in vec_event {
@@ -70,6 +77,7 @@ pub fn abs_freq_of_event(
                 result_vec_event.push(event);
                 let frequenzy = bucket_map.get("sum").unwrap();
                 result_builder.push(frequenzy.to_owned());
+                result_vec_op.push(current_operator);
                 // reset bucket_map
                 bucket_map.insert(event, 0.0);
             }
@@ -90,20 +98,24 @@ pub fn abs_freq_of_event(
                 result_vec_event.push(event);
                 let frequenzy = bucket_map.get("sum").unwrap();
                 result_builder.push(frequenzy.to_owned());
+                result_vec_op.push(current_operator);
             }
         }
 
         column_index += 1;
     }
 
-    let batch = create_freq_bucket(
-        &batch,
-        column_for_event,
-        result_bucket,
-        result_vec_event,
-        result_builder,
-        freq::Freq::ABS,
+    let batch = create_new_record_batch(
+        vec!["bucket", "operator", "absfreq"],
+        vec![DataType::Float64, DataType::Utf8, DataType::Float64],
+        vec![
+            Arc::new(Float64Array::from(result_bucket)),
+            Arc::new(StringArray::from(result_vec_op)),
+            Arc::new(Float64Array::from(result_builder)),
+        ],
     );
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     batch
 }

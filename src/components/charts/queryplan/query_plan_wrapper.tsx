@@ -21,7 +21,6 @@ export interface AppstateProps {
     currentOperatorTimeframe: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
-
 }
 
 type Props = model.IQueryPlanProps & AppstateProps;

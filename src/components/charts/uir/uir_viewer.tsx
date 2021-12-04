@@ -17,6 +17,7 @@ interface AppstateProps {
     currentEvent: string | "Default";
     events: Array<string> | undefined;
     currentOperator: Array<string> | "All";
+    currentOperatorTimeframe: Array<string> | "All";
     operators: Array<string> | undefined;
 }
 
@@ -457,6 +458,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps)
     currentEvent: state.currentEvent,
     events: state.events,
     currentOperator: state.currentOperator,
+    currentOperatorTimeframe: state.currentOperatorTimeframe,
     operators: state.operators,
 });
 

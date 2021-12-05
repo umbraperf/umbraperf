@@ -16,7 +16,6 @@ pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> R
         .unwrap();
 
     let mut result_builder = Float64Array::builder(1);
-
     let _result_builder = result_builder.append_value(if vec.len() > 0 {
         arrow::compute::max(vec).unwrap()
     } else {
@@ -45,7 +44,6 @@ pub fn relative(
         .unwrap();
 
     let denominator = vec_de.len();
-
     let batch = filter::filter_with(column_index_for_numerator, vec!["No Operator"], batch);
 
     let vec_nom = batch
@@ -57,13 +55,9 @@ pub fn relative(
     let numerator = vec_nom.len();
 
     let result = numerator as f64 / denominator as f64;
-
     let result = f64::trunc(result * 100.0) / 100.0;
-
     let mut result_builder = Float64Array::builder(1);
-
     let _result_builder = result_builder.append_value(result);
-
     let result_builder = result_builder.finish();
 
     let batch = create_new_record_batch(

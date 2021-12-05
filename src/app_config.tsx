@@ -1,31 +1,30 @@
 import * as React from 'react';
 import createDevStore from './model/store_dev';
 import { IAppContext } from './app_context';
+import styles from './style/export-variables.module.css';
+import * as model from './model';
 
-import FileUploader from './components/utils/file_uploader';
-import Dashboard from './components/dashboards/dashboard';
-import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
-import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
-import SwimLanesPipelines from './components/charts/swim_lanes_pipelines';
-import Dummy from './components/testdummy';
+import FileUploader from './components/utils/containers/file_uploader';
+import DashboardWrapper from './components/dashboards/dashboard_wrapper';
 
-import HelpIcon from '@material-ui/icons/Help';
 import BackupIcon from '@material-ui/icons/Backup';
-import SortIcon from '@material-ui/icons/Sort';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import SdStorageIcon from '@material-ui/icons/SdStorage';
-import {createTheme } from '@material-ui/core';
+import DeveloperModeIcon from '@material-ui/icons/DeveloperMode';
+import { createTheme } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
 export const webFileController = new RequestController();
 
 export const appColor = {
-    primary: '#040404',
-    secondary: '#d4733e',
-    tertiary: '#919191',
-    accent: '#F5F3BB',
+    primary: styles.colorPrimary,
+    secondary: styles.colorSecondary,
+    tertiary: styles.colorTertiary,
+    accentBlack: styles.colorAccentBlack,
+    accentDarkGreen: styles.colorAccentDarkGreen,
+    accentDarkBlue: styles.colorAccentDarkBlue,
 }
 
 export const appContext: IAppContext = {
@@ -33,12 +32,16 @@ export const appContext: IAppContext = {
     primaryColor: appColor.primary,
     secondaryColor: appColor.secondary,
     tertiaryColor: appColor.tertiary,
+    accentBlack: appColor.accentBlack,
+    accentDarkGreen: appColor.accentDarkGreen,
+    accentDarkBlue: appColor.accentDarkBlue,
 };
 
 //Create Redux stroe
 //TODO change to prod store
 //export const store = createProdStore();
 export const store = createDevStore();
+
 
 export const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
@@ -48,7 +51,7 @@ export const materialUiTheme = createTheme({
         },
         secondary: {
             main: appColor.secondary
-        }
+        },
     },
     breakpoints: {
         values: {
@@ -58,75 +61,65 @@ export const materialUiTheme = createTheme({
             lg: 1200,
             xl: 1535, //customized from 1536
         },
-    },
+    }
 });
 
-export const topLevelComponents = [
+interface ITopLevelComponent {
+    viewType: model.ViewType;
+    path: string;
+    sidebarName: string;
+    component: JSX.Element;
+    icon: () => JSX.Element;
+}
+export const topLevelComponents: Array<ITopLevelComponent> = [
     {
+        viewType: model.ViewType.UPLOAD,
         path: '/upload',
         sidebarName: 'Upload File',
-        component: FileUploader,
+        component: <FileUploader />,
         icon: () => { return (<BackupIcon />) },
     },
     {
-        path: '/dashboard',
-        sidebarName: 'Dashboard',
-        component: Dashboard,
+        viewType: model.ViewType.DASHBOARD_SINGLE_EVENT,
+        path: '/dashboard-single-event',
+        sidebarName: 'Dashboard (Single Event)',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT} />,
         icon: () => { return (<DashboardIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_MULTIPLE_EVENTS,
         path: '/dashboard-multiple-events',
         sidebarName: 'Dashboard (Multiple Events)',
-        component: DashboardMultipleEvents,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS} />,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
+        viewType: model.ViewType.DASHBOARD_MEMORY,
         path: '/dashboard-memory-accesses',
         sidebarName: 'Dashboard (Memory Accesses)',
-        component: DashboardMemoryAccesses,
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY} />,
         icon: () => { return (<SdStorageIcon />) },
     },
-    // {
-    //     path: '/bar-chart',
-    //     sidebarName: 'Bar Chart',
-    //     component: BarChart,
-    //     icon: () => { return (<BarChartIcon />) },
-    // },
-    // {
-    //     path: '/swim-lanes',
-    //     sidebarName: 'Swim Lanes',
-    //     component: SwimLanes,
-    //     icon: () => { return (<ViewHeadlineIcon />) },
-    // },
     {
-        path: '/swim-lanes-pipelines',
-        sidebarName: 'Swim Lanes (Pipelines)',
-        component: SwimLanesPipelines,
-        icon: () => { return (<SortIcon />) },
+        viewType: model.ViewType.DASHBOARD_UIR,
+        path: '/dashboard-uir',
+        sidebarName: 'Dashboard (UIR)',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR} />,
+        icon: () => { return (<DeveloperModeIcon />) },
     },
     // {
-    //     path: '/swim-lanes-multiple-pipelines',
-    //     sidebarName: 'Swim Lanes (Multiple Pipelines)',
-    //     component: SwimLanesMultiplePipelines,
-    //     icon: () => { return (<MultilineChartIcon />) },
+    //     path: '/swim-lanes-pipelines',
+    //     sidebarName: 'Swim Lanes (Pipelines)',
+    //     // component: SwimLanesPipelines,
+    //     // view: model.ViewType.PIPELINES,
+    //     icon: () => { return (<SortIcon />) },
     // },
     // {
-    //     path: '/swim-lanes-multiple-pipelines-combined',
-    //     sidebarName: 'Swim Lanes (Multiple Events)',
-    //     component: SwimLanesCombinedMultiplePipelines,
-    //     icon: () => { return (<ViewStreamIcon />) },
+    //     path: '/dummy',
+    //     sidebarName: 'Dummy',
+    //     component: Dummy,
+    //     view: model.ViewType.DUMMY,
+    //     icon: () => { return (<HelpIcon />) },
     // },
-    // {
-    //     path: '/donut-chart',
-    //     sidebarName: 'Donut Chart',
-    //     component: DonutChart,
-    //     icon: () => { return (<DonutLargeIcon />) },
-    // },
-    {
-        path: '/dummy',
-        sidebarName: 'Dummy',
-        component: Dummy,
-        icon: () => { return (<HelpIcon />) },
-    },
 
 ];

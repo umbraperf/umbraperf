@@ -1,7 +1,4 @@
-import { AppState } from './state';
-import { IKpiData, Result } from "./core_result";
-import { RestQueryType } from './rest_queries';
-import { ChartDataKeyValue } from './chart_data_result';
+import { AppState, createProfiles, ProfileType, IKpiData, Result, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable } from '.';
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 
 
@@ -13,7 +10,6 @@ export type StateMutation<T, P> = {
 
 /// A mutation type
 export enum StateMutationType {
-    SET_FILENAME = 'SET_FILENAME',
     SET_FILELOADING = 'SET_FILELOADING',
     SET_RESULTLOADING = 'SET_RESULTLOADING',
     SET_RESULT = 'SET_RESULT',
@@ -22,6 +18,7 @@ export enum StateMutationType {
     SET_CSVPARSINGFINISHED = 'SET_CSVPARSINGFINISHED',
     RESET_STATE = 'RESET_STATE',
     SET_CURRENTCHART = 'SET_CURRENTCHART',
+    SET_LOADINGCHARTREADABLENAME = 'SET_LOADINGCHARTREADABLENAME',
     SET_CURRENTEVENT = 'SET_CURRENTEVENT',
     SET_CURRENTMULTIPLEEVENT = 'SET_CURRENTMULTIPLEEVENT',
     SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
@@ -38,12 +35,15 @@ export enum StateMutationType {
     SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
     SET_CURRENTTIMEBUCKETSELECTIONTUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
     SET_CURRENTTIMEPOSITIONSELECTIONTUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
+    SET_CURRENTVIEW = 'SET_CURRENTVIEW',
+    SET_QUERYPLAN = 'SET_QUERYPLAN',
+    SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION = 'SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION',
+    SET_CURRENTPROFILE = 'SET_CURRENTPROFILE',
     OTHER = 'OTHER',
 }
 
 /// An state mutation variant
 export type StateMutationVariant =
-    | StateMutation<StateMutationType.SET_FILENAME, string>
     | StateMutation<StateMutationType.SET_FILELOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULTLOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
@@ -51,12 +51,13 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
     | StateMutation<StateMutationType.RESET_STATE, undefined>
-    | StateMutation<StateMutationType.SET_CURRENTCHART, string>
+    | StateMutation<StateMutationType.SET_CURRENTCHART, ChartType>
+    | StateMutation<StateMutationType.SET_LOADINGCHARTREADABLENAME, ChartType>
     | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTREQUEST, RestQueryType>
+    | StateMutation<StateMutationType.SET_CURRENTREQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
@@ -68,6 +69,9 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
+    | StateMutation<StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION, boolean>
+    | StateMutation<StateMutationType.SET_CURRENTPROFILE, ProfileType>
     ;
 
 // The action dispatch
@@ -76,11 +80,6 @@ export type Dispatch = (mutation: StateMutationVariant) => void;
 export class AppStateMutation {
     public static reduce(state: AppState, mutation: StateMutationVariant): AppState {
         switch (mutation.type) {
-            case StateMutationType.SET_FILENAME:
-                return {
-                    ...state,
-                    fileName: mutation.data,
-                };
             case StateMutationType.SET_FILELOADING:
                 return {
                     ...state,
@@ -114,7 +113,12 @@ export class AppStateMutation {
             case StateMutationType.SET_CURRENTCHART:
                 return {
                     ...state,
-                    currentChart: mutation.data,
+                    currentChart: state.currentChart.concat([mutation.data]),
+                };
+            case StateMutationType.SET_LOADINGCHARTREADABLENAME:
+                return {
+                    ...state,
+                    loadingChartReadableName: state.loadingChartReadableName.concat([ChartTypeReadable[mutation.data]]),
                 };
             case StateMutationType.SET_CURRENTEVENT:
                 return {
@@ -197,16 +201,31 @@ export class AppStateMutation {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
+            case StateMutationType.SET_CURRENTVIEW:
+                return {
+                    ...state,
+                    currentView: mutation.data,
+                }
+            case StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION:
+                return {
+                    ...state,
+                    memoryHeatmapsDifferenceRepresentation: mutation.data,
+                }
+            case StateMutationType.SET_CURRENTPROFILE:
+                return {
+                    ...state,
+                    currentProfile: mutation.data,
+                }
             case StateMutationType.RESET_STATE:
                 return {
-                    fileName: undefined,
                     fileLoading: false,
                     resultLoading: {},
                     result: undefined,
                     chunksNumber: 0,
                     csvParsingFinished: false,
                     file: undefined,
-                    currentChart: "",
+                    currentChart: [],
+                    loadingChartReadableName: [],
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",
@@ -224,6 +243,10 @@ export class AppStateMutation {
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
+                    currentView: ViewType.UPLOAD,
+                    memoryHeatmapsDifferenceRepresentation: true,
+                    currentProfile: ProfileType.OVERVIEW,
+                    profiles: createProfiles(),
                 }
         }
     }

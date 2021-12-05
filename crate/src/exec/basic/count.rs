@@ -9,11 +9,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use crate::{
-    exec::basic::{basic::find_unique_string, filter::filter_with},
-    get_record_batches,
-    utils::record_batch_util::create_new_record_batch,
-};
+use crate::{exec::basic::{basic::find_unique_string, filter::filter_with}, state::state::get_record_batches, utils::record_batch_util::create_new_record_batch};
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let vec = batch
@@ -66,7 +62,7 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
-    let unique_batch = find_unique_string(&get_record_batches().unwrap(), column_to_groupby_over);
+    let unique_batch = find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
 
     let vec = unique_batch
         .column(0)
@@ -87,7 +83,6 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     }
 
     let builder = result_builder.finish();
-
     let batch = create_new_record_batch(
         vec![batch.schema().field(column_to_groupby_over).name(), "count"],
         vec![DataType::Utf8, DataType::Float64],

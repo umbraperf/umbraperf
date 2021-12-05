@@ -3,16 +3,14 @@ import React from 'react';
 import styles from '../../style/dashboard.module.css';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import EventsButtons from '../utils/events_buttons';
-import KpiContainer from '../utils/kpi_container';
-import DropdownsOptions from '../utils/dropdowns_options';
+import EventsButtons from '../utils/navigation/events_buttons';
+import KpiContainer from '../utils/containers/kpi_container';
+import DropdownsOptions from '../utils/dropdowns/dropdowns_options';
 import { Grid, Box } from '@material-ui/core';
 
 
 interface Props {
     csvParsingFinished: boolean;
-    multipleEvents?: boolean;
-    setCurrentChart: (newCurrentChart: string) => void;
 }
 
 
@@ -22,11 +20,6 @@ class DashboardHeader extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
     }
-
-    componentDidMount() {
-        this.props.setCurrentChart(model.ChartType.DASHBOARD);
-    }
-
 
     public render() {
 
@@ -38,7 +31,7 @@ class DashboardHeader extends React.Component<Props, {}> {
             <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
                 <Grid item className={styles.dashboardGridCellOptionsItem} xs={12} lg={8} xl={5}>
                     <Box className={styles.dashboardGridCellOptionsBox}>
-                        <EventsButtons multipleEvents={this.props.multipleEvents} />
+                        <EventsButtons />
                     </Box>
                 </Grid>
             </Box>
@@ -66,16 +59,8 @@ const mapStateToProps = (state: model.AppState) => ({
     csvParsingFinished: state.csvParsingFinished,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentChart: (newCurrentChart: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
-        data: newCurrentChart,
-    }),
-});
 
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardHeader);
+export default connect(mapStateToProps)(DashboardHeader);
 
 
 

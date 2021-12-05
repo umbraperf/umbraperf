@@ -1,7 +1,11 @@
+@value colors: "./export-variables.module.css";
+@value appBackgroundColor from colors;
+
 .dropzoneContainer{
     height: 100%;
     display: flex;
     align-items: center;
+    background-color: white;
 }
 
 .dropzoneBase{
@@ -15,7 +19,7 @@
     border-radius: 2;
     border-color: #adadad;
     border-style: dashed;
-    background-color: #fafafa;
+    background-color: appBackgroundColor;
     color: #bdbdbd;
     outline: none;
     transition: border .24s ease-in-out;
@@ -27,7 +31,7 @@
 .dropzoneActive{
     composes: dropzoneBase;
     border-color:#2196f3;
-    background-color: #bdddf7;
+    background-color: appBackgroundColor;
 
 }
 
@@ -35,8 +39,6 @@
     composes: dropzoneBase;
     border-color:#00e676;
     background-color: #d5ebdf;
-
-
 }
 
 .dropzoneReject{

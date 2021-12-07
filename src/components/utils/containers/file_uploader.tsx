@@ -57,7 +57,7 @@ class FileUploader extends React.Component<Props, State> {
     listAcceptedFiles(acceptedFiles: File[]) {
         return acceptedFiles.map(file => (
             <li className={styles.acceptedFilesList} key={file.name}>
-                {file.name} - {file.size} bytes
+                {file.name} - {Math.round((file.size / 1000000 + Number.EPSILON) * 100) / 100} MB
             </li>
         ));
     }

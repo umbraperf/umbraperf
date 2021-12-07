@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import { mode } from 'd3-array';
+import ChartResetButton from '../../utils/togglers/chart_reset_button';
+
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -33,7 +34,25 @@ class SunburstChart extends React.Component<Props, {}> {
 
 
     public render() {
-        return <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+        return <div style={{ position: "relative" }} >
+            {this.createChartResetComponent()}
+            <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
+        </div>
+    }
+
+    createChartResetComponent() {
+        return this.isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={Controller.resetTimeBucketSelection} />;
+    }
+
+    isResetButtonVisible() {
+        if ((this.props.currentOperator !== "All"
+            && !_.isEqual(this.props.currentOperator, this.props.operators))
+            || (this.props.currentPipeline !== "All"
+                && !_.isEqual(this.props.currentPipeline, this.props.pipelines))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     createVegaSignalListeners() {

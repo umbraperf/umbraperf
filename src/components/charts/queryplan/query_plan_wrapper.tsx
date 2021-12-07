@@ -46,6 +46,7 @@ export type PlanNode = {
 export type PlanEdge = {
     source: string,
     target: string,
+    cardinality: number | undefined,
 }
 
 export type FlowGraphNode = {
@@ -69,6 +70,8 @@ export type FlowGraphEdge = {
     type: ConnectionLineType,
     animated: boolean,
     style: CSS.Properties,
+    label: string | undefined,
+    labelStyle: CSS.Properties,
 }
 
 export type FlowGraphElements = Array<FlowGraphNode | FlowGraphEdge>;
@@ -274,6 +277,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             planData.links.push({
                 source: parent,
                 target: currentPlanElement.operator,
+                cardinality: currentPlanElement.cardinality,
             });
 
             ["input", "left", "right"].forEach(childType => {
@@ -282,6 +286,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 }
             });
         }
+
+        console.log(planData.links);
 
         const flowGraphElements: FlowGraphElements = this.createReactFlowNodesEdges(planData.nodes, planData.links);
 
@@ -344,6 +350,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     strokeWidth: '1px'
                 },
                 animated: false,
+                label: edge.cardinality ? `${model.chartConfiguration.nFormatter(+edge.cardinality, 1)}` : "",
+                labelStyle: {
+                    stroke: this.props.appContext.tertiaryColor,
+                }
             }
             return reactFlowEdge;
         });

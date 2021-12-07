@@ -5,16 +5,14 @@ use arrow::{
         Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
         UInt64Array,
     },
-    datatypes::{DataType, Float64Type, Int32Type, Schema, UInt64Type},
+    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
     record_batch::RecordBatch,
 };
 
 use crate::{
     exec::{
         basic::{
-            basic::{find_unique_string, sort_batch},
-            filter::{filter_between_int32, filter_between_u64},
-            statistics,
+            basic::{find_unique_string, sort_batch}
         },
         rest::rest_api::finish_query_exec,
     },
@@ -65,9 +63,8 @@ pub fn create_freq_bucket(
 }
 
 pub fn round(to_round: f64) -> f64 {
-    return f64::trunc((to_round) * 100.0) / 100.0; 
+    return f64::trunc((to_round) * 100.0) / 100.0;
 }
-
 
 pub fn create_mem_bucket(
     record_batch: &RecordBatch,
@@ -234,30 +231,29 @@ pub fn freq_of_pipelines(
         }
 
         if i == time_column.len() - 1 {
-                for operator in vec_operator {
-                    let operator = operator.unwrap();
-                    result_bucket.push(round(round(time_bucket) - bucket_size));
-                    result_vec_operator.push(operator);
-                    let bucket = bucket_map.to_owned();
-                    if matches!(freq, Freq::ABS) {
-                        let frequenzy = bucket.get(operator).unwrap();
-                        result_builder.push(frequenzy.to_owned());
+            for operator in vec_operator {
+                let operator = operator.unwrap();
+                result_bucket.push(round(round(time_bucket) - bucket_size));
+                result_vec_operator.push(operator);
+                let bucket = bucket_map.to_owned();
+                if matches!(freq, Freq::ABS) {
+                    let frequenzy = bucket.get(operator).unwrap();
+                    result_builder.push(frequenzy.to_owned());
+                } else {
+                    if bucket_map.get(operator).unwrap() == &0.0 {
+                        let frequenzy = 0.0;
+                        result_builder.push(frequenzy);
                     } else {
-                        if bucket_map.get(operator).unwrap() == &0.0 {
-                            let frequenzy = 0.0;
-                            result_builder.push(frequenzy);
-                        } else {
-                            let frequenzy =
-                                bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                            let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                            result_builder.push(frequenzy_rounded);
-                        }
+                        let frequenzy =
+                            bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                        result_builder.push(frequenzy_rounded);
                     }
-                    // reset bucket_map
-                    bucket_map.insert(operator, 0.0);
                 }
-                time_bucket += bucket_size;
-            
+                // reset bucket_map
+                bucket_map.insert(operator, 0.0);
+            }
+            time_bucket += bucket_size;
         }
 
         column_index += 1;
@@ -309,7 +305,6 @@ pub fn freq_of_memory(
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
-
     let batch = &sort_batch(&batch, 2, false);
 
     let unique_operator = find_unique_string(batch, column_for_operator);
@@ -360,8 +355,9 @@ pub fn freq_of_memory(
         let current_operator = operator_column.value(i as usize);
         if i == 0 && matches!(mem_en, MEM::DIFF) {
             continue 'outer;
-        } 
-        let value_earlier_index = get_earlier_entry(&batch, i, current_operator, column_for_operator);
+        }
+        let value_earlier_index =
+            get_earlier_entry(&batch, i, current_operator, column_for_operator);
         if (value_earlier_index as usize) == usize::MAX && matches!(mem_en, MEM::DIFF) {
             continue 'outer;
         }
@@ -376,7 +372,6 @@ pub fn freq_of_memory(
             let diff = value_earlier as i64 - value1 as i64;
 
             diff as i32
-
         };
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
@@ -424,7 +419,6 @@ pub fn freq_of_memory(
                 bucket_map.insert(operator, HashMap::new());
             }
         }
-
     }
 
     let batch = create_mem_bucket(
@@ -468,15 +462,13 @@ pub fn freq_of_memory(
         ],
     );
 
-    send_record_batch_to_js(&meta_info); 
+    send_record_batch_to_js(&meta_info);
 
     let sorted_batch = sort_batch(&batch, 1, false);
     let mut offset = 0.;
     let mut hashmap = HashMap::new();
 
-
     for entry in vec_operator.into_iter().enumerate() {
-
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 
         if len == 0. {
@@ -497,7 +489,7 @@ pub fn freq_of_memory(
             );
             hashmap.insert((entry.1.unwrap(), 0 as usize), single_batch);
             continue;
-        } 
+        }
 
         let batch = sorted_batch.slice(offset as usize, len as usize);
 

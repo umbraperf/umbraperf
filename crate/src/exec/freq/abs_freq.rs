@@ -7,14 +7,11 @@ use arrow::{
 };
 
 use crate::{
-    exec::{
-        basic::{
-            basic::{find_unique_string, sort_batch},
-            filter,
-        },
-        freq::freq::create_freq_bucket,
+    exec::basic::{
+        basic::{find_unique_string, sort_batch},
+        filter,
     },
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+    utils::record_batch_util::create_new_record_batch,
 };
 
 use super::freq;

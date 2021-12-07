@@ -50,10 +50,10 @@ mod utils {
     pub mod string_util;
 }
 
-use utils::bindings;
-use utils::record_batch_util;
-use utils::print_to_cons::print_to_js_with_obj;
 use crate::utils::bindings::notify_js_finished_reading;
+use utils::bindings;
+use utils::print_to_cons::print_to_js_with_obj;
+use utils::record_batch_util;
 
 // State
 mod state {
@@ -64,7 +64,6 @@ use crate::state::state::set_file_size;
 use crate::state::state::set_record_batches;
 use crate::state::state::set_serde_dict;
 use state::state::get_record_batches;
-
 
 // TIMER
 fn start_timer() -> instant::Instant {

@@ -5,9 +5,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
-import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
-import IconButton from "@material-ui/core/IconButton";
 import _ from 'lodash';
+import ChartResetButton from '../../utils/togglers/chart_reset_button';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -29,17 +28,22 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
         Controller.resetTimeBucketSelection();
     }
 
     public render() {
 
         return <div style={{ position: "relative" }} >
-            {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={() => Controller.resetTimeBucketSelection()} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>}
+            {/* {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={() => Controller.resetTimeBucketSelection()} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>} */}
+            {this.createChartResetComponent()}
             <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
         </div>
 
+    }
+
+    createChartResetComponent() {
+        return this.props.currentTimeBucketSelectionTuple[0] >= 0 && <ChartResetButton chartResetButtonFunction={Controller.resetTimeBucketSelection} />;
     }
 
     createVegaSignalListeners() {

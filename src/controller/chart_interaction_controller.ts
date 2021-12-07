@@ -78,6 +78,25 @@ export function resetTimeBucketSelection() {
     requestActiveOperatorsTimeframe(appContext.controller);
 }
 
+export function resetSunburstSelection(){
+    resetCurrentOperatorSelection();
+    resetCurrentPipelineSelection();
+}
+
+function resetCurrentOperatorSelection(){
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTOPERATOR,
+        data: store.getState().operators!,
+    });
+}
+
+function resetCurrentPipelineSelection(){
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENTPIPELINE,
+        data: store.getState().pipelines!,
+    });
+}
+
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
     const isMetadataAvailable = () => {

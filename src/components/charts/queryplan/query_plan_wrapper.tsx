@@ -352,8 +352,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 animated: false,
                 label: edge.cardinality ? `${model.chartConfiguration.nFormatter(+edge.cardinality, 1)}` : "",
                 labelStyle: {
-                    stroke: this.props.appContext.tertiaryColor,
-                    strokeWidth: '0.5px'
+                    fill: this.props.appContext.tertiaryColor,
                 }
             }
             return reactFlowEdge;

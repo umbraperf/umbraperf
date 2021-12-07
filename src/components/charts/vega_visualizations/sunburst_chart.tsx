@@ -41,7 +41,7 @@ class SunburstChart extends React.Component<Props, {}> {
     }
 
     createChartResetComponent() {
-        return this.isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={Controller.resetTimeBucketSelection} />;
+        return this.isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={Controller.resetSunburstSelection} />;
     }
 
     isResetButtonVisible() {

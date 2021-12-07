@@ -225,6 +225,13 @@
     vertical-align: middle;
 }
 
+.chartRestButton{
+    position: absolute;
+    left: 20px;
+    margin-top: -9px;
+    z-index: 2;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }

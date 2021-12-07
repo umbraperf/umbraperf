@@ -1,4 +1,4 @@
-name: Umbra-Profiler Release Process
+name: Umbra-Profiler Release & Deploy Process
 
 on:
   push:

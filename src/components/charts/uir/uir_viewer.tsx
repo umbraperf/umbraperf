@@ -455,3 +455,5 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps)
 });
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(UirViewer));
+
+//TEST

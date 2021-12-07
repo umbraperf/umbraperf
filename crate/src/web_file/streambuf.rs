@@ -1,7 +1,7 @@
-use js_sys::Uint8Array;
-use std::io::{Result, Seek, SeekFrom};
-use std::io::{Read};
 use crate::bindings;
+use js_sys::Uint8Array;
+use std::io::Read;
+use std::io::{Result, Seek, SeekFrom};
 
 pub struct WebFileReader {
     offset: u64,
@@ -25,14 +25,14 @@ impl WebFileReader {
 }
 
 impl Seek for WebFileReader {
-    
     fn seek(&mut self, pos: std::io::SeekFrom) -> Result<u64> {
         self.offset = match pos {
             SeekFrom::Current(ofs) => self.offset + (self.length - self.offset).min(ofs as u64),
             SeekFrom::Start(ofs) => self.length.min(ofs as u64),
             SeekFrom::End(ofs) => self.length - self.length.min(ofs as u64),
         };
-        Ok(self.offset)    }
+        Ok(self.offset)
+    }
 }
 
 impl Read for WebFileReader {

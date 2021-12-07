@@ -28,6 +28,7 @@ interface State {
     operatorsColorHidden: boolean;
     operatorColorScale: string[];
     hoverProviderDispose: monaco.IDisposable | undefined,
+    editorMounted: boolean,
 }
 
 
@@ -45,6 +46,7 @@ class UirViewer extends React.Component<Props, State> {
             operatorsColorHidden: false,
             operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
             hoverProviderDispose: undefined,
+            editorMounted: false,
         }
         this.handleEditorWillMount = this.handleEditorWillMount.bind(this);
         this.handleEditorDidMount = this.handleEditorDidMount.bind(this);
@@ -57,12 +59,12 @@ class UirViewer extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
-
-        //Update glyphs when event, currentOperators or operatorColord changes
-        if (this.props.currentEvent !== prevProps.currentEvent
-            || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
-            || !(_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe))
-            || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
+        //Update glyphs when event, currentOperators or operatorColord changes, but only if editor is already mounted
+        if (this.state.editorMounted &&
+            (this.props.currentEvent !== prevProps.currentEvent
+                || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
+                || !(_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe))
+                || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator)))) {
             this.setMonacoGlyphs();
         }
     }
@@ -248,6 +250,10 @@ class UirViewer extends React.Component<Props, State> {
         this.editorRef = editor;
         this.foldAllLines();
         this.setMonacoGlyphs();
+        this.setState((state, props) => ({
+            ...state,
+            editorMounted: true,
+        }));
     }
 
     toggleFoldAllLines(event: React.ChangeEvent<HTMLInputElement>) {

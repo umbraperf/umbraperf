@@ -11,7 +11,7 @@ pub struct WebFileChunkReader {
 
 impl WebFileChunkReader {
     pub fn new(file_size: i32) -> Self {
-        BufferReader::read_to_buffer("samples.parquet",file_size as u64);
+        BufferReader::read_to_buffer("samples.parquet", file_size as u64);
         Self {
             length: file_size as u64,
         }

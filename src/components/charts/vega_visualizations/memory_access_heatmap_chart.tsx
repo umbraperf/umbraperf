@@ -124,10 +124,12 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
             }
         };
 
+        const isSmallWindow = this.props.width < 500;
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
-            width: 300,
-            height: 200,
+            width: isSmallWindow ? 150 : 300,
+            height: isSmallWindow ? 100 : 200,
             padding: { left: 5, right: 5, top: 10, bottom: 10 },
             autosize: { type: "pad", resize: false },
 

@@ -1,4 +1,7 @@
-use crate::{bindings::notify_js_query_result, state::state::{get_serde_dict}, web_file::{web_file_chunkreader::WebFileChunkReader}};
+use crate::{
+    bindings::notify_js_query_result, state::state::get_serde_dict,
+    web_file::web_file_chunkreader::WebFileChunkReader,
+};
 use arrow::{
     array::{Array, ArrayRef, Int64Array, StringArray},
     datatypes::{DataType, Field, Schema, SchemaRef},
@@ -166,7 +169,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     let addr = batch.column(5).to_owned();
 
     let uri = batch.column(4).to_owned();
-       /*  .as_any()
+    /*  .as_any()
         .downcast_ref::<Int64Array>()
         .unwrap();
 
@@ -186,7 +189,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             DataType::Float64,
             DataType::Utf8,
             DataType::UInt64,
-            DataType::Int64
+            DataType::Int64,
         ],
         vec![
             Arc::new(StringArray::from(operator_vec)),
@@ -194,13 +197,12 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             time,
             Arc::new(StringArray::from(pipeline_vec)),
             addr,
-            uri
+            uri,
         ],
     )
 }
 
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
-    
     let mut buff = Cursor::new(vec![]);
 
     let options = arrow::ipc::writer::IpcWriteOptions::default();
@@ -221,6 +223,6 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
     let _writer_mess =
         arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
-    
+
     notify_js_query_result(buff.into_inner());
 }

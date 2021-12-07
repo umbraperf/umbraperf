@@ -1,8 +1,20 @@
-use crate::{exec::basic::{basic, count, filter, kpis, uir::{get_top_srclines, uir}}, record_batch_util::send_record_batch_to_js, state::state::{get_file_size, get_query_from_cache, insert_query_to_cache}, utils::{print_to_cons::print_to_js_with_obj, record_batch_util::concat_record_batches, string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}}};
+use crate::{
+    exec::basic::{
+        basic, count, filter, kpis,
+        uir::{get_top_srclines, uir},
+    },
+    record_batch_util::send_record_batch_to_js,
+    state::state::{get_file_size, get_query_from_cache, insert_query_to_cache},
+    utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_util::concat_record_batches,
+        string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to},
+    },
+};
 use arrow::record_batch::RecordBatch;
 use std::usize;
 
-use super::rest_api_pars::{abs_freq_pars,freq_mem, rel_freq_pars, sort};
+use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 
 // Find name in Record Batch
 // Panic if error, else usize of column
@@ -116,7 +128,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                     "l1-cache-misses" => 1,
                     "l3-cache-misses" => 2,
                     "mem_inst_retired.all_loads" => 3,
-                    &_ => 0
+                    &_ => 0,
                 };
                 record_batch = get_top_srclines(record_batch, order as usize);
             }

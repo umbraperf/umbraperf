@@ -10,14 +10,15 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import QueryPlanViewer from './query_plan_viewer';
 import dagre from 'dagre';
-import { ArrowHeadType, ConnectionLineType, Position } from 'react-flow-renderer';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
 import CSS from 'csstype';
 import { QueryplanNodeData } from './query_plan_node';
-import { QueryplanNodeTooltip } from './query_plan_node_tooltip_content';
+import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
     currentOperator: Array<string> | "All";
+    currentOperatorTimeframe: Array<string> | "All";
     operators: Array<string> | undefined;
     chartData: model.IQueryPlanData,
 }
@@ -28,6 +29,7 @@ interface State {
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
+    // currentUirOperators: Array<string>,
 }
 
 export type PlanNode = {
@@ -38,12 +40,13 @@ export type PlanNode = {
     backgroundFill: string,
     nodeCursor: string,
     isNodeSelectable: boolean,
-    tooltipData: QueryplanNodeTooltip,
+    tooltipData: QueryplanNodeTooltipData,
 }
 
 export type PlanEdge = {
     source: string,
     target: string,
+    cardinality: number | undefined,
 }
 
 export type FlowGraphNode = {
@@ -67,6 +70,8 @@ export type FlowGraphEdge = {
     type: ConnectionLineType,
     animated: boolean,
     style: CSS.Properties,
+    label: string | undefined,
+    labelStyle: CSS.Properties,
 }
 
 export type FlowGraphElements = Array<FlowGraphNode | FlowGraphEdge>;
@@ -82,13 +87,30 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
+            // currentUirOperators: this.getCurrentUirOperators(),
         };
 
         this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
 
+    // getCurrentUirOperators(): string[] {
+    //     let currentUirOperators: string[] = [];
+    //     this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
+    //         if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
+    //             currentUirOperators.push(elem);
+    //         }
+    //     });
+    //     return currentUirOperators;
+    // }
+
     componentDidMount() {
         this.createQueryPlan();
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (!_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe)) {
+            this.updateQueryPlan();
+        }
     }
 
     public render() {
@@ -97,6 +119,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             <div className={styles.queryplanContainerTitle}>Query Plan</div>
             {this.state.renderedFlowPlan}
         </div>
+    }
+
+    updateQueryPlan() {
+        this.setState((state, props) => ({
+            ...state,
+            loading: true,
+            renderedFlowPlan: undefined,
+        }));
+        this.createQueryPlan();
     }
 
     createQueryPlan() {
@@ -153,12 +184,20 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
         const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
+        const isNodeUnavailable = (nodeId: string) => {
+            return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
+        }
+
+        const isNodeSelected = (nodeId: string) => {
+            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId);
+        }
+
         const nodeCursor = (nodeId: string) => {
             //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeId === "root") {
                 return ["default", false];
-            } else if (!this.props.operators!.includes(nodeId)) {
-                //node does not appear in measurement data
+            } else if (isNodeUnavailable(nodeId)) {
+                //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
                 return ["pointer", true];
@@ -168,35 +207,40 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeColor = (nodeId: string) => {
             //add 33 to hex color for 10% opacity
             //return tuple with 0: border color, 1: background color
-            const lowOpacity = "33";
             if (nodeId === "root") {
+                //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (!this.props.operators!.includes(nodeId)) {
-                //node does not appear in measurement data
-                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + lowOpacity];
-            } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId)) {
+            } else if (isNodeUnavailable(nodeId)) {
+                //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
+                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
+            } else if (isNodeSelected(nodeId)) {
+                //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
                 return [nodeColorScale[operatorIndex], nodeBackgroundColorScale[operatorIndex]];
             } else {
+                //inactive node
                 return [this.props.appContext.tertiaryColor, '#fff'];
             }
         }
 
-        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltip => {
+        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
             const tooltipUirLines: string[] = [];
             const tooltipUirLineNumbers: number[] = [];
             const tooltipUirOccurrences: number[] = [];
-            this.props.chartData.nodeTooltipData.operators.forEach((operator, index) => {
-                if(operator === nodeId){
+            let tooltipUirTotalOccurrences: number = 0;
+            this.props.chartData.nodeTooltipData.operators.forEach((operator: string, index: number) => {
+                if (operator === nodeId) {
                     tooltipUirLines.push(this.props.chartData.nodeTooltipData.uirLines[index]);
                     tooltipUirLineNumbers.push(this.props.chartData.nodeTooltipData.uirLineNumbers[index]);
                     tooltipUirOccurrences.push(this.props.chartData.nodeTooltipData.eventOccurrences[index]);
+                    if (tooltipUirTotalOccurrences === 0) tooltipUirTotalOccurrences = this.props.chartData.nodeTooltipData.operatorTotalFrequency[index];
                 }
             });
-            return{
+            return {
                 uirLines: tooltipUirLines,
                 uirLineNumber: tooltipUirLineNumbers,
                 eventOccurrences: tooltipUirOccurrences,
+                totalEventOccurrence: tooltipUirTotalOccurrences,
             }
         }
 
@@ -233,6 +277,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             planData.links.push({
                 source: parent,
                 target: currentPlanElement.operator,
+                cardinality: currentPlanElement.cardinality,
             });
 
             ["input", "left", "right"].forEach(childType => {
@@ -241,6 +286,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 }
             });
         }
+
+        console.log(planData.links);
 
         const flowGraphElements: FlowGraphElements = this.createReactFlowNodesEdges(planData.nodes, planData.links);
 
@@ -300,9 +347,14 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 type: ConnectionLineType.Bezier,
                 style: {
                     stroke: this.props.appContext.tertiaryColor,
-                    strokeWidth: '3px'
+                    strokeWidth: '1px'
                 },
                 animated: false,
+                label: edge.cardinality ? `${model.chartConfiguration.nFormatter(+edge.cardinality, 1)}` : "",
+                labelStyle: {
+                    stroke: this.props.appContext.tertiaryColor,
+                    strokeWidth: '0.5px'
+                }
             }
             return reactFlowEdge;
         });
@@ -353,6 +405,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps)
     currentOperator: state.currentOperator,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
+    currentOperatorTimeframe: state.currentOperatorTimeframe,
 });
 
 

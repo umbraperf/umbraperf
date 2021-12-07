@@ -55,23 +55,7 @@ class KpiContainer extends React.Component<Props, {}> {
         //get array of kpis from redux, map to multiple cards
         return this.props.kpis!.map((elem, index) => {
             if (elem.id === "noSamples") {
-                const nFormatter = ((num: number, digits: number) => {
-                    const lookup = [
-                        { value: 1, symbol: "" },
-                        { value: 1e3, symbol: "k" },
-                        { value: 1e6, symbol: "M" },
-                        { value: 1e9, symbol: "G" },
-                        { value: 1e12, symbol: "T" },
-                        { value: 1e15, symbol: "P" },
-                        { value: 1e18, symbol: "E" }
-                    ];
-                    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-                    const item = lookup.slice().reverse().find(function (item) {
-                        return num >= item.value;
-                    });
-                    return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
-                });
-                return this.createKpiCard(index, elem.title, nFormatter(+elem.value, 1));
+                return this.createKpiCard(index, elem.title, model.chartConfiguration.nFormatter(+elem.value, 1));
             } else if (elem.id === "execTime") {
                 const valueRounded = Math.round(+elem.value) / 1000;
                 const valueString = valueRounded + "s";

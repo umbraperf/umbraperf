@@ -94,6 +94,15 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
                 data: kpis,
             });
             break;
+
+        case model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
+            const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
+            console.log(operatorsTimeframe);
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENTOPERATORTIMEFRAME,
+                data: operatorsTimeframe,
+            });
+            break;
     }
 
     store.dispatch({
@@ -371,6 +380,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
                     eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),
                     operators: resultObject.rustResultTable.getColumn('op').toArray(),
                     uirLineNumbers: resultObject.rustResultTable.getColumn('srcline_num').toArray(),
+                    operatorTotalFrequency: resultObject.rustResultTable.getColumn('total').toArray(),
                 }
                 queryplanDataElem.nodeTooltipData = nodeTooltipData;
             }

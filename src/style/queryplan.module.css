@@ -72,9 +72,21 @@
     align-items: center;
 }
 
+.queryplanNodeTooltip{
+    color: colorAccentBlack;
+    width: 300px;
+    border-style: solid;
+    border-width: var(--tooltipBorderWidth) !important;
+    border-radius: var(--tooltipBorderRadius) !important;
+    border-color: var(--tooltipBorderColor) !important;    
+    background-color: var(--tooltipBackgroundColor);
+}
+
 .queryplanNodeTooltipSubtitle{
+    text-align: right;
     margin-top: 10px;
     margin-bottom: 3px;
+    font-size: 11px;
 }
 
 .queryplanNodeTooltipTableCell{
@@ -86,8 +98,8 @@
 }
 
 .queryplanNodeTooltipTableCellContent{
-    font-size: 11px;
-    color: colorTertiary;
+    font-size: 10px;
+    color: colorAccentBlack;
     white-space: nowrap;
     display: block;
     overflow: hidden;

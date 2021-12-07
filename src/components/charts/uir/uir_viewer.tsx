@@ -8,6 +8,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
+import '../../../style/uir-view-monaco-editor.css';
 
 
 interface AppstateProps {
@@ -16,6 +17,7 @@ interface AppstateProps {
     currentEvent: string | "Default";
     events: Array<string> | undefined;
     currentOperator: Array<string> | "All";
+    currentOperatorTimeframe: Array<string> | "All";
     operators: Array<string> | undefined;
 }
 
@@ -59,6 +61,7 @@ class UirViewer extends React.Component<Props, State> {
         //Update glyphs when event, currentOperators or operatorColord changes
         if (this.props.currentEvent !== prevProps.currentEvent
             || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
+            || !(_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe))
             || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator))) {
             this.setMonacoGlyphs();
         }
@@ -134,16 +137,16 @@ class UirViewer extends React.Component<Props, State> {
                 //tertiary color:
                 'editorLineNumber.foreground': this.props.appContext.tertiaryColor,
                 'editor.lineHighlightBorder': lightColor(this.props.appContext.tertiaryColor),
-                'foreground': this.props.appContext.tertiaryColor,
+                // 'foreground': this.props.appContext.tertiaryColor, makes tooltip text grey, moved to css
                 'editor.selectionHighlightBackground': lightColor(this.props.appContext.tertiaryColor),
+                // 'editorHoverWidget.border': this.props.appContext.tertiaryColor, makes tooltip border grey, moved to css
 
                 //white color:
                 'editor.rangeHighlightBackground': '#fff',
                 'list.activeSelectionForeground': '#fff',
                 'list.hoverForeground': '#fff',
+                'editorHoverWidget.background': '#fff',
 
-                "editorHoverWidget.background": '#fff',
-                "editorHoverWidget.border": this.props.appContext.secondaryColor,
             }
         });
     }
@@ -208,9 +211,9 @@ class UirViewer extends React.Component<Props, State> {
 
     getHoverProviderResult(model: monaco.editor.ITextModel, position: monaco.Position) {
 
-        const markdownUirLine = `- **UIR Line:** ${position.lineNumber}  \n`;
-        const markdownOperator = `- **Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
-        const markdownPipeline = `- **Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
+        const markdownUirLine = `**UIR Line:** ${position.lineNumber}  \n`;
+        const markdownOperator = `**Operator:** ${this.props.chartData.operators[position.lineNumber - 1]}  \n`;
+        const markdownPipeline = `**Pipeline:** ${this.props.chartData.pipelines[position.lineNumber - 1]}  \n`;
         const markdownEvents = this.createMarkdownEventsList(position.lineNumber - 1);
 
 
@@ -231,10 +234,10 @@ class UirViewer extends React.Component<Props, State> {
             if (marginGlyphRepresentation && i + 1 === italicEvent) {
                 italicCharacter = "*";
             }
-            if(this.props.chartData.isFunction[eventIndex] === 0){
+            if (this.props.chartData.isFunction[eventIndex] === 0) {
                 relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
             }
-            const markdownEvent = `- ${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
+            const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;
@@ -349,7 +352,7 @@ class UirViewer extends React.Component<Props, State> {
             if (eventOccurence > 0) {
                 const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
                 const relativeFunctionEventOccurence = (this.props.chartData[relativeFunctionEventString])[i];
-                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence)/10);
+                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
                 const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
                 glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
@@ -357,14 +360,17 @@ class UirViewer extends React.Component<Props, State> {
 
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
-            if (!this.state.operatorsColorHidden
-                && this.props.operators!.includes(operator)
-                && operator !== "None"
-                && (this.props.currentOperator === "All"
-                    || this.props.currentOperator.includes(operator))) {
-                const operatorColorGroup = this.props.operators!.indexOf(operator);
-                elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
+            if (!this.state.operatorsColorHidden && operator !== "None") {
+                if (!(this.props.operators!.includes(operator) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(operator)))) {
+                    //node not available, not in sample or nor in time selection
+                    elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", -1);
+                } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator)) {
+                    //node available and selected
+                    const operatorColorGroup = this.props.operators!.indexOf(operator);
+                    elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
+                }
             }
+
 
             (this.editorRef as any).deltaDecorations([this.globalEventOccurrenceDecorations[i]], [
                 {
@@ -411,43 +417,25 @@ class UirViewer extends React.Component<Props, State> {
                 this.addCssClassForGlyphToDom(className, glyphClassGroupNumber as number);
             }
             return className;
-        }else if(glyphClassScaleType == "Event"){
+        } else if (glyphClassScaleType == "Event") {
             return styles[className];
-        }else{
-            return "";
         }
+        return "";
 
     }
 
     addCssClassForGlyphToDom(className: string, glyphClassGroupNumber: number) {
         const style = document.createElement('style');
         style.setAttribute("id", className);
-        const color = this.state.operatorColorScale[glyphClassGroupNumber];
+        let color = "";
+        if (glyphClassGroupNumber === -1) {
+            color = this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex;
+        } else {
+            color = this.state.operatorColorScale[glyphClassGroupNumber];
+        }
         style.innerHTML = `.${className} { background: ${color}; }`;
         this.editorContainerRef.current!.appendChild(style);
     }
-
-    // createCustomCssGlyphClass(colorScaleType: "Event" | "Operator", colorGroup: number) {
-
-    //     //return name of correct css class, create class if not yet created
-    //     const className = `glyphClass${colorScaleType}${colorGroup}`;
-
-    //     if (this.editorContainerRef.current!.children.namedItem(className)) {
-    //         return className;
-    //     } else {
-    //         const style = document.createElement('style');
-    //         style.setAttribute("id", className);
-    //         let color = "";
-    //         if (colorScaleType === "Event") {
-    //             color = model.chartConfiguration.getOrangeColor(colorGroup as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
-    //         } else if (colorScaleType === "Operator") {
-    //             color = this.state.operatorColorScale[colorGroup];
-    //         }
-    //         style.innerHTML = `.${className} { background: ${color}; }`;
-    //         this.editorContainerRef.current!.appendChild(style);
-    //         return className;
-    //     }
-    // }
 
 }
 
@@ -456,6 +444,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps)
     currentEvent: state.currentEvent,
     events: state.events,
     currentOperator: state.currentOperator,
+    currentOperatorTimeframe: state.currentOperatorTimeframe,
     operators: state.operators,
 });
 

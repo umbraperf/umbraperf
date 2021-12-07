@@ -1,0 +1,14 @@
+.monaco-hover{
+    border: solid !important;
+    border-width: var(--tooltipBorderWidth) !important;
+    border-radius: var(--tooltipBorderRadius) !important;
+    border-color: var(--tooltipBorderColor) !important;
+    background-color: var(--tooltipBackgroundColor) !important;
+    margin-left: 10px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.hover-row p{
+    font-size: 11px;
+}

@@ -376,10 +376,8 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         if entry.contains("None") {
         } else {
             let filter = filter_with(5, vec![&entry], &sort);
-            print_to_js_with_obj(&format!("{:?}", filter).into());
             let column = filter.column(ordered_by + 1).as_any().downcast_ref::<Float64Array>().unwrap();
             let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
-            print_to_js_with_obj(&format!("{:?}", sum).into());
             vec_sum.push(sum);
             vec_sum.push(sum);  
             vec_sum.push(sum);  
@@ -396,10 +394,6 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let op = StringArray::from(batch.column(5).data().clone());
     let srcline_num = Int32Array::from(batch.column(8).data().clone());
     let total = Float64Array::from(vec_sum);
-    print_to_js_with_obj(&format!("{:?}", op).into());
-
-    print_to_js_with_obj(&format!("{:?}", total).into());
-
 
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {

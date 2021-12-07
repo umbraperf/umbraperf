@@ -5,7 +5,6 @@ use std::{
 
 use arrow::{
     array::{Float64Array, Int32Array, Int64Array, StringArray},
-    compute::filter,
     datatypes::DataType,
     record_batch::RecordBatch,
 };
@@ -13,10 +12,7 @@ use arrow::{
 use crate::{
     exec::basic::{basic::sort_batch, filter::filter_between_int32},
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{
-        print_to_cons::print_to_js_with_obj,
-        record_batch_util::{self, create_new_record_batch},
-    },
+    utils::record_batch_util::{self, create_new_record_batch},
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -368,21 +364,25 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let mut vec_sum = Vec::new();
 
     vec_sum.push(0.);
-    vec_sum.push(0.);  
-    vec_sum.push(0.);  
-    vec_sum.push(0.);  
-    vec_sum.push(0.); 
+    vec_sum.push(0.);
+    vec_sum.push(0.);
+    vec_sum.push(0.);
+    vec_sum.push(0.);
     for entry in unique {
         if entry.contains("None") {
         } else {
             let filter = filter_with(5, vec![&entry], &sort);
-            let column = filter.column(ordered_by + 1).as_any().downcast_ref::<Float64Array>().unwrap();
+            let column = filter
+                .column(ordered_by + 1)
+                .as_any()
+                .downcast_ref::<Float64Array>()
+                .unwrap();
             let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
             vec_sum.push(sum);
-            vec_sum.push(sum);  
-            vec_sum.push(sum);  
-            vec_sum.push(sum);  
-            vec_sum.push(sum);    
+            vec_sum.push(sum);
+            vec_sum.push(sum);
+            vec_sum.push(sum);
+            vec_sum.push(sum);
             vec.push(get_max_top_five(filter));
         }
     }

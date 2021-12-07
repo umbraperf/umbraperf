@@ -2,13 +2,13 @@ use arrow::error::Result as ArrowResult;
 use arrow::{
     array::{ArrayRef, StringArray},
     compute::{sort_to_indices, take},
-    datatypes::{Schema},
+    datatypes::Schema,
     record_batch::RecordBatch,
 };
 use std::{collections::HashSet, sync::Arc};
 
+use crate::utils::record_batch_util::create_new_record_batch;
 use crate::utils::record_batch_util::create_record_batch;
-use crate::utils::record_batch_util::{create_new_record_batch};
 
 pub fn select_columns(batch: RecordBatch, columns_to_select: Vec<usize>) -> RecordBatch {
     let mut vec = Vec::new();

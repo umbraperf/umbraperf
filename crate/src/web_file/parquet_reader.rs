@@ -1,11 +1,11 @@
-use std::{io::{Read}};
+use std::io::Read;
 
-use crate::{state::state::{append_to_buffer, clear_buffer, get_buffer}};
+use crate::state::state::{append_to_buffer, clear_buffer, get_buffer};
 
 use super::streambuf::WebFileReader;
 
 pub struct BufferReader {
-    offset: u64
+    offset: u64,
 }
 
 impl BufferReader {
@@ -29,7 +29,7 @@ impl BufferReader {
             offset = offset + readsize as u64;
         }
 
-        Self { offset: 0}
+        Self { offset: 0 }
     }
 
     pub fn set_offset(offset: u64) -> Self {
@@ -47,7 +47,7 @@ impl Read for BufferReader {
         let read_size = read_size.min(binary.len() - (self.offset as usize));
 
         if read_size == 0 {
-            return Ok(0)
+            return Ok(0);
         }
 
         buf.clone_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);

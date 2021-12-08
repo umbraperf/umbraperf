@@ -230,9 +230,7 @@ class UirViewer extends React.Component<Props, State> {
 
     createMarkdownEventsList(currentIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
         let markdownEventsString = "";
-        // for (let i = 0; i < this.props.events!.length; i++) {
-        //TODO enable
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < this.props.events!.length; i++) {
             let italicCharacter = "";
             let relativeEventString = "";
             if (marginGlyphRepresentation && i + 1 === italicEvent) {

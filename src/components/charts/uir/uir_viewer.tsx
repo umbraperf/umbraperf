@@ -228,19 +228,21 @@ class UirViewer extends React.Component<Props, State> {
         };
     }
 
-    createMarkdownEventsList(eventIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
+    createMarkdownEventsList(currentIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
         let markdownEventsString = "";
-        for (let i = 0; i < this.props.events!.length; i++) {
+        // for (let i = 0; i < this.props.events!.length; i++) {
+        //TODO enable
+        for (let i = 0; i < 4; i++) {
             let italicCharacter = "";
             let relativeEventString = "";
             if (marginGlyphRepresentation && i + 1 === italicEvent) {
                 italicCharacter = "*";
             }
-            if (this.props.chartData.isFunction[eventIndex] === 0) {
-                // relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
+            if (this.props.chartData.isFunction[currentIndex] === 0) {
+                relativeEventString = `, Function ${this.props.chartData.eventsRelativeFrequency[i + 1][currentIndex]}%`
             }
-            // const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
-            // markdownEventsString += markdownEvent;
+            const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${this.props.chartData.eventsFrequency[i + 1][currentIndex]}%${relativeEventString}${italicCharacter}  \n`;
+            markdownEventsString += markdownEvent;
         }
         return markdownEventsString;
 

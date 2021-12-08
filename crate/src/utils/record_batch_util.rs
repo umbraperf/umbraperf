@@ -3,7 +3,7 @@ use crate::{
     web_file::web_file_chunkreader::WebFileChunkReader,
 };
 use arrow::{
-    array::{Array, ArrayRef, Int64Array, StringArray},
+    array::{Array, ArrayRef, Int64Array, StringArray, Float64Array, UInt64Array},
     datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
@@ -151,7 +151,15 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         event_vec.push(dict_key.unwrap().as_str());
     }
 
-    let time = batch.column(2).to_owned();
+    let time_col = batch.column(2)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();;
+
+    let mut time = Vec::new();
+    for value in time_col {
+        time.push(value.unwrap());
+    }
 
     let pipeline = batch
         .column(1)
@@ -166,20 +174,34 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let addr = batch.column(5).to_owned();
+    let addr_col = batch.column(5)
+        .as_any()
+        .downcast_ref::<UInt64Array>()
+        .unwrap();;
+
+    let mut addr = Vec::new();
+    for value in addr_col {
+        addr.push(value.unwrap());
+    }
 
     let uri = batch.column(4).to_owned();
-    /*  .as_any()
-        .downcast_ref::<Int64Array>()
-        .unwrap();
 
-    let mut uri_vec = Vec::new();
-    let hash_map = serde.dict.get("srclines").unwrap();
-    print_to_js_with_obj(&format!("{:?}", hash_map).into());
-    for value in uri {
-        let dict_key = hash_map.get(&(value.unwrap() as u64));
-        uri_vec.push(dict_key.unwrap().as_str());
-    } */
+    let uri_col = batch.column(4)
+        .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();;
+
+    let mut uri = Vec::new();
+    for value in uri_col {
+        uri.push(value.unwrap());
+    }
+    
+    operator_vec.push("test_Operator");
+    event_vec.push("test_Event");
+    time.push(99.0);
+    pipeline_vec.push("test_Pipeline");
+    addr.push(12341234);
+    uri.push(2);
 
     create_new_record_batch(
         vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],
@@ -194,10 +216,10 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         vec![
             Arc::new(StringArray::from(operator_vec)),
             Arc::new(StringArray::from(event_vec)),
-            time,
+            Arc::new(Float64Array::from(time)),
             Arc::new(StringArray::from(pipeline_vec)),
-            addr,
-            uri,
+            Arc::new(UInt64Array::from(addr)),
+            Arc::new(Int64Array::from(uri)),
         ],
     )
 }

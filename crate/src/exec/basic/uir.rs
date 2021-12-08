@@ -77,7 +77,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 .collect::<Vec<&str>>();
             let srcline_key = split[1];
             if dict.uri_dict.get(srcline_key).is_some() {
-                if entry.0 == 5 {
+                if entry.0 < 30 {
                     current_ev = "test_Event";
                 }
                 let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());

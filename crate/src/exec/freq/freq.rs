@@ -142,7 +142,7 @@ pub fn freq_of_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>,
     from: f64,
-    to: f64,
+    _to: f64,
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2, false);
 
@@ -299,7 +299,7 @@ pub fn freq_of_memory(
     column_for_time: usize,
     bucket_size: f64,
     from: f64,
-    to: f64,
+    _to: f64,
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
@@ -529,7 +529,7 @@ pub fn freq_of_memory(
         );
 
         let mem_column = get_int32_column(&single_batch, 2);
-        let mem_vec = mem_column
+        let _mem_vec = mem_column
             .into_iter()
             .map(|v| (v.unwrap() as i64))
             .collect::<Vec<i64>>();

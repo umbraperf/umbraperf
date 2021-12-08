@@ -347,20 +347,34 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
 
         case model.BackendQueryType.GET_GROUPED_UIR_LINES:
 
+            let eventsFrequency: {
+                [eventId: number]: Array<number>;
+            } = {};
+            let eventsRelativeFrequency: {
+                [eventId: number]: Array<number>;
+            } = {};
+            for (let i = 0; i < store.getState().events!.length; i++) {
+                const eventId = i + 1;
+                eventsFrequency[eventId] = resultObject.rustResultTable.getColumn(`perc${eventId}`).toArray();
+                eventsRelativeFrequency[eventId] = resultObject.rustResultTable.getColumn(`rel_perc1${eventId}`).toArray();
+            }
+
             chartDataElem = model.createChartDataObject(
                 requestId,
                 {
                     chartType: model.ChartType.UIR_VIEWER,
                     data: {
                         uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
-                        event1: resultObject.rustResultTable.getColumn('perc1').toArray(),
-                        event2: resultObject.rustResultTable.getColumn('perc2').toArray(),
-                        event3: resultObject.rustResultTable.getColumn('perc3').toArray(),
-                        event4: resultObject.rustResultTable.getColumn('perc4').toArray(),
-                        relEvent1: resultObject.rustResultTable.getColumn('rel_perc1').toArray(),
-                        relEvent2: resultObject.rustResultTable.getColumn('rel_perc2').toArray(),
-                        relEvent3: resultObject.rustResultTable.getColumn('rel_perc3').toArray(),
-                        relEvent4: resultObject.rustResultTable.getColumn('rel_perc4').toArray(),
+                        eventsFrequency,
+                        eventsRelativeFrequency,
+                        // event1: resultObject.rustResultTable.getColumn('perc1').toArray(),
+                        // event2: resultObject.rustResultTable.getColumn('perc2').toArray(),
+                        // event3: resultObject.rustResultTable.getColumn('perc3').toArray(),
+                        // event4: resultObject.rustResultTable.getColumn('perc4').toArray(),
+                        // relEvent1: resultObject.rustResultTable.getColumn('rel_perc1').toArray(),
+                        // relEvent2: resultObject.rustResultTable.getColumn('rel_perc2').toArray(),
+                        // relEvent3: resultObject.rustResultTable.getColumn('rel_perc3').toArray(),
+                        // relEvent4: resultObject.rustResultTable.getColumn('rel_perc4').toArray(),
                         operators: resultObject.rustResultTable.getColumn('op').toArray(),
                         pipelines: resultObject.rustResultTable.getColumn('pipe').toArray(),
                         isFunction: resultObject.rustResultTable.getColumn('func_flag').toArray(),

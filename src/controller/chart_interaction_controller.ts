@@ -7,7 +7,6 @@ import { requestActiveOperatorsTimeframe } from ".";
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
     const currentOperator = store.getState().currentOperator;
-    // const currentPipeline = store.getState().currentPipeline;
     const operators = store.getState().operators;
 
     if (currentOperator === "All" || !currentOperator.includes("")) {
@@ -18,15 +17,20 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
     } else {
         const selectedIndexPosition = operators!.indexOf(selectedOperator);
         if (currentOperator[selectedIndexPosition] === "") {
-            // if (selectedOperatorPipeline && currentPipeline.includes(selectedOperatorPipeline)) {
-            // Automatically disable pipeline on operator selection 
-            //     handlePipelineSelection(selectedOperatorPipeline);
-            // }
+            //Operator was disbaled and will be enabled
+            
+            const currentPipeline = store.getState().currentPipeline;
+            if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
+                // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
+                handlePipelineSelection(selectedOperatorPipeline);
+            }
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENTOPERATOR,
                 data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
             });
         } else {
+            //Operator was enabled and will be disabled
+
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENTOPERATOR,
                 data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),

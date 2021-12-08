@@ -129,11 +129,21 @@
 }
 
 .eventButton{
-    animation: fadeIn 1s;
+    /* animation: fadeIn 1s;
     width: 135px;
     border-radius: 70px;
     margin: 7px;
+    font-size: 10px; */
+    animation: fadeIn 1s;
+    max-width: 135px;
+    min-width: 115px;
+    border-radius: 70px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     font-size: 10px;
+    flex: 1 1 135px;
 }
 
 .kpiContainer{

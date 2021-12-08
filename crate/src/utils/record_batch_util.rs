@@ -201,7 +201,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     time.push(99.0);
     pipeline_vec.push("test_Pipeline");
     addr.push(12341234);
-    uri.push(2);
+    uri.push(2); 
 
     create_new_record_batch(
         vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],

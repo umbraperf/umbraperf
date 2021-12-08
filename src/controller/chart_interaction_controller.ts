@@ -7,7 +7,7 @@ import { requestActiveOperatorsTimeframe } from ".";
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
     const currentOperator = store.getState().currentOperator;
-    const currentPipeline = store.getState().currentPipeline;
+    // const currentPipeline = store.getState().currentPipeline;
     const operators = store.getState().operators;
 
     if (currentOperator === "All" || !currentOperator.includes("")) {
@@ -18,9 +18,10 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
     } else {
         const selectedIndexPosition = operators!.indexOf(selectedOperator);
         if (currentOperator[selectedIndexPosition] === "") {
-            if (selectedOperatorPipeline && currentPipeline.includes(selectedOperatorPipeline)) {
-                handlePipelineSelection(selectedOperatorPipeline);
-            }
+            // if (selectedOperatorPipeline && currentPipeline.includes(selectedOperatorPipeline)) {
+            // Automatically disable pipeline on operator selection 
+            //     handlePipelineSelection(selectedOperatorPipeline);
+            // }
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENTOPERATOR,
                 data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
@@ -78,19 +79,19 @@ export function resetTimeBucketSelection() {
     requestActiveOperatorsTimeframe(appContext.controller);
 }
 
-export function resetSunburstSelection(){
+export function resetSunburstSelection() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
 }
 
-function resetCurrentOperatorSelection(){
+function resetCurrentOperatorSelection() {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENTOPERATOR,
         data: store.getState().operators!,
     });
 }
 
-function resetCurrentPipelineSelection(){
+function resetCurrentPipelineSelection() {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENTPIPELINE,
         data: store.getState().pipelines!,

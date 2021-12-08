@@ -51,11 +51,11 @@ export type QueryVariant =
 export function createBackendQuery(query: QueryVariant) {
 
     const bucketSize = () => {
-        return (query.data as any).bucketSize ? `time:${(query.data as any).bucketSize}` : '';
+        return `time:${(query.data as any).bucketSize}`;
     }
 
     const event = () => {
-        return (query.data as any).event ? ((query.data as any).event === "Default" ? 'Default' : (query.data as any).event) : '';
+        return (query.data as any).event;
     }
     const eventFilter = () => {
         const eventString = event();
@@ -63,11 +63,11 @@ export function createBackendQuery(query: QueryVariant) {
     }
 
     const doubleEvent = () => {
-        return (query.data as any).event1 && (query.data as any).event2 ? { event1: (query.data as any).event1, event2: (query.data as any).event2 } : { event1: "Default", event2: "Default" };
+        return { event1: (query.data as any).event1, event2: (query.data as any).event2 };
     }
 
     const time = () => {
-        return (query.data as any).timeBucketFrame ? `${(query.data as any).timeBucketFrame[0]}from_to${(query.data as any).timeBucketFrame[1]}` : '';
+        return `${(query.data as any).timeBucketFrame[0]}from_to${(query.data as any).timeBucketFrame[1]}`;
     }
     const timeFilter = () => {
         const timeString = time();
@@ -75,7 +75,7 @@ export function createBackendQuery(query: QueryVariant) {
     }
 
     const pipelines = () => {
-        return (query.data as any).pipelines && (query.data as any).pipelines.length > 0 ? ((query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join()) : ' ';
+        return (query.data as any).pipelines === "All" ? 'All' : (query.data as any).pipelines.join();
     }
     const pipelinesFilter = () => {
         const pipelinesString = pipelines();
@@ -83,7 +83,7 @@ export function createBackendQuery(query: QueryVariant) {
     }
 
     const operators = () => {
-        return (query.data as any).operators && (query.data as any).operators.length > 0 ? ((query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join()) : ' ';
+        return (query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join();
     }
     const operatorsFilter = () => {
         let operatorsString = operators();

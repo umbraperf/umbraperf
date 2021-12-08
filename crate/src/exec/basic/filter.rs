@@ -1,5 +1,5 @@
 use arrow::{
-    array::{ArrayRef, BooleanArray, Float64Array, Int32Array, StringArray, UInt64Array},
+    array::{ArrayRef, BooleanArray, Float64Array, Int32Array, StringArray},
     record_batch::RecordBatch,
 };
 

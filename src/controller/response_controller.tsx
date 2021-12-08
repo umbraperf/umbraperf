@@ -353,10 +353,13 @@ function storeChartDataFromRust(requestId: number, resultObject: model.Result, r
             let eventsRelativeFrequency: {
                 [eventId: number]: Array<number>;
             } = {};
-            for (let i = 0; i < store.getState().events!.length; i++) {
+            // for (let i = 0; i < store.getState().events!.length; i++) {
+            //TODO enable and replace:
+            for (let i = 0; i < 4; i++) {
+
                 const eventId = i + 1;
                 eventsFrequency[eventId] = resultObject.rustResultTable.getColumn(`perc${eventId}`).toArray();
-                eventsRelativeFrequency[eventId] = resultObject.rustResultTable.getColumn(`rel_perc1${eventId}`).toArray();
+                eventsRelativeFrequency[eventId] = resultObject.rustResultTable.getColumn(`rel_perc${eventId}`).toArray();
             }
 
             chartDataElem = model.createChartDataObject(

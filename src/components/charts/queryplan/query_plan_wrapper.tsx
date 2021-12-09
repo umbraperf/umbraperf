@@ -89,19 +89,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             renderFlowPlan: true,
             // currentUirOperators: this.getCurrentUirOperators(),
         };
-
-        this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
-
-    // getCurrentUirOperators(): string[] {
-    //     let currentUirOperators: string[] = [];
-    //     this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
-    //         if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
-    //             currentUirOperators.push(elem);
-    //         }
-    //     });
-    //     return currentUirOperators;
-    // }
 
     componentDidMount() {
         this.createQueryPlan();
@@ -160,18 +148,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: this.props.height,
             width: this.props.width,
             graphElements: flowGraphData,
-            handleOperatorSelection: this.handleOperatorSelection,
         } as any);
 
         return planViewer;
-    }
-
-
-    handleOperatorSelection(elementId: string) {
-        if (this.props.operators!.includes(elementId)) {
-            //Only trigger operator selection if operator is in measurement data
-            Controller.handleOperatorSelection(elementId);
-        }
     }
 
     createFlowGraphData(root: Partial<PlanNode> & { child: object }): FlowGraphElements {

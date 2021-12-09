@@ -1,3 +1,4 @@
+import * as Controller from '../../../controller';
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
@@ -11,7 +12,6 @@ interface Props {
     height: number;
     width: number;
     graphElements: FlowGraphElements,
-    handleOperatorSelection: (elementId: string) => void;
 }
 
 class QueryPlanViewer extends React.Component<Props, {}> {
@@ -22,7 +22,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
     }
 
     handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
-        this.props.handleOperatorSelection(element.id);
+        Controller.handleOperatorSelection(element.id);
     }
 
     onLoad(reactFlowInstance: any) {

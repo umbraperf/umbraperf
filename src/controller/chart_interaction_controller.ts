@@ -8,33 +8,37 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
 
     const currentOperator = store.getState().currentOperator;
     const operators = store.getState().operators;
+    const operatorsTimefrabe = store.getState().currentOperatorTimeframe;
 
-    if (currentOperator === "All" || !currentOperator.includes("")) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENTOPERATOR,
-            data: operators!.map((elem, index) => (elem === selectedOperator ? elem : "")),
-        });
-    } else {
-        const selectedIndexPosition = operators!.indexOf(selectedOperator);
-        if (currentOperator[selectedIndexPosition] === "") {
-            //Operator was disbaled and will be enabled
-            
-            const currentPipeline = store.getState().currentPipeline;
-            if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                handlePipelineSelection(selectedOperatorPipeline);
-            }
+    if (operatorsTimefrabe.includes(selectedOperator) && operators!.includes(selectedOperator)) {
+
+        if (currentOperator === "All" || !currentOperator.includes("")) {
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENTOPERATOR,
-                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
+                data: operators!.map((elem, index) => (elem === selectedOperator ? elem : "")),
             });
         } else {
-            //Operator was enabled and will be disabled
+            const selectedIndexPosition = operators!.indexOf(selectedOperator);
+            if (currentOperator[selectedIndexPosition] === "") {
+                //Operator was disbaled and will be enabled
 
-            store.dispatch({
-                type: model.StateMutationType.SET_CURRENTOPERATOR,
-                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
-            });
+                const currentPipeline = store.getState().currentPipeline;
+                if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
+                    // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
+                    handlePipelineSelection(selectedOperatorPipeline);
+                }
+                store.dispatch({
+                    type: model.StateMutationType.SET_CURRENTOPERATOR,
+                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
+                });
+            } else {
+                //Operator was enabled and will be disabled
+
+                store.dispatch({
+                    type: model.StateMutationType.SET_CURRENTOPERATOR,
+                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
+                });
+            }
         }
     }
 

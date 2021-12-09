@@ -10,7 +10,7 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{basic::sort_batch, filter::filter_between_int32},
+    exec::{basic::{basic::sort_batch, filter::filter_between_int32}, rest::rest_api::find_name},
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
     utils::{record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj},
 };
@@ -353,10 +353,12 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
     let batch = uir(0, record_batch);
 
-    let only_functions = filter_between_int32(7, 0, 0, &batch);
+    let function_flac_col = find_name("func_flag", &batch);
+    let only_functions = filter_between_int32(function_flac_col, 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);
 
-    let unique = find_unique_string(&sort, 5);
+    let op_col = find_name("op", &sort);
+    let unique = find_unique_string(&sort, op_col);
     let unique = unique
         .column(0)
         .as_any()
@@ -381,7 +383,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     for entry in unique {
         if entry.contains("None") {
         } else {
-            let filter = filter_with(5, vec![&entry], &sort);
+            let filter = filter_with(op_col, vec![&entry], &sort);
             let column = filter
                 .column(ordered_by + 1)
                 .as_any()
@@ -399,10 +401,12 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let batch = record_batch_util::convert_without_mapping(vec);
 
+    let srcline_num_col = find_name("srcline_num", &batch);
+
     let srcline = StringArray::from(batch.column(0).data().clone());
     let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
-    let op = StringArray::from(batch.column(5).data().clone());
-    let srcline_num = Int32Array::from(batch.column(8).data().clone());
+    let op = StringArray::from(batch.column(op_col).data().clone());
+    let srcline_num = Int32Array::from(batch.column(srcline_num_col).data().clone());
     let total = Float64Array::from(vec_sum);
 
     let mut op_vec = Vec::new();

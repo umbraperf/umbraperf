@@ -38,7 +38,7 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         for item in vec.iter().skip(i).step_by(num_of_events) {
             sum += item;
         }
-        out_vec.push(sum);
+        out_vec.push(f64::trunc((sum) * 100.0) / 100.0);
     }
     
     out_vec
@@ -161,7 +161,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                                 .get(&(item.0 as i64).to_string().as_str())
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
-                            let percentage = specific / total;
+                            let percentage = round(specific / total);
                             buffer_percentage.push(percentage)
                         }
                     }
@@ -215,7 +215,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 if total_sum_vec[curr_freq.0] == 0. {
                     vec.push(0.);
                 } else {
-                    vec.push(curr_freq.1 / total_sum_vec[curr_freq.0]);
+                    vec.push(round(curr_freq.1 / total_sum_vec[curr_freq.0]));
                 }
             }
             let rel_freq = RELFREQ {

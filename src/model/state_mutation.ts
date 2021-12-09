@@ -26,7 +26,7 @@ export enum StateMutationType {
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
-    SET_OPERATORGROUPS = 'SET_OPERATORGROUPS',
+    SET_PHYSICALOPERATORS = 'SET_PHYSICALOPERATORS',
     SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
@@ -62,7 +62,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
-    | StateMutation<StateMutationType.SET_OPERATORGROUPS, Array<string>>
+    | StateMutation<StateMutationType.SET_PHYSICALOPERATORS, Array<string>>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
@@ -167,10 +167,10 @@ export class AppStateMutation {
                     ...state,
                     operators: mutation.data,
                 };
-            case StateMutationType.SET_OPERATORGROUPS:
+            case StateMutationType.SET_PHYSICALOPERATORS:
                 return {
                     ...state,
-                    operatorGroups: mutation.data,
+                    physicalOperators: mutation.data,
                 }
             case StateMutationType.SET_KPIS:
                 return {
@@ -242,7 +242,7 @@ export class AppStateMutation {
                     pipelines: undefined,
                     pipelinesShort: undefined,
                     operators: undefined,
-                    operatorGroups: undefined,
+                    physicalOperators: undefined,
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},

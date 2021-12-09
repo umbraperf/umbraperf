@@ -181,9 +181,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             links: new Array<PlanEdge>()
         }
 
-        const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
-        const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
-
         const isNodeUnavailable = (nodeId: string) => {
             return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }
@@ -203,6 +200,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 return ["pointer", true];
             }
         }
+        
+        const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
+        const nodeDisabledScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.25);
 
         const nodeColor = (nodeId: string) => {
             //add 33 to hex color for 10% opacity
@@ -212,14 +212,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 return [this.props.appContext.secondaryColor, '#fff'];
             } else if (isNodeUnavailable(nodeId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
-                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
+                return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
             } else if (isNodeSelected(nodeId)) {
                 //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return [nodeColorScale[operatorIndex], nodeBackgroundColorScale[operatorIndex]];
+                return ['#fff', nodeColorScale[operatorIndex]];
             } else {
                 //inactive node
-                return [this.props.appContext.tertiaryColor, '#fff'];
+                const operatorIndex = this.props.operators!.indexOf(nodeId);
+                return ['#fff', nodeDisabledScale[operatorIndex], ];
             }
         }
 

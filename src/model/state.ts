@@ -21,7 +21,7 @@ export interface AppState {
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
-    operatorGroups: Array<string> | undefined;
+    physicalOperators: Array<string> | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
@@ -55,7 +55,7 @@ export function createDefaultState(): AppState {
         pipelines: undefined,
         pipelinesShort: undefined,
         operators: undefined,
-        operatorGroups: undefined,
+        physicalOperators: undefined,
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},

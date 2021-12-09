@@ -142,7 +142,7 @@ export let chartConfiguration: ChartConfiguration = {
     hoverFillOpacity: 0.5,
 
     //Color properties:
-    colorLowOpacityHex: "33",
+    colorLowOpacityHex: "26",
 
     //Number formatter:
     nFormatter: (num: number, digits: number) => {

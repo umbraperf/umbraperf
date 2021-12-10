@@ -75,9 +75,15 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
         case model.BackendQueryType.GET_OPERATORS:
             const operators = store.getState().result?.rustResultTable.getColumn('operator').toArray();
+            const physicaloperators = ""; //TODO 
             store.dispatch({
                 type: model.StateMutationType.SET_OPERATORS,
                 data: operators,
+            });
+            //TODO 
+            store.dispatch({
+                type: model.StateMutationType.SET_PHYSICALOPERATORS,
+                data: operators.map((elem: string) => elem.substring(0,3)),
             });
             break;
 

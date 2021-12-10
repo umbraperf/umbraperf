@@ -213,7 +213,7 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
     interface IPhysicalOperatorCount { [operator: string]: number }
 
     const physicalOperatosBaseHsl: Array<[number, number, number]> = [
-        //TODO more base colors with l 50
+        //vega tableau10 with adjusted luminance
         [211, 38, 50],
         [30, 92, 50],
         [114, 37, 50],
@@ -224,6 +224,10 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         [339, 55, 50],
         [317, 27, 50],
         [22, 25, 50],
+        //own
+        [194, 70, 50],
+        [314, 100, 50],
+        [63, 100, 50]
     ]
 
     //create base color object for physical operators

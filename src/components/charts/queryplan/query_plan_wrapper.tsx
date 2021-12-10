@@ -184,7 +184,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         // const nodeDisabledScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.25);
 
         const nodeColor = (nodeId: string) => {
-            //add 33 to hex color for 10% opacity
             //return tuple with 0: border color, 1: background color
             if (nodeId === "root") {
                 //root node

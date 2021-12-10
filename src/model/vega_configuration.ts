@@ -255,6 +255,8 @@ const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
 //Create and return color scales
 // TODO 
 export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number) {
+    interface IPhysicalOperatorBaseColors { [operator: string]: [number, number, number] }
+    interface IPhysicalOperatorCount { [operator: string]: number }
 
     const physicalOperatosBaseHsl: Array<[number, number, number]> = [
         //TODO more base colors with l 50
@@ -272,8 +274,6 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
 
     //create base color object for physical operators
     const createBaseOperatorColors = () => {
-        interface IPhysicalOperatorBaseColors { [operator: string]: [number, number, number] }
-        interface IPhysicalOperatorCount { [operator: string]: number }
         let physicalOperatorBaseColors: IPhysicalOperatorBaseColors = {};
         let physicalOperatorCount: IPhysicalOperatorCount = {};
         let colorIndexCounter = 0;
@@ -288,25 +288,28 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         })
         return { physicalOperatorBaseColors, physicalOperatorCount };
     }
-    const baseOperatorColors = createBaseOperatorColors();
 
     //create base color object for physical operators scale for legends
-    const createBaseOperatorColorScale = () => {
+    const createPhysicalOperatorColorScale = (baseOperatorColors: { physicalOperatorBaseColors: IPhysicalOperatorBaseColors, physicalOperatorCount: IPhysicalOperatorCount }) => {
         return Object.values(baseOperatorColors.physicalOperatorBaseColors);
     }
 
     //create operator color scale based on color object for physical operators
-    const createOperatorColorScale = () => {
+    const createOperatorColorScale = (baseOperatorColors: { physicalOperatorBaseColors: IPhysicalOperatorBaseColors, physicalOperatorCount: IPhysicalOperatorCount }) => {
         const luminanceLow = 30;
         const luminanceHigh = 70;
         const luminanceRange = luminanceHigh - luminanceLow;
 
-        const operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
-            //TODO different luminances
-            let currentOperatorColor = baseOperatorColors.physicalOperatorBaseColors[physicalOperators[index]]
-            return currentOperatorColor;
-        })
+        let currentPhysicalOperatorCount: IPhysicalOperatorCount = {};
 
+        const operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
+            const currentPhysicalOperator = physicalOperators[index];
+            currentPhysicalOperatorCount[currentPhysicalOperator] = currentPhysicalOperatorCount[currentPhysicalOperator] ? currentPhysicalOperatorCount[currentPhysicalOperator] + 1 : 1;
+            const currentColorLuminanceShift = (luminanceRange / (baseOperatorColors.physicalOperatorCount[currentPhysicalOperator] + 1)) * currentPhysicalOperatorCount[currentPhysicalOperator];
+            const currentOperatorLuminance = luminanceLow + currentColorLuminanceShift;
+            const currentPysicalOperatorColor = baseOperatorColors.physicalOperatorBaseColors[currentPhysicalOperator];
+            return [currentPysicalOperatorColor[0], currentPysicalOperatorColor[1], currentOperatorLuminance];
+        })
         return operatorColorScale;
     }
 
@@ -317,11 +320,16 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         })
     }
 
+    const baseOperatorColors = createBaseOperatorColors();
+
+    const pysicalOperatorColorScale = createPhysicalOperatorColorScale(baseOperatorColors);
+    const operatorColorScale = createOperatorColorScale(baseOperatorColors);
+
     //Set colorScale field in chartConfiguration varibale
     chartConfiguration.colorScale = {
-        operatorColorScale: createHslStringArray(createOperatorColorScale()),
-        operatorColorScaleLowOpacity: createHslStringArray(createOperatorColorScale(), 0.3),
-        physicalOperatorsScale: createHslStringArray(createBaseOperatorColorScale()),
+        operatorColorScale: createHslStringArray(operatorColorScale),
+        operatorColorScaleLowOpacity: createHslStringArray(operatorColorScale, 0.3),
+        physicalOperatorsScale: createHslStringArray(pysicalOperatorColorScale),
     }
 }
 

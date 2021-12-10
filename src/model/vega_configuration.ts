@@ -110,6 +110,7 @@ export let chartConfiguration: ChartConfiguration = {
 
     //Color scale:
     getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
+        //TODO remove
 
         const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
 
@@ -149,7 +150,7 @@ export let chartConfiguration: ChartConfiguration = {
     hoverFillOpacity: 0.5,
 
     //Color properties:
-    colorLowOpacityHex: "26",
+    colorLowOpacityHex: "26", // TODO remove 
 
     //Number formatter:
     nFormatter: (num: number, digits: number) => {
@@ -276,16 +277,14 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         let physicalOperatorBaseColors: IPhysicalOperatorBaseColors = {};
         let physicalOperatorCount: IPhysicalOperatorCount = {};
         let colorIndexCounter = 0;
-        physicalOperators.forEach((elem, index) => {
+        physicalOperators.forEach((elem) => {
             if (physicalOperatorCount[elem]) {
                 physicalOperatorCount[elem] = physicalOperatorCount[elem] + 1;
             } else {
                 physicalOperatorCount[elem] = 1;
                 physicalOperatorBaseColors[elem] = physicalOperatosBaseHsl[colorIndexCounter];
-                colorIndexCounter++;
+                colorIndexCounter = (colorIndexCounter + 1) % physicalOperatosBaseHsl.length;
             }
-            // physicalOperatorCount[elem] = physicalOperatorCount[elem] ? physicalOperatorCount[elem] + 1 : 1;
-            // physicalOperatorBaseColors[elem] = physicalOperatorBaseColors[elem] ? physicalOperatorBaseColors[elem] : physicalOperatosBaseHsl[(colorIndexCounter++)];
         })
         return { physicalOperatorBaseColors, physicalOperatorCount };
     }

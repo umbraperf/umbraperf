@@ -275,7 +275,6 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
     }
 
     const baseOperatorColors = createBaseOperatorColors();
-
     const pysicalOperatorColorScale = createPhysicalOperatorColorScale(baseOperatorColors);
     const operatorColorScale = createOperatorColorScale(baseOperatorColors);
 

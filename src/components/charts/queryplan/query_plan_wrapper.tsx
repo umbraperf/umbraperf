@@ -39,6 +39,7 @@ export type PlanNode = {
     borderFill: string,
     backgroundFill: string,
     nodeCursor: string,
+    textColor: string,
     isNodeSelectable: boolean,
     tooltipData: QueryplanNodeTooltipData,
 }
@@ -180,9 +181,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        // const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
-        // const nodeDisabledScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.25);
-
         const nodeColor = (nodeId: string) => {
             //return tuple with 0: border color, 1: background color
             if (nodeId === "root") {
@@ -199,6 +197,14 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 //inactive node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[operatorIndex],];
+            }
+        }
+
+        const nodeTextColor = (nodeId: string) => {
+            if(isNodeUnavailable(nodeId)){
+                return '#919191';
+            }else {
+                return this.props.appContext.accentBlack;
             }
         }
 
@@ -225,6 +231,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const rootCursor = nodeCursor(root.id!);
         const rootColor = nodeColor(root.id!);
+        const rootTextColor = nodeTextColor(root.id!);
         const rootTooltipData = nodeTooltipData(root.id!);
         planData.nodes.push({
             label: root.label!,
@@ -233,6 +240,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             isNodeSelectable: rootCursor[1] as boolean,
             borderFill: rootColor[0],
             backgroundFill: rootColor[1],
+            textColor: rootTextColor,
             tooltipData: rootTooltipData,
         })
         fillGraph(root.child, root.id!);
@@ -241,6 +249,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             const planNodeCursor = nodeCursor(currentPlanElement.operator);
             const planNodeColor = nodeColor(currentPlanElement.operator);
+            const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
             const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
 
             planData.nodes.push({
@@ -251,6 +260,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 isNodeSelectable: planNodeCursor[1] as boolean,
                 borderFill: planNodeColor[0],
                 backgroundFill: planNodeColor[1],
+                textColor: planNodeTextColor,
                 tooltipData: planNodeTooltipData,
             });
             planData.links.push({
@@ -296,6 +306,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 borderColor: node.borderFill,
                 cursor: node.nodeCursor,
                 fontSize: '15px',
+                color: node.textColor,
             }
 
             const data: QueryplanNodeData = {

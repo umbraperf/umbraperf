@@ -309,8 +309,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 data,
                 position,
                 style,
-                targetPosition: isVertical ? Position.Bottom : Position.Right,
-                sourcePosition: isVertical ? Position.Top : Position.Left,
+                targetPosition: isVertical ? Position.Bottom : Position.Left,
+                sourcePosition: isVertical ? Position.Top : Position.Right,
                 selectable: node.isNodeSelectable,
                 type: 'queryplanNode',
             }
@@ -360,7 +360,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     getGraphDirection() {
-        return this.props.height > this.props.width ? 'TB' : 'LR';
+        return this.props.height > this.props.width ? 'TB' : 'RL';
     }
 
     createNoQueryPlanWarning() {

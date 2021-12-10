@@ -46,6 +46,7 @@ export interface ChartConfiguration {
     memoryChartTooltip: string,
     colorLowOpacityHex: string,
     nFormatter: (num: number, digits: number) => string,
+    colorScale: {operatorColorScale: string[], operatorColorScaleLowOpacity: string[], physicalOperatorsScale: string[]} | undefined;
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -103,6 +104,9 @@ export let chartConfiguration: ChartConfiguration = {
             "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
     memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
+
+    //Color Scale
+    colorScale: undefined,
 
     //Color scale:
     getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
@@ -249,7 +253,7 @@ const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
 
 //Create and return color scales
 // TODO 
-export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number): { operatorColorScale: Array<string>, operatorColorScaleLowOpacity: Array<string>, physicalOperatorsScale: Array<string> } {
+export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number) {
 
     const physicalOperatosBaseHsl: Array<[number, number, number]> = [
         //TODO more base colors with l 50
@@ -284,20 +288,21 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
     const createBaseOperatorColorScale = () => {
         return Object.values(baseOperatorColors.physicalOperatorBaseColors);
     }
-    
 
     //create operator color scale based on color object for physical operators
     const createOperatorColorScale = () => {
-        // let operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
-            //TODO 
+        const luminanceLow = 30;
+        const luminanceHigh = 70;
+        const luminanceRange = luminanceHigh-luminanceLow;
 
-        // })
+        const operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
+            //TODO different luminances
+            let currentOperatorColor = baseOperatorColors.physicalOperatorBaseColors[physicalOperators[index]]
+            return currentOperatorColor;
+        })
 
+        return operatorColorScale;
     }
-
-
-
-
 
     //create hsl values from color scale arrays
     const createHslStringArray = (colorScale: [number, number, number][], hsla?: number): string[] => {
@@ -306,14 +311,11 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         })
     }
 
-    let colorScales = {
-        operatorColorScale: []/* createHslStringArray(createOperatorColorScale()) */,
-        operatorColorScaleLowOpacity: []/* createHslStringArray(createOperatorColorScale(), 0.3) */,
+    chartConfiguration.colorScale = {
+        operatorColorScale: createHslStringArray(createOperatorColorScale()),
+        operatorColorScaleLowOpacity: createHslStringArray(createOperatorColorScale(), 0.3),
         physicalOperatorsScale: createHslStringArray(createBaseOperatorColorScale()),
     }
-
-
-    return colorScales;
 }
 
 

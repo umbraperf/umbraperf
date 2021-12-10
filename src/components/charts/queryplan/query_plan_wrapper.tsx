@@ -179,9 +179,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 return ["pointer", true];
             }
         }
-        
-        const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
-        const nodeDisabledScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.25);
+
+        // const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
+        // const nodeDisabledScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.25);
 
         const nodeColor = (nodeId: string) => {
             //add 33 to hex color for 10% opacity
@@ -195,11 +195,11 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             } else if (isNodeSelected(nodeId)) {
                 //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', nodeColorScale[operatorIndex]];
+                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScale[operatorIndex]];
             } else {
                 //inactive node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', nodeDisabledScale[operatorIndex], ];
+                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[operatorIndex],];
             }
         }
 

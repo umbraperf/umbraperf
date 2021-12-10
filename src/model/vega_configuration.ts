@@ -166,7 +166,7 @@ export let chartConfiguration: ChartConfiguration = {
     },
 }
 
-const operatorColorScemeHsl: Array<Array<number>> = [
+const operatorColorScemeHsl: Array<[number, number, number]> = [
     [211, 38, 48],
     [205, 63, 77],
     [30, 92, 53],
@@ -206,7 +206,7 @@ const orangeColorSchemeHex: Array<string> = [
 //Prepare new color scale:
 //TODO 
 const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
-    const baseVegaScale= [
+    const baseVegaScale = [
         "#4c78a8",
         "#f58518",
         "#e45756",
@@ -218,6 +218,29 @@ const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
         "#9d755d",
         "#bab0ac",
     ]
-    const baseSpectralScale= ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf'];
+    const baseSpectralScale = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf'];
     return Chroma.scale(baseVegaScale).colors(scaleLength);
-} 
+}
+
+//create base color object for physical operators
+const createBaseOperatorColorScale = (operators: Array<string>, physicalOperators: Array<string>) => {
+    interface IPhysicalOperatorBaseColors { [operator: string]: [number, number, number] }
+    let physicalOperatorBaseColors: IPhysicalOperatorBaseColors = {};
+    const physicalOperatorsUnique = [...new Set(physicalOperators)]
+    physicalOperatorsUnique.forEach((elem, index) => {
+        physicalOperatorBaseColors[elem] = operatorColorScemeHsl[index]
+    })
+    return physicalOperatorBaseColors;
+}
+
+//create base color object for physical operators scale for legends
+
+//create operator color scale based on color object for physical operators
+
+//Getter for created operator color scale
+let operatorColorScale: Array<string> | undefined = undefined;
+const getOperatorColorScale = (domainLength: number, hsla?: number) => {
+    if (undefined === operatorColorScale) {
+
+    }
+}

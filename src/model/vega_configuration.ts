@@ -231,29 +231,7 @@ const orangeColorSchemeHex: Array<string> = [
     '#86431F',
 ]
 
-//Prepare new color scale:
-//TODO 
-const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
-    const baseVegaScale = [
-        "#4c78a8",
-        "#f58518",
-        "#e45756",
-        "#72b7b2",
-        "#54a24b",
-        "#eeca3b",
-        "#b279a2",
-        "#ff9da6",
-        "#9d755d",
-        "#bab0ac",
-    ]
-    //TODO remove chroma 
-    const baseSpectralScale = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf'];
-    return Chroma.scale(baseVegaScale).colors(scaleLength);
-}
-
-
 //Create and return color scales
-// TODO 
 export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number) {
     interface IPhysicalOperatorBaseColors { [operator: string]: [number, number, number] }
     interface IPhysicalOperatorCount { [operator: string]: number }

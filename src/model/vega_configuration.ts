@@ -130,8 +130,8 @@ export let chartConfiguration: ChartConfiguration = {
         });
 
         //TODO 
-        // return parsedColorValueRange;
-        return getPhysicalColorScale(domainLength)
+        return parsedColorValueRange;
+        //return getPhysicalColorScale(domainLength)
     },
 
     getOrangeColor: (opacity) => {

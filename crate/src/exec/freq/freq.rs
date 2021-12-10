@@ -12,7 +12,7 @@ use arrow::{
 use crate::{
     exec::{
         basic::{
-            basic::{find_unique_string, sort_batch}
+            basic::{find_unique_string, sort_batch}, filter::filter_between_int32, statistics
         },
     },
     state::state::get_record_batches,
@@ -528,30 +528,30 @@ pub fn freq_of_memory(
             ],
         );
 
-        let mem_column = get_int32_column(&single_batch, 2);
-        let _mem_vec = mem_column
-            .into_iter()
-            .map(|v| (v.unwrap() as i64))
-            .collect::<Vec<i64>>();
+        if matches!(mem_en, MEM::ABS) {
 
-        /* let mean = statistics::mean(&mem_vec).unwrap();
-        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+            let mem_column = get_int32_column(&single_batch, 2);
+            let mem_vec = mem_column
+                .into_iter()
+                .map(|v| (v.unwrap() as i64))
+                .collect::<Vec<i64>>();
 
-        let from = if matches!(mem_en, MEM::DIFF) {
-            mean - (std_deviation * 100.)
+            let mean = statistics::mean(&mem_vec).unwrap();
+            let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+
+            let from = mean - (std_deviation * 2.);
+            
+            let to = mean + (std_deviation * 2.);
+
+            let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch); 
+
+            let min_bucket = arrow::compute::min(bucket).unwrap();
+            hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+
         } else {
-            mean - (std_deviation)
-        };
-        let to = if matches!(mem_en, MEM::DIFF) {
-            mean + (std_deviation * 100.)
-        } else {
-            mean + (std_deviation)
-        };
-
-        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch); */
-
-        let min_bucket = arrow::compute::min(bucket).unwrap();
-        hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+            let min_bucket = arrow::compute::min(bucket).unwrap();
+            hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+        }
 
         offset += len;
     }

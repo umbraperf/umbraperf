@@ -46,7 +46,7 @@ export interface ChartConfiguration {
     memoryChartTooltip: string,
     colorLowOpacityHex: string,
     nFormatter: (num: number, digits: number) => string,
-    colorScale: {operatorColorScale: string[], operatorColorScaleLowOpacity: string[], physicalOperatorsScale: string[]} | undefined;
+    colorScale: { operatorColorScale: string[], operatorColorScaleLowOpacity: string[], physicalOperatorsScale: string[] } | undefined;
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -277,8 +277,15 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         let physicalOperatorCount: IPhysicalOperatorCount = {};
         let colorIndexCounter = 0;
         physicalOperators.forEach((elem, index) => {
-            physicalOperatorCount[elem] = physicalOperatorCount[elem] ? physicalOperatorCount[elem] + 1 : 1,
-                physicalOperatorBaseColors[elem] = physicalOperatorBaseColors[elem] ? physicalOperatorBaseColors[elem] : physicalOperatosBaseHsl[(colorIndexCounter++) % physicalOperatosBaseHsl.length];
+            if (physicalOperatorCount[elem]) {
+                physicalOperatorCount[elem] = physicalOperatorCount[elem] + 1;
+            } else {
+                physicalOperatorCount[elem] = 1;
+                physicalOperatorBaseColors[elem] = physicalOperatosBaseHsl[colorIndexCounter];
+                colorIndexCounter++;
+            }
+            // physicalOperatorCount[elem] = physicalOperatorCount[elem] ? physicalOperatorCount[elem] + 1 : 1;
+            // physicalOperatorBaseColors[elem] = physicalOperatorBaseColors[elem] ? physicalOperatorBaseColors[elem] : physicalOperatosBaseHsl[(colorIndexCounter++)];
         })
         return { physicalOperatorBaseColors, physicalOperatorCount };
     }
@@ -293,7 +300,7 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
     const createOperatorColorScale = () => {
         const luminanceLow = 30;
         const luminanceHigh = 70;
-        const luminanceRange = luminanceHigh-luminanceLow;
+        const luminanceRange = luminanceHigh - luminanceLow;
 
         const operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
             //TODO different luminances
@@ -311,6 +318,7 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         })
     }
 
+    //Set colorScale field in chartConfiguration varibale
     chartConfiguration.colorScale = {
         operatorColorScale: createHslStringArray(createOperatorColorScale()),
         operatorColorScaleLowOpacity: createHslStringArray(createOperatorColorScale(), 0.3),

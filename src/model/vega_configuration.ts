@@ -1,3 +1,4 @@
+import Chroma from 'chroma-js';
 
 export interface ChartConfiguration {
     titlePadding: number;
@@ -128,7 +129,9 @@ export let chartConfiguration: ChartConfiguration = {
             return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
         });
 
-        return parsedColorValueRange;
+        //TODO 
+        // return parsedColorValueRange;
+        return getPhysicalColorScale(domainLength)
     },
 
     getOrangeColor: (opacity) => {
@@ -199,3 +202,22 @@ const orangeColorSchemeHex: Array<string> = [
     '#964D24',
     '#86431F',
 ]
+
+//Prepare new color scale:
+//TODO 
+const getPhysicalColorScale = (scaleLength: number, opacity?: string) => {
+    const baseVegaScale= [
+        "#4c78a8",
+        "#f58518",
+        "#e45756",
+        "#72b7b2",
+        "#54a24b",
+        "#eeca3b",
+        "#b279a2",
+        "#ff9da6",
+        "#9d755d",
+        "#bab0ac",
+    ]
+    const baseSpectralScale= ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf'];
+    return Chroma.scale(baseVegaScale).colors(scaleLength);
+} 

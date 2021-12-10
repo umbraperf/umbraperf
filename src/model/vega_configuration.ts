@@ -136,7 +136,6 @@ export let chartConfiguration: ChartConfiguration = {
 
         //TODO 
         return parsedColorValueRange;
-        //return getPhysicalColorScale(domainLength)
     },
 
     getOrangeColor: (opacity) => {
@@ -170,29 +169,6 @@ export let chartConfiguration: ChartConfiguration = {
         return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
     },
 }
-
-// const operatorColorScemeHsl: Array<[number, number, number]> = [
-//     [211, 38, 50],
-//     [205, 63, 50],
-//     [30, 92, 50],
-//     [31, 100, 50],
-//     [114, 37, 50],
-//     [110, 49, 50],
-//     [48, 70, 50],
-//     [46, 85, 50],
-//     [177, 39, 50],
-//     [174, 30, 50],
-//     [0, 72, 50],
-//     [3, 100, 50],
-//     [11, 5, 50],
-//     [17, 9, 50],
-//     [339, 55, 50],
-//     [341, 91, 50],
-//     [317, 27, 50],
-//     [316, 37, 50],
-//     [22, 25, 50],
-//     [19, 40, 50],
-// ]
 
 const operatorColorScemeHsl: Array<[number, number, number]> = [
     [211, 38, 48],

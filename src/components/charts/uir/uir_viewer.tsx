@@ -354,14 +354,15 @@ class UirViewer extends React.Component<Props, State> {
 
             // color margin glyph for event
             const eventOccurence = this.props.chartData.eventsFrequency[eventNumber][i];
+            const relativeFunctionEventOccurence = this.props.chartData.eventsRelativeFrequency[eventNumber][i];
 
-            if (eventOccurence > 0) {
+            if (eventOccurence > 0 || relativeFunctionEventOccurence > 0) {
                 const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
-                const relativeFunctionEventOccurence = this.props.chartData.eventsRelativeFrequency[eventNumber][i];
-                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
+                let eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
+                eventOccurenceRelAbsColorGroup = eventOccurenceRelAbsColorGroup === 10 ? 9 : eventOccurenceRelAbsColorGroup;
                 const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
+                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) }; 
             }
 
             //color line glyph for operator

@@ -1,5 +1,3 @@
-import Chroma from 'chroma-js';
-
 export interface ChartConfiguration {
     titlePadding: number;
     titleAlign: string;
@@ -37,8 +35,8 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    getOperatorColorScheme: (domainLength: number, higSaturation?: boolean, hsla?: number) => Array<string>;
-    getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
+    // getOperatorColorScheme: (domainLength: number, higSaturation?: boolean, hsla?: number) => Array<string>;
+    // getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
@@ -108,48 +106,11 @@ export let chartConfiguration: ChartConfiguration = {
     //Color Scale
     colorScale: undefined,
 
-    //Color scale:
-    getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
-        //TODO remove
-
-        const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
-
-        const parsedColorValueRange = colorValueRange.map((elem) => {
-
-            let elemSaturation = elem[1];
-            if (higSaturation) {
-                const saturationOffset = 20;
-                let adjustedSaturation = elemSaturation - saturationOffset;
-                if (adjustedSaturation > 100) {
-                    adjustedSaturation = 100;
-                } else if (adjustedSaturation < 0) {
-                    adjustedSaturation = 0;
-                }
-                elemSaturation = adjustedSaturation;
-            }
-
-            if (hsla) {
-                return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
-            }
-            return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
-        });
-
-        //TODO 
-        return parsedColorValueRange;
-    },
-
-    getOrangeColor: (opacity) => {
-        //depreciated
-        //TODO remove, not used
-
-        return orangeColorSchemeHex[opacity];
-    },
+    //Color properties:
+    colorLowOpacityHex: "26",
 
     //Hover behaviour: 
     hoverFillOpacity: 0.5,
-
-    //Color properties:
-    colorLowOpacityHex: "26", // TODO remove 
 
     //Number formatter:
     nFormatter: (num: number, digits: number) => {
@@ -168,44 +129,81 @@ export let chartConfiguration: ChartConfiguration = {
         });
         return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
     },
+
+    //Color scale depreciated:
+    // getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
+    //     //TODO remove
+
+    //     const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
+
+    //     const parsedColorValueRange = colorValueRange.map((elem) => {
+
+    //         let elemSaturation = elem[1];
+    //         if (higSaturation) {
+    //             const saturationOffset = 20;
+    //             let adjustedSaturation = elemSaturation - saturationOffset;
+    //             if (adjustedSaturation > 100) {
+    //                 adjustedSaturation = 100;
+    //             } else if (adjustedSaturation < 0) {
+    //                 adjustedSaturation = 0;
+    //             }
+    //             elemSaturation = adjustedSaturation;
+    //         }
+
+    //         if (hsla) {
+    //             return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
+    //         }
+    //         return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
+    //     });
+
+    //     return parsedColorValueRange;
+    // },
+
+    // getOrangeColor: (opacity) => {
+    //     //depreciated
+    //     //TODO remove, not used
+
+    //     return orangeColorSchemeHex[opacity];
+    // },
+
 }
 
-const operatorColorScemeHsl: Array<[number, number, number]> = [
-    [211, 38, 48],
-    [205, 63, 77],
-    [30, 92, 53],
-    [31, 100, 74],
-    [114, 37, 46],
-    [110, 49, 65],
-    [48, 70, 42],
-    [46, 85, 65],
-    [177, 39, 43],
-    [174, 30, 63],
-    [0, 72, 62],
-    [3, 100, 80],
-    [11, 5, 45],
-    [17, 9, 70],
-    [339, 55, 64],
-    [341, 91, 87],
-    [317, 27, 59],
-    [316, 37, 74],
-    [22, 25, 50],
-    [19, 40, 75],
-]
+// const operatorColorScemeHsl: Array<[number, number, number]> = [
+//     [211, 38, 48],
+//     [205, 63, 77],
+//     [30, 92, 53],
+//     [31, 100, 74],
+//     [114, 37, 46],
+//     [110, 49, 65],
+//     [48, 70, 42],
+//     [46, 85, 65],
+//     [177, 39, 43],
+//     [174, 30, 63],
+//     [0, 72, 62],
+//     [3, 100, 80],
+//     [11, 5, 45],
+//     [17, 9, 70],
+//     [339, 55, 64],
+//     [341, 91, 87],
+//     [317, 27, 59],
+//     [316, 37, 74],
+//     [22, 25, 50],
+//     [19, 40, 75],
+// ]
 
-const orangeColorSchemeHex: Array<string> = [
-    //depreciated
-    //TODO remove, not used
-    '#EDB596',
-    '#E69F78',
-    '#DD895A',
-    '#d4733e',
-    '#C56937',
-    '#B66031',
-    '#A6562A',
-    '#964D24',
-    '#86431F',
-]
+// const orangeColorSchemeHex: Array<string> = [
+//     //depreciated
+//     //TODO remove, not used
+//     '#EDB596',
+//     '#E69F78',
+//     '#DD895A',
+//     '#d4733e',
+//     '#C56937',
+//     '#B66031',
+//     '#A6562A',
+//     '#964D24',
+//     '#86431F',
+// ]
 
 //Create and return color scales
 export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number) {
@@ -230,7 +228,7 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         [63, 100, 50]
     ]
 
-    //create base color object for physical operators
+    //create base color object for physical operators (base colors with luminance = 50)
     const createBaseOperatorColors = () => {
         let physicalOperatorBaseColors: IPhysicalOperatorBaseColors = {};
         let physicalOperatorCount: IPhysicalOperatorCount = {};

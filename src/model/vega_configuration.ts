@@ -225,7 +225,9 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         //own
         [194, 70, 50],
         [314, 100, 50],
-        [63, 100, 50]
+        [63, 100, 50],
+        [168, 100, 50],
+        [269, 100, 50],
     ]
 
     //create base color object for physical operators (base colors with luminance = 50)

@@ -276,8 +276,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             });
         }
 
-        console.log(planData.links);
-
         const flowGraphElements: FlowGraphElements = this.createReactFlowNodesEdges(planData.nodes, planData.links);
 
         return flowGraphElements;

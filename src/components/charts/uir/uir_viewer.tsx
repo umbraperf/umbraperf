@@ -1,6 +1,7 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import styles from '../../../style/uir-viewer.module.css';
+import '../../../style/uir-view-monaco-editor.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -8,7 +9,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
-import '../../../style/uir-view-monaco-editor.css';
 
 
 interface AppstateProps {
@@ -26,7 +26,6 @@ type Props = model.IUirViewerProps & AppstateProps;
 interface State {
     linesFolded: boolean;
     operatorsColorHidden: boolean;
-    operatorColorScale: string[];
     hoverProviderDispose: monaco.IDisposable | undefined,
     editorMounted: boolean,
 }
@@ -44,7 +43,6 @@ class UirViewer extends React.Component<Props, State> {
         this.state = {
             linesFolded: true,
             operatorsColorHidden: false,
-            operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
             hoverProviderDispose: undefined,
             editorMounted: false,
         }
@@ -438,7 +436,7 @@ class UirViewer extends React.Component<Props, State> {
         if (glyphClassGroupNumber === -1) {
             color = this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex;
         } else {
-            color = this.state.operatorColorScale[glyphClassGroupNumber];
+            color = model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[glyphClassGroupNumber];
         }
         style.innerHTML = `.${className} { background: ${color}; }`;
         this.editorContainerRef.current!.appendChild(style);

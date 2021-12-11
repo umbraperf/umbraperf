@@ -45,7 +45,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     minZoom={0.1}
                     maxZoom={3}
                     // onNodeMouseEnter={(event, element) => this.handleNodeMouseEnter(event, element as FlowGraphNode)}
-                    // onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
+                    //onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
                     nodesConnectable={false}
                     nodesDraggable={true}
                     connectionLineType={ConnectionLineType.SmoothStep}
@@ -53,7 +53,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
                     nodeTypes={nodeTypes}
                 >
-                    <Controls className={styles.reactFlowControls}/>
+                    <Controls className={styles.reactFlowControls} />
                 </ReactFlow>
 
 

@@ -319,7 +319,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     fill: "colorOperators", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
-                    orient: this.props.doubleRowSize ? "bottom-left" : "right",
+                    orient: this.props.doubleRowSize ? "bottom-left" : "left",
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     values: pipelinesLegend(),
@@ -338,7 +338,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
                     rowPadding: 2,
-                    columns: this.props.doubleRowSize ? 1 : 3,
+                    // columns:  this.props.doubleRowSize ? 1 : 3,
                     columnPadding: 3,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,

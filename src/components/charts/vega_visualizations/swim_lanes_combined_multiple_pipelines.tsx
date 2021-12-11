@@ -141,13 +141,15 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorPos",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorColorScale,
                     domain: this.props.operators,
                 },
                 {
                     name: "colorNeg",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorColorScale,
                     domain: this.props.operators,
                 }
             ],

@@ -238,7 +238,8 @@ class SunburstChart extends React.Component<Props, {}> {
                     name: "colorOperators",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorColorScale,
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                 },
             ],
 

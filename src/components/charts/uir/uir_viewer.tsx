@@ -1,6 +1,7 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import styles from '../../../style/uir-viewer.module.css';
+import '../../../style/uir-view-monaco-editor.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -8,7 +9,6 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
-import '../../../style/uir-view-monaco-editor.css';
 
 
 interface AppstateProps {
@@ -26,7 +26,6 @@ type Props = model.IUirViewerProps & AppstateProps;
 interface State {
     linesFolded: boolean;
     operatorsColorHidden: boolean;
-    operatorColorScale: string[];
     hoverProviderDispose: monaco.IDisposable | undefined,
     editorMounted: boolean,
 }
@@ -44,7 +43,6 @@ class UirViewer extends React.Component<Props, State> {
         this.state = {
             linesFolded: true,
             operatorsColorHidden: false,
-            operatorColorScale: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, undefined, 0.3),
             hoverProviderDispose: undefined,
             editorMounted: false,
         }
@@ -228,18 +226,18 @@ class UirViewer extends React.Component<Props, State> {
         };
     }
 
-    createMarkdownEventsList(eventIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
+    createMarkdownEventsList(currentIndex: number, italicEvent?: number, marginGlyphRepresentation?: boolean) {
         let markdownEventsString = "";
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < this.props.events!.length; i++) {
             let italicCharacter = "";
             let relativeEventString = "";
             if (marginGlyphRepresentation && i + 1 === italicEvent) {
                 italicCharacter = "*";
             }
-            if (this.props.chartData.isFunction[eventIndex] === 0) {
-                relativeEventString = `, Function ${(this.props.chartData["relEvent" + (i + 1) as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4"])[eventIndex]}%`
+            if (this.props.chartData.isFunction[currentIndex] === 0) {
+                relativeEventString = `, Function ${this.props.chartData.eventsRelativeFrequency[i + 1][currentIndex]}%`
             }
-            const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${(this.props.chartData["event" + (i + 1) as "event1" | "event2" | "event3" | "event4"])[eventIndex]}%${relativeEventString}${italicCharacter}  \n`;
+            const markdownEvent = `${italicCharacter}**${this.props.events![i]}:** Global ${this.props.chartData.eventsFrequency[i + 1][currentIndex]}%${relativeEventString}${italicCharacter}  \n`;
             markdownEventsString += markdownEvent;
         }
         return markdownEventsString;
@@ -342,9 +340,9 @@ class UirViewer extends React.Component<Props, State> {
 
     updateColorGlyphs() {
         const currentEventIndex = this.props.events?.indexOf(this.props.currentEvent);
-        const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1;
-        const eventString = `event${eventNumber}` as "event1" | "event2" | "event3" | "event4";
-        const relativeFunctionEventString = `relEvent${eventNumber}` as "relEvent1" | "relEvent2" | "relEvent3" | "relEvent4";
+        const eventNumber = (currentEventIndex && currentEventIndex >= 0) ? currentEventIndex + 1 : 1; //Set to 1 if currentEventIndex is undefined as currentEvent is default
+        // const eventString = `event${eventNumber}`;
+        // const relativeFunctionEventString = `relEvent${eventNumber}`;
 
         for (let i = 0; i < this.props.chartData.uirLines.length; i++) {
 
@@ -353,15 +351,16 @@ class UirViewer extends React.Component<Props, State> {
             let glyphMarginHoverMessage = undefined;
 
             // color margin glyph for event
-            const eventOccurence = (this.props.chartData[eventString])[i];
+            const eventOccurence = this.props.chartData.eventsFrequency[eventNumber][i];
+            const relativeFunctionEventOccurence = this.props.chartData.eventsRelativeFrequency[eventNumber][i];
 
-            if (eventOccurence > 0) {
+            if (eventOccurence > 0 || relativeFunctionEventOccurence > 0) {
                 const eventOccurenceIsFunctionColorGroup = this.props.chartData.isFunction[i];
-                const relativeFunctionEventOccurence = (this.props.chartData[relativeFunctionEventString])[i];
-                const eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
+                let eventOccurenceRelAbsColorGroup = Math.floor((eventOccurenceIsFunctionColorGroup === 1 ? eventOccurence : relativeFunctionEventOccurence) / 10);
+                eventOccurenceRelAbsColorGroup = eventOccurenceRelAbsColorGroup === 10 ? 9 : eventOccurenceRelAbsColorGroup;
                 const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
+                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) }; 
             }
 
             //color line glyph for operator
@@ -437,7 +436,7 @@ class UirViewer extends React.Component<Props, State> {
         if (glyphClassGroupNumber === -1) {
             color = this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex;
         } else {
-            color = this.state.operatorColorScale[glyphClassGroupNumber];
+            color = model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[glyphClassGroupNumber];
         }
         style.innerHTML = `.${className} { background: ${color}; }`;
         this.editorContainerRef.current!.appendChild(style);

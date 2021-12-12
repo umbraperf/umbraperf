@@ -5,7 +5,7 @@ use crate::{
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
-    state::state::{get_file_size, get_query_from_cache, insert_query_to_cache},
+    state::state::{get_query_from_cache, insert_query_to_cache},
     utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::concat_record_batches,
@@ -119,7 +119,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 return None;
             }
             "uir" => {
-                record_batch = uir(get_file_size().unwrap(), record_batch);
+                record_batch = uir(record_batch);
             }
             "top(srclines)" => {
                 let order = match params {

@@ -50,7 +50,7 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
     out_vec
 }
 
-pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
+pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     let column_ev_name = record_batch
         .column(1)
         .as_any()
@@ -353,7 +353,7 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 }
 
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
-    let batch = uir(0, record_batch);
+    let batch = uir(record_batch);
 
     let function_flac_col = find_name("func_flag", &batch);
     let only_functions = filter_between_int32(function_flac_col, 0, 0, &batch);

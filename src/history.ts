@@ -1,9 +1,11 @@
-// import { createBrowserHistory, createHashHistory } from "history";
+import { createHashHistory } from "history";
+
+export default createHashHistory(/* {basename: '/'} */);
+
 
 // // export default createBrowserHistory({ basename: process.env.PUBLIC_URL });
-// export default createHashHistory(/* {basename: '/'} */);
 
-import { createBrowserHistory } from "history";
+// import { createBrowserHistory } from "history";
 
-export default createBrowserHistory();
+// export default createBrowserHistory();
 

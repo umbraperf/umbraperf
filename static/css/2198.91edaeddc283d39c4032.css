@@ -2224,7 +2224,7 @@
 @font-face {
 	font-family: "codicon";
 	font-display: block;
-	src: url(/static/fonts/codicon.59002d8cc9a0e78be5b7cd556cb07281.ttf) format("truetype");
+	src: url(/umbraperf/static/fonts/codicon.59002d8cc9a0e78be5b7cd556cb07281.ttf) format("truetype");
 }
 
 .codicon[class*='codicon-'] {

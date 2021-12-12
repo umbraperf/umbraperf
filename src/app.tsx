@@ -37,7 +37,7 @@ export default function App() {
             <ReduxProvider store={Config.store}>
                 <StylesProvider injectFirst={true}>
                     <MuiThemeProvider theme={Config.materialUiTheme}>
-                        <HashRouter>
+                        <HashRouter basename={'/'}>
                             {/* <Router history={history}> */}
 
                             <div className={`app ${styles.app}`}>

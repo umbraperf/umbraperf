@@ -194,12 +194,12 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         uri.push(value.unwrap());
     }
     
-    operator_vec.push("test_Operator");
+    /* operator_vec.push("test_Operator");
     event_vec.push("test_Event");
     time.push(99.0);
     pipeline_vec.push("test_Pipeline");
     addr.push(12341234);
-    uri.push(2); 
+    uri.push(2);  */
 
     create_new_record_batch(
         vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],
@@ -222,6 +222,8 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     )
 }
 
+
+// Sending record batch to javascript via IPC which include a schema and a message
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let mut buff = Cursor::new(vec![]);
 

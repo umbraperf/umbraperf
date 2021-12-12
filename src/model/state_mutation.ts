@@ -1,6 +1,4 @@
 import { AppState, createProfiles, ProfileType, IKpiData, Result, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable } from '.';
-import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -28,6 +26,7 @@ export enum StateMutationType {
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
+    SET_PHYSICALOPERATORS = 'SET_PHYSICALOPERATORS',
     SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
@@ -63,10 +62,10 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
+    | StateMutation<StateMutationType.SET_PHYSICALOPERATORS, Array<string>>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
-    | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
     | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
@@ -168,6 +167,11 @@ export class AppStateMutation {
                     ...state,
                     operators: mutation.data,
                 };
+            case StateMutationType.SET_PHYSICALOPERATORS:
+                return {
+                    ...state,
+                    physicalOperators: mutation.data,
+                }
             case StateMutationType.SET_KPIS:
                 return {
                     ...state,
@@ -183,11 +187,6 @@ export class AppStateMutation {
                     ...state,
                     chartData: mutation.data,
                 };
-            case StateMutationType.SET_DASHBOARDSTATE:
-                return {
-                    ...state,
-                    dashboardState: mutation.data,
-                }
             case StateMutationType.SET_CURRENTINTERPOLATION:
                 return {
                     ...state,
@@ -243,10 +242,10 @@ export class AppStateMutation {
                     pipelines: undefined,
                     pipelinesShort: undefined,
                     operators: undefined,
+                    physicalOperators: undefined,
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},
-                    dashboardState: undefined,
                     currentInterpolation: "basis",
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],

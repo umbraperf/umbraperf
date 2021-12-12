@@ -11,6 +11,7 @@ interface AppstateProps {
     appContext: Context.IAppContext;
     currentMultipleEvent: [string, string] | "Default";
     operators: Array<string> | undefined;
+    physicalOperators: Array<string> | undefined;
     currentInterpolation: String,
     chartData: model.ISwimlanesCombinedData,
 }
@@ -141,14 +142,22 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorPos",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorColorScale,
                     domain: this.props.operators,
                 },
                 {
                     name: "colorNeg",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorColorScale,
                     domain: this.props.operators,
+                },
+                {
+                    name: "colorPhysicalOperators",
+                    type: "ordinal",
+                    domain: this.props.physicalOperators,
+                    range: model.chartConfiguration.colorScale!.physicalOperatorsScale,
                 }
             ],
 
@@ -322,12 +331,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 }
             ],
             legends: [{
-                fill: "colorPos",
+                fill: "colorPhysicalOperators",
                 title: "Operators",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
+                values: [...new Set(this.props.physicalOperators)],
             }
             ],
         } as VisualizationSpec;
@@ -340,6 +350,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps) => ({
     currentMultipleEvent: state.currentMultipleEvent,
     operators: state.operators,
+    physicalOperators: state.physicalOperators,
     currentInterpolation: state.currentInterpolation,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesCombinedData,
 });

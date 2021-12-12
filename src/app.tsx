@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { AppContextProvider } from './app_context';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Route, BrowserRouter, Switch, useLocation, Redirect, Link } from 'react-router-dom';
-import { StylesProvider, AppBar, MuiThemeProvider, Toolbar, Typography } from '@material-ui/core';
+import { Route, Router, Switch, useLocation, Redirect, Link, HashRouter, BrowserRouter } from 'react-router-dom';
+import history from "./history";
+import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
+
 
 import './globals.css';
 import '../node_modules/react-grid-layout/css/styles.css';
@@ -10,13 +12,8 @@ import '../node_modules/react-resizable/css/styles.css';
 import styles from './style/main-app.module.css';
 import * as Config from './app_config';
 
-import VisualizationContainer from './components/visualization_container';
-import TabPanel from './components/utils/tab_panel';
-import FileUploader from './components/utils/file_uploader';
-import Dashboard from './components/dashboards/dashboard';
-import DashboardMultipleEvents from './components/dashboards/dashboard_multiple_events';
-import DashboardMemoryAccesses from './components/dashboards/dashboard_memory_accesses';
-import Dummy from './components/testdummy';
+import TabPanel from './components/utils/navigation/tab_panel';
+import HeaderAppbar from './components/utils/navigation/header_appbar';
 
 
 function NoMatch() {
@@ -40,24 +37,17 @@ export default function App() {
             <ReduxProvider store={Config.store}>
                 <StylesProvider injectFirst={true}>
                     <MuiThemeProvider theme={Config.materialUiTheme}>
-                        <BrowserRouter>
+                        <HashRouter>
+                            {/* <Router history={history}> */}
 
                             <div className={`app ${styles.app}`}>
 
                                 <div className={styles.appHeader}>
-                                    <AppBar position="static" >
-                                        <Toolbar style={{ minHeight: '38px' }}>
-                                            <Typography variant="h6" className={styles.appHeaderTitle}>
-                                                Umbra-Profiler
-                                            </Typography>
-                                        </Toolbar>
-                                    </AppBar>
+                                    <HeaderAppbar />
                                 </div>
 
                                 <div className={`appNavigation ${styles.appNavigation}`}>
-
                                     <TabPanel />
-
                                 </div>
 
                                 <div className={styles.appBody}>
@@ -67,29 +57,9 @@ export default function App() {
                                             <Redirect to="/upload" />
                                         </Route>
 
-                                        <Route exact path="/upload" key="/upload">
-                                            <FileUploader />
-                                        </Route>
-
-                                        <Route exact path="/dashboard" key="/dashboard">
-                                            <Dashboard />
-                                        </Route>
-
-                                        <Route exact path="/dashboard-multiple-events" key="/dashboard-multiple-events">
-                                            <DashboardMultipleEvents />
-                                        </Route>
-
-                                        <Route exact path="/dashboard-memory-accesses" key="/dashboard-memory-accesses">
-                                            <DashboardMemoryAccesses />
-                                        </Route>
-
-                                        <Route exact path="/dummy" key="/dummy">
-                                            <Dummy />
-                                        </Route>
-
-                                        {Config.topLevelComponents.map((route: any) => {
-                                            return <Route exact path={route.path} key={route.path}>
-                                                <VisualizationContainer component={route.component} visualizationName={route.path} />
+                                        {Config.topLevelComponents.map((topLevelComponent) => {
+                                            return <Route exact path={topLevelComponent.path} key={topLevelComponent.path}>
+                                                {topLevelComponent.component}
                                             </Route>
                                         })}
 
@@ -102,7 +72,7 @@ export default function App() {
 
                             </div>
 
-                        </BrowserRouter>
+                        </HashRouter>
                     </MuiThemeProvider>
                 </StylesProvider>
             </ReduxProvider>

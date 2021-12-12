@@ -1,16 +1,24 @@
-use std::{collections::HashMap, convert::TryInto, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
 use arrow::{
     array::{
-        Float64Array, GenericStringArray, Int32Array, Int64Array, PrimitiveArray, StringArray,
+        Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
+        UInt64Array,
     },
-    datatypes::{DataType, Field, Float64Type, Int64Type, Schema},
+    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
     record_batch::RecordBatch,
 };
 
 use crate::{
-    exec::basic::basic::{find_unique_string, sort_batch},
-    get_record_batches,
+    exec::{
+        basic::{
+            basic::{find_unique_string, sort_batch}
+        },
+    },
+    state::state::get_record_batches,
+    utils::{
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js},
+    },
 };
 
 pub enum Freq {
@@ -34,27 +42,26 @@ pub fn create_freq_bucket(
     let schema = record_batch.schema();
     let column_for_operator_name = schema.field(column_for_operator).name();
 
-    let field_bucket = Field::new("bucket", DataType::Float64, false);
-    let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
     let freq_name;
     if matches!(freq, Freq::REL) {
         freq_name = "relfreq";
     } else {
         freq_name = "absfreq";
     }
-    let result_field = Field::new(freq_name, DataType::Float64, false);
 
-    let schema = Schema::new(vec![field_bucket, field_operator, result_field]);
-
-    RecordBatch::try_new(
-        Arc::new(schema),
+    create_new_record_batch(
+        vec!["bucket", column_for_operator_name, freq_name],
+        vec![DataType::Float64, DataType::Utf8, DataType::Float64],
         vec![
             Arc::new(builder_bucket),
             Arc::new(operator_arr),
             Arc::new(builder_result),
         ],
     )
-    .unwrap()
+}
+
+pub fn round(to_round: f64) -> f64 {
+    return f64::trunc((to_round) * 100.0) / 100.0;
 }
 
 pub fn create_mem_bucket(
@@ -70,19 +77,17 @@ pub fn create_mem_bucket(
     let memory_arr = Int32Array::from(result_vec_memory);
     let builder_result = Float64Array::from(result_builder);
 
-    // Record Batch
     let schema = record_batch.schema();
     let column_for_operator_name = schema.field(column_for_operator).name();
 
-    let field_bucket = Field::new("bucket", DataType::Float64, false);
-    let field_operator = Field::new(column_for_operator_name, DataType::Utf8, false);
-    let mem_field = Field::new("mem", DataType::Int32, false);
-    let result_field = Field::new("freq", DataType::Float64, false);
-
-    let schema = Schema::new(vec![field_bucket, field_operator, mem_field, result_field]);
-
-    RecordBatch::try_new(
-        Arc::new(schema),
+    create_new_record_batch(
+        vec!["bucket", column_for_operator_name, "mem", "freq"],
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Int32,
+            DataType::Float64,
+        ],
         vec![
             Arc::new(builder_bucket),
             Arc::new(operator_arr),
@@ -90,7 +95,6 @@ pub fn create_mem_bucket(
             Arc::new(builder_result),
         ],
     )
-    .unwrap()
 }
 
 pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {
@@ -111,11 +115,20 @@ pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveAr
     return column;
 }
 
-pub fn get_int_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int64Type> {
+pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UInt64Type> {
     let column = batch
         .column(column)
         .as_any()
-        .downcast_ref::<Int64Array>()
+        .downcast_ref::<UInt64Array>()
+        .unwrap();
+    return column;
+}
+
+pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int32Type> {
+    let column = batch
+        .column(column)
+        .as_any()
+        .downcast_ref::<Int32Array>()
         .unwrap();
     return column;
 }
@@ -133,7 +146,8 @@ pub fn freq_of_pipelines(
 ) -> RecordBatch {
     let batch = &sort_batch(batch, 2, false);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
+    let unique_operator =
+        find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
 
     // Vector of unique strings
     let vec_operator = get_stringarray_column(&unique_operator, 0);
@@ -148,12 +162,12 @@ pub fn freq_of_pipelines(
 
     let mut time_bucket;
     if from == -1. {
-        time_bucket = 0.;
+        time_bucket = 0. + bucket_size;
     } else {
-        time_bucket = from;
+        time_bucket = from + bucket_size;
     }
 
-    time_bucket = f64::trunc(time_bucket);
+    //time_bucket = f64::trunc(time_bucket);
     let mut column_index = 0;
 
     let mut bucket_map = HashMap::new();
@@ -171,7 +185,7 @@ pub fn freq_of_pipelines(
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
-                result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
 
                 if matches!(freq, Freq::ABS) {
@@ -215,31 +229,29 @@ pub fn freq_of_pipelines(
         }
 
         if i == time_column.len() - 1 {
-            while time_bucket < to {
-                for operator in vec_operator {
-                    let operator = operator.unwrap();
-                    result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
-                    result_vec_operator.push(operator);
-                    let bucket = bucket_map.to_owned();
-                    if matches!(freq, Freq::ABS) {
-                        let frequenzy = bucket.get(operator).unwrap();
-                        result_builder.push(frequenzy.to_owned());
+            for operator in vec_operator {
+                let operator = operator.unwrap();
+                result_bucket.push(round(round(time_bucket) - bucket_size));
+                result_vec_operator.push(operator);
+                let bucket = bucket_map.to_owned();
+                if matches!(freq, Freq::ABS) {
+                    let frequenzy = bucket.get(operator).unwrap();
+                    result_builder.push(frequenzy.to_owned());
+                } else {
+                    if bucket_map.get(operator).unwrap() == &0.0 {
+                        let frequenzy = 0.0;
+                        result_builder.push(frequenzy);
                     } else {
-                        if bucket_map.get(operator).unwrap() == &0.0 {
-                            let frequenzy = 0.0;
-                            result_builder.push(frequenzy);
-                        } else {
-                            let frequenzy =
-                                bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                            let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                            result_builder.push(frequenzy_rounded);
-                        }
+                        let frequenzy =
+                            bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                        result_builder.push(frequenzy_rounded);
                     }
-                    // reset bucket_map
-                    bucket_map.insert(operator, 0.0);
                 }
-                time_bucket += bucket_size;
+                // reset bucket_map
+                bucket_map.insert(operator, 0.0);
             }
+            time_bucket += bucket_size;
         }
 
         column_index += 1;
@@ -255,6 +267,32 @@ pub fn freq_of_pipelines(
     );
 }
 
+pub enum MEM {
+    DIFF,
+    ABS,
+}
+
+pub fn get_earlier_entry(
+    recordbatch: &RecordBatch,
+    index: usize,
+    operator: &str,
+    column_for_operator: usize,
+) -> usize {
+    if index == 0 {
+        return usize::MAX;
+    }
+    let mut start = index;
+    while start >= 1 {
+        //print_to_js_with_obj(&format!("curr_operator {:?} compare_with  {:?}", operator, get_stringarray_column(recordbatch, column_for_operator).value(start - 1)).into());
+
+        if operator == get_stringarray_column(recordbatch, column_for_operator).value(start - 1) {
+            return start;
+        }
+        start -= 1;
+    }
+    return usize::MAX;
+}
+
 pub fn freq_of_memory(
     batch: &RecordBatch,
     column_for_operator: usize,
@@ -262,14 +300,15 @@ pub fn freq_of_memory(
     bucket_size: f64,
     from: f64,
     to: f64,
-) -> RecordBatch {
-    //let batch = &filter_with(0, vec!["groupby139628250252480"], batch);
+    len_of_mem: Option<i64>,
+    mem_en: MEM,
+) {
+    let batch = &sort_batch(&batch, 2, false);
 
-    let batch = &sort_batch(batch, 2, false);
+    let unique_operator = find_unique_string(batch, column_for_operator);
 
-    let unique_operator = find_unique_string(&get_record_batches().unwrap(), column_for_operator);
+    let unique_operator = &sort_batch(&unique_operator, 0, false);
 
-    // Vector of unique strings
     let vec_operator = get_stringarray_column(&unique_operator, 0);
 
     let mut result_bucket = Vec::new();
@@ -279,26 +318,59 @@ pub fn freq_of_memory(
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
     let time_column = get_floatarray_column(batch, column_for_time);
-    let memory_column = get_int_column(batch, 4);
+    let memory_column = get_uint_column(batch, 4);
 
     let mut time_bucket;
     if from == -1. {
-        time_bucket = 0.;
+        time_bucket = 0. + bucket_size;
     } else {
-        time_bucket = from;
+        time_bucket = from + bucket_size;
     }
 
     time_bucket = f64::trunc(time_bucket);
-    let mut column_index = 0;
 
     let mut bucket_map = HashMap::new();
     for operator in vec_operator {
-        bucket_map.insert(operator.unwrap(), HashMap::<i64, f64>::new());
+        bucket_map.insert(operator.unwrap(), HashMap::<i32, f64>::new());
     }
 
-    for (i, time) in time_column.into_iter().enumerate() {
-        let current_operator = operator_column.value(column_index as usize);
-        let current_memory = memory_column.value(column_index as usize) / 100000000;
+    let mut bucket_map_count = HashMap::new();
+    for operator in vec_operator {
+        bucket_map_count.insert(operator.unwrap(), 0.);
+    }
+
+    let divided = if len_of_mem.is_some() {
+        let mut out = 1;
+        for _i in 0..len_of_mem.unwrap() {
+            out *= 10;
+        }
+        out
+    } else {
+        1000000000
+    };
+
+    'outer: for (i, time) in time_column.into_iter().enumerate() {
+        let current_operator = operator_column.value(i as usize);
+        if i == 0 && matches!(mem_en, MEM::DIFF) {
+            continue 'outer;
+        }
+        let value_earlier_index =
+            get_earlier_entry(&batch, i, current_operator, column_for_operator);
+        if (value_earlier_index as usize) == usize::MAX && matches!(mem_en, MEM::DIFF) {
+            continue 'outer;
+        }
+        let current_memory = if matches!(mem_en, MEM::ABS) {
+            let mem = (memory_column.value(i as usize) / divided) as i32;
+            mem
+        } else {
+            let value1 = memory_column.value(i as usize);
+
+            let value_earlier = memory_column.value(value_earlier_index as usize);
+
+            let diff = value_earlier as i64 - value1 as i64;
+
+            diff as i32
+        };
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
@@ -307,10 +379,12 @@ pub fn freq_of_memory(
                 for item in frequenzy {
                     let times = *item.1 as i32;
                     for _i in 0..times {
-                        result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
+                        result_bucket.push(round(round(time_bucket) - bucket_size));
                         result_vec_operator.push(operator);
-                        result_mem_operator.push(current_memory.try_into().unwrap());
+                        result_mem_operator.push(*item.0);
                         result_builder.push(item.1.to_owned());
+                        let current_value = bucket_map_count[operator] + 1.;
+                        bucket_map_count.insert(operator, current_value);
                     }
                 }
                 // reset bucket_map
@@ -324,28 +398,25 @@ pub fn freq_of_memory(
         inner_hashmap.insert(current_memory, inner_hashmap[&current_memory] + 1.);
 
         if i == time_column.len() - 1 {
-            while time_bucket < to {
-                for operator in vec_operator {
-                    let operator = operator.unwrap();
+            for operator in vec_operator {
+                let operator = operator.unwrap();
 
-                    let frequenzy = bucket_map.get(operator).unwrap();
-                    for item in frequenzy {
-                        let times = *item.1 as i32;
-                        for _i in 0..times {
-                            result_bucket.push(f64::trunc((time_bucket) * 100.0) / 100.0);
-                            result_vec_operator.push(operator);
-                            result_mem_operator.push(current_memory.try_into().unwrap());
-                            result_builder.push(item.1.to_owned());
-                        }
+                let frequenzy = bucket_map.get(operator).unwrap();
+                for item in frequenzy {
+                    let times = *item.1 as i32;
+                    for _i in 0..times {
+                        result_bucket.push(round(round(time_bucket) - bucket_size));
+                        result_vec_operator.push(operator);
+                        result_mem_operator.push(*item.0);
+                        result_builder.push(item.1.to_owned());
+                        let current_value = bucket_map_count[operator] + 1.;
+                        bucket_map_count.insert(operator, current_value);
                     }
-                    // reset bucket_map
-                    bucket_map.insert(operator, HashMap::new());
                 }
-                time_bucket += bucket_size;
+                // reset bucket_map
+                bucket_map.insert(operator, HashMap::new());
             }
         }
-
-        column_index += 1;
     }
 
     let batch = create_mem_bucket(
@@ -357,5 +428,144 @@ pub fn freq_of_memory(
         result_builder,
     );
 
-    batch
+    let max_mem = arrow::compute::max(get_int32_column(&batch, 2)).unwrap();
+    let min_mem = arrow::compute::min(get_int32_column(&batch, 2)).unwrap();
+    let max_time = arrow::compute::max(get_floatarray_column(&batch, 0)).unwrap();
+    let min_time = arrow::compute::min(get_floatarray_column(&batch, 0)).unwrap();
+    let max_freq = arrow::compute::max(get_floatarray_column(&batch, 3)).unwrap();
+    let min_freq = arrow::compute::min(get_floatarray_column(&batch, 3)).unwrap();
+    let num_op = vec_operator.len() as f64;
+
+    let meta_info = create_new_record_batch(
+        vec![
+            "max_mem", "min_mem", "max_time", "min_time", "max_freq", "min_freq", "num_op",
+        ],
+        vec![
+            DataType::Int32,
+            DataType::Int32,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+            DataType::Float64,
+        ],
+        vec![
+            Arc::new(Int32Array::from(vec![max_mem])),
+            Arc::new(Int32Array::from(vec![min_mem])),
+            Arc::new(Float64Array::from(vec![max_time])),
+            Arc::new(Float64Array::from(vec![min_time])),
+            Arc::new(Float64Array::from(vec![max_freq])),
+            Arc::new(Float64Array::from(vec![min_freq])),
+            Arc::new(Float64Array::from(vec![num_op])),
+        ],
+    );
+
+    send_record_batch_to_js(&meta_info);
+
+    let sorted_batch = sort_batch(&batch, 1, false);
+    let mut offset = 0.;
+    let mut hashmap = HashMap::new();
+
+    for entry in vec_operator.into_iter().enumerate() {
+        let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
+
+        if len == 0. {
+            let single_batch = create_new_record_batch(
+                vec!["bucket", "operator", "mem", "freq"],
+                vec![
+                    DataType::Float64,
+                    DataType::Utf8,
+                    DataType::Int32,
+                    DataType::Float64,
+                ],
+                vec![
+                    Arc::new(Float64Array::from(vec![-1.])),
+                    Arc::new(StringArray::from(vec![entry.1.unwrap()])),
+                    Arc::new(Int32Array::from(vec![0])),
+                    Arc::new(Float64Array::from(vec![0.])),
+                ],
+            );
+            hashmap.insert((entry.1.unwrap(), 0 as usize), single_batch);
+            continue;
+        }
+
+        let batch = sorted_batch.slice(offset as usize, len as usize);
+
+        let bucket = get_floatarray_column(&batch, 0);
+        let mut bucket_vec = Vec::new();
+        for entry in bucket {
+            bucket_vec.push(entry.unwrap());
+        }
+        let operator = get_stringarray_column(&batch, 1);
+        let mut operator_vec = Vec::new();
+        for entry in operator {
+            operator_vec.push(entry.unwrap());
+        }
+        let mem = get_int32_column(&batch, 2);
+        let mut mem_vec = Vec::new();
+        for entry in mem {
+            mem_vec.push(entry.unwrap());
+        }
+        let freq = get_floatarray_column(&batch, 3);
+        let mut freq_vec = Vec::new();
+        for entry in freq {
+            freq_vec.push(entry.unwrap());
+        }
+
+        let single_batch = create_new_record_batch(
+            vec!["bucket", "operator", "mem", "freq"],
+            vec![
+                DataType::Float64,
+                DataType::Utf8,
+                DataType::Int32,
+                DataType::Float64,
+            ],
+            vec![
+                Arc::new(Float64Array::from(bucket_vec)),
+                Arc::new(StringArray::from(operator_vec)),
+                Arc::new(Int32Array::from(mem_vec)),
+                Arc::new(Float64Array::from(freq_vec)),
+            ],
+        );
+
+        let mem_column = get_int32_column(&single_batch, 2);
+        let mem_vec = mem_column
+            .into_iter()
+            .map(|v| (v.unwrap() as i64))
+            .collect::<Vec<i64>>();
+
+        /* let mean = statistics::mean(&mem_vec).unwrap();
+        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+
+        let from = if matches!(mem_en, MEM::DIFF) {
+            mean - (std_deviation * 100.)
+        } else {
+            mean - (std_deviation)
+        };
+        let to = if matches!(mem_en, MEM::DIFF) {
+            mean + (std_deviation * 100.)
+        } else {
+            mean + (std_deviation)
+        };
+
+        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch); */
+
+        let min_bucket = arrow::compute::min(bucket).unwrap();
+        hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+
+        offset += len;
+    }
+
+    let mut vec = Vec::new();
+    for k in hashmap.keys() {
+        vec.push(k);
+    }
+
+    vec.sort_by(|a, b| a.0.cmp(&b.0));
+    vec.sort_by(|a, b| a.1.cmp(&b.1));
+
+    for entry in vec {
+        let batch = hashmap.get(entry).unwrap();
+        send_record_batch_to_js(batch);
+    }
 }

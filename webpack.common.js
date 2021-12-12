@@ -1,5 +1,6 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -135,9 +136,18 @@ export function configure(params) {
                 filename: './static/css/[id].[contenthash].css',
                 chunkFilename: './static/css/[id].[contenthash].css',
             }),
+            new MonacoWebpackPlugin()
+            // new webpack.ProvidePlugin({ 
+            //     JSZip: 'jszip', 
+            // }), 
         ],
         experiments: {
             asyncWebAssembly: true,
         },
+        // externals: [
+        //     {
+        //         './jszip': 'jszip'
+        //     }
+        // ]
     };
 }

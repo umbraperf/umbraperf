@@ -1,0 +1,125 @@
+@value colors: "./export-variables.module.css";
+@value colorAccentBlack, colorTertiary from colors;
+
+:root {
+    --dagreGraphPadding: 2px;
+}
+
+.elementWrapper{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+}
+
+.queryplanContainer{
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.queryplanContainerTitle{
+    position: relative;
+    top: 1px;
+    font-family: 'Segoe UI';
+    font-size: 11px;
+    font-weight: bold;
+    color: colorAccentBlack;
+    opacity: 1;
+    margin-bottom: 0;
+}
+
+.warningContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.reactFlowGraph{
+    cursor: grab;
+    padding: var(--dagreGraphPadding);
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%; 
+}
+
+.reactFlowGraph:active{
+    cursor: grabbing;
+}
+
+.reactFlowControls{
+    opacity: 50%;
+    transition: opacity 0.5s;
+}
+
+.reactFlowControls:hover{
+    opacity: 100%;
+}
+
+.queryplanNodeBody{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.queryplanNodeTooltip{
+    color: colorAccentBlack;
+    width: 300px;
+    border-style: solid;
+    border-width: var(--tooltipBorderWidth) !important;
+    border-radius: var(--tooltipBorderRadius) !important;
+    border-color: var(--tooltipBorderColor) !important;    
+    background-color: var(--tooltipBackgroundColor);
+}
+
+.queryplanNodeTooltipSubtitle{
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 3px;
+    font-size: 11px;
+}
+
+.queryplanNodeTooltipTableCell{
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+
+}
+
+.queryplanNodeTooltipTableCellContent{
+    font-size: 10px;
+    color: colorAccentBlack;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.queryplanNodeTooltipTableCellContentUirNumber{
+    composes: queryplanNodeTooltipTableCellContent;
+}
+
+.queryplanNodeTooltipTableCellContentUirLine{
+    composes: queryplanNodeTooltipTableCellContent;
+    width: 215px;
+}
+
+.queryplanNodeTooltipTableCellContentUirFreq{
+    composes: queryplanNodeTooltipTableCellContent;
+}
+
+.queryplanNodeTooltipTableCellHead{
+    composes: queryplanNodeTooltipTableCell;
+    font-size: 12px;
+}

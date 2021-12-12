@@ -1,23 +1,23 @@
-import { ChartDataKeyValue } from "./chart_data_result";
-import { IKpiData, Result, ResultLoading } from "./core_result";
-import { RestQueryType } from "./rest_queries";
+import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
 import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
+import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
-    fileName: string | undefined;
     fileLoading: boolean;
     resultLoading: ResultLoading;
     result: Result | undefined;
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
-    currentChart: string;
+    currentChart: Array<ChartType>;
+    loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    currentRequest: RestQueryType | undefined;
+    currentOperatorTimeframe: Array<string> | "All";
+    currentRequest: BackendQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
@@ -31,22 +31,27 @@ export interface AppState {
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
+    currentView: ViewType;
+    memoryHeatmapsDifferenceRepresentation: boolean;
+    currentProfile: ProfileType;
+    profiles: Array<ProfileVariant>;
 }
 
 export function createDefaultState(): AppState {
     return {
-        fileName: undefined,
         fileLoading: false,
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
         csvParsingFinished: false,
         file: undefined,
-        currentChart: "",
+        currentChart: [],
+        loadingChartReadableName: [],
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",
         currentOperator: "All",
+        currentOperatorTimeframe: "All",
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
@@ -59,7 +64,10 @@ export function createDefaultState(): AppState {
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],
-        currentTimePositionSelectionTuple: [-1, -1]
-
+        currentTimePositionSelectionTuple: [-1, -1],
+        currentView: ViewType.UPLOAD,
+        memoryHeatmapsDifferenceRepresentation: true,
+        currentProfile: ProfileType.OVERVIEW,
+        profiles: createProfiles(),
     };
 }

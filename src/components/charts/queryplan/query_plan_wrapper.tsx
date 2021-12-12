@@ -39,7 +39,6 @@ export type PlanNode = {
     borderFill: string,
     backgroundFill: string,
     nodeCursor: string,
-    textColor: string,
     isNodeSelectable: boolean,
     tooltipData: QueryplanNodeTooltipData,
 }
@@ -90,7 +89,19 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             renderFlowPlan: true,
             // currentUirOperators: this.getCurrentUirOperators(),
         };
+
+        this.handleOperatorSelection = this.handleOperatorSelection.bind(this);
     }
+
+    // getCurrentUirOperators(): string[] {
+    //     let currentUirOperators: string[] = [];
+    //     this.props.chartData.nodeTooltipData.operators.forEach((elem, index) => {
+    //         if (currentUirOperators[currentUirOperators.length - 1] !== elem && this.props.chartData.nodeTooltipData.operatorTotalFrequency[index] > 0) {
+    //             currentUirOperators.push(elem);
+    //         }
+    //     });
+    //     return currentUirOperators;
+    // }
 
     componentDidMount() {
         this.createQueryPlan();
@@ -149,9 +160,18 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             height: this.props.height,
             width: this.props.width,
             graphElements: flowGraphData,
+            handleOperatorSelection: this.handleOperatorSelection,
         } as any);
 
         return planViewer;
+    }
+
+
+    handleOperatorSelection(elementId: string) {
+        if (this.props.operators!.includes(elementId)) {
+            //Only trigger operator selection if operator is in measurement data
+            Controller.handleOperatorSelection(elementId);
+        }
     }
 
     createFlowGraphData(root: Partial<PlanNode> & { child: object }): FlowGraphElements {
@@ -160,6 +180,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             nodes: new Array<PlanNode>(),
             links: new Array<PlanEdge>()
         }
+
+        const nodeColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false);
+        const nodeBackgroundColorScale = model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length, false, 0.1);
 
         const isNodeUnavailable = (nodeId: string) => {
             return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
@@ -182,29 +205,21 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeColor = (nodeId: string) => {
+            //add 33 to hex color for 10% opacity
             //return tuple with 0: border color, 1: background color
             if (nodeId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
             } else if (isNodeUnavailable(nodeId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
-                return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
+                return [this.props.appContext.tertiaryColor, this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
             } else if (isNodeSelected(nodeId)) {
                 //active node
                 const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScale[operatorIndex]];
+                return [nodeColorScale[operatorIndex], nodeBackgroundColorScale[operatorIndex]];
             } else {
                 //inactive node
-                const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[operatorIndex],];
-            }
-        }
-
-        const nodeTextColor = (nodeId: string) => {
-            if(isNodeUnavailable(nodeId)){
-                return '#919191';
-            }else {
-                return this.props.appContext.accentBlack;
+                return [this.props.appContext.tertiaryColor, '#fff'];
             }
         }
 
@@ -231,7 +246,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const rootCursor = nodeCursor(root.id!);
         const rootColor = nodeColor(root.id!);
-        const rootTextColor = nodeTextColor(root.id!);
         const rootTooltipData = nodeTooltipData(root.id!);
         planData.nodes.push({
             label: root.label!,
@@ -240,7 +254,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             isNodeSelectable: rootCursor[1] as boolean,
             borderFill: rootColor[0],
             backgroundFill: rootColor[1],
-            textColor: rootTextColor,
             tooltipData: rootTooltipData,
         })
         fillGraph(root.child, root.id!);
@@ -249,7 +262,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             const planNodeCursor = nodeCursor(currentPlanElement.operator);
             const planNodeColor = nodeColor(currentPlanElement.operator);
-            const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
             const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
 
             planData.nodes.push({
@@ -260,7 +272,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 isNodeSelectable: planNodeCursor[1] as boolean,
                 borderFill: planNodeColor[0],
                 backgroundFill: planNodeColor[1],
-                textColor: planNodeTextColor,
                 tooltipData: planNodeTooltipData,
             });
             planData.links.push({
@@ -275,6 +286,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 }
             });
         }
+
+        console.log(planData.links);
 
         const flowGraphElements: FlowGraphElements = this.createReactFlowNodesEdges(planData.nodes, planData.links);
 
@@ -304,7 +317,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 borderColor: node.borderFill,
                 cursor: node.nodeCursor,
                 fontSize: '15px',
-                color: node.textColor,
             }
 
             const data: QueryplanNodeData = {
@@ -317,8 +329,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 data,
                 position,
                 style,
-                targetPosition: isVertical ? Position.Bottom : Position.Left,
-                sourcePosition: isVertical ? Position.Top : Position.Right,
+                targetPosition: isVertical ? Position.Bottom : Position.Right,
+                sourcePosition: isVertical ? Position.Top : Position.Left,
                 selectable: node.isNodeSelectable,
                 type: 'queryplanNode',
             }
@@ -368,7 +380,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     getGraphDirection() {
-        return this.props.height > this.props.width ? 'TB' : 'RL';
+        return this.props.height > this.props.width ? 'TB' : 'LR';
     }
 
     createNoQueryPlanWarning() {

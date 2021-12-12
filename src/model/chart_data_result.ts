@@ -88,12 +88,14 @@ export interface IMemoryAccessHeatmapChartData {
 
 export interface IUirViewerData {
     uirLines: Array<string>;
-    eventsFrequency: {
-        [eventId:number ]: Array<number>;
-    }
-    eventsRelativeFrequency: {
-        [eventId:number ]: Array<number>;
-    }
+    event1: Array<number>;
+    event2: Array<number>;
+    event3: Array<number>;
+    event4: Array<number>;
+    relEvent1: Array<number>;
+    relEvent2: Array<number>;
+    relEvent3: Array<number>;
+    relEvent4: Array<number>;
     operators: Array<string>;
     pipelines: Array<string>;
     isFunction: Array<number>;

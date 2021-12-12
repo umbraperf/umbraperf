@@ -16,7 +16,6 @@ interface AppstateProps {
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
-    physicalOperators: Array<string> | undefined;
     chartData: model.ISunburstChartData,
 }
 
@@ -239,15 +238,8 @@ class SunburstChart extends React.Component<Props, {}> {
                     name: "colorOperators",
                     type: "ordinal",
                     domain: this.props.operators,
-                    range: model.chartConfiguration.colorScale!.operatorColorScale,
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                 },
-                {
-                    name: "colorPhysicalOperators",
-                    type: "ordinal",
-                    domain: this.props.physicalOperators,
-                    range: model.chartConfiguration.colorScale!.physicalOperatorsScale,
-                }
             ],
 
             marks: [
@@ -319,7 +311,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     fill: "colorOperators", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
-                    orient: this.props.doubleRowSize ? "bottom-left" : "left",
+                    orient: this.props.doubleRowSize ? "bottom-left" : "right",
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     values: pipelinesLegend(),
@@ -333,17 +325,17 @@ class SunburstChart extends React.Component<Props, {}> {
                     }
                 },
                 {
-                    fill: "colorPhysicalOperators",
+                    fill: "colorOperators",
                     title: "Operators",
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
                     rowPadding: 2,
-                    // columns:  this.props.doubleRowSize ? 1 : 3,
+                    columns: this.props.doubleRowSize ? 1 : 3,
                     columnPadding: 3,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,
-                    values: [...new Set(this.props.physicalOperators)],
+                    values: this.props.operators,
                     encode: {
                         labels: {
                             update: {
@@ -365,7 +357,6 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartPr
     pipelines: state.pipelines,
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
-    physicalOperators: state.physicalOperators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
 });
 

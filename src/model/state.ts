@@ -1,4 +1,5 @@
 import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
+import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -21,10 +22,11 @@ export interface AppState {
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
     operators: Array<string> | undefined;
-    physicalOperators: Array<string> | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
+    //TODO remove:
+    dashboardState: IDashboardState | undefined;
     currentInterpolation: String;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
@@ -55,10 +57,10 @@ export function createDefaultState(): AppState {
         pipelines: undefined,
         pipelinesShort: undefined,
         operators: undefined,
-        physicalOperators: undefined,
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},
+        dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],

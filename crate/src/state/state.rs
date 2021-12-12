@@ -64,7 +64,7 @@ pub fn get_buffer() -> Arc<Mutex<Vec<u8>>> {
 pub fn get_serde_dict() -> Option<Arc<SerdeDict>> {
     with_state(|s| s.dict.clone())
 }
-pub fn get_file_size() -> Option<u64> {
+pub fn _get_file_size() -> Option<u64> {
     with_state(|s| s.file_size.clone())
 }
 

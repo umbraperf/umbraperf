@@ -4,27 +4,33 @@ use std::{
 };
 
 use arrow::{
-    array::{Float64Array, Int32Array, Int64Array, StringArray, ArrayRef},
+    array::{ArrayRef, Float64Array, Int32Array, Int64Array, StringArray},
     datatypes::DataType,
     record_batch::RecordBatch,
 };
 
 use crate::{
-    exec::{basic::{basic::sort_batch, filter::filter_between_int32}, rest::rest_api::find_name},
+    exec::{
+        basic::{basic::sort_batch, filter::filter_between_int32},
+        rest::rest_api::find_name,
+    },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj},
+    utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_util::{self, create_new_record_batch},
+    },
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
 
 #[derive(Clone, Debug)]
 pub struct ABSFREQ {
-    abs_freq: Vec<f64>
+    abs_freq: Vec<f64>,
 }
 
 #[derive(Clone, Debug)]
 pub struct RELFREQ {
-    rel_freq: Vec<f64>
+    rel_freq: Vec<f64>,
 }
 
 pub fn round(to_round: f64) -> f64 {
@@ -40,10 +46,9 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         }
         out_vec.push(f64::trunc((sum) * 100.0) / 100.0);
     }
-    
+
     out_vec
 }
-
 
 pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let column_ev_name = record_batch
@@ -63,7 +68,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     // CALCULATE
     let mut hashmap_count = HashMap::new();
     let mut unique_events_set = HashSet::new();
-    
+
     for entry in column_srcline.into_iter().enumerate() {
         let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
@@ -119,15 +124,14 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         let dict = dict.uri_dict.get(&entry).unwrap();
 
         output_vec.push((
-            dict.uir.as_ref(), 
+            dict.uir.as_ref(),
             ABSFREQ {
-                abs_freq: buffer_percentage
-            }, 
+                abs_freq: buffer_percentage,
+            },
             dict.op.as_ref(),
             dict.pipeline.as_ref(),
         ));
     }
-
 
     // Special treatment for functions with define, declare and aggregated output
     let mut aggregated_output_vec = Vec::new();
@@ -146,9 +150,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         aggregated_output_vec.push((
                             Some(current_srcline.to_owned()),
-                            ABSFREQ {  
-                                abs_freq: sum_vec
-                            }, 
+                            ABSFREQ { abs_freq: sum_vec },
                             dict.op.as_ref(),
                             dict.pipeline.as_ref(),
                             1,
@@ -205,7 +207,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 total_sum_vec_function.push(0.);
             }
             let rel_freq = RELFREQ {
-                rel_freq: total_sum_vec_function.clone()
+                rel_freq: total_sum_vec_function.clone(),
             };
 
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
@@ -219,7 +221,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 }
             }
             let rel_freq = RELFREQ {
-               rel_freq: vec.clone()
+                rel_freq: vec.clone(),
             };
 
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
@@ -233,7 +235,6 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut is_function_flag = Vec::new();
     let mut srcline_num = Vec::new();
     let mut vec_vec_rel_perc = Vec::new();
-
 
     for input in aggregated_output_vec_2.into_iter().enumerate() {
         let num = input.0;
@@ -257,23 +258,21 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let mut vec = Vec::new();
     for entry in unique_events_set.clone().into_iter().enumerate() {
-        let value = entry.0+1;
+        let value = entry.0 + 1;
         let mut str = "perc".to_owned();
         str.push_str(&value.to_string());
         vec.push(str);
     }
     let vec: Vec<&str> = vec.iter().map(AsRef::as_ref).collect();
 
-
     let mut vec_rel: Vec<String> = Vec::new();
     for entry in unique_events_set.clone().into_iter().enumerate() {
-        let value = entry.0+1;
+        let value = entry.0 + 1;
         let mut str = "rel_perc".to_owned();
         str.push_str(&value.to_string());
         vec_rel.push(str);
     }
     let vec_rel: Vec<&str> = vec_rel.iter().map(AsRef::as_ref).collect();
-
 
     let data = vec![
         vec!["scrline"],
@@ -282,7 +281,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         vec!["pipe"],
         vec!["func_flag"],
         vec!["srcline_num"],
-        vec_rel
+        vec_rel,
     ];
 
     let mut vec_data = Vec::new();
@@ -301,7 +300,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         vec![DataType::Utf8],
         vec![DataType::Int32],
         vec![DataType::Int32],
-        vec_rel_data
+        vec_rel_data,
     ];
 
     let mut column_ref: Vec<ArrayRef> = Vec::new();
@@ -331,7 +330,10 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let out_batch = create_new_record_batch(
         data.into_iter().flatten().collect::<Vec<&str>>(),
-        data_datatype.into_iter().flatten().collect::<Vec<DataType>>(),
+        data_datatype
+            .into_iter()
+            .flatten()
+            .collect::<Vec<DataType>>(),
         column_ref,
     );
 

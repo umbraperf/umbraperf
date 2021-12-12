@@ -1,3 +1,4 @@
+use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 use crate::{
     exec::basic::{
         basic, count, filter, kpis,
@@ -13,7 +14,6 @@ use crate::{
 };
 use arrow::record_batch::RecordBatch;
 use std::usize;
-use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 
 // Find name in Record Batch
 // Panic if error, else usize of column
@@ -206,7 +206,6 @@ pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
-
     if query_already_calculated(restful_string) {
         return;
     }

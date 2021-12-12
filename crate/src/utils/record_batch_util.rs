@@ -154,7 +154,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     let time_col = batch.column(2)
         .as_any()
         .downcast_ref::<Float64Array>()
-        .unwrap();;
+        .unwrap();
 
     let mut time = Vec::new();
     for value in time_col {
@@ -177,19 +177,17 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     let addr_col = batch.column(5)
         .as_any()
         .downcast_ref::<UInt64Array>()
-        .unwrap();;
+        .unwrap();
 
     let mut addr = Vec::new();
     for value in addr_col {
         addr.push(value.unwrap());
     }
 
-    let uri = batch.column(4).to_owned();
-
     let uri_col = batch.column(4)
         .as_any()
         .downcast_ref::<Int64Array>()
-        .unwrap();;
+        .unwrap();
 
     let mut uri = Vec::new();
     for value in uri_col {

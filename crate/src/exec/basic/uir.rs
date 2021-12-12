@@ -191,7 +191,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     let mut aggregated_output_vec_2 = Vec::new();
 
     let mut total_sum_vec = Vec::new();
-    for entry in &unique_events_set {
+    for _entry in &unique_events_set {
         total_sum_vec.push(0.);
     }
     for item in aggregated_output_vec {
@@ -201,7 +201,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                 total_sum_vec.push(entry);
             }
             let mut total_sum_vec_function = Vec::new();
-            for entry in &unique_events_set {
+            for _entry in &unique_events_set {
                 total_sum_vec_function.push(0.);
             }
             let rel_freq = RELFREQ {
@@ -286,11 +286,11 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     ];
 
     let mut vec_data = Vec::new();
-    for entry in &unique_events_set.clone() {
+    for _entry in &unique_events_set.clone() {
         vec_data.push(DataType::Float64);
     }
     let mut vec_rel_data = Vec::new();
-    for entry in &unique_events_set.clone() {
+    for _entry in &unique_events_set.clone() {
         vec_rel_data.push(DataType::Float64);
     }
 

@@ -1,5 +1,8 @@
+@value colors: "./export-variables.module.css";
+@value appBackgroundColor from colors;
+
 .app{
-    background-color: rgb(247, 251, 255);
+    background-color: appBackgroundColor;
 }
 
 .appHeader{
@@ -19,10 +22,5 @@
     top: 76px;
     bottom: 0px;
     width: 100%;
-    /* overflow-y: auto; */
-}
-
-.appHeaderTitle{
-    flex-grow: 1,
 }
 

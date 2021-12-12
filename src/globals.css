@@ -1,7 +1,3 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
 
 html { font-family: 'Roboto', sans-serif; }
-
-:root {
-    --some_cool_css_variable: rgb(30, 30, 30);
-}

@@ -7,12 +7,9 @@ use arrow::{
 };
 
 use crate::{
-    exec::{
-        basic::{
-            basic::{find_unique_string, sort_batch},
-            filter,
-        },
-        freq::freq::create_freq_bucket,
+    exec::basic::{
+        basic::{find_unique_string, sort_batch},
+        filter,
     },
     utils::record_batch_util::create_new_record_batch,
 };
@@ -29,7 +26,6 @@ pub fn abs_freq_of_event(
 
     let unique_event = find_unique_string(batch, column_for_event);
 
-    // Vector of unique strings
     let vec_event = unique_event
         .column(0)
         .as_any()
@@ -97,13 +93,13 @@ pub fn abs_freq_of_event(
         column_index += 1;
     }
 
-    let batch = create_freq_bucket(
-        &batch,
-        column_for_event,
-        result_bucket,
-        result_vec_event,
-        result_builder,
-        freq::Freq::ABS,
+    let batch = create_new_record_batch(
+        vec!["bucket", "absfreq"],
+        vec![DataType::Float64, DataType::Float64],
+        vec![
+            Arc::new(Float64Array::from(result_bucket)),
+            Arc::new(Float64Array::from(result_builder)),
+        ],
     );
 
     batch
@@ -147,12 +143,14 @@ pub fn abs_freq_with_pipelines_with_double_events(
     vec.push(events[0]);
     let f_batch = filter::filter_with(1, vec, batch);
 
-    let mut vec1 = Vec::new();
-    let mut vec2 = Vec::new();
-    let mut vec3 = Vec::new();
-    let mut vec4 = Vec::new();
-    let mut vec5 = Vec::new();
-    let mut vec6 = Vec::new();
+    let (mut vec1, mut vec2, mut vec3, mut vec4, mut vec5, mut vec6) = (
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+    );
 
     let first_filter_batch = abs_freq_of_pipelines(
         &f_batch,
@@ -237,12 +235,12 @@ pub fn abs_freq_with_pipelines_with_double_events(
 
     create_new_record_batch(
         vec![
-            "bucket",
-            "operator",
-            "absfreq",
             "bucketNEG",
             "operatorNEG",
             "absfreqNEG",
+            "bucket",
+            "operator",
+            "absfreq",
         ],
         vec![
             DataType::Float64,

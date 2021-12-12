@@ -3,10 +3,15 @@ use arrow::record_batch::RecordBatch;
 use crate::{
     exec::{
         basic::basic,
-        freq::{abs_freq, freq::freq_of_memory, rel_freq},
+        freq::{
+            abs_freq,
+            freq::{freq_of_memory, MEM},
+            rel_freq,
+        },
     },
     utils::string_util::{
-        split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_to,
+        split_at_and, split_at_colon, split_at_comma, split_at_excl_mark, split_at_numop,
+        split_at_to,
     },
 };
 
@@ -127,20 +132,6 @@ pub fn rel_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
     return rel_freq_specific_pipelines(record_batch, params);
 }
 
-pub fn add_column(record_batch: &RecordBatch, params: &str) -> RecordBatch {
-    let split = split_at_comma(params);
-    if split[0].contains("\"") {
-        basic::add_column(record_batch, &split[0].replace("\"", ""), split[1])
-    } else {
-        basic::add_column_float(record_batch, split[0].parse::<f64>().unwrap(), split[1])
-    }
-}
-
-pub fn rename(record_batch: &RecordBatch, params: &str) -> RecordBatch {
-    let split = split_at_comma(params);
-    basic::rename(record_batch, split[0], split[1])
-}
-
 pub fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     if params.contains(",") {
         let split = split_at_comma(params);
@@ -153,12 +144,23 @@ pub fn sort(record_batch: &RecordBatch, params: &str) -> RecordBatch {
     return basic::sort_batch(&record_batch, find_name(params, &record_batch), false);
 }
 
-pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
+pub fn freq_mem(record_batch: RecordBatch, params: &str) {
     let split = split_at_excl_mark(params);
+    let split_numop = split_at_numop(split[1]);
 
     let before_excl_mark = 0;
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
-    let range = split_at_to(split[1]);
+    let range = split_at_to(split_numop[0]);
+
+    let abs_or_diff = if let Some(x) = split_numop.get(1) {
+        match *x {
+            "ABS" => MEM::ABS,
+            "DIFF" => MEM::DIFF,
+            _ => MEM::ABS,
+        }
+    } else {
+        MEM::ABS
+    };
 
     let _before_colon = 0;
     let after_colon = 1;
@@ -166,12 +168,14 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) -> RecordBatch {
         .parse::<f64>()
         .unwrap();
 
-    return freq_of_memory(
+    freq_of_memory(
         &record_batch,
         find_name("operator", &record_batch),
         find_name("time", &record_batch),
         bucket_size,
         range[0].parse::<f64>().unwrap(),
         range[1].parse::<f64>().unwrap(),
+        None,
+        abs_or_diff,
     );
 }

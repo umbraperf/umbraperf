@@ -10,10 +10,11 @@ export * from './state_mutation';
 export * from './state';
 export * from './chart_data_result';
 export * from './core_result';
-export * from './rest_queries';
+export * from './backend_queries';
 export * from './vega_configuration';
 export * from './chart_types';
-export * from './rest_queries';
+export * from './backend_queries';
+export * from './profiles';
 
 // XXX Conditional
 import storeDev from './store_dev';

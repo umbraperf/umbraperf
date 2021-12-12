@@ -1,19 +1,49 @@
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';
-import * as RestApi from './model/rest_queries';
+import * as BackendApi from './model/backend_queries';
+import * as JSZip from '../node_modules/jszip/';
 
+//worker responses:
+
+export enum WorkerResponseType {
+  CSV_READING_FINISHED = 'CSV_READING_FINISHED',
+  STORE_RESULT = 'STORE_RESULT',
+  STORE_QUERYPLAN = 'STORE_QUERYPLAN',
+};
+
+export type WorkerResponse<T, P> = {
+  readonly type: T;
+  readonly data: P;
+  readonly messageId: number;
+};
+
+export interface IStoreResultResponseData {
+  requestId: number,
+  chartData: any,
+  backendQueryType: BackendApi.BackendQueryType,
+  metaRequest: boolean,
+}
+
+export interface IStoreQueryplanResponseData {
+  requestId: number,
+  queryPlanData: object,
+  backendQueryType: BackendApi.BackendQueryType,
+}
+
+export type WorkerResponseVariant =
+  WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, number> |
+  WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
+  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, IStoreQueryplanResponseData>
+  ;
+
+
+//worker requests:
 
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
   CALCULATE_CHART_DATA = 'CALCULATE_CHART_DATA',
   TEST = 'TEST',
-};
-
-export enum WorkerResponseType {
-  CSV_READING_FINISHED = 'CSV_READING_FINISHED',
-  STORE_RESULT = 'STORE_RESULT',
-  REGISTERED_FILE = 'REGISTERED_FILE',
 };
 
 export type WorkerRequest<T, P> = {
@@ -22,28 +52,11 @@ export type WorkerRequest<T, P> = {
   readonly data: P;
 };
 
-export type WorkerResponse<T, P> = {
-  readonly messageId: number;
+export interface ICalculateChartDataRequestData {
   readonly requestId: number | undefined;
-  readonly type: T;
-  readonly data: P;
-  readonly metaRequest: boolean;
-  readonly restQueryType: RestApi.RestQueryType | undefined;
-};
-
-export interface ICalculateChartDataRequestData{
-  queryMetadata: string,
-  restQuery: string,
-  requestId: number,
-  metaRequest: boolean,
-  restQueryType: RestApi.RestQueryType,
-}
-
-export interface IStoreResultResponseData{
-  messageId: number;
-  requestId: number|undefined;
-  type: WorkerResponseType;
-  data: any;
+  readonly backendQuery: string,
+  readonly metaRequest: boolean,
+  readonly backendQueryType: BackendApi.BackendQueryType;
 }
 
 export type WorkerRequestVariant =
@@ -51,14 +64,8 @@ export type WorkerRequestVariant =
   WorkerRequest<WorkerRequestType.CALCULATE_CHART_DATA, ICalculateChartDataRequestData>
   ;
 
-export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, any> |
-  WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
-  WorkerResponse<WorkerResponseType.REGISTERED_FILE, string>
-  ;
 
-
-export interface IRequestWorker {
+export interface IWorker {
   postMessage: (answerMessage: WorkerResponseVariant) => void;
   onmessage: (message: MessageEvent<WorkerRequestVariant>) => void;
 }
@@ -71,19 +78,11 @@ interface IGlobalFileDictionary {
 let globalFileIdCounter = 0;
 let globalMetaRequest: boolean;
 let globalFileDictionary: IGlobalFileDictionary = {}
-let globalRequestId: number|undefined = undefined;
-let globalRestQueryType: RestApi.RestQueryType | undefined = undefined;
+let globalRequestId: number | undefined = undefined;
+let globalBackendQueryType: BackendApi.BackendQueryType | undefined = undefined;
 
-const worker: IRequestWorker = self as any;
+const worker: IWorker = self as any;
 
-interface IRegisteredFile {
-  file: File | undefined,
-  size: number | undefined,
-}
-let registeredFile: IRegisteredFile = {
-  file: undefined,
-  size: undefined,
-};
 
 export function readFileChunk(offset: number, chunkSize: number) {
 
@@ -105,15 +104,45 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
+function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
+  JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
+    const queryPlanFile = umbraperfArchiv.files["query_plan.json"];
+    if (undefined === queryPlanFile) {
+      worker.postMessage({
+        messageId: 201,
+        type: WorkerResponseType.STORE_QUERYPLAN,
+        data: {
+          requestId: queryplanRequestId,
+          queryPlanData: { "error": "no queryplan" },
+          backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
+        },
+      });
+    } else {
+      queryPlanFile.async('string').then(
+        function (queryPlanFileData: any) {
+          const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
+          worker.postMessage({
+            messageId: 201,
+            type: WorkerResponseType.STORE_QUERYPLAN,
+            data: {
+              requestId: queryplanRequestId,
+              queryPlanData: queryPlanFileDataJson,
+              backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
+            },
+          });
+        },
+      )
+    }
+  })
 
-export function notifyJsFinishedReading(requestId: number) {
+}
+
+
+export function notifyJsFinishedReading(registeredFileId: number) {
   worker.postMessage({
     messageId: 201,
-    requestId: 100,
     type: WorkerResponseType.CSV_READING_FINISHED,
-    data: requestId,
-    metaRequest: false,
-    restQueryType: undefined,
+    data: registeredFileId,
   });
 
 }
@@ -123,11 +152,13 @@ export function notifyJsQueryResult(result: any) {
   if (result) {
     worker.postMessage({
       messageId: 201,
-      requestId: globalRequestId,
       type: WorkerResponseType.STORE_RESULT,
-      data: result,
-      metaRequest: globalMetaRequest,
-      restQueryType: globalRestQueryType,
+      data: {
+        requestId: globalRequestId!,
+        chartData: result,
+        backendQueryType: globalBackendQueryType!,
+        metaRequest: globalMetaRequest,
+      },
     });
   }
 
@@ -145,16 +176,20 @@ worker.onmessage = (message) => {
 
     case WorkerRequestType.REGISTER_FILE:
 
+      globalFileIdCounter++;
       globalFileDictionary[globalFileIdCounter] = messageData as File;
       profiler_core.analyzeFile(globalFileDictionary[globalFileIdCounter].size);
-      globalFileIdCounter++;
       break;
 
     case WorkerRequestType.CALCULATE_CHART_DATA:
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
-      globalRestQueryType = (messageData as ICalculateChartDataRequestData).restQueryType;
-      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).restQuery);
+      globalBackendQueryType = (messageData as ICalculateChartDataRequestData).backendQueryType;
+      if (globalBackendQueryType === BackendApi.BackendQueryType.GET_QUERYPLAN_DATA) {
+        // extract queryplan from zip if queryplan tooltip query is send to request
+        extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter], globalRequestId!);
+      }
+      profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).backendQuery);
       break;
 
     default:

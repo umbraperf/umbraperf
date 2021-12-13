@@ -45,7 +45,9 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             }
 
             return (
-                <Paper>
+                <Paper
+                    className={styles.queryplanNodeTooltipTableBackground}
+                >
                     <Table
                         size="small"
                         aria-label="a dense table">

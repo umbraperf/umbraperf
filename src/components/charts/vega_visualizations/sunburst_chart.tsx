@@ -346,7 +346,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     encode: {
                         labels: {
                             update: {
-                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 15)" } : { signal: "truncate(datum.value, 8)" },
+                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 20)" } : { signal: "truncate(datum.value, 15)" },
                             }
                         }
                     }

@@ -89,6 +89,10 @@
     font-size: 11px;
 }
 
+.queryplanNodeTooltipTableBackground{
+    background-color: inherit;
+}
+
 .queryplanNodeTooltipTableCell{
     padding-top: 3px !important;
     padding-bottom: 3px !important;

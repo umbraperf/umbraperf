@@ -138,7 +138,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     createPlanViewer(queryplanJson: object) {
 
         const rootNode = {
-            label: "RESULT",
             id: "root",
             child: queryplanJson,
         }
@@ -201,11 +200,23 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeTextColor = (nodeId: string) => {
-            if(isNodeUnavailable(nodeId)){
+            if (isNodeUnavailable(nodeId)) {
                 return '#919191';
-            }else {
+            } else {
                 return this.props.appContext.accentBlack;
             }
+        }
+
+        const nodeLabel = (nodeId: string) => {
+            let nodeLabel = "";
+            if (nodeId === "root") {
+                nodeLabel = "RESULT";
+            } else if (this.props.operators!.operatorsId.includes(nodeId)) {
+                nodeLabel = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(nodeId)];
+            } else {
+                nodeLabel = nodeId;
+            }
+            return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
 
         const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
@@ -234,8 +245,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const rootTextColor = nodeTextColor(root.id!);
         const rootTooltipData = nodeTooltipData(root.id!);
         planData.nodes.push({
-            label: root.label!,
-            id: root.id!, parent: "",
+            label: nodeLabel(root.id!),
+            id: root.id!, 
+            parent: "",
             nodeCursor: rootCursor[0] as string,
             isNodeSelectable: rootCursor[1] as boolean,
             borderFill: rootColor[0],
@@ -253,7 +265,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
 
             planData.nodes.push({
-                label: currentPlanElement.operator,
+                label: nodeLabel(currentPlanElement.operator),
                 id: currentPlanElement.operator,
                 parent: parent,
                 nodeCursor: planNodeCursor[0] as string,
@@ -308,7 +320,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
 
             const data: QueryplanNodeData = {
-                label: node.label.length > 15 ? node.label.substring(0, 14) + "..." : node.label,
+                label: node.label,
                 tooltipData: node.tooltipData,
             }
 

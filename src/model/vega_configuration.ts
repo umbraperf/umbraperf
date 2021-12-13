@@ -23,7 +23,7 @@ export interface ChartConfiguration {
     subtitleFontSize: number;
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
-    donutChartTooltip: string;
+    // donutChartTooltip: string;
     activityHistogramTooltip: string;
     barChartTooltip: string;
     sunburstChartTooltip: (pipeline: boolean) => string;
@@ -41,7 +41,7 @@ export interface ChartConfiguration {
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
     memoryChartXLabelSeparation: number,
-    memoryChartTooltip: string,
+    // memoryChartTooltip: string,
     colorLowOpacityHex: string,
     nFormatter: (num: number, digits: number) => string,
     colorScale: { operatorsIdColorScale: string[], operatorsIdColorScaleLowOpacity: string[], operatorsGroupScale: string[] } | undefined;
@@ -91,17 +91,17 @@ export let chartConfiguration: ChartConfiguration = {
     valueLabelFont: "Segoe UI",
 
     //Tooltip:
-    areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Relative Frequency': datum.frequency",
-    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operators, 'Absolute Frequency': datum.frequency",
-    donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
+    areaChartTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Relative Frequency': datum.frequency",
+    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
+    // donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
-    barChartTooltip: "{'Operator': datum.operators, 'Occurences': datum.values}",
+    barChartTooltip: "{'Operator ID': datum.operators, 'Occurences': datum.values}",
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
-            "{'Operator': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
+            "{'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
-    memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
+    // memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 
     //Color Scale
     colorScale: undefined,

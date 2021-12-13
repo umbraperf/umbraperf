@@ -29,7 +29,6 @@ interface State {
     loading: boolean,
     renderedFlowPlan: JSX.Element | undefined,
     renderFlowPlan: boolean,
-    // currentUirOperators: Array<string>,
 }
 
 export type PlanNode = {

@@ -23,7 +23,9 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
     componentDidUpdate(prevProps: Props) {
         //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to use cycles as current event 
-        if (!_.isEqual(prevProps.events, this.props.events) && this.props.events && !this.props.events.includes("mem_inst_retired.all_loads")) {
+        if (!_.isEqual(prevProps.events, this.props.events)
+            && this.props.events
+            && !this.props.events.includes("mem_inst_retired.all_loads")) {
             this.props.setCurrentEvent(this.props.events[this.props.events.length - 1]);
         }
     }
@@ -40,7 +42,6 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                     </Box>
                 </Grid>
             </Box>
-
 
             <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >

@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 interface Props {
     fileLoading: boolean;
     file: undefined | File;
-    resultLoading: model.ResultLoading;
+    resultLoading: model.IResultLoading;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     kpis: Array<model.IKpiData> | undefined;
     loadingChartReadableName: Array<model.ChartTypeReadable>;
 }

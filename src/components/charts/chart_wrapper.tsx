@@ -28,11 +28,11 @@ export interface ChartWrapperAppstateProps {
     appContext: Context.IAppContext;
     chartIdCounter: number;
     csvParsingFinished: boolean;
-    resultLoading: model.ResultLoading;
+    resultLoading: model.IResultLoading;
     chartData: model.ChartDataKeyValue,
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentEvent: string;
     currentMultipleEvent: [string, string] | "Default";
     currentOperator: Array<string> | "All",

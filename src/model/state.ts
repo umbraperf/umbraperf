@@ -1,11 +1,11 @@
-import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
+import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
     /// The registered files
     fileLoading: boolean;
-    resultLoading: ResultLoading;
-    result: Result | undefined;
+    resultLoading: IResultLoading;
+    result: IResult | undefined;
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
@@ -20,8 +20,7 @@ export interface AppState {
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
-    operators: Array<string> | undefined;
-    physicalOperators: Array<string> | undefined;
+    operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
     chartData: ChartDataKeyValue;
@@ -55,7 +54,6 @@ export function createDefaultState(): AppState {
         pipelines: undefined,
         pipelinesShort: undefined,
         operators: undefined,
-        physicalOperators: undefined,
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},

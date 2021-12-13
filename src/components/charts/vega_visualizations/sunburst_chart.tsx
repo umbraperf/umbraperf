@@ -15,8 +15,7 @@ interface AppstateProps {
     currentOperator: Array<string> | "All";
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
-    operators: Array<string> | undefined;
-    physicalOperators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     chartData: model.ISunburstChartData,
 }
 
@@ -47,7 +46,7 @@ class SunburstChart extends React.Component<Props, {}> {
 
     isResetButtonVisible() {
         if ((this.props.currentOperator !== "All"
-            && !_.isEqual(this.props.currentOperator, this.props.operators))
+            && !_.isEqual(this.props.currentOperator, this.props.operators!.operatorsId))
             || (this.props.currentPipeline !== "All"
                 && !_.isEqual(this.props.currentPipeline, this.props.pipelines))) {
             return true;
@@ -112,7 +111,7 @@ class SunburstChart extends React.Component<Props, {}> {
             },
             {
                 name: "selectedOperators",
-                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators!.operatorsId : this.props.currentOperator },
                 transform: [
                     {
                         type: "flatten",
@@ -236,17 +235,17 @@ class SunburstChart extends React.Component<Props, {}> {
 
             scales: [
                 {
-                    name: "colorOperators",
+                    name: "colorOperatorsId",
                     type: "ordinal",
-                    domain: this.props.operators,
-                    range: model.chartConfiguration.colorScale!.operatorColorScale,
+                    domain: this.props.operators!.operatorsId,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
                     // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                 },
                 {
-                    name: "colorPhysicalOperators",
+                    name: "colorOperatorsGroup",
                     type: "ordinal",
-                    domain: this.props.physicalOperators,
-                    range: model.chartConfiguration.colorScale!.physicalOperatorsScale,
+                    domain: this.props.operators!.operatorsGroup,
+                    range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
 
@@ -275,7 +274,7 @@ class SunburstChart extends React.Component<Props, {}> {
                             fill: [
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
                                 { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
-                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperators", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
                                 { test: "datum.operator !== 'inner'", value: this.props.appContext.tertiaryColor } //use grey app color for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
                             ],
                         },
@@ -316,7 +315,7 @@ class SunburstChart extends React.Component<Props, {}> {
             ],
             legends: [
                 {
-                    fill: "colorOperators", //just as dummy
+                    fill: "colorOperatorsId", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
                     orient: this.props.doubleRowSize ? "bottom-left" : "left",
@@ -333,7 +332,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     }
                 },
                 {
-                    fill: "colorPhysicalOperators",
+                    fill: "colorOperatorsGroup",
                     title: "Operators",
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
@@ -343,7 +342,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,
-                    values: [...new Set(this.props.physicalOperators)],
+                    values: [...new Set(this.props.operators!.operatorsGroup)],
                     encode: {
                         labels: {
                             update: {
@@ -365,7 +364,6 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartPr
     pipelines: state.pipelines,
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
-    physicalOperators: state.physicalOperators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
 });
 

@@ -10,8 +10,7 @@ import _ from 'lodash';
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentEvent: string;
-    operators: Array<string> | undefined;
-    physicalOperators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentInterpolation: String,
     currentBucketSize: number,
     chartData: model.ISwimlanesData,
@@ -173,15 +172,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 {
                     name: "color",
                     type: "ordinal",
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    range: model.chartConfiguration.colorScale!.operatorColorScale,
-                    domain: this.props.operators,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
                 },
                 {
                     name: "colorPhysicalOperators",
                     type: "ordinal",
-                    domain: this.props.physicalOperators,
-                    range: model.chartConfiguration.colorScale!.physicalOperatorsScale,
+                    domain: this.props.operators!.operatorsGroup,
+                    range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
             axes: [
@@ -277,7 +275,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: [...new Set(this.props.physicalOperators)],
+                values: [...new Set(this.props.operators!.operatorsGroup)],
             }
             ],
         } as VisualizationSpec;
@@ -290,7 +288,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps) => ({
     currentEvent: state.currentEvent,
     operators: state.operators,
-    physicalOperators: state.physicalOperators,
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,

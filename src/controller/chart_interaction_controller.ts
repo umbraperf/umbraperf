@@ -10,15 +10,15 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
     const operators = store.getState().operators;
     const operatorsTimefrabe = store.getState().currentOperatorTimeframe;
 
-    if (operatorsTimefrabe.includes(selectedOperator) && operators!.includes(selectedOperator)) {
+    if (operatorsTimefrabe.includes(selectedOperator) && operators!.operatorsId.includes(selectedOperator)) {
 
         if (currentOperator === "All" || !currentOperator.includes("")) {
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENTOPERATOR,
-                data: operators!.map((elem, index) => (elem === selectedOperator ? elem : "")),
+                data: operators!.operatorsId.map((elem, index) => (elem === selectedOperator ? elem : "")),
             });
         } else {
-            const selectedIndexPosition = operators!.indexOf(selectedOperator);
+            const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
             if (currentOperator[selectedIndexPosition] === "") {
                 //Operator was disbaled and will be enabled
 
@@ -29,7 +29,7 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
                 }
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENTOPERATOR,
-                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
+                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
                 });
             } else {
                 //Operator was enabled and will be disabled
@@ -95,7 +95,7 @@ export function resetSunburstSelection() {
 function resetCurrentOperatorSelection() {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENTOPERATOR,
-        data: store.getState().operators!,
+        data: store.getState().operators!.operatorsId,
     });
 }
 

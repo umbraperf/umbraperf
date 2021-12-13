@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, Result, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -26,7 +26,6 @@ export enum StateMutationType {
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
-    SET_PHYSICALOPERATORS = 'SET_PHYSICALOPERATORS',
     SET_KPIS = 'SET_KPIS',
     SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
     SET_CHARTDATA = 'SET_CHARTDATA',
@@ -46,7 +45,7 @@ export enum StateMutationType {
 export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILELOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULTLOADING, { key: number, value: boolean }>
-    | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
+    | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
     | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
@@ -61,8 +60,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
-    | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
-    | StateMutation<StateMutationType.SET_PHYSICALOPERATORS, Array<string>>
+    | StateMutation<StateMutationType.SET_OPERATORS, IOperatorsData>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
     | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
@@ -167,11 +165,6 @@ export class AppStateMutation {
                     ...state,
                     operators: mutation.data,
                 };
-            case StateMutationType.SET_PHYSICALOPERATORS:
-                return {
-                    ...state,
-                    physicalOperators: mutation.data,
-                }
             case StateMutationType.SET_KPIS:
                 return {
                     ...state,
@@ -242,7 +235,6 @@ export class AppStateMutation {
                     pipelines: undefined,
                     pipelinesShort: undefined,
                     operators: undefined,
-                    physicalOperators: undefined,
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},

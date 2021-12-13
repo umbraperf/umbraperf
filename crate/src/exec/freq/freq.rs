@@ -281,8 +281,6 @@ pub fn get_earlier_entry(
     }
     let mut start = index;
     while start >= 1 {
-        //print_to_js_with_obj(&format!("curr_operator {:?} compare_with  {:?}", operator, get_stringarray_column(recordbatch, column_for_operator).value(start - 1)).into());
-
         if operator == get_stringarray_column(recordbatch, column_for_operator).value(start - 1) {
             return start;
         }

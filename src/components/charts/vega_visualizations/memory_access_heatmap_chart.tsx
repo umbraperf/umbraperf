@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    operators: Array<string> | undefined;
     chartData: model.IMemoryAccessHeatmapChartData,
     memoryHeatmapsDifferenceRepresentation: boolean,
 }
@@ -250,7 +249,6 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IMemoryAccessHeatmapChartProps) => ({
-    operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IMemoryAccessHeatmapChartData,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });

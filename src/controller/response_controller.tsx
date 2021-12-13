@@ -24,7 +24,7 @@ export function setCsvReadingFinished() {
 export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType, queryPlan?: object) {
 
     //store result of current request in redux store result variable 
-    const resultObject: model.Result = model.createResultObject(requestId, rustResult, queryPlan);
+    const resultObject: model.IResult = model.createResultObject(requestId, rustResult, queryPlan);
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULT,
@@ -74,22 +74,19 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             break;
 
         case model.BackendQueryType.GET_OPERATORS:
-            const operators = store.getState().result?.rustResultTable.getColumn('operator').toArray();
-            const physicaloperators = operators.map((elem: string) => elem.substring(0,3)); //TODO 
 
-            //TODO create colorscale and store to vega config
-            model.createColorScales(operators, physicaloperators, 0.3);
-            console.log(model.chartConfiguration.colorScale);
+        const operators: model.IOperatorsData = {
+            operatorsId: store.getState().result?.rustResultTable.getColumn('operator').toArray(),
+            //TODO 
+            operatorsGroup: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem.replace(/\d+/g, '')),
+            operatorsNice: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem.replace(/\d+/g, '')),
+        }
+            model.createColorScales(operators.operatorsId, operators.operatorsGroup, 0.3);
 
             store.dispatch({
                 type: model.StateMutationType.SET_OPERATORS,
                 data: operators,
             });
-            store.dispatch({
-                type: model.StateMutationType.SET_PHYSICALOPERATORS,
-                data: physicaloperators,
-            });
-
             break;
 
         case model.BackendQueryType.GET_STATISTICS:
@@ -136,7 +133,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 // }
 
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
-function storeChartDataFromRust(requestId: number, resultObject: model.Result, requestType: model.BackendQueryType) {
+function storeChartDataFromRust(requestId: number, resultObject: model.IResult, requestType: model.BackendQueryType) {
 
     let chartDataElem: model.ChartDataObject | undefined;
     let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;

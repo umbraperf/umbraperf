@@ -44,7 +44,7 @@ export interface ChartConfiguration {
     memoryChartTooltip: string,
     colorLowOpacityHex: string,
     nFormatter: (num: number, digits: number) => string,
-    colorScale: { operatorColorScale: string[], operatorColorScaleLowOpacity: string[], physicalOperatorsScale: string[] } | undefined;
+    colorScale: { operatorsIdColorScale: string[], operatorsIdColorScaleLowOpacity: string[], operatorsGroupScale: string[] } | undefined;
 }
 
 export let chartConfiguration: ChartConfiguration = {
@@ -206,11 +206,15 @@ export let chartConfiguration: ChartConfiguration = {
 // ]
 
 //Create and return color scales
-export function createColorScales(operators: Array<string>, physicalOperators: Array<string>, hsla: number) {
-    interface IPhysicalOperatorBaseColors { [operator: string]: [number, number, number] }
-    interface IPhysicalOperatorCount { [operator: string]: number }
+export function createColorScales(operatorsId: Array<string>, operatorsGroup: Array<string>, hsla: number) {
+    interface IOperatorsGroupBaseColors { [operator: string]: [number, number, number] }
+    interface IOperatorsGroupCount { [operator: string]: number }
+    interface IBaseOperatorsGroupColors {
+        operatorsGroupBaseColors: IOperatorsGroupBaseColors;
+        operatorsGroupCount: IOperatorsGroupCount;
+    }
 
-    const physicalOperatosBaseHsl: Array<[number, number, number]> = [
+    const operatosGroupBaseHsl: Array<[number, number, number]> = [
         //vega tableau10 with adjusted luminance
         [211, 38, 50],
         [30, 92, 50],
@@ -230,45 +234,45 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         [269, 100, 50],
     ]
 
-    //create base color object for physical operators (base colors with luminance = 50)
-    const createBaseOperatorColors = () => {
-        let physicalOperatorBaseColors: IPhysicalOperatorBaseColors = {};
-        let physicalOperatorCount: IPhysicalOperatorCount = {};
+    //create base color object for operatorsGgroup (base colors with luminance = 50)
+    const createBaseOperatorsGroupColors = () => {
+        let operatorsGroupBaseColors: IOperatorsGroupBaseColors = {};
+        let operatorsGroupCount: IOperatorsGroupCount = {};
         let colorIndexCounter = 0;
-        physicalOperators.forEach((elem) => {
-            if (physicalOperatorCount[elem]) {
-                physicalOperatorCount[elem] = physicalOperatorCount[elem] + 1;
+        operatorsGroup.forEach((elem) => {
+            if (operatorsGroupCount[elem]) {
+                operatorsGroupCount[elem] = operatorsGroupCount[elem] + 1;
             } else {
-                physicalOperatorCount[elem] = 1;
-                physicalOperatorBaseColors[elem] = physicalOperatosBaseHsl[colorIndexCounter];
-                colorIndexCounter = (colorIndexCounter + 1) % physicalOperatosBaseHsl.length;
+                operatorsGroupCount[elem] = 1;
+                operatorsGroupBaseColors[elem] = operatosGroupBaseHsl[colorIndexCounter];
+                colorIndexCounter = (colorIndexCounter + 1) % operatosGroupBaseHsl.length;
             }
         })
-        return { physicalOperatorBaseColors, physicalOperatorCount };
+        return { operatorsGroupBaseColors, operatorsGroupCount };
     }
 
-    //create base color object for physical operators scale for legends
-    const createPhysicalOperatorColorScale = (baseOperatorColors: { physicalOperatorBaseColors: IPhysicalOperatorBaseColors, physicalOperatorCount: IPhysicalOperatorCount }) => {
-        return Object.values(baseOperatorColors.physicalOperatorBaseColors);
+    //create base color object for operatorsGroup scale for legends
+    const createOperatorsGroupColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
+        return Object.values(baseOperatorColors.operatorsGroupBaseColors);
     }
 
-    //create operator color scale based on color object for physical operators
-    const createOperatorColorScale = (baseOperatorColors: { physicalOperatorBaseColors: IPhysicalOperatorBaseColors, physicalOperatorCount: IPhysicalOperatorCount }) => {
+    //create operatorId color scale based on color object for operatorGgroup
+    const createOperatorsIdColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
         const luminanceLow = 30;
         const luminanceHigh = 70;
         const luminanceRange = luminanceHigh - luminanceLow;
 
-        let currentPhysicalOperatorCount: IPhysicalOperatorCount = {};
+        let currentOperatorsGroupCount: IOperatorsGroupCount = {};
 
-        const operatorColorScale: [number, number, number][] = operators.map((elem, index) => {
-            const currentPhysicalOperator = physicalOperators[index];
-            currentPhysicalOperatorCount[currentPhysicalOperator] = currentPhysicalOperatorCount[currentPhysicalOperator] ? currentPhysicalOperatorCount[currentPhysicalOperator] + 1 : 1;
-            const currentColorLuminanceShift = (luminanceRange / (baseOperatorColors.physicalOperatorCount[currentPhysicalOperator] + 1)) * currentPhysicalOperatorCount[currentPhysicalOperator];
-            const currentOperatorLuminance = luminanceLow + currentColorLuminanceShift;
-            const currentPysicalOperatorColor = baseOperatorColors.physicalOperatorBaseColors[currentPhysicalOperator];
-            return [currentPysicalOperatorColor[0], currentPysicalOperatorColor[1], currentOperatorLuminance];
+        const operatorsIdColorScale: [number, number, number][] = operatorsId.map((elem, index) => {
+            const currentOperatorGroup = operatorsGroup[index];
+            currentOperatorsGroupCount[currentOperatorGroup] = currentOperatorsGroupCount[currentOperatorGroup] ? currentOperatorsGroupCount[currentOperatorGroup] + 1 : 1;
+            const currentOperatorIdColorLuminanceShift = (luminanceRange / (baseOperatorColors.operatorsGroupCount[currentOperatorGroup] + 1)) * currentOperatorsGroupCount[currentOperatorGroup];
+            const currentOperatorIdLuminance = luminanceLow + currentOperatorIdColorLuminanceShift;
+            const currentOperatorGroupColor = baseOperatorColors.operatorsGroupBaseColors[currentOperatorGroup];
+            return [currentOperatorGroupColor[0], currentOperatorGroupColor[1], currentOperatorIdLuminance];
         })
-        return operatorColorScale;
+        return operatorsIdColorScale;
     }
 
     //create hsl values from color scale arrays
@@ -278,15 +282,15 @@ export function createColorScales(operators: Array<string>, physicalOperators: A
         })
     }
 
-    const baseOperatorColors = createBaseOperatorColors();
-    const pysicalOperatorColorScale = createPhysicalOperatorColorScale(baseOperatorColors);
-    const operatorColorScale = createOperatorColorScale(baseOperatorColors);
+    const baseOperatorsGroupColors = createBaseOperatorsGroupColors();
+    const operatorsGroupColorScale = createOperatorsGroupColorScale(baseOperatorsGroupColors);
+    const operatorsIdColorScale = createOperatorsIdColorScale(baseOperatorsGroupColors);
 
     //Set colorScale field in chartConfiguration varibale
     chartConfiguration.colorScale = {
-        operatorColorScale: createHslStringArray(operatorColorScale),
-        operatorColorScaleLowOpacity: createHslStringArray(operatorColorScale, 0.3),
-        physicalOperatorsScale: createHslStringArray(pysicalOperatorColorScale),
+        operatorsIdColorScale: createHslStringArray(operatorsIdColorScale),
+        operatorsIdColorScaleLowOpacity: createHslStringArray(operatorsIdColorScale, 0.3),
+        operatorsGroupScale: createHslStringArray(operatorsGroupColorScale),
     }
 }
 

@@ -19,7 +19,7 @@ export interface AppstateProps {
     appContext: Context.IAppContext;
     currentOperator: Array<string> | "All";
     currentOperatorTimeframe: Array<string> | "All";
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     chartData: model.IQueryPlanData,
 }
 
@@ -162,7 +162,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const isNodeUnavailable = (nodeId: string) => {
-            return !(this.props.operators!.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
+            return !(this.props.operators!.operatorsId.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
         }
 
         const isNodeSelected = (nodeId: string) => {
@@ -191,12 +191,12 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
             } else if (isNodeSelected(nodeId)) {
                 //active node
-                const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScale[operatorIndex]];
+                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeId);
+                return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScale[operatorIndex]];
             } else {
                 //inactive node
-                const operatorIndex = this.props.operators!.indexOf(nodeId);
-                return ['#fff', model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[operatorIndex],];
+                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeId);
+                return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity[operatorIndex],];
             }
         }
 

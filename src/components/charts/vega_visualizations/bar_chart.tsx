@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentOperator: Array<string> | "All",
     chartData: model.IBarChartData;
 }
@@ -45,7 +45,7 @@ class BarChart extends React.Component<Props, {}> {
             },
             {
                 name: "selectedOperators",
-                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators : this.props.currentOperator },
+                values: { operatorsUsed: this.props.currentOperator === "All" ? this.props.operators!.operatorsId : this.props.currentOperator },
                 transform: [
                     {
                         type: "flatten",
@@ -96,8 +96,8 @@ class BarChart extends React.Component<Props, {}> {
                     name: "color",
                     type: "ordinal",
                     // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    range: model.chartConfiguration.colorScale!.operatorColorScale,
-                    domain: this.props.operators,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
                 },
             ],
 

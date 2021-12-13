@@ -18,7 +18,7 @@ interface AppstateProps {
     events: Array<string> | undefined;
     currentOperator: Array<string> | "All";
     currentOperatorTimeframe: Array<string> | "All";
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
 }
 
 type Props = model.IUirViewerProps & AppstateProps;
@@ -366,12 +366,12 @@ class UirViewer extends React.Component<Props, State> {
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
             if (!this.state.operatorsColorHidden && operator !== "None") {
-                if (!(this.props.operators!.includes(operator) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(operator)))) {
+                if (!(this.props.operators!.operatorsId.includes(operator) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(operator)))) {
                     //node not available, not in sample or nor in time selection
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", -1);
                 } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator)) {
                     //node available and selected
-                    const operatorColorGroup = this.props.operators!.indexOf(operator);
+                    const operatorColorGroup = this.props.operators!.operatorsId.indexOf(operator);
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);
                 }
             }
@@ -436,7 +436,7 @@ class UirViewer extends React.Component<Props, State> {
         if (glyphClassGroupNumber === -1) {
             color = this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex;
         } else {
-            color = model.chartConfiguration.colorScale!.operatorColorScaleLowOpacity[glyphClassGroupNumber];
+            color = model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity[glyphClassGroupNumber];
         }
         style.innerHTML = `.${className} { background: ${color}; }`;
         this.editorContainerRef.current!.appendChild(style);

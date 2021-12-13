@@ -142,7 +142,7 @@ pub fn freq_of_pipelines(
     from: f64,
     _to: f64,
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, 2, false);
+    let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
 
     let unique_operator =
         find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
@@ -156,7 +156,7 @@ pub fn freq_of_pipelines(
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
     let time_column = get_floatarray_column(batch, column_for_time);
-    let pipeline_column = get_stringarray_column(batch, 3);
+    let pipeline_column = get_stringarray_column(batch, RecordBatchSchema::Pipeline as usize);
 
     let mut time_bucket;
     if from == -1. {
@@ -165,7 +165,6 @@ pub fn freq_of_pipelines(
         time_bucket = from + bucket_size;
     }
 
-    //time_bucket = f64::trunc(time_bucket);
     let mut column_index = 0;
 
     let mut bucket_map = HashMap::new();
@@ -299,7 +298,7 @@ pub fn freq_of_memory(
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
-    let batch = &sort_batch(&batch, 2, false);
+    let batch = &sort_batch(&batch, RecordBatchSchema::Time as usize, false);
 
     let unique_operator = find_unique_string(batch, column_for_operator);
 

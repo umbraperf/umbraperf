@@ -11,7 +11,7 @@ use crate::{
         basic::{find_unique_string, sort_batch},
         filter,
     },
-    utils::record_batch_util::create_new_record_batch,
+    utils::{record_batch_util::create_new_record_batch, record_batch_schema::RecordBatchSchema},
 };
 
 use super::freq;
@@ -22,7 +22,7 @@ pub fn abs_freq_of_event(
     column_for_time: usize,
     bucket_size: f64,
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, 2, false);
+    let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
 
     let unique_event = find_unique_string(batch, column_for_event);
 

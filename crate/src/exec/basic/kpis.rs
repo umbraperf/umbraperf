@@ -8,6 +8,8 @@ use arrow::{
 
 use crate::{exec::basic::filter, utils::record_batch_util::create_new_record_batch};
 
+
+// Find maximal time in record batch
 pub fn max_execution_time(batch: &RecordBatch, column_index_for_max: usize) -> RecordBatch {
     let vec = batch
         .column(column_index_for_max)

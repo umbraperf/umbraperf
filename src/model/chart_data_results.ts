@@ -1,14 +1,13 @@
 import { ChartType } from '.';
 
-export interface ChartDataKeyValue {
-    [chartId: number]: ChartDataObject;
+export interface IChartDataKeyValue {
+    [chartId: number]: IChartDataObject;
 }
 
-export interface ChartDataObject {
+export interface IChartDataObject {
     readonly chartId: number;
     readonly chartData: ChartDataVariant;
 }
-
 
 export type ChartData<T, P> = {
     readonly chartType: T;
@@ -28,7 +27,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.QUERY_PLAN, IQueryPlanData>
     ;
 
-export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
+export function createChartDataObject(chartId: number, chartData: ChartDataVariant): IChartDataObject {
     return {
         chartId: chartId,
         chartData: chartData,

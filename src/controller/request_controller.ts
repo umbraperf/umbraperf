@@ -225,7 +225,7 @@ export function resetChartDataInStore(chartId: number) {
 
     let chartData = store.getState().chartData;
     delete chartData[chartId];
-    let newChartData: model.ChartDataKeyValue = { ...chartData }
+    let newChartData: model.IChartDataKeyValue = { ...chartData }
 
     store.dispatch({
         type: model.StateMutationType.SET_CHARTDATA,

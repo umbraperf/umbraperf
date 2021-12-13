@@ -29,7 +29,7 @@ export interface ChartWrapperAppstateProps {
     chartIdCounter: number;
     csvParsingFinished: boolean;
     resultLoading: model.IResultLoading;
-    chartData: model.ChartDataKeyValue,
+    chartData: model.IChartDataKeyValue,
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     operators: model.IOperatorsData | undefined;

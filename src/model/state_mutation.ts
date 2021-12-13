@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -63,7 +63,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_OPERATORS, IOperatorsData>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
     | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
-    | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
+    | StateMutation<StateMutationType.SET_CHARTDATA, IChartDataKeyValue>
     | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
     | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>

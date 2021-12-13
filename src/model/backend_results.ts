@@ -1,4 +1,4 @@
-import * as ArrowTable from "../../node_modules/apache-arrow/table";
+import * as ArrowTable from "apache-arrow/table";
 
 export interface IResult {
     request: number;

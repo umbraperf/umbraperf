@@ -8,8 +8,8 @@ import * as model from '../model';
 
 export * from './state_mutation';
 export * from './state';
-export * from './chart_data_result';
-export * from './core_result';
+export * from './chart_data_results';
+export * from './backend_results';
 export * from './backend_queries';
 export * from './vega_configuration';
 export * from './chart_types';

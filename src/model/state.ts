@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -23,7 +23,7 @@ export interface AppState {
     operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
-    chartData: ChartDataKeyValue;
+    chartData: IChartDataKeyValue;
     currentInterpolation: String;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];

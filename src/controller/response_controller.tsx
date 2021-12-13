@@ -135,8 +135,8 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.IResult, requestType: model.BackendQueryType) {
 
-    let chartDataElem: model.ChartDataObject | undefined;
-    let chartDataCollection: model.ChartDataKeyValue = store.getState().chartData;
+    let chartDataElem: model.IChartDataObject | undefined;
+    let chartDataCollection: model.IChartDataKeyValue = store.getState().chartData;
     let toggleResultLoadingFlag = false;
 
     switch (requestType) {
@@ -302,7 +302,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
         case model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
             //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
-            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
+            let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.IChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
             if (resultObject.rustResultTable.schema.fields.length === 7) {
                 //domain info received
@@ -384,7 +384,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
             break;
 
         case model.BackendQueryType.GET_QUERYPLAN_DATA:
-            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} as model.IQueryPlanNodeTooltipData };
+            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.IChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} as model.IQueryPlanNodeTooltipData };
 
             if (resultObject.queryPlan) {
                 queryplanDataElem.queryplanData = resultObject.queryPlan;

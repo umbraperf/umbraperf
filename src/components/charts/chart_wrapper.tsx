@@ -282,7 +282,7 @@ class ChartWrapper extends React.Component<Props, State> {
         return React.createElement(chartClass!, specificChart.props as any);
     }
 
-    isComponentLoading(): boolean {
+    isChartDataLoading(): boolean {
 
         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
             return true;
@@ -311,7 +311,7 @@ class ChartWrapper extends React.Component<Props, State> {
 
         return <div className={styles.elementWrapper} ref={this.elementWrapper}>
             {this.renderChartOptions()}
-            {this.isComponentLoading()
+            {this.isChartDataLoading()
                 ? <Spinner />
                 : <div className={styles.chartContainer}>
                     {this.createChildChart()}

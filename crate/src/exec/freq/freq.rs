@@ -16,7 +16,7 @@ use crate::{
         statistics,
     },
     state::state::get_record_batches,
-    utils::record_batch_util::{create_new_record_batch, send_record_batch_to_js},
+    utils::{record_batch_util::{create_new_record_batch, send_record_batch_to_js}, record_batch_schema::RecordBatchSchema},
 };
 
 pub enum Freq {

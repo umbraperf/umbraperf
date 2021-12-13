@@ -2,7 +2,6 @@ import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, I
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
-    /// The registered files
     fileLoading: boolean;
     resultLoading: IResultLoading;
     result: IResult | undefined;

@@ -79,7 +79,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             operatorsId: store.getState().result?.rustResultTable.getColumn('operator').toArray(),
             //TODO 
             operatorsGroup: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem.replace(/\d+/g, '')),
-            operatorsNice: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem.replace(/\d+/g, '')),
+            operatorsNice: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem+"Nice"),
         }
             model.createColorScales(operators.operatorsId, operators.operatorsGroup, 0.3);
 

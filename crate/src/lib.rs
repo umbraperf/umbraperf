@@ -49,6 +49,7 @@ mod utils {
     pub mod record_batch_util;
     pub mod string_util;
     pub mod record_batch_schema;
+    pub mod array_util;
 }
 
 use crate::utils::bindings::notify_js_finished_reading;

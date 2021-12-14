@@ -55,7 +55,7 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => dispatch({
-        type: model.StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION,
+        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
         data: newMemoryHeatmapsDifferenceRepresentation,
     }),
 

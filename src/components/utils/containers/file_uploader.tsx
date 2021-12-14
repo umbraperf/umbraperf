@@ -157,22 +157,22 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         data: newFile,
     }),
     setCsvParsingFinished: (newCsvParsingFinished: boolean) => dispatch({
-        type: model.StateMutationType.SET_CSVPARSINGFINISHED,
+        type: model.StateMutationType.SET_CSV_PARSING_FINISHED,
         data: newCsvParsingFinished,
     }),
     setFileLoading: (newFileLoading: boolean) =>
         dispatch({
-            type: model.StateMutationType.SET_FILELOADING,
+            type: model.StateMutationType.SET_FILE_LOADING,
             data: newFileLoading,
         }),
     setCurrentView: (newCurrentView: model.ViewType) =>
         dispatch({
-            type: model.StateMutationType.SET_CURRENTVIEW,
+            type: model.StateMutationType.SET_CURRENT_VIEW,
             data: newCurrentView,
         }),
     setResetState: () =>
         dispatch({
-            type: model.StateMutationType.RESET_STATE,
+            type: model.StateMutationType.SET_RESET_STATE,
             data: undefined,
         }),
 });

@@ -83,8 +83,6 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
         const operators: model.IOperatorsData = {
             operatorsId,
             operatorsGroup: createOperatorsGroupNames(),
-            //TODO:
-            // operatorsNice: operatorsId.map((elem: string) => elem+"N"),
             operatorsNice: store.getState().result?.rustResultTable.getColumn('op_ext').toArray(),
         }
             model.createColorScales(operators.operatorsId, operators.operatorsGroup, 0.3);

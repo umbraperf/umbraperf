@@ -1,3 +1,5 @@
+import styles from '../style/export-variables.module.css';
+
 export interface ChartConfiguration {
     titlePadding: number;
     titleAlign: string;
@@ -110,7 +112,7 @@ export let chartConfiguration: ChartConfiguration = {
     colorLowOpacityHex: "26",
 
     //Hover behaviour: 
-    hoverFillOpacity: 0.5,
+    hoverFillOpacity: +styles.hoverOpacity,
 
     //Number formatter:
     nFormatter: (num: number, digits: number) => {
@@ -258,8 +260,8 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     //create operatorId color scale based on color object for operatorGgroup
     const createOperatorsIdColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
-        const luminanceLow = 40;
-        const luminanceHigh = 80;
+        const luminanceLow = 35;
+        const luminanceHigh = 75;
         const luminanceRange = luminanceHigh - luminanceLow;
 
         let currentOperatorsGroupCount: IOperatorsGroupCount = {};

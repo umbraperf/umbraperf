@@ -8,36 +8,34 @@ export type StateMutation<T, P> = {
 
 /// A mutation type
 export enum StateMutationType {
-    SET_FILE_LOADING = 'SET_FILELOADING',
-    SET_RESULT_LOADING = 'SET_RESULTLOADING',
+    SET_FILE_LOADING = 'SET_FILE_LOADING',
+    SET_RESULT_LOADING = 'SET_RESULT_LOADING',
     SET_RESULT = 'SET_RESULT',
-    SET_CHUNKS_NUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
-    SET_CSV_PARSING_FINISHED = 'SET_CSVPARSINGFINISHED',
+    SET_CSV_PARSING_FINISHED = 'SET_CSV_PARSING_FINISHED',
     SET_RESET_STATE = 'SET_RESET_STATE',
-    SET_CURRENT_CHART = 'SET_CURRENTCHART',
-    SET_LOADING_CHART_READABLE_NAME = 'SET_LOADINGCHARTREADABLENAME',
-    SET_CURRENT_EVENT = 'SET_CURRENTEVENT',
-    SET_CURRENT_MULTIPLE_EVENT = 'SET_CURRENTMULTIPLEEVENT',
-    SET_CURRENT_PIPELINE = 'SET_CURRENTPIPELINE',
-    SET_CURRENT_OPERATOR = 'SET_CURRENTOPERATOR',
-    SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE = 'SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE',
-    SET_CURRENT_REQUEST = 'SET_CURRENTREQUEST',
+    SET_CURRENT_CHART = 'SET_CURRENT_CHART',
+    SET_LOADING_CHART_READABLE_NAME = 'SET_LOADING_CHART_READABLE_NAME',
+    SET_CURRENT_EVENT = 'SET_CURRENT_EVENT',
+    SET_CURRENT_MULTIPLE_EVENT = 'SET_CURRENT_MULTIPLE_EVENT',
+    SET_CURRENT_PIPELINE = 'SET_CURRENT_PIPELINE',
+    SET_CURRENT_OPERATOR = 'SET_CURRENT_OPERATOR',
+    SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE = 'SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE',
+    SET_CURRENT_REQUEST = 'SET_CURRENT_REQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
     SET_KPIS = 'SET_KPIS',
-    SET_CHART_ID_COUNTER = 'SET_CHARTIDCOUNTER',
-    SET_CHART_DATA = 'SET_CHARTDATA',
-    SET_DASHBOARD_STATE = 'SET_DASHBOARDSTATE', //TODO remove
-    SET_CURRENT_INTERPOLATION = 'SET_CURRENTINTERPOLATION',
-    SET_CURRENT_BUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
-    SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
-    SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
-    SET_CURRENT_VIEW = 'SET_CURRENTVIEW',
+    SET_CHART_ID_COUNTER = 'SET_CHART_ID_COUNTER',
+    SET_CHART_DATA = 'SET_CHART_DATA',
+    SET_CURRENT_INTERPOLATION = 'SET_CURRENT_INTERPOLATION',
+    SET_CURRENT_BUCKETSIZE = 'SET_CURRENT_BUCKETSIZE',
+    SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
+    SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
+    SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
     SET_QUERYPLAN = 'SET_QUERYPLAN',
-    SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION',
-    SET_CURRENT_PROFILE = 'SET_CURRENTPROFILE',
+    SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
+    SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
     OTHER = 'OTHER',
 }
 
@@ -46,7 +44,6 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_FILE_LOADING, boolean>
     | StateMutation<StateMutationType.SET_RESULT_LOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
-    | StateMutation<StateMutationType.SET_CHUNKS_NUMBER, number>
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_CSV_PARSING_FINISHED, boolean>
     | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
@@ -56,7 +53,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_MULTIPLE_EVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENT_PIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_OPERATOR, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_REQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
@@ -93,11 +90,6 @@ export class AppStateMutation {
                 return {
                     ...state,
                     result: mutation.data,
-                };
-            case StateMutationType.SET_CHUNKS_NUMBER:
-                return {
-                    ...state,
-                    chunksNumber: mutation.data,
                 };
             case StateMutationType.SET_FILE:
                 return {
@@ -139,7 +131,7 @@ export class AppStateMutation {
                     ...state,
                     currentOperator: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE:
+            case StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE:
                 return {
                     ...state,
                     currentOperatorActiveTimeframePipeline: mutation.data,

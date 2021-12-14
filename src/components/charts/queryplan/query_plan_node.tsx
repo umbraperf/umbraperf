@@ -26,7 +26,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
     const handleStyle = (handlerType: "source" | "target"): CSS.Properties => {
         return {
             background: context!.accentBlack,
-            visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && props.id.includes("tablescan"))) ? "hidden" : "visible",
+            visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && (props.id.includes("tablescan") || props.id.includes("groupbyscan")))) ? "hidden" : "visible",
         }
     }
 

@@ -258,8 +258,8 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     //create operatorId color scale based on color object for operatorGgroup
     const createOperatorsIdColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
-        const luminanceLow = 30;
-        const luminanceHigh = 70;
+        const luminanceLow = 40;
+        const luminanceHigh = 80;
         const luminanceRange = luminanceHigh - luminanceLow;
 
         let currentOperatorsGroupCount: IOperatorsGroupCount = {};
@@ -267,7 +267,7 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
         const operatorsIdColorScale: [number, number, number][] = operatorsId.map((elem, index) => {
             const currentOperatorGroup = operatorsGroup[index];
             currentOperatorsGroupCount[currentOperatorGroup] = currentOperatorsGroupCount[currentOperatorGroup] ? currentOperatorsGroupCount[currentOperatorGroup] + 1 : 1;
-            const currentOperatorIdColorLuminanceShift = (luminanceRange / (baseOperatorColors.operatorsGroupCount[currentOperatorGroup] + 1)) * currentOperatorsGroupCount[currentOperatorGroup];
+            const currentOperatorIdColorLuminanceShift = (luminanceRange / (baseOperatorColors.operatorsGroupCount[currentOperatorGroup] + 1)) * (currentOperatorsGroupCount[currentOperatorGroup]);
             const currentOperatorIdLuminance = luminanceLow + currentOperatorIdColorLuminanceShift;
             const currentOperatorGroupColor = baseOperatorColors.operatorsGroupBaseColors[currentOperatorGroup];
             return [currentOperatorGroupColor[0], currentOperatorGroupColor[1], currentOperatorIdLuminance];

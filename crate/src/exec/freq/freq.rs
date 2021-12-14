@@ -10,6 +10,7 @@ use arrow::{
     datatypes::{DataType},
     record_batch::RecordBatch,
 };
+use regex::{Replacer, Regex};
 
 use crate::{
     exec::basic::{
@@ -148,7 +149,9 @@ pub fn init_mapping_operator() {
             if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
                 "-".to_string()
             } else {
-                group.unwrap().to_string()
+                let re = Regex::new("[0123456789]").unwrap();
+                let cow_str = re.replace(group.unwrap(),"");
+                cow_str.to_string()
             }
         } else {
             let out = if group.unwrap().contains("tablescan") {
@@ -159,7 +162,10 @@ pub fn init_mapping_operator() {
             } else {
                 let mut str = op_extension_col.value(0).to_owned();
                 str.push_str(" ");
-                str.push_str(group.unwrap());
+                let re = Regex::new("[0123456789]").unwrap();
+                let cow_str = re.replace(group.unwrap(),"");
+                let str_to = cow_str.to_string();
+                str.push_str(str_to.as_str());  
                 str
             };
             out

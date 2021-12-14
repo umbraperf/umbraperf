@@ -12,7 +12,7 @@ use arrow::{
 use crate::{
     exec::basic::{basic::find_unique_string, filter::filter_with},
     state::state::get_record_batches,
-    utils::record_batch_util::create_new_record_batch,
+    utils::{record_batch_util::create_new_record_batch, print_to_cons::print_to_js_with_obj},
 };
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
@@ -66,6 +66,8 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
+    //count_rows_over_with_mapping(&batch, column_to_groupby_over);
+
     let unique_batch =
         find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
 
@@ -78,9 +80,8 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     let mut result_builder = Float64Array::builder(vec.len());
 
     for group in vec {
-        let mut filter_str = Vec::new();
-        filter_str.push(group.unwrap());
-        let group_batch = filter_with(column_to_groupby_over, filter_str, batch);
+
+        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
 
         let row_count = group_batch.num_rows() as f64;
 
@@ -93,6 +94,86 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
         vec![DataType::Utf8, DataType::Float64],
         vec![unique_batch.column(0).to_owned(), Arc::new(builder)],
     );
+
+    return batch;
+}
+
+pub fn count_rows_over_with_mapping(
+    batch: &RecordBatch,
+    column_to_groupby_over: usize,
+) -> RecordBatch {
+    let unique_batch =
+        find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
+
+    let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+    let mut result_builder = Float64Array::builder(vec.len());
+    let mut op_extension_vec = Vec::new();
+    let mut pyhsical_vec = Vec::new();
+
+    for group in vec {
+        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
+        let row_count = group_batch.num_rows() as f64;
+
+        print_to_js_with_obj(&format!("{:?}", group_batch).into());
+
+        let op_extension_col = group_batch
+            .column(6)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+
+        let pyhsical_vec_col = group_batch
+            .column(7)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+
+        let nice_op = if op_extension_col.value(0).to_owned() == "null" {
+            if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
+                "null".to_string()
+            } else {
+                group.unwrap().to_string()
+            }
+        } else {
+            op_extension_col.value(0).to_owned()
+        };
+       
+
+        op_extension_vec.push(nice_op);
+        pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
+        let _result_builder = result_builder.append_value(row_count);
+    }
+
+    let builder = result_builder.finish();
+
+    // TODO
+    let batch = create_new_record_batch(
+        vec![
+            batch.schema().field(column_to_groupby_over).name(),
+            "op_ext",
+            "physical_op",
+            "count",
+        ],
+        vec![
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
+        vec![
+            unique_batch.column(0).to_owned(),
+            Arc::new(StringArray::from(op_extension_vec)),
+            Arc::new(StringArray::from(pyhsical_vec)),
+            Arc::new(builder),
+        ],
+    );
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     return batch;
 }

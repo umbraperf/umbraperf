@@ -164,6 +164,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         let referenceNodes = new Array<{
             referenceTargetAnalyzePlanId: number,
             referenceNode: any,
+            isTempRef?: boolean,
         }>();
 
         const isNodeUnavailable = (nodeOperatorId: string) => {
@@ -293,7 +294,11 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (currentPlanElement.hasOwnProperty('source')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
             }
-            //TODO add further indicator for node reference: tempRef?
+            if(currentPlanElement.hasOwnProperty('temp') && "number" === typeof currentPlanElement['temp']){
+                //ensure that temp is of type number as temp can also appear as type of child node
+
+                referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['temp'], referenceNode: currentPlanElement, isTempRef: true });
+            }
 
             ["input", "left", "right", "magic", "temp"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {
@@ -305,17 +310,23 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         //Add links for references
         if (referenceNodes.length > 0) {
             referenceNodes.forEach((reference) => {
-                console.log(reference);
                 const referenceOperator = planData.nodes.find(planNodes => {
                     return planNodes.analyzePlanId === reference.referenceTargetAnalyzePlanId;
                 });
-                console.log(referenceOperator);
                 const referenceOperatorId = referenceOperator!.operatorId;
-                planData.links.push({
-                    source: referenceOperatorId,
-                    target: reference.referenceNode.operator,
-                    isReference: true,
-                });
+                if(reference.isTempRef){
+                    planData.links.push({
+                        source: reference.referenceNode.operator,
+                        target: referenceOperatorId,
+                        isReference: true,
+                    });
+                }else{
+                    planData.links.push({
+                        source: referenceOperatorId,
+                        target: reference.referenceNode.operator,
+                        isReference: true,
+                    });
+                }
             });
         }
 

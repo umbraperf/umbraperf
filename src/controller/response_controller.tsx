@@ -124,18 +124,6 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
 }
 
-// export function storeQueryPlanData(queryPlanJson: object, requestId: number) {
-
-//     let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} }; 
-
-//     if (queryPlanJson) {
-//         store.dispatch({
-//             type: model.StateMutationType.SET_QUERYPLAN,
-//             data: queryPlanJson,
-//         });
-//     }
-// }
-
 //store data arriving from rust that were caused for visualizations in a collection for chart data in redux store
 function storeChartDataFromRust(requestId: number, resultObject: model.IResult, requestType: model.BackendQueryType) {
 
@@ -158,40 +146,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                 });
             toggleResultLoadingFlag = true;
             break;
-
-        // case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET:
-
-        //     chartDataElem = model.createChartDataObject(
-        //         requestId,
-        //         {
-        //             chartType: model.ChartType.SWIM_LANES,
-        //             data: {
-        //                 buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-        //                 operators: resultObject.resultTable.getColumn('operator').toArray(),
-        //                 frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
-        //             }
-        //         });
-        //     setResultLoading = true;
-        //     break;
-
-        // case model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
-
-        //     let dataArray: Array<model.ISwimlanesData> = (store.getState().chartData[requestId] as model.ChartDataObject) ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.ISwimlanesData[] : new Array<model.ISwimlanesData>();
-        //     const data: model.ISwimlanesData = {
-        //         buckets: resultObject.resultTable.getColumn('bucket').toArray(),
-        //         operators: resultObject.resultTable.getColumn('operator').toArray(),
-        //         frequency: resultObject.resultTable.getColumn('relfreq').toArray(),
-        //     }
-        //     dataArray.push(data);
-
-        //     chartDataElem = model.createChartDataObject(
-        //         requestId,
-        //         {
-        //             chartType: model.ChartType.SWIM_LANES_PIPELINES,
-        //             data: dataArray,
-        //         });
-        //     setResultLoading = true;
-        //     break;
 
         case model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
 
@@ -264,20 +218,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                 });
             toggleResultLoadingFlag = true;
             break;
-
-        // case model.RestQueryType.GET_PIPELINE_COUNT:
-
-        //     chartDataElem = model.createChartDataObject(
-        //         requestId,
-        //         {
-        //             chartType: model.ChartType.DONUT_CHART,
-        //             data: {
-        //                 pipeline: resultObject.resultTable.getColumn('pipeline').toArray(),
-        //                 count: resultObject.resultTable.getColumn('count').toArray(),
-        //             }
-        //         });
-        //     setResultLoading = true;
-        //     break;
 
         case model.BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:
 

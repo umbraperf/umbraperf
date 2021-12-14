@@ -341,8 +341,6 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
 
     let batch = get_uir_record_batches().unwrap().batch.clone();
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
-
     return batch;
 }
 

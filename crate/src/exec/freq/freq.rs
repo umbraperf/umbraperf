@@ -71,8 +71,6 @@ pub fn create_freq_bucket(
         ],
     );
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
-
     batch
 }
 

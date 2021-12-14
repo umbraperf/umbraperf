@@ -95,7 +95,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
     // donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
-    barChartTooltip: "{'Operator ID': datum.operators, 'Occurences': datum.values}",
+    barChartTooltip: "{'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Occurences': datum.values}",
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :

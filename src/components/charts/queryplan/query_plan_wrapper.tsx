@@ -42,6 +42,7 @@ export type PlanNode = {
     textColor: string,
     isNodeSelectable: boolean,
     tooltipData: QueryplanNodeTooltipData,
+    cssClass: string,
 }
 
 export type PlanEdge = {
@@ -226,6 +227,16 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             // return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
 
+        const nodeClass = (nodeOperatorId: string) => {
+            if (nodeOperatorId === "root") {
+                return "";
+            }else if (isNodeUnavailable(nodeOperatorId)){
+                return "";
+            }else{
+                return styles.queryPlanNode;
+            }
+        }
+
         const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
             const tooltipUirLines: string[] = [];
             const tooltipUirLineNumbers: number[] = [];
@@ -251,8 +262,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const rootColor = nodeColor(root.operatorId!);
         const rootTextColor = nodeTextColor(root.operatorId!);
         const rootTooltipData = nodeTooltipData(root.operatorId!);
+        const rootNodeLabel = nodeLabel(root.operatorId!);
+        const nodeCssClass = nodeClass(root.operatorId!);
         planData.nodes.push({
-            label: nodeLabel(root.operatorId!),
+            label: rootNodeLabel,
             operatorId: root.operatorId!,
             analyzePlanId: root.analyzePlanId!,
             parent: "",
@@ -262,7 +275,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             backgroundFill: rootColor[1],
             textColor: rootTextColor,
             tooltipData: rootTooltipData,
+            cssClass: nodeCssClass,
         })
+
         fillGraph(root.child, root.operatorId!);
 
         function fillGraph(currentPlanElement: any, parent: string) {
@@ -271,9 +286,11 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const planNodeColor = nodeColor(currentPlanElement.operator);
             const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
             const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
+            const planNodeLabel = nodeLabel(currentPlanElement.operator);
+            const planNodeCssClass = nodeClass(currentPlanElement.operator);
 
             planData.nodes.push({
-                label: nodeLabel(currentPlanElement.operator),
+                label: planNodeLabel,
                 operatorId: currentPlanElement.operator,
                 analyzePlanId: currentPlanElement.analyzePlanId,
                 parent: parent,
@@ -283,6 +300,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 backgroundFill: planNodeColor[1],
                 textColor: planNodeTextColor,
                 tooltipData: planNodeTooltipData,
+                cssClass: planNodeCssClass,
             });
             planData.links.push({
                 source: parent,
@@ -374,7 +392,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 sourcePosition: isVertical ? Position.Top : Position.Right,
                 selectable: planNode.isNodeSelectable,
                 type: 'queryplanNode',
-                className: styles.queryPlanNode,
+                className: planNode.cssClass,
             }
             return reactFlowNode;
 

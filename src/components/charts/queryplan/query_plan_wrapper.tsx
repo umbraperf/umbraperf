@@ -293,7 +293,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 referenceNodes.push({referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
             }
 
-            ["input", "left", "right", "magic"].forEach(childType => {
+            ["input", "left", "right", "magic", "temp"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {
                     fillGraph(currentPlanElement[childType], currentPlanElement.operator);
                 }

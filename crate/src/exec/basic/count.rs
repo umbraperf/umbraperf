@@ -10,8 +10,8 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{basic::find_unique_string, filter::filter_with},
-    state::state::get_record_batches,
+    exec::{basic::{basic::find_unique_string, filter::filter_with}, freq::freq::init_mapping_operator},
+    state::state::{get_record_batches, get_mapping_operator},
     utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
@@ -118,43 +118,17 @@ pub fn count_rows_over_with_mapping(
         let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
         let row_count = group_batch.num_rows() as f64;
 
-        print_to_js_with_obj(&format!("{:?}", group_batch).into());
-
-        let op_extension_col = group_batch
-            .column(6)
-            .as_any()
-            .downcast_ref::<StringArray>()
-            .unwrap();
-
         let pyhsical_vec_col = group_batch
             .column(7)
             .as_any()
             .downcast_ref::<StringArray>()
             .unwrap();
 
-        let nice_op = if op_extension_col.value(0).to_owned() == "null" {
-            if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
-                "-".to_string()
-            } else {
-                group.unwrap().to_string()
-            }
-        } else {
-            let out = if group.unwrap().contains("tablescan") {
-                let mut str = op_extension_col.value(0).to_owned();
-                str.push_str(" ");
-                str.push_str("scan");
-                str
-            } else {
-                let mut str = op_extension_col.value(0).to_owned();
-                str.push_str(" ");
-                str.push_str(group.unwrap());
-                str
-            };
-            out
-        };
-
-        op_extension_vec.push(nice_op);
+        init_mapping_operator();
+        let mapping =  get_mapping_operator();
+        let map = mapping.lock().unwrap();
         pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
+        op_extension_vec.push(map.get(group.unwrap()).unwrap().to_owned());
         let _result_builder = result_builder.append_value(row_count);
     }
 

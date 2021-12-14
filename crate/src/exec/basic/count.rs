@@ -10,17 +10,16 @@ use arrow::{
 };
 
 use crate::{
-    exec::{basic::{basic::find_unique_string, filter::filter_with}, freq::freq::init_mapping_operator},
-    state::state::{get_record_batches, get_mapping_operator},
-    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
+    exec::{
+        basic::{basic::find_unique_string, filter::filter_with},
+        freq::freq::init_mapping_operator,
+    },
+    state::state::{get_mapping_operator, get_record_batches},
+    utils::{record_batch_util::create_new_record_batch, array_util::get_stringarray_column},
 };
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
-    let vec = batch
-        .column(column_to_count)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec = get_stringarray_column(batch, column_to_count);
 
     let mut result_builder = Float64Array::builder(1);
 
@@ -39,11 +38,7 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
 }
 
 pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) -> RecordBatch {
-    let vec = batch
-        .column(*column_index_for_unqiue)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec = get_stringarray_column(batch, *column_index_for_unqiue);
 
     let hash_set = vec
         .into_iter()
@@ -66,7 +61,6 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
-    //count_rows_over_with_mapping(&batch, column_to_groupby_over);
 
     let unique_batch =
         find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
@@ -125,7 +119,7 @@ pub fn count_rows_over_with_mapping(
             .unwrap();
 
         init_mapping_operator();
-        let mapping =  get_mapping_operator();
+        let mapping = get_mapping_operator();
         let map = mapping.lock().unwrap();
         pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
         op_extension_vec.push(map.get(group.unwrap()).unwrap().to_owned());
@@ -155,8 +149,6 @@ pub fn count_rows_over_with_mapping(
         ],
     );
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
-
     return batch;
 }
 
@@ -165,17 +157,8 @@ pub fn count_rows_over_double(
     column_pipeline: usize,
     column_operator: usize,
 ) -> RecordBatch {
-    let vec_pipe = batch
-        .column(column_pipeline)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let vec_op = batch
-        .column(column_operator)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec_pipe = get_stringarray_column(batch, column_pipeline);
+    let vec_op = get_stringarray_column(batch, column_operator);
 
     let mut hashmap: HashMap<&str, HashMap<&str, f64>> = HashMap::new();
 

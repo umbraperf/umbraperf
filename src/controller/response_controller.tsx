@@ -75,11 +75,16 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
         case model.BackendQueryType.GET_OPERATORS:
 
+        const operatorsId = store.getState().result?.rustResultTable.getColumn('operator').toArray();
+        const createOperatorsGroupNames = () => {
+            return operatorsId.map((elem: string) => elem.replace(/\d+/g, ''));
+        }
+
         const operators: model.IOperatorsData = {
-            operatorsId: store.getState().result?.rustResultTable.getColumn('operator').toArray(),
-            //TODO 
-            operatorsGroup: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem.replace(/\d+/g, '')),
-            operatorsNice: store.getState().result?.rustResultTable.getColumn('operator').toArray().map((elem: string) => elem+"Nice"),
+            operatorsId,
+            operatorsGroup: createOperatorsGroupNames(),
+            //TODO:
+            operatorsNice: operatorsId.map((elem: string) => elem+"N"),
         }
             model.createColorScales(operators.operatorsId, operators.operatorsGroup, 0.3);
 

@@ -2,13 +2,13 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsTimeframe } from ".";
+import { requestActiveOperatorsTimeframe as requestOperatorsActiveTimeframePipeline } from ".";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
     const currentOperator = store.getState().currentOperator;
     const operators = store.getState().operators;
-    const operatorsTimefrabe = store.getState().currentOperatorTimeframe;
+    const operatorsTimefrabe = store.getState().currentOperatorActiveTimeframePipeline;
 
     if (operatorsTimefrabe.includes(selectedOperator) && operators!.operatorsId.includes(selectedOperator)) {
 
@@ -67,6 +67,8 @@ export function handlePipelineSelection(selectedPipeline: string) {
             });
         }
     }
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
+
 
 }
 
@@ -79,17 +81,18 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
         data: selectedPosition,
     });
-    requestActiveOperatorsTimeframe(appContext.controller);
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 export function resetTimeBucketSelection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestActiveOperatorsTimeframe(appContext.controller);
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 export function resetSunburstSelection() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 function resetCurrentOperatorSelection() {

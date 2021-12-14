@@ -97,10 +97,10 @@ export function requestStatistics(controller: RequestController) {
 //request operators arry of active operators in current selected timeframe
 export function requestActiveOperatorsTimeframe(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
+        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
-            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, pipelines: store.getState().currentPipeline },
         }), true);
 }
 

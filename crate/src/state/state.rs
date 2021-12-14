@@ -12,6 +12,7 @@ pub struct RecordBatchShared {
 pub struct State {
     pub record_batches: Option<Arc<RecordBatchShared>>,
     pub queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
+    pub mapping: Arc<Mutex<HashMap<String, String>>>,
     pub dict: Option<Arc<SerdeDict>>,
     pub parquet_file_binary: Arc<Mutex<Vec<u8>>>,
     pub file_size: Option<u64>,
@@ -22,6 +23,7 @@ thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
         record_batches: None,
         queries:  Arc::new(Mutex::new(HashMap::new())),
+        mapping:  Arc::new(Mutex::new(HashMap::new())),
         dict: None,
         parquet_file_binary: Arc::new(Mutex::new(Vec::new())),
         file_size: None,
@@ -58,6 +60,10 @@ pub fn get_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
     with_state(|s| s.queries.clone())
 }
 
+pub fn get_mapping_operator() -> Arc<Mutex<HashMap<String, String>>> {
+    with_state(|s| s.mapping.clone())
+}
+
 pub fn get_buffer() -> Arc<Mutex<Vec<u8>>> {
     with_state(|s| s.parquet_file_binary.clone())
 }
@@ -76,7 +82,6 @@ pub fn append_to_buffer(mut vec: Vec<u8>) {
 }
 pub fn clear_buffer() {
     _with_state_mut(|s| {
-        //let mut binary = s.parquet_file_binary.lock().unwrap();
         s.parquet_file_binary = Arc::new(Mutex::new(Vec::new()));
     });
 }
@@ -111,5 +116,11 @@ pub fn insert_query_to_cache(restful_string: &str, record_batch: RecordBatch) {
     _with_state_mut(|s| {
         let mut hashmap = s.queries.lock().unwrap();
         hashmap.insert(restful_string.to_string(), record_batch)
+    });
+}
+
+pub fn insert_mapping_hashmap(hashmap: HashMap<String, String>) {
+    _with_state_mut(|s| {
+        s.mapping = Arc::new(Mutex::new(hashmap));
     });
 }

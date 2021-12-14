@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, sync::{Arc, MutexGuard}};
 
 use arrow::{
     array::{
@@ -15,7 +15,7 @@ use crate::{
         filter::{filter_between_int32, filter_with},
         statistics,
     },
-    state::state::get_record_batches,
+    state::state::{get_record_batches, get_mapping_operator, insert_mapping_hashmap},
     utils::{record_batch_util::{create_new_record_batch, send_record_batch_to_js}, record_batch_schema::RecordBatchSchema, print_to_cons::print_to_js_with_obj},
 };
 
@@ -138,7 +138,16 @@ pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<I
     return column;
 }
 
-pub fn get_map() -> HashMap<String, String> {
+pub fn init_mapping_operator() {
+
+    let mapping =  get_mapping_operator();
+    let map = mapping.lock().unwrap();
+
+    if map.len() > 0 {
+        return;
+    }
+
+
     let unique_batch =
         find_unique_string(&get_record_batches().unwrap().batch, RecordBatchSchema::Operator as usize);
 
@@ -148,7 +157,7 @@ pub fn get_map() -> HashMap<String, String> {
         .downcast_ref::<StringArray>()
         .unwrap();
 
-    let mut op_extension_vec = HashMap::new();
+    let mut hashmap = HashMap::new();
 
     for group in vec {
         let group_batch = filter_with(RecordBatchSchema::Operator as usize, vec![group.unwrap()], &get_record_batches().unwrap().batch);
@@ -180,12 +189,11 @@ pub fn get_map() -> HashMap<String, String> {
             out
         };
 
-        op_extension_vec.insert(group.unwrap().to_string(), nice_op);
+        hashmap.insert(group.unwrap().to_string(), nice_op);
+
     }
 
-    print_to_js_with_obj(&format!("{:?}", op_extension_vec ).into());
-
-    op_extension_vec
+    insert_mapping_hashmap(hashmap);
 
 }
 
@@ -235,7 +243,9 @@ pub fn freq_of_pipelines(
         bucket_map.insert("sum", 0.0);
     }
 
-    let mapping = get_map();
+    init_mapping_operator();
+    let mapping =  get_mapping_operator();
+    let map = mapping.lock().unwrap();
 
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
@@ -246,7 +256,7 @@ pub fn freq_of_pipelines(
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
-                result_vec_operator_nice_format.push(mapping.get(operator).unwrap());
+                result_vec_operator_nice_format.push(map.get(operator).unwrap());
 
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket_map.get(operator).unwrap();
@@ -293,7 +303,7 @@ pub fn freq_of_pipelines(
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
-                result_vec_operator_nice_format.push(mapping.get(operator).unwrap());
+                result_vec_operator_nice_format.push(map.get(operator).unwrap());
                 let bucket = bucket_map.to_owned();
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket.get(operator).unwrap();

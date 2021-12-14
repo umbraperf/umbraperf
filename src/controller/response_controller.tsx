@@ -201,6 +201,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES,
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                     }
@@ -216,6 +217,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     chartType: model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE,
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                     }

@@ -91,8 +91,8 @@ export let chartConfiguration: ChartConfiguration = {
     valueLabelFont: "Segoe UI",
 
     //Tooltip:
-    areaChartTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Relative Frequency': datum.frequency",
-    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
+    areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Relative Frequency': datum.frequency",
+    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
     // donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
     barChartTooltip: "{'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Occurences': datum.values}",

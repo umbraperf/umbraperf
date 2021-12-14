@@ -42,15 +42,18 @@ export interface IBarChartData {
 export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
 }
 
 export interface ISwimlanesCombinedData {
     buckets: Array<number>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
     bucketsNeg: Array<number>,
     operatorsNeg: Array<string>,
+    operatorsNiceNeg: Array<string>,
     frequencyNeg: Array<number>,
 }
 

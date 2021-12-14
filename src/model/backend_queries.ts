@@ -128,9 +128,9 @@ export function createBackendQuery(query: QueryVariant) {
         // case RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE:
         //     return `bucket/operator/relfreq${eventFilter}/relfreq?pipeline,${bucketSize}`;
         case BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/relfreq${eventFilter()}${timeFilter()}/relfreq?pipeline,${bucketSize()}!${pipelines()}!${operators()}!${time()}`;
+            return `bucket/op_ext/operator/relfreq${eventFilter()}${timeFilter()}/relfreq?pipeline,${bucketSize()}!${pipelines()}!${operators()}!${time()}`;
         case BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
-            return `bucket/operator/absfreq${eventFilter()}${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}!${operators()}!${time()}`;
+            return `bucket/op_ext/operator/absfreq${eventFilter()}${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}!${operators()}!${time()}`;
         case BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
             return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter()}/relfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2},${doubleEvent().event1}&${operators()}&${time()}`;
         case BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:

@@ -79,14 +79,14 @@ class SunburstChart extends React.Component<Props, {}> {
 
         const operatorIdArray = this.props.chartData.operator;
         const parentPipelinesArray = this.props.chartData.pipeline;
-        const operatorOccurrences = Array.from(this.props.chartData.opOccurrences);
-        const pipelineOccurrences = Array.from(this.props.chartData.pipeOccurrences);
+        const operatorOccurrencesArray = Array.from(this.props.chartData.opOccurrences);
+        const pipelineOccurrencesArray = Array.from(this.props.chartData.pipeOccurrences);
 
         //add datum for inner circle at beginning of data only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
-        operatorOccurrences[0] !== null && operatorOccurrences.unshift(null);
-        pipelineOccurrences[0] !== null && pipelineOccurrences.unshift(null);
+        operatorOccurrencesArray[0] !== null && operatorOccurrencesArray.unshift(null);
+        pipelineOccurrencesArray[0] !== null && pipelineOccurrencesArray.unshift(null);
 
         const data = [
             {
@@ -120,9 +120,19 @@ class SunburstChart extends React.Component<Props, {}> {
                 ]
             },
             {
+                name: "operatorsNiceMapping",
+                values: { operatorsId: this.props.operators!.operatorsId, operatorsNice: this.props.operators!.operatorsNice },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operatorsId", "operatorsNice"]
+                    }
+                ],
+            },
+            {
                 name: "tree",
                 values: [
-                    { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrences, opOccurrences: operatorOccurrences }
+                    { operator: operatorIdArray, parent: parentPipelinesArray, pipeOccurrences: pipelineOccurrencesArray, opOccurrences: operatorOccurrencesArray }
                 ],
                 transform: [
                     {
@@ -137,8 +147,8 @@ class SunburstChart extends React.Component<Props, {}> {
                     {
                         type: "partition",
                         field: "opOccurrences", //size of leaves -> operators
-                        sort: { "field": "value" },
-                        size: [{ "signal": "2 * PI" }, { "signal": "pieSize" }], //determine size of pipeline circles
+                        sort: { field: "value" },
+                        size: [{ signal: "2 * PI" }, { signal: "pieSize" }], //determine size of pipeline circles
                         as: ["a0", "r0", "a1", "r1", "depth", "children"]
                     },
                     {
@@ -155,6 +165,13 @@ class SunburstChart extends React.Component<Props, {}> {
                         fields: ["parent"],
                         values: ["pipelineShort"],
                         as: ["parentShort"]
+                    },
+                    {
+                        type: "lookup", //join operator nice names column only at operator rows
+                        from: "operatorsNiceMapping",
+                        key: "operatorsId",
+                        fields: ["operator"],
+                        values: ["operatorsNice"],
                     }
                 ],
 

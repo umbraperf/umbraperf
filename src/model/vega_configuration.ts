@@ -91,15 +91,15 @@ export let chartConfiguration: ChartConfiguration = {
     valueLabelFont: "Segoe UI",
 
     //Tooltip:
-    areaChartTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Relative Frequency': datum.frequency",
-    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
+    areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Relative Frequency': datum.frequency",
+    areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
     // donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
     barChartTooltip: "{'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Occurences': datum.values}",
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
-            "{'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
+            "{'Operator': datum.operatorsNice, 'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
     // memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 

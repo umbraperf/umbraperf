@@ -141,7 +141,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
 ) -> RecordBatch {
     let mut vec = Vec::new();
     vec.push(events[0]);
-    let f_batch = filter::filter_with(1, vec, batch);
+    let f_batch = filter::filter_with(RecordBatchSchema::EvName as usize, vec, batch);
 
     let (mut vec1, mut vec2, mut vec3, mut vec4, mut vec5, mut vec6) = (
         Vec::new(),
@@ -169,12 +169,12 @@ pub fn abs_freq_with_pipelines_with_double_events(
         .downcast_ref::<Float64Array>()
         .unwrap();
     let column2 = first_filter_batch
-        .column(1)
+        .column(2)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap();
     let column3 = first_filter_batch
-        .column(2)
+        .column(3)
         .as_any()
         .downcast_ref::<Float64Array>()
         .unwrap();
@@ -212,12 +212,12 @@ pub fn abs_freq_with_pipelines_with_double_events(
         .downcast_ref::<Float64Array>()
         .unwrap();
     let column5 = second_filter_batch
-        .column(1)
+        .column(2)
         .as_any()
         .downcast_ref::<StringArray>()
         .unwrap();
     let column6 = second_filter_batch
-        .column(2)
+        .column(3)
         .as_any()
         .downcast_ref::<Float64Array>()
         .unwrap();

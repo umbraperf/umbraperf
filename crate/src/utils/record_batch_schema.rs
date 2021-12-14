@@ -1,6 +1,6 @@
 pub enum RecordBatchSchema {
     Operator = 0,
-    // EvName = 1,
+    EvName = 1,
     Time = 2,
     Pipeline = 3,
     // Addr = 4,

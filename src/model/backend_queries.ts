@@ -132,10 +132,9 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES:
             return `bucket/op_ext/operator/absfreq${eventFilter()}${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}!${operators()}!${time()}`;
         case BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
-            return `bucket/operator/relfreq/bucketNEG/operatorNEG/relfreqNEG${timeFilter()}/relfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2},${doubleEvent().event1}&${operators()}&${time()}`;
+            return `bucket/op_ext/operator/relfreq/bucketNEG/op_extNEG/operatorNEG/relfreqNEG${timeFilter()}/relfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2},${doubleEvent().event1}&${operators()}&${time()}`;
         case BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
-            console.log(`bucket/operator/absfreq/bucketNEG/operatorNEG/absfreqNEG${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2}},${doubleEvent().event1}&${operators()}&${time()}`);
-            return `bucket/operator/absfreq/bucketNEG/operatorNEG/absfreqNEG${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2},${doubleEvent().event1}&${operators()}&${time()}`;
+            return `bucket/op_ext/operator/absfreq/bucketNEG/op_extNEG/operatorNEG/absfreqNEG${timeFilter()}/absfreq?pipeline,${bucketSize()}!${pipelines()}&${doubleEvent().event2},${doubleEvent().event1}&${operators()}&${time()}`;
         // case RestQueryType.GET_PIPELINE_COUNT:
         //     return `pipeline/count${eventFilter}${timeFilter}/count?pipeline/sort?pipeline`;
         case BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT:

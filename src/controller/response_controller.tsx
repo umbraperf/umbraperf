@@ -234,11 +234,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('operator').toArray(), //TODO 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
                         frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(), //TODO 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
                         frequencyNeg: resultObject.rustResultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
@@ -254,11 +254,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('operator').toArray(), //TODO 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
                         frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(), //TODO 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
                         frequencyNeg: resultObject.rustResultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });

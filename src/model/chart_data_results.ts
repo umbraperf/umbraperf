@@ -67,7 +67,6 @@ export interface ISunburstChartData {
     pipeline: Array<string | null>;
     opOccurrences: Array<number | null>;
     pipeOccurrences: Array<number | null>;
-    operatorsNice: Array<string>,
 }
 
 export interface IMemoryAccessHeatmapChartSingleData {

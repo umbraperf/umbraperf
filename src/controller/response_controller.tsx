@@ -304,7 +304,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                         pipeline: resultObject.rustResultTable.getColumn('pipeline').toArray(),
                         opOccurrences: resultObject.rustResultTable.getColumn('opcount').toArray(),
                         pipeOccurrences: resultObject.rustResultTable.getColumn('pipecount').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('operator').toArray(), //TODO 
                     }
                 });
             toggleResultLoadingFlag = true;

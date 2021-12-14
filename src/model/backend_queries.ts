@@ -116,7 +116,7 @@ export function createBackendQuery(query: QueryVariant) {
             return 'pipeline/count?pipeline/sort?count';
         case BackendQueryType.GET_OPERATORS:
             // return `operator${eventFilter()}/count?operator/sort?count,desc`;
-            return 'operator/op_ext/physical_op/count_with_mapping?operator/count?operator/sort?count,desc';
+            return 'operator/op_ext/physical_op/count_with_mapping?operator/sort?count,desc';
         case BackendQueryType.GET_STATISTICS:
             return `count${timeFilter()}${pipelinesFilter()}${eventFilter()}/basic_count?operator&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/count(distinct)?pipeline&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/count(distinct)?operator&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/max(time)?time&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/relative?operator`;
         case BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:

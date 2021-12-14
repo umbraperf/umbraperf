@@ -100,7 +100,8 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
     createHeaderOperatorName() {
         const showOperatorId = () => {
-            return this.props.operatorName === this.props.operatorId ? "" : ` (${this.props.operatorId})`;
+            //TODO test if works if no numbers in nice name anymore
+            return this.props.operatorName === this.props.operatorId.replace(/\d+/g, '') ? "" : ` (${this.props.operatorId})`;
         }
 
         return <Typography

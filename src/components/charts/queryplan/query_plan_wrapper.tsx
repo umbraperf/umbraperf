@@ -289,11 +289,15 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 cardinality: currentPlanElement.cardinality,
             });
             if (currentPlanElement.hasOwnProperty('groupBy')) {
-                //TODO add further 2 indicators for node reference
-                referenceNodes.push({referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
+                referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
             }
+            if (currentPlanElement.hasOwnProperty('source')) {
+                referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
+            }
+            //TODO add further indicator for node reference: tempRef?
 
-            ["input", "left", "right", "magic", "temp"].forEach(childType => {
+            ["input", "left", "right", "magic"].forEach(childType => {
+                //TODO go on for tempscan "temp",
                 if (currentPlanElement.hasOwnProperty(childType)) {
                     fillGraph(currentPlanElement[childType], currentPlanElement.operator);
                 }

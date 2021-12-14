@@ -1,4 +1,7 @@
-use std::{collections::HashMap, sync::{Arc, MutexGuard}};
+use std::{
+    collections::HashMap,
+    sync::{Arc, MutexGuard},
+};
 
 use arrow::{
     array::{
@@ -15,8 +18,12 @@ use crate::{
         filter::{filter_between_int32, filter_with},
         statistics,
     },
-    state::state::{get_record_batches, get_mapping_operator, insert_mapping_hashmap},
-    utils::{record_batch_util::{create_new_record_batch, send_record_batch_to_js}, record_batch_schema::RecordBatchSchema, print_to_cons::print_to_js_with_obj},
+    state::state::{get_mapping_operator, get_record_batches, insert_mapping_hashmap},
+    utils::{
+        print_to_cons::print_to_js_with_obj,
+        record_batch_schema::RecordBatchSchema,
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js}, array_util::{get_stringarray_column, get_floatarray_column, get_int32_column, get_uint_column},
+    },
 };
 
 pub enum Freq {
@@ -51,7 +58,12 @@ pub fn create_freq_bucket(
 
     let batch = create_new_record_batch(
         vec!["bucket", "op_ext", column_for_operator_name, freq_name],
-        vec![DataType::Float64, DataType::Utf8, DataType::Utf8, DataType::Float64],
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
         vec![
             Arc::new(builder_bucket),
             Arc::new(nice_operator_arr),
@@ -102,54 +114,18 @@ pub fn create_mem_bucket(
     )
 }
 
-pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Float64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UInt64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<UInt64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int32Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Int32Array>()
-        .unwrap();
-    return column;
-}
-
 pub fn init_mapping_operator() {
-
-    let mapping =  get_mapping_operator();
+    let mapping = get_mapping_operator();
     let map = mapping.lock().unwrap();
 
     if map.len() > 0 {
         return;
     }
 
-
-    let unique_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, RecordBatchSchema::Operator as usize);
+    let unique_batch = find_unique_string(
+        &get_record_batches().unwrap().batch,
+        RecordBatchSchema::Operator as usize,
+    );
 
     let vec = unique_batch
         .column(0)
@@ -160,7 +136,11 @@ pub fn init_mapping_operator() {
     let mut hashmap = HashMap::new();
 
     for group in vec {
-        let group_batch = filter_with(RecordBatchSchema::Operator as usize, vec![group.unwrap()], &get_record_batches().unwrap().batch);
+        let group_batch = filter_with(
+            RecordBatchSchema::Operator as usize,
+            vec![group.unwrap()],
+            &get_record_batches().unwrap().batch,
+        );
 
         let op_extension_col = group_batch
             .column(6)
@@ -190,11 +170,9 @@ pub fn init_mapping_operator() {
         };
 
         hashmap.insert(group.unwrap().to_string(), nice_op);
-
     }
 
     insert_mapping_hashmap(hashmap);
-
 }
 
 pub fn freq_of_pipelines(
@@ -244,7 +222,7 @@ pub fn freq_of_pipelines(
     }
 
     init_mapping_operator();
-    let mapping =  get_mapping_operator();
+    let mapping = get_mapping_operator();
     let map = mapping.lock().unwrap();
 
     for (i, time) in time_column.into_iter().enumerate() {
@@ -328,7 +306,10 @@ pub fn freq_of_pipelines(
         column_index += 1;
     }
 
-    let result_vec_operator_nice_format: Vec<&str> = result_vec_operator_nice_format.iter().map(AsRef::as_ref).collect();
+    let result_vec_operator_nice_format: Vec<&str> = result_vec_operator_nice_format
+        .iter()
+        .map(AsRef::as_ref)
+        .collect();
 
     return create_freq_bucket(
         &batch,

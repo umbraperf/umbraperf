@@ -33,7 +33,8 @@ interface State {
 
 export type PlanNode = {
     label: string
-    id: string,
+    operatorId: string,
+    analyzePlanId: number,
     parent: string,
     borderFill: string,
     backgroundFill: string,
@@ -46,7 +47,8 @@ export type PlanNode = {
 export type PlanEdge = {
     source: string,
     target: string,
-    cardinality: number | undefined,
+    cardinality?: number,
+    isReference?: boolean,
 }
 
 export type FlowGraphNode = {
@@ -137,8 +139,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     createPlanViewer(queryplanJson: object) {
 
         const rootNode = {
-            id: "root",
+            operatorId: "root",
             child: queryplanJson,
+            analyzePlanId: -1, //-1 as first operator begins with 0 in queryplan data
         }
         const flowGraphData = this.createFlowGraphData(rootNode);
 
@@ -158,20 +161,24 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             nodes: new Array<PlanNode>(),
             links: new Array<PlanEdge>()
         }
+        let referenceNodes = new Array<{
+            referenceTargetAnalyzePlanId: number,
+            referenceNode: any,
+        }>();
 
-        const isNodeUnavailable = (nodeId: string) => {
-            return !(this.props.operators!.operatorsId.includes(nodeId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeId)))
+        const isNodeUnavailable = (nodeOperatorId: string) => {
+            return !(this.props.operators!.operatorsId.includes(nodeOperatorId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeOperatorId)))
         }
 
-        const isNodeSelected = (nodeId: string) => {
-            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeId);
+        const isNodeSelected = (nodeOperatorId: string) => {
+            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeOperatorId);
         }
 
-        const nodeCursor = (nodeId: string) => {
+        const nodeCursor = (nodeOperatorId: string) => {
             //return tuple with 0: cursor style, 1: node selectable flag
-            if (nodeId === "root") {
+            if (nodeOperatorId === "root") {
                 return ["default", false];
-            } else if (isNodeUnavailable(nodeId)) {
+            } else if (isNodeUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
@@ -179,41 +186,41 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        const nodeColor = (nodeId: string) => {
+        const nodeColor = (nodeOperatorId: string) => {
             //return tuple with 0: border color, 1: background color
-            if (nodeId === "root") {
+            if (nodeOperatorId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (isNodeUnavailable(nodeId)) {
+            } else if (isNodeUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
-            } else if (isNodeSelected(nodeId)) {
+            } else if (isNodeSelected(nodeOperatorId)) {
                 //active node
-                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeId);
+                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeOperatorId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScale[operatorIndex]];
             } else {
                 //inactive node
-                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeId);
+                const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeOperatorId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity[operatorIndex],];
             }
         }
 
-        const nodeTextColor = (nodeId: string) => {
-            if (isNodeUnavailable(nodeId)) {
+        const nodeTextColor = (nodeOperatorId: string) => {
+            if (isNodeUnavailable(nodeOperatorId)) {
                 return '#919191';
             } else {
                 return this.props.appContext.accentBlack;
             }
         }
 
-        const nodeLabel = (nodeId: string) => {
+        const nodeLabel = (nodeOperatorId: string) => {
             let nodeLabel = "";
-            if (nodeId === "root") {
+            if (nodeOperatorId === "root") {
                 nodeLabel = "RESULT";
-            } else if (this.props.operators!.operatorsId.includes(nodeId)) {
-                nodeLabel = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(nodeId)];
+            } else if (this.props.operators!.operatorsId.includes(nodeOperatorId)) {
+                nodeLabel = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(nodeOperatorId)];
             } else {
-                nodeLabel = nodeId;
+                nodeLabel = nodeOperatorId;
             }
             return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
@@ -239,13 +246,14 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        const rootCursor = nodeCursor(root.id!);
-        const rootColor = nodeColor(root.id!);
-        const rootTextColor = nodeTextColor(root.id!);
-        const rootTooltipData = nodeTooltipData(root.id!);
+        const rootCursor = nodeCursor(root.operatorId!);
+        const rootColor = nodeColor(root.operatorId!);
+        const rootTextColor = nodeTextColor(root.operatorId!);
+        const rootTooltipData = nodeTooltipData(root.operatorId!);
         planData.nodes.push({
-            label: nodeLabel(root.id!),
-            id: root.id!, 
+            label: nodeLabel(root.operatorId!),
+            operatorId: root.operatorId!,
+            analyzePlanId: root.analyzePlanId!,
             parent: "",
             nodeCursor: rootCursor[0] as string,
             isNodeSelectable: rootCursor[1] as boolean,
@@ -254,7 +262,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             textColor: rootTextColor,
             tooltipData: rootTooltipData,
         })
-        fillGraph(root.child, root.id!);
+        fillGraph(root.child, root.operatorId!);
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
@@ -265,7 +273,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             planData.nodes.push({
                 label: nodeLabel(currentPlanElement.operator),
-                id: currentPlanElement.operator,
+                operatorId: currentPlanElement.operator,
+                analyzePlanId: currentPlanElement.analyzePlanId,
                 parent: parent,
                 nodeCursor: planNodeCursor[0] as string,
                 isNodeSelectable: planNodeCursor[1] as boolean,
@@ -279,11 +288,32 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 target: currentPlanElement.operator,
                 cardinality: currentPlanElement.cardinality,
             });
+            if (currentPlanElement.hasOwnProperty('groupBy')) {
+                //TODO add further 2 indicators for node reference
+                referenceNodes.push({referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
+            }
 
-            ["input", "left", "right"].forEach(childType => {
+            ["input", "left", "right", "magic"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType)) {
                     fillGraph(currentPlanElement[childType], currentPlanElement.operator);
                 }
+            });
+        }
+
+        //Add links for references
+        if (referenceNodes.length > 0) {
+            referenceNodes.forEach((reference) => {
+                console.log(reference);
+                const referenceOperator = planData.nodes.find(planNodes => {
+                    return planNodes.analyzePlanId === reference.referenceTargetAnalyzePlanId;
+                });
+                console.log(referenceOperator);
+                const referenceOperatorId = referenceOperator!.operatorId;
+                planData.links.push({
+                    source: referenceOperatorId,
+                    target: reference.referenceNode.operator,
+                    isReference: true,
+                });
             });
         }
 
@@ -299,8 +329,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         const isVertical = this.getGraphDirection() === 'TB';
 
-        const reactFlowNodes: FlowGraphNode[] = nodes.map((node) => {
-            const nodeWithPosition = dagreGraph.node(node.id);
+        const reactFlowNodes: FlowGraphNode[] = nodes.map((planNode) => {
+            const nodeWithPosition = dagreGraph.node(planNode.operatorId);
             const position = {
                 x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
                 y: nodeWithPosition.y - nodeHight / 2,
@@ -311,45 +341,45 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 height: '30px',
                 borderWidth: '4px',
                 borderRadius: '25px',
-                backgroundColor: node.backgroundFill,
-                borderColor: node.borderFill,
-                cursor: node.nodeCursor,
+                backgroundColor: planNode.backgroundFill,
+                borderColor: planNode.borderFill,
+                cursor: planNode.nodeCursor,
                 fontSize: '15px',
-                color: node.textColor,
+                color: planNode.textColor,
             }
 
             const data: QueryplanNodeData = {
-                label: node.label,
-                tooltipData: node.tooltipData,
+                label: planNode.label,
+                tooltipData: planNode.tooltipData,
             }
 
             const reactFlowNode: FlowGraphNode = {
-                id: node.id,
+                id: planNode.operatorId,
                 data,
                 position,
                 style,
                 targetPosition: isVertical ? Position.Bottom : Position.Left,
                 sourcePosition: isVertical ? Position.Top : Position.Right,
-                selectable: node.isNodeSelectable,
+                selectable: planNode.isNodeSelectable,
                 type: 'queryplanNode',
             }
             return reactFlowNode;
 
         });
 
-        const reactFlowEdges: FlowGraphEdge[] = edges.map((edge) => {
+        const reactFlowEdges: FlowGraphEdge[] = edges.map((planEdge) => {
             const reactFlowEdge: FlowGraphEdge = {
                 //turn around source and target to invert direction of edge animation
-                id: edge.source + "_" + edge.target,
-                source: edge.target,
-                target: edge.source,
+                id: planEdge.source + "_" + planEdge.target,
+                source: planEdge.target,
+                target: planEdge.source,
                 type: ConnectionLineType.Bezier,
                 style: {
                     stroke: this.props.appContext.tertiaryColor,
                     strokeWidth: '1px'
                 },
-                animated: false,
-                label: edge.cardinality ? `${model.chartConfiguration.nFormatter(+edge.cardinality, 1)}` : "",
+                animated: planEdge.isReference ? true : false,
+                label: planEdge.cardinality ? `${model.chartConfiguration.nFormatter(+planEdge.cardinality, 1)}` : "",
                 labelStyle: {
                     fill: this.props.appContext.tertiaryColor,
                 }
@@ -367,7 +397,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         dagreGraph.setDefaultEdgeLabel(function () { return {}; });
 
         nodes.forEach((node) => {
-            dagreGraph.setNode(node.id, { label: node.label, width: nodeWidth, height: nodeHight });
+            dagreGraph.setNode(node.operatorId, { label: node.label, width: nodeWidth, height: nodeHight });
         });
         edges.forEach((edge => {
             dagreGraph.setEdge(edge.source, edge.target);

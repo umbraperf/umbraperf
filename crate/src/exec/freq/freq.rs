@@ -12,11 +12,11 @@ use arrow::{
 use crate::{
     exec::basic::{
         basic::{find_unique_string, sort_batch},
-        filter::filter_between_int32,
+        filter::{filter_between_int32, filter_with},
         statistics,
     },
     state::state::get_record_batches,
-    utils::{record_batch_util::{create_new_record_batch, send_record_batch_to_js}, record_batch_schema::RecordBatchSchema},
+    utils::{record_batch_util::{create_new_record_batch, send_record_batch_to_js}, record_batch_schema::RecordBatchSchema, print_to_cons::print_to_js_with_obj},
 };
 
 pub enum Freq {
@@ -29,10 +29,12 @@ pub fn create_freq_bucket(
     column_for_operator: usize,
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
+    result_vec_operator_nice_format: Vec<&str>,
     result_builder: Vec<f64>,
     freq: Freq,
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
+    let nice_operator_arr = StringArray::from(result_vec_operator_nice_format);
     let operator_arr = StringArray::from(result_vec_operator);
     let builder_result = Float64Array::from(result_builder);
 
@@ -47,15 +49,20 @@ pub fn create_freq_bucket(
         freq_name = "absfreq";
     }
 
-    create_new_record_batch(
-        vec!["bucket", column_for_operator_name, freq_name],
-        vec![DataType::Float64, DataType::Utf8, DataType::Float64],
+    let batch = create_new_record_batch(
+        vec!["bucket", "op_ext", column_for_operator_name, freq_name],
+        vec![DataType::Float64, DataType::Utf8, DataType::Utf8, DataType::Float64],
         vec![
             Arc::new(builder_bucket),
+            Arc::new(nice_operator_arr),
             Arc::new(operator_arr),
             Arc::new(builder_result),
         ],
-    )
+    );
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
+
+    batch
 }
 
 pub fn round(to_round: f64) -> f64 {
@@ -131,6 +138,57 @@ pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<I
     return column;
 }
 
+pub fn get_map() -> HashMap<String, String> {
+    let unique_batch =
+        find_unique_string(&get_record_batches().unwrap().batch, RecordBatchSchema::Operator as usize);
+
+    let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+    let mut op_extension_vec = HashMap::new();
+
+    for group in vec {
+        let group_batch = filter_with(RecordBatchSchema::Operator as usize, vec![group.unwrap()], &get_record_batches().unwrap().batch);
+
+        let op_extension_col = group_batch
+            .column(6)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+
+        let nice_op = if op_extension_col.value(0).to_owned() == "null" {
+            if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
+                "-".to_string()
+            } else {
+                group.unwrap().to_string()
+            }
+        } else {
+            let out = if group.unwrap().contains("tablescan") {
+                let mut str = op_extension_col.value(0).to_owned();
+                str.push_str(" ");
+                str.push_str("scan");
+                str
+            } else {
+                let mut str = op_extension_col.value(0).to_owned();
+                str.push_str(" ");
+                str.push_str(group.unwrap());
+                str
+            };
+            out
+        };
+
+        op_extension_vec.insert(group.unwrap().to_string(), nice_op);
+    }
+
+    print_to_js_with_obj(&format!("{:?}", op_extension_vec ).into());
+
+    op_extension_vec
+
+}
+
 pub fn freq_of_pipelines(
     batch: &RecordBatch,
     freq: Freq,
@@ -152,6 +210,7 @@ pub fn freq_of_pipelines(
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
+    let mut result_vec_operator_nice_format = Vec::new();
     let mut result_builder = Vec::new();
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
@@ -176,14 +235,18 @@ pub fn freq_of_pipelines(
         bucket_map.insert("sum", 0.0);
     }
 
+    let mapping = get_map();
+
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
+
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
+                result_vec_operator_nice_format.push(mapping.get(operator).unwrap());
 
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket_map.get(operator).unwrap();
@@ -230,6 +293,7 @@ pub fn freq_of_pipelines(
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
+                result_vec_operator_nice_format.push(mapping.get(operator).unwrap());
                 let bucket = bucket_map.to_owned();
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket.get(operator).unwrap();
@@ -254,11 +318,14 @@ pub fn freq_of_pipelines(
         column_index += 1;
     }
 
+    let result_vec_operator_nice_format: Vec<&str> = result_vec_operator_nice_format.iter().map(AsRef::as_ref).collect();
+
     return create_freq_bucket(
         &batch,
         column_for_operator,
         result_bucket,
         result_vec_operator,
+        result_vec_operator_nice_format,
         result_builder,
         freq,
     );

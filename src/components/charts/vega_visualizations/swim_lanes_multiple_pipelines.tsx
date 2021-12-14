@@ -6,7 +6,6 @@ import { Vega, View } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
 
-
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentEvent: string;

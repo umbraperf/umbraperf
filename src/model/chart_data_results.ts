@@ -41,17 +41,19 @@ export interface IBarChartData {
 
 export interface ISwimlanesData {
     buckets: Array<number>,
-    operatorsNice: Array<string>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
 }
 
 export interface ISwimlanesCombinedData {
     buckets: Array<number>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
     bucketsNeg: Array<number>,
     operatorsNeg: Array<string>,
+    operatorsNiceNeg: Array<string>,
     frequencyNeg: Array<number>,
 }
 
@@ -65,6 +67,7 @@ export interface ISunburstChartData {
     pipeline: Array<string | null>;
     opOccurrences: Array<number | null>;
     pipeOccurrences: Array<number | null>;
+    operatorsNice: Array<string>,
 }
 
 export interface IMemoryAccessHeatmapChartSingleData {

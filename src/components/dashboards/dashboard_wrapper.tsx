@@ -59,7 +59,7 @@ class DashboardWrapper extends React.Component<Props, {}> {
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentView: (newCurrentView: model.ViewType) =>
         dispatch({
-            type: model.StateMutationType.SET_CURRENTVIEW,
+            type: model.StateMutationType.SET_CURRENT_VIEW,
             data: newCurrentView,
         })
 });

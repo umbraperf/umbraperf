@@ -17,19 +17,19 @@ export class RequestController {
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTREQUEST,
+            type: model.StateMutationType.SET_CURRENT_REQUEST,
             data: restQueryType,
         });
 
         if (!metaRequest && chartType) {
             store.dispatch({
-                type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
+                type: model.StateMutationType.SET_LOADING_CHART_READABLE_NAME,
                 data: chartType,
             });
         }
 
         store.dispatch({
-            type: model.StateMutationType.SET_RESULTLOADING,
+            type: model.StateMutationType.SET_RESULT_LOADING,
             data: { key: requestingChartId ? requestingChartId : -1, value: true },
         });
 
@@ -204,7 +204,7 @@ export function resetChartDataInStore(chartId: number) {
     let newChartData: model.IChartDataKeyValue = { ...chartData }
 
     store.dispatch({
-        type: model.StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHART_DATA,
         data: newChartData,
     });
 }

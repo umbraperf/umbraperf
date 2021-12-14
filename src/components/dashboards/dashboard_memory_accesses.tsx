@@ -66,12 +66,12 @@ const mapStateToProps = (state: model.AppState) => ({
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentView: (newCurrentView: model.ViewType) =>
         dispatch({
-            type: model.StateMutationType.SET_CURRENTVIEW,
+            type: model.StateMutationType.SET_CURRENT_VIEW,
             data: newCurrentView,
         }),
     setCurrentEvent: (newCurrentEvent: string) =>
         dispatch({
-            type: model.StateMutationType.SET_CURRENTEVENT,
+            type: model.StateMutationType.SET_CURRENT_EVENT,
             data: newCurrentEvent,
         }),
 });

@@ -296,7 +296,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
             if(currentPlanElement.hasOwnProperty('temp') && "number" === typeof currentPlanElement['temp']){
                 //ensure that temp is of type number as temp can also appear as type of child node
-
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['temp'], referenceNode: currentPlanElement, isTempRef: true });
             }
 

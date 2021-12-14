@@ -19,7 +19,6 @@ use crate::{
     },
     state::state::{get_mapping_operator, get_record_batches, insert_mapping_hashmap},
     utils::{
-        print_to_cons::print_to_js_with_obj,
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{create_new_record_batch, send_record_batch_to_js}, array_util::{get_stringarray_column, get_floatarray_column, get_int32_column, get_uint_column},
     },
@@ -70,8 +69,6 @@ pub fn create_freq_bucket(
             Arc::new(builder_result),
         ],
     );
-
-    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     batch
 }

@@ -34,14 +34,14 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
         const chartDataElementPos: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
-            operatorsNice: [], //TODO 
+            operatorsNice: this.props.chartData.operatorsNice,
             operators: this.props.chartData.operators,
             frequency: this.props.chartData.frequency,
         }
 
         const chartDataElementNeg: model.ISwimlanesData = {
             buckets: this.props.chartData.bucketsNeg,
-            operatorsNice: [], //TODO 
+            operatorsNice: this.props.chartData.operatorsNiceNeg,
             operators: this.props.chartData.operatorsNeg,
             frequency: this.props.chartData.frequencyNeg,
         }
@@ -50,18 +50,18 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
             name: "tablePos",
             values: chartDataElementPos,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                { type: "flatten", fields: ["buckets", "operators", "frequency", "operatorsNice"] },
+                { type: "collect", sort: { "field": "operators" } },
+                { type: "stack", groupby: ["buckets"], field: "frequency" }
             ]
         },
         {
             name: "tableNeg",
             values: chartDataElementNeg,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                { type: "flatten", fields: ["buckets", "operators", "frequency", "operatorsNice"] },
+                { type: "collect", sort: { "field": "operators" } },
+                { type: "stack", groupby: ["buckets"], field: "frequency" }
             ]
         }
         ];

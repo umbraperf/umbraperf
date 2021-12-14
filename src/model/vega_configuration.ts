@@ -99,7 +99,7 @@ export let chartConfiguration: ChartConfiguration = {
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
-            "{'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
+            "{'Operator': datum.operatorsNice, 'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
     },
     // memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
 

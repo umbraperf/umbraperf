@@ -34,12 +34,14 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
         const chartDataElementPos: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
+            operatorsNice: [], //TODO 
             operators: this.props.chartData.operators,
             frequency: this.props.chartData.frequency,
         }
 
         const chartDataElementNeg: model.ISwimlanesData = {
             buckets: this.props.chartData.bucketsNeg,
+            operatorsNice: [], //TODO 
             operators: this.props.chartData.operatorsNeg,
             frequency: this.props.chartData.frequencyNeg,
         }

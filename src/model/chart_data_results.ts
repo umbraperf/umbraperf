@@ -41,6 +41,7 @@ export interface IBarChartData {
 
 export interface ISwimlanesData {
     buckets: Array<number>,
+    operatorsNice: Array<string>,
     operators: Array<string>,
     frequency: Array<number>,
 }

@@ -3,7 +3,7 @@ use crate::{
     web_file::web_file_chunkreader::WebFileChunkReader,
 };
 use arrow::{
-    array::{Array, ArrayRef, Int64Array, StringArray, Float64Array, UInt64Array},
+    array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
     datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
@@ -22,7 +22,7 @@ pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
     let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
     let record_reader = reader
-        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6].into_iter(), 1024 * 8)
+        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6, 13, 14].into_iter(), 1024 * 8)
         .unwrap();
     record_reader
 }
@@ -151,7 +151,8 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         event_vec.push(dict_key.unwrap().as_str());
     }
 
-    let time_col = batch.column(2)
+    let time_col = batch
+        .column(2)
         .as_any()
         .downcast_ref::<Float64Array>()
         .unwrap();
@@ -174,7 +175,8 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let addr_col = batch.column(5)
+    let addr_col = batch
+        .column(5)
         .as_any()
         .downcast_ref::<UInt64Array>()
         .unwrap();
@@ -184,7 +186,8 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         addr.push(value.unwrap());
     }
 
-    let uri_col = batch.column(4)
+    let uri_col = batch
+        .column(4)
         .as_any()
         .downcast_ref::<Int64Array>()
         .unwrap();
@@ -193,7 +196,33 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     for value in uri_col {
         uri.push(value.unwrap());
     }
-    
+
+    let op_ext_col = batch
+        .column(6)
+        .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();
+
+    let mut op_extension = Vec::new();
+    let hash_map = serde.dict.get("op_extension").unwrap();
+    for value in op_ext_col {
+        let dict_key = hash_map.get(&(value.unwrap() as u64));
+        op_extension.push(dict_key.unwrap().as_str());
+    }
+
+    let pyhs_op_col = batch
+        .column(7)
+        .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();
+
+    let mut physical_op = Vec::new();
+    let hash_map = serde.dict.get("physical_op").unwrap();
+    for value in pyhs_op_col {
+        let dict_key = hash_map.get(&(value.unwrap() as u64));
+        physical_op.push(dict_key.unwrap().as_str());
+    }
+
     /* operator_vec.push("test_Operator");
     event_vec.push("test_Event");
     time.push(99.0);
@@ -202,7 +231,16 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
     uri.push(2);  */
 
     create_new_record_batch(
-        vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],
+        vec![
+            "operator",
+            "ev_name",
+            "time",
+            "pipeline",
+            "addr",
+            "uri",
+            "op_ext",
+            "physical_op",
+        ],
         vec![
             DataType::Utf8,
             DataType::Utf8,
@@ -210,6 +248,8 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             DataType::Utf8,
             DataType::UInt64,
             DataType::Int64,
+            DataType::Utf8,
+            DataType::Utf8,
         ],
         vec![
             Arc::new(StringArray::from(operator_vec)),
@@ -218,10 +258,11 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(pipeline_vec)),
             Arc::new(UInt64Array::from(addr)),
             Arc::new(Int64Array::from(uri)),
+            Arc::new(StringArray::from(op_extension)),
+            Arc::new(StringArray::from(physical_op)),
         ],
     )
 }
-
 
 // Sending record batch to javascript via IPC which include a schema and a message
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {

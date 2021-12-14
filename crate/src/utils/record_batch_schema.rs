@@ -5,5 +5,5 @@ pub enum RecordBatchSchema {
     Pipeline = 3,
     // Addr = 4,
     // Uri = 5
-    OpExtension = 6
+    _OpExtension = 6
 }

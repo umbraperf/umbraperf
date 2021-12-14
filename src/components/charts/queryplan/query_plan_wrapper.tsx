@@ -18,7 +18,7 @@ import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
 export interface AppstateProps {
     appContext: Context.IAppContext;
     currentOperator: Array<string> | "All";
-    currentOperatorTimeframe: Array<string> | "All";
+    currentOperatorActiveTimeframePipeline: Array<string> | "All";
     operators: model.IOperatorsData | undefined;
     chartData: model.IQueryPlanData,
 }
@@ -100,7 +100,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        if (!_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe)) {
+        if (!_.isEqual(this.props.currentOperatorActiveTimeframePipeline, prevProps.currentOperatorActiveTimeframePipeline)) {
             this.updateQueryPlan();
         }
     }
@@ -170,7 +170,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }>();
 
         const isNodeUnavailable = (nodeOperatorId: string) => {
-            return !(this.props.operators!.operatorsId.includes(nodeOperatorId) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(nodeOperatorId)))
+            return !(this.props.operators!.operatorsId.includes(nodeOperatorId) && (this.props.currentOperatorActiveTimeframePipeline === "All" || this.props.currentOperatorActiveTimeframePipeline.includes(nodeOperatorId)))
         }
 
         const isNodeSelected = (nodeOperatorId: string) => {
@@ -464,7 +464,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IQueryPlanProps)
     currentOperator: state.currentOperator,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IQueryPlanData,
-    currentOperatorTimeframe: state.currentOperatorTimeframe,
+    currentOperatorActiveTimeframePipeline: state.currentOperatorActiveTimeframePipeline,
 });
 
 

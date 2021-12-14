@@ -17,7 +17,7 @@ interface AppstateProps {
     currentEvent: string | "Default";
     events: Array<string> | undefined;
     currentOperator: Array<string> | "All";
-    currentOperatorTimeframe: Array<string> | "All";
+    currentOperatorActiveTimeframePipeline: Array<string> | "All";
     operators: model.IOperatorsData | undefined;
 }
 
@@ -61,7 +61,7 @@ class UirViewer extends React.Component<Props, State> {
         if (this.state.editorMounted &&
             (this.props.currentEvent !== prevProps.currentEvent
                 || this.state.operatorsColorHidden !== prevState.operatorsColorHidden
-                || !(_.isEqual(this.props.currentOperatorTimeframe, prevProps.currentOperatorTimeframe))
+                || !(_.isEqual(this.props.currentOperatorActiveTimeframePipeline, prevProps.currentOperatorActiveTimeframePipeline))
                 || !(_.isEqual(this.props.currentOperator, prevProps.currentOperator)))) {
             this.setMonacoGlyphs();
         }
@@ -366,7 +366,7 @@ class UirViewer extends React.Component<Props, State> {
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
             if (!this.state.operatorsColorHidden && operator !== "None") {
-                if (!(this.props.operators!.operatorsId.includes(operator) && (this.props.currentOperatorTimeframe === "All" || this.props.currentOperatorTimeframe.includes(operator)))) {
+                if (!(this.props.operators!.operatorsId.includes(operator) && (this.props.currentOperatorActiveTimeframePipeline === "All" || this.props.currentOperatorActiveTimeframePipeline.includes(operator)))) {
                     //node not available, not in sample or nor in time selection
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", -1);
                 } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator)) {
@@ -449,7 +449,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IUirViewerProps)
     currentEvent: state.currentEvent,
     events: state.events,
     currentOperator: state.currentOperator,
-    currentOperatorTimeframe: state.currentOperatorTimeframe,
+    currentOperatorActiveTimeframePipeline: state.currentOperatorActiveTimeframePipeline,
     operators: state.operators,
 });
 

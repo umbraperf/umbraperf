@@ -21,7 +21,7 @@ export enum StateMutationType {
     SET_CURRENTMULTIPLEEVENT = 'SET_CURRENTMULTIPLEEVENT',
     SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
     SET_CURRENTOPERATOR = 'SET_CURRENTOPERATOR',
-    SET_CURRENTOPERATORTIMEFRAME = 'SET_CURRENTOPERATORTIMEFRAME',
+    SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE = 'SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE',
     SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
@@ -56,7 +56,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTOPERATORTIMEFRAME, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENTREQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
@@ -139,10 +139,10 @@ export class AppStateMutation {
                     ...state,
                     currentOperator: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTOPERATORTIMEFRAME:
+            case StateMutationType.SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE:
                 return {
                     ...state,
-                    currentOperatorTimeframe: mutation.data,
+                    currentOperatorActiveTimeframePipeline: mutation.data,
                 };
             case StateMutationType.SET_CURRENTREQUEST:
                 return {
@@ -229,7 +229,7 @@ export class AppStateMutation {
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",
                     currentOperator: "All",
-                    currentOperatorTimeframe: "All",
+                    currentOperatorActiveTimeframePipeline: "All",
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,

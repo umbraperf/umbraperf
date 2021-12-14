@@ -109,6 +109,8 @@ pub fn clear_cache() {
     _with_state_mut(|s| {
         let mut hashmap = s.queries.lock().unwrap();
         hashmap.clear();
+        let mut hashmap_mapping = s.mapping.lock().unwrap();
+        hashmap_mapping.clear();
     });
 }
 

@@ -111,7 +111,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             console.log(operatorsTimeframe);
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTOPERATORACTIVETIMEFRAMEPIPELINE,
+                type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
                 data: operatorsTimeframe,
             });
             break;

@@ -12,7 +12,7 @@ use arrow::{
 use crate::{
     exec::basic::{basic::find_unique_string, filter::filter_with},
     state::state::get_record_batches,
-    utils::{record_batch_util::create_new_record_batch, print_to_cons::print_to_js_with_obj},
+    utils::{print_to_cons::print_to_js_with_obj, record_batch_util::create_new_record_batch},
 };
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
@@ -80,7 +80,6 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     let mut result_builder = Float64Array::builder(vec.len());
 
     for group in vec {
-
         let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
 
         let row_count = group_batch.num_rows() as f64;
@@ -135,14 +134,24 @@ pub fn count_rows_over_with_mapping(
 
         let nice_op = if op_extension_col.value(0).to_owned() == "null" {
             if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
-                "null".to_string()
+                "-".to_string()
             } else {
                 group.unwrap().to_string()
             }
         } else {
-            op_extension_col.value(0).to_owned()
+            let out = if group.unwrap().contains("tablescan") {
+                let mut str = op_extension_col.value(0).to_owned();
+                str.push_str(" ");
+                str.push_str("scan");
+                str
+            } else {
+                let mut str = op_extension_col.value(0).to_owned();
+                str.push_str(" ");
+                str.push_str(group.unwrap());
+                str
+            };
+            out
         };
-       
 
         op_extension_vec.push(nice_op);
         pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());

@@ -214,19 +214,4 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     return false;
 }
 
-// export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
-//     if (props.operators &&
-//         props.queryPlan &&
-        // TODO queryplan comparison necessare?
-//         (props.queryPlan !== prevProps.queryPlan ||
-//             props.currentView !== prevProps.currentView ||
-//             width !== prevWidth ||
-//             !_.isEqual(props.operators, prevProps.operators) ||
-//             !_.isEqual(props.currentOperator, prevProps.currentOperator))) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
-
 

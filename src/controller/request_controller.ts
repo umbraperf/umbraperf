@@ -120,22 +120,6 @@ export function requestChartData(controller: RequestController, chartId: number,
             });
             break;
 
-        // case model.ChartType.SWIM_LANES:
-        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-        //     });
-        //     break;
-
-        // case model.ChartType.SWIM_LANES_PIPELINES:
-        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-        //     });
-        //     break;
-
         case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
             restQueryType = model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES;
             restQuery = model.createBackendQuery({
@@ -167,14 +151,6 @@ export function requestChartData(controller: RequestController, chartId: number,
                 data: { event2: store.getState().currentMultipleEvent[1], event1: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
-
-        // case model.ChartType.DONUT_CHART:
-        //     restQueryType = model.RestQueryType.GET_PIPELINE_COUNT;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-        //     });
-        //     break;
 
         case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
             restQueryType = model.BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT;

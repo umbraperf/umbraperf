@@ -214,15 +214,14 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeLabel = (nodeOperatorId: string) => {
-            let nodeLabel = "";
             if (nodeOperatorId === "root") {
-                nodeLabel = "RESULT";
+                return "RESULT";
             } else if (this.props.operators!.operatorsId.includes(nodeOperatorId)) {
-                nodeLabel = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(nodeOperatorId)];
+                return this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(nodeOperatorId)];
             } else {
-                nodeLabel = nodeOperatorId;
+                return nodeOperatorId;
             }
-            return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
+            // return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
 
         const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {

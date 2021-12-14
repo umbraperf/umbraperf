@@ -15,10 +15,7 @@ use crate::{
         rest::rest_api::find_name,
     },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{
-        print_to_cons::print_to_js_with_obj,
-        record_batch_util::{self, create_new_record_batch},
-    },
+    utils::record_batch_util::{self, create_new_record_batch},
 };
 
 use super::{basic::find_unique_string, filter::filter_with};

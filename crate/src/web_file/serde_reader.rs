@@ -14,6 +14,8 @@ struct Dictionary {
     srclines: Map<String, Value>,
     dso: Map<String, Value>,
     mapping: Map<String, Value>,
+    op_extension: Map<String, Value>,
+    physical_op: Map<String, Value>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -79,6 +81,28 @@ impl SerdeDict {
                 .or_insert(HashMap::new());
             let string = srclines.0;
             if let Number(x) = srclines.1 {
+                let num = x.as_u64().unwrap();
+                inner_hash_map.insert(num, string);
+            }
+        }
+
+        for op_extension in d.op_extension{
+            let inner_hash_map = hash_map
+                .entry("op_extension".to_string())
+                .or_insert(HashMap::new());
+            let string = op_extension.0;
+            if let Number(x) = op_extension.1 {
+                let num = x.as_u64().unwrap();
+                inner_hash_map.insert(num, string);
+            }
+        }
+
+        for physical_op in d.physical_op {
+            let inner_hash_map = hash_map
+                .entry("physical_op".to_string())
+                .or_insert(HashMap::new());
+            let string = physical_op.0;
+            if let Number(x) = physical_op.1 {
                 let num = x.as_u64().unwrap();
                 inner_hash_map.insert(num, string);
             }

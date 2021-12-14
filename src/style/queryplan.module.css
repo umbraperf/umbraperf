@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack, colorTertiary from colors;
+@value colorAccentBlack, colorTertiary, hoverOpacity from colors;
 
 :root {
     --dagreGraphPadding: 2px;
@@ -62,6 +62,10 @@
 
 .reactFlowControls:hover{
     opacity: 100%;
+}
+
+.queryPlanNode:hover{
+    opacity: hoverOpacity !important;
 }
 
 .queryplanNodeBody{

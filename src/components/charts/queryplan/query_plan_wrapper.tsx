@@ -62,7 +62,8 @@ export type FlowGraphNode = {
     sourcePosition: Position;
     selectable: boolean;
     type: string,
-    style: CSS.Properties;
+    style: CSS.Properties,
+    className: string,
 }
 
 export type FlowGraphEdge = {
@@ -373,6 +374,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 sourcePosition: isVertical ? Position.Top : Position.Right,
                 selectable: planNode.isNodeSelectable,
                 type: 'queryplanNode',
+                className: styles.queryPlanNode,
             }
             return reactFlowNode;
 

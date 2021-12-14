@@ -105,6 +105,10 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch =
                     count::count_rows_over(&record_batch, find_name(params, &record_batch))
             }
+            "count_with_mapping" => {
+                record_batch =
+                    count::count_rows_over_with_mapping(&record_batch, find_name(params, &record_batch))
+            }
             "absfreq" => {
                 record_batch = abs_freq_pars(record_batch, params);
             }

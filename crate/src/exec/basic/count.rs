@@ -151,7 +151,6 @@ pub fn count_rows_over_with_mapping(
 
     let builder = result_builder.finish();
 
-    // TODO
     let batch = create_new_record_batch(
         vec![
             batch.schema().field(column_to_groupby_over).name(),

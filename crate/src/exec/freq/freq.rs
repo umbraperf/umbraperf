@@ -10,7 +10,7 @@ use arrow::{
     datatypes::{DataType},
     record_batch::RecordBatch,
 };
-use regex::{Replacer, Regex};
+use regex::{Regex};
 
 use crate::{
     exec::basic::{

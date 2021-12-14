@@ -295,9 +295,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
             //TODO add further indicator for node reference: tempRef?
 
-            ["input", "left", "right", "magic"].forEach(childType => {
-                //TODO go on for tempscan "temp",
-                if (currentPlanElement.hasOwnProperty(childType)) {
+            ["input", "left", "right", "magic", "temp"].forEach(childType => {
+                if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {
                     fillGraph(currentPlanElement[childType], currentPlanElement.operator);
                 }
             });

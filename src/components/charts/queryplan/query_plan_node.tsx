@@ -1,3 +1,4 @@
+import * as model from '../../../model';
 import { Tooltip } from '@material-ui/core';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
@@ -25,7 +26,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
     const handleStyle = (handlerType: "source" | "target"): CSS.Properties => {
         return {
             background: context!.accentBlack,
-            visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && props.id.includes("tablescan"))) ? "hidden" : "visible",
+            visibility: ((handlerType === "source" && props.id.includes("root")) || (handlerType === "target" && (props.id.includes("tablescan") || props.id.includes("groupbyscan")))) ? "hidden" : "visible",
         }
     }
 
@@ -35,7 +36,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
         return <div
             className={styles.queryplanNodeBody}
         >
-            {props.data.label}
+            {props.data.label.length > 15 ? props.data.label.substring(0, 14) + "..." : props.data.label}
         </div>
     }
 
@@ -46,6 +47,7 @@ export default memo(function QueryplanNode(props: QueryplanNodeProps) {
                 title={<React.Fragment>
                     <QueryPlanNodeTooltipContent
                         operatorName={props.data.label}
+                        operatorId={props.id}
                         tooltipData={props.data.tooltipData}
                     />
                 </React.Fragment>

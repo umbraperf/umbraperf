@@ -13,6 +13,7 @@ export type QueryplanNodeTooltipData = {
 interface Props {
     appContext: Context.IAppContext;
     operatorName: string,
+    operatorId: string,
     tooltipData: QueryplanNodeTooltipData,
 }
 
@@ -97,8 +98,24 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         </Typography>
     }
 
+    createHeaderOperatorName() {
+        const showOperatorId = () => {
+            //TODO test if works if no numbers in nice name anymore
+            return this.props.operatorName === this.props.operatorId.replace(/\d+/g, '') ? "" : ` (${this.props.operatorId})`;
+        }
+
+        return <Typography
+            className={styles.queryplanNodeTooltipHeader}
+            variant="subtitle2"
+        >
+            {this.props.operatorName} {showOperatorId()}
+
+        </Typography>
+    }
+
     createNodeTooltip() {
         return <div>
+            {this.createHeaderOperatorName()}
             {this.createContentTable()}
             {this.createTotalSumLine()}
         </div >

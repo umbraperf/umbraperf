@@ -1,14 +1,13 @@
 use std::{
     collections::HashMap,
-    sync::{Arc, MutexGuard},
+    sync::{Arc},
 };
 
 use arrow::{
     array::{
-        Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
-        UInt64Array,
+        Array, Float64Array, Int32Array, StringArray
     },
-    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
+    datatypes::{DataType},
     record_batch::RecordBatch,
 };
 

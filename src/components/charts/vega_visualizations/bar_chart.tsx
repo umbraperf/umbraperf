@@ -37,11 +37,33 @@ class BarChart extends React.Component<Props, {}> {
 
         const data = [
             {
+                name: "operatorsNiceMapping",
+                values: { operatorsId: this.props.operators!.operatorsId, operatorsNice: this.props.operators!.operatorsNice },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operatorsId", "operatorsNice"]
+                    }
+                ],
+            },
+            {
                 name: "table",
                 values: [
                     { operators: operatorsArray, values: valueArray }
                 ],
-                transform: [{ type: "flatten", fields: ["operators", "values"] }],
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["operators", "values"]
+                    },
+                    {
+                        type: "lookup",
+                        from: "operatorsNiceMapping",
+                        key: "operatorsId",
+                        fields: ["operators"],
+                        values: ["operatorsNice"],
+                    }
+                ],
             },
             {
                 name: "selectedOperators",
@@ -52,7 +74,7 @@ class BarChart extends React.Component<Props, {}> {
                         fields: ["operatorsUsed"]
                     }
                 ]
-            }
+            },
         ];
 
 
@@ -95,7 +117,6 @@ class BarChart extends React.Component<Props, {}> {
                 {
                     name: "color",
                     type: "ordinal",
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
                     domain: this.props.operators!.operatorsId,
                 },

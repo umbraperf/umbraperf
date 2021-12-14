@@ -7,6 +7,7 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
+use crate::utils::array_util::get_stringarray_column;
 use crate::utils::record_batch_util::create_new_record_batch;
 use crate::utils::record_batch_util::create_record_batch;
 
@@ -55,11 +56,7 @@ pub fn sort_batch(
 
 // UNIQUE for specified column
 pub fn find_unique_string(batch: &RecordBatch, column_for_unique: usize) -> RecordBatch {
-    let column = batch
-        .column(column_for_unique)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let column = get_stringarray_column(batch, column_for_unique);
 
     let hash_set = column
         .into_iter()

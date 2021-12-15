@@ -2,7 +2,7 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsTimeframe as requestOperatorsActiveTimeframePipeline } from ".";
+import { requestActiveOperatorsTimeframePipeline, requestActivePipelineTimeframe } from ".";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
@@ -39,7 +39,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             }
         }
     }
-
 }
 
 export function handlePipelineSelection(selectedPipeline: string) {
@@ -65,9 +64,7 @@ export function handlePipelineSelection(selectedPipeline: string) {
             });
         }
     }
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
-
-
+    requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
 export function handleTimeBucketSelection(selectedTimeBuckets: [number, number], selectedPosition: [number, number]) {
@@ -79,18 +76,20 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE,
         data: selectedPosition,
     });
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActivePipelineTimeframe(appContext.controller);
+    requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
 export function resetTimeBucketSelection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActivePipelineTimeframe(appContext.controller);
+    requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
 export function resetSunburstSelection() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
 function resetCurrentOperatorSelection() {

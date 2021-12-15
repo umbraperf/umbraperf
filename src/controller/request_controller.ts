@@ -94,8 +94,18 @@ export function requestStatistics(controller: RequestController) {
         }), true);
 }
 
-//request operators arry of active operators in current selected timeframe
-export function requestActiveOperatorsTimeframe(controller: RequestController) {
+//request pipelines arry of active pipelines in current selected timeframe
+export function requestActivePipelineTimeframe(controller: RequestController) {
+    controller.calculateChartData(
+        model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME,
+        model.createBackendQuery({
+            type: model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+        }), true);
+}
+
+//request operators arry of active operators in current selected timeframe and pipeline
+export function requestActiveOperatorsTimeframePipeline(controller: RequestController) {
     controller.calculateChartData(
         model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
         model.createBackendQuery({

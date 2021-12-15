@@ -18,6 +18,8 @@ interface AppstateProps {
     pipelinesShort: Array<string> | undefined;
     operators: model.IOperatorsData | undefined;
     chartData: model.ISunburstChartData,
+    currentOperatorActiveTimeframePipeline: Array<string> | "All";
+    currentPipelineActiveTimeframe: Array<string> | "All";
 }
 
 type Props = model.ISunburstChartProps & AppstateProps;
@@ -101,7 +103,7 @@ class SunburstChart extends React.Component<Props, {}> {
                 ]
             },
             {
-                name: "pipelinesShort",
+                name: "pipelinesShortMapping",
                 values: { pipeline: this.props.pipelines, pipelineShort: this.props.pipelinesShort },
                 transform: [
                     {
@@ -126,8 +128,14 @@ class SunburstChart extends React.Component<Props, {}> {
 
             },
             {
-                //TODO 
-                name: "availablePipelines"
+                name: "availablePipelines",
+                values: { pipelinesActiveTimeframe: this.props.currentPipelineActiveTimeframe === "All" ? this.props.pipelines : this.props.currentPipelineActiveTimeframe },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["pipelinesActiveTimeframe"]
+                    }
+                ]
             },
             {
                 name: "operatorsNiceMapping",
@@ -163,14 +171,14 @@ class SunburstChart extends React.Component<Props, {}> {
                     },
                     {
                         type: "lookup", //join short pipeline names to tree table
-                        from: "pipelinesShort",
+                        from: "pipelinesShortMapping",
                         key: "pipeline",
                         fields: ["operator"],
                         values: ["pipelineShort"],
                     },
                     {
                         type: "lookup", //join short parent pipeline names colum 
-                        from: "pipelinesShort",
+                        from: "pipelinesShortMapping",
                         key: "pipeline",
                         fields: ["parent"],
                         values: ["pipelineShort"],
@@ -352,13 +360,21 @@ class SunburstChart extends React.Component<Props, {}> {
                     orient: this.props.doubleRowSize ? "bottom-left" : "left",
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
-                    values: pipelinesLegend(),
+                    values: { signal: "data('pipelinesShortMapping')" },
                     rowPadding: 0,
                     encode: {
                         labels: {
                             update: {
-                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 60)" } : { signal: "truncate(datum.value, 35)" },
+                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, 60)" } : { signal: "truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, 35)" },
+                                fill: [
+                                    {
+                                        test: "indata('availablePipelines', 'pipelinesActiveTimeframe', datum.value.pipeline)",
+                                        value: this.props.appContext.secondaryColor
+                                    },
+                                    { value: this.props.appContext.tertiaryColor }
+                                ]
                             }
+
                         }
                     }
                 },
@@ -396,6 +412,8 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartPr
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
+    currentOperatorActiveTimeframePipeline: state.currentOperatorActiveTimeframePipeline,
+    currentPipelineActiveTimeframe: state.currentPipelineActiveTimeframe,
 });
 
 

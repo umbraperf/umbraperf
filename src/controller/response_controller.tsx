@@ -110,7 +110,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
         case model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME:
             const pipelinesTimeframe = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
+                type: model.StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME,
                 data: pipelinesTimeframe,
             });
             break;

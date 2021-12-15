@@ -121,6 +121,15 @@ class SunburstChart extends React.Component<Props, {}> {
                 ]
             },
             {
+                //TODO 
+                name: "availableOperatorsTimeframePipeline",
+
+            },
+            {
+                //TODO 
+                name: "availablePipelines"
+            },
+            {
                 name: "operatorsNiceMapping",
                 values: { operatorsId: this.props.operators!.operatorsId, operatorsNice: this.props.operators!.operatorsNice },
                 transform: [

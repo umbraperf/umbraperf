@@ -10,15 +10,14 @@ use arrow::{
     datatypes::{DataType},
     record_batch::RecordBatch,
 };
-use regex::{Regex};
 
 use crate::{
     exec::basic::{
         basic::{find_unique_string, sort_batch},
-        filter::{filter_between_int32, filter_with},
-        statistics,
+        filter::{filter_between_int32},
+        statistics, op_mapping::init_mapping_operator,
     },
-    state::state::{get_mapping_operator, get_record_batches, insert_mapping_hashmap},
+    state::state::{get_mapping_operator, get_record_batches},
     utils::{
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{create_new_record_batch, send_record_batch_to_js}, array_util::{get_stringarray_column, get_floatarray_column, get_int32_column, get_uint_column},
@@ -109,72 +108,6 @@ pub fn create_mem_bucket(
             Arc::new(builder_result),
         ],
     )
-}
-
-pub fn init_mapping_operator() {
-    let mapping = get_mapping_operator();
-    let map = mapping.lock().unwrap();
-
-    if map.len() > 0 {
-        return;
-    }
-
-    let unique_batch = find_unique_string(
-        &get_record_batches().unwrap().batch,
-        RecordBatchSchema::Operator as usize,
-    );
-
-    let vec = unique_batch
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let mut hashmap = HashMap::new();
-
-    for group in vec {
-        let group_batch = filter_with(
-            RecordBatchSchema::Operator as usize,
-            vec![group.unwrap()],
-            &get_record_batches().unwrap().batch,
-        );
-
-        let op_extension_col = group_batch
-            .column(6)
-            .as_any()
-            .downcast_ref::<StringArray>()
-            .unwrap();
-
-        let nice_op = if op_extension_col.value(0).to_owned() == "null" {
-            if group.unwrap() == "Kernel" || group.unwrap() == "No Operator" {
-                "-".to_string()
-            } else {
-                let re = Regex::new("[0123456789]").unwrap();
-                let cow_str = re.replace(group.unwrap(),"");
-                cow_str.to_string()
-            }
-        } else {
-            let out = if group.unwrap().contains("tablescan") {
-                let mut str = op_extension_col.value(0).to_owned();
-                str.push_str(" ");
-                str.push_str("scan");
-                str
-            } else {
-                let mut str = op_extension_col.value(0).to_owned();
-                str.push_str(" ");
-                let re = Regex::new("[0123456789]").unwrap();
-                let cow_str = re.replace(group.unwrap(),"");
-                let str_to = cow_str.to_string();
-                str.push_str(str_to.as_str());  
-                str
-            };
-            out
-        };
-
-        hashmap.insert(group.unwrap().to_string(), nice_op);
-    }
-
-    insert_mapping_hashmap(hashmap);
 }
 
 pub fn freq_of_pipelines(

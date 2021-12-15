@@ -15,7 +15,12 @@ use crate::{
         rest::rest_api::find_name,
     },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::{record_batch_util::{self, create_new_record_batch}, array_util::{get_stringarray_column, get_int64_column}, record_batch_schema::RecordBatchSchema},
+    utils::{
+        array_util::{get_int64_column, get_stringarray_column},
+        record_batch_schema::RecordBatchSchema,
+        record_batch_util::{self, create_new_record_batch},
+        string_util::split_at_colon,
+    },
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -47,8 +52,10 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
     out_vec
 }
 
-pub fn uir(record_batch: RecordBatch) -> RecordBatch {
 
+pub fn calculate(
+    record_batch: RecordBatch,
+) -> (HashMap<String, HashMap<String, i32>>, HashSet<String>) {
     let column_ev_name = get_stringarray_column(&record_batch, RecordBatchSchema::EvName as usize);
     let column_srcline = get_int64_column(&record_batch, RecordBatchSchema::Uri as usize);
 
@@ -66,21 +73,27 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
             .unwrap();
         let current_ev = column_ev_name.value(entry.0);
         if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
-            let split = mapping_to_dict_file
-                .split_terminator(":")
-                .collect::<Vec<&str>>();
+            let split = split_at_colon(mapping_to_dict_file);
             let srcline_key = split[1];
-            if dict.uri_dict.get(srcline_key).is_some() {
-                let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
-                unique_events_set.insert(current_ev);
+            let inner_hashmap = hashmap_count
+                .entry(current_ev.to_string())
+                .or_insert(HashMap::new());
+            unique_events_set.insert(current_ev.to_string());
 
-                inner_hashmap.entry(srcline_key).or_insert(0);
-                inner_hashmap.insert(srcline_key, inner_hashmap[split[1]] + 1);
-                inner_hashmap.entry("sum").or_insert(0);
-                inner_hashmap.insert("sum", inner_hashmap["sum"] + 1);
-            }
+            inner_hashmap.entry(srcline_key.to_string()).or_insert(0);
+            inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[split[1]] + 1);
+            inner_hashmap.entry("sum".to_string()).or_insert(0);
+            inner_hashmap.insert("sum".to_string(), inner_hashmap["sum"] + 1);
+            
         }
     }
+
+    return (hashmap_count, unique_events_set);
+}
+
+pub fn uir(record_batch: RecordBatch) -> RecordBatch {
+    let dict = get_serde_dict().unwrap();
+    let (hashmap_count, unique_events_set) = calculate(record_batch);
 
     let mut output_vec = Vec::new();
     let keys = dict.uri_dict.keys();
@@ -90,7 +103,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         .map(|i| i.parse::<i64>().unwrap())
         .collect::<Vec<i64>>();
     uirs.sort();
-    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<&str>>();
+    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<String>>();
     unique_events_set.sort();
 
     for uir in uirs {
@@ -100,7 +113,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
 
         for event in &unique_events_set {
             let inner_hashmap = hashmap_count.get(event).unwrap();
-            let specific = *inner_hashmap.get(&(entry.as_str())).unwrap_or(&0) as f64;
+            let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = specific / total;
             let percentage = round(percentage);
@@ -122,13 +135,13 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     // Special treatment for functions with define, declare and aggregated output
     let mut aggregated_output_vec = Vec::new();
     for item in output_vec.clone().into_iter().enumerate() {
-        let iter = item.0;
-        let item = item.1;
-        let current_srcline = item.0.unwrap();
+        let current_index = item.0;
+        let all_entries = item.1;
+        let current_srcline = all_entries.0.unwrap();
         if current_srcline.contains("define") || current_srcline.contains("declare") {
             let mut buffer_percentage = Vec::new();
             for item in output_vec.clone().into_iter().enumerate() {
-                if item.0 > iter {
+                if item.0 > current_index {
                     let str = item.1;
                     let str = str.0;
                     if str.unwrap().contains("define") || str.unwrap().contains("declare") {
@@ -146,7 +159,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                         for event in &unique_events_set {
                             let inner_hashmap = hashmap_count.get(event).unwrap();
                             let specific = *inner_hashmap
-                                .get(&(item.0 as i64).to_string().as_str())
+                                .get(&(item.0 as i64).to_string())
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
                             let percentage = round(specific / total);
@@ -156,20 +169,20 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 }
             }
         } else {
-            if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
+            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ") {
                 aggregated_output_vec.push((
-                    Some(format!("{}", item.0.unwrap())),
-                    item.1,
-                    item.2,
-                    item.3,
+                    Some(format!("{}", all_entries.0.unwrap())),
+                    all_entries.1,
+                    all_entries.2,
+                    all_entries.3,
                     0,
                 ));
             } else {
                 aggregated_output_vec.push((
-                    Some(format!("  {}", item.0.unwrap())),
-                    item.1,
-                    item.2,
-                    item.3,
+                    Some(format!("  {}", all_entries.0.unwrap())),
+                    all_entries.1,
+                    all_entries.2,
+                    all_entries.3,
                     0,
                 ));
             }
@@ -339,8 +352,7 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
     let batch = uir(record_batch);
 
-    let function_flac_col = find_name("func_flag", &batch);
-    let only_functions = filter_between_int32(function_flac_col, 0, 0, &batch);
+    let only_functions = filter_between_int32(find_name("func_flag", &batch), 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);
 
     let op_col = find_name("op", &sort);

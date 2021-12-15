@@ -310,9 +310,9 @@ class SunburstChart extends React.Component<Props, {}> {
                             ],
                         },
                         hover: {
-                            fillOpacity: {
-                                value: model.chartConfiguration.hoverFillOpacity,
-                            },
+                            fillOpacity: [{
+                                test: "datum.parent==='inner' || indata('selectedPipelines', 'pipelinesUsed', datum.parent)", value: model.chartConfiguration.hoverFillOpacity, //Only hover behavior if pipeline, or if operator and available (ie. only if partent pipeline is selected)
+                            }],
                         }
                     }
                 },

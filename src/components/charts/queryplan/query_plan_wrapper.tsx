@@ -169,19 +169,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             isTempRef?: boolean,
         }>();
 
-        const isNodeUnavailable = (nodeOperatorId: string) => {
-            return !(this.props.operators!.operatorsId.includes(nodeOperatorId) && (this.props.currentOperatorActiveTimeframePipeline === "All" || this.props.currentOperatorActiveTimeframePipeline.includes(nodeOperatorId)))
-        }
 
-        const isNodeSelected = (nodeOperatorId: string) => {
-            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeOperatorId);
-        }
 
         const nodeCursor = (nodeOperatorId: string) => {
             //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeOperatorId === "root") {
                 return ["default", false];
-            } else if (isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isNodeUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
@@ -194,10 +188,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (nodeOperatorId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isNodeUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
-            } else if (isNodeSelected(nodeOperatorId)) {
+            } else if (Controller.isNodeSelected(nodeOperatorId)) {
                 //active node
                 const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeOperatorId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScale[operatorIndex]];
@@ -209,7 +203,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeTextColor = (nodeOperatorId: string) => {
-            if (isNodeUnavailable(nodeOperatorId)) {
+            if (Controller.isNodeUnavailable(nodeOperatorId)) {
                 return '#919191';
             } else {
                 return this.props.appContext.accentBlack;
@@ -224,13 +218,12 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             } else {
                 return nodeOperatorId;
             }
-            // return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
 
         const nodeClass = (nodeOperatorId: string) => {
             if (nodeOperatorId === "root") {
                 return "";
-            }else if (isNodeUnavailable(nodeOperatorId)){
+            }else if (Controller.isNodeUnavailable(nodeOperatorId)){
                 return "";
             }else{
                 return styles.queryPlanNode;

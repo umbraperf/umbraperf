@@ -291,7 +291,7 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
     //Set colorScale field in chartConfiguration varibale
     chartConfiguration.colorScale = {
         operatorsIdColorScale: createHslStringArray(operatorsIdColorScale),
-        operatorsIdColorScaleLowOpacity: createHslStringArray(operatorsIdColorScale, 0.3),
+        operatorsIdColorScaleLowOpacity: createHslStringArray(operatorsIdColorScale, 0.2),
         operatorsGroupScale: createHslStringArray(operatorsGroupColorScale),
     }
 }

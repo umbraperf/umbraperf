@@ -211,7 +211,6 @@ class SunburstChart extends React.Component<Props, {}> {
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: false },
 
-
             title: {
                 text: "Shares of Pipelines and Operators",
                 align: model.chartConfiguration.titleAlign,

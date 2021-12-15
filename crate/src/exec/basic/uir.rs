@@ -15,7 +15,7 @@ use crate::{
         rest::rest_api::find_name,
     },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::record_batch_util::{self, create_new_record_batch},
+    utils::{record_batch_util::{self, create_new_record_batch}, array_util::{get_stringarray_column, get_int64_column}, record_batch_schema::RecordBatchSchema},
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -48,17 +48,10 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
 }
 
 pub fn uir(record_batch: RecordBatch) -> RecordBatch {
-    let column_ev_name = record_batch
-        .column(1)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
 
-    let column_srcline = record_batch
-        .column(5)
-        .as_any()
-        .downcast_ref::<Int64Array>()
-        .unwrap();
+    let column_ev_name = get_stringarray_column(&record_batch, RecordBatchSchema::EvName as usize);
+
+    let column_srcline = get_int64_column(&record_batch, RecordBatchSchema::Uri as usize);
 
     let dict = get_serde_dict().unwrap();
 

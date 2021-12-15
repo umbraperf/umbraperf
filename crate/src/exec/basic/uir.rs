@@ -16,7 +16,7 @@ use crate::{
     },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
     utils::{
-        array_util::{get_int64_column, get_stringarray_column},
+        array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{self, create_new_record_batch},
         string_util::split_at_colon,
@@ -52,7 +52,6 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
     out_vec
 }
 
-
 pub fn calculate(
     record_batch: RecordBatch,
 ) -> (HashMap<String, HashMap<String, i32>>, HashSet<String>) {
@@ -84,7 +83,6 @@ pub fn calculate(
             inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[split[1]] + 1);
             inner_hashmap.entry("sum".to_string()).or_insert(0);
             inner_hashmap.insert("sum".to_string(), inner_hashmap["sum"] + 1);
-            
         }
     }
 
@@ -169,7 +167,8 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 }
             }
         } else {
-            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ") {
+            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ")
+            {
                 aggregated_output_vec.push((
                     Some(format!("{}", all_entries.0.unwrap())),
                     all_entries.1,
@@ -357,11 +356,8 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let op_col = find_name("op", &sort);
     let unique = find_unique_string(&sort, op_col);
-    let unique = unique
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+
+    let unique = get_stringarray_column(&unique, 0);
 
     let mut unique = unique
         .into_iter()
@@ -373,26 +369,19 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     vec.push(get_max_top_five(sort.clone()));
     let mut vec_sum = Vec::new();
 
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
+    for _i in 0..5 {
+        vec_sum.push(0.);
+    }
+
     for entry in unique {
         if entry.contains("None") {
         } else {
             let filter = filter_with(op_col, vec![&entry], &sort);
-            let column = filter
-                .column(ordered_by + 1)
-                .as_any()
-                .downcast_ref::<Float64Array>()
-                .unwrap();
+            let column = get_floatarray_column(&filter, ordered_by + 1);
             let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
+            for _i in 0..5 {
+                vec_sum.push(sum);
+            }
             vec.push(get_max_top_five(filter));
         }
     }
@@ -400,12 +389,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let batch = record_batch_util::convert_without_mapping(vec);
 
     let srcline_num_col = find_name("srcline_num", &batch);
-
-    let srcline = StringArray::from(batch.column(0).data().clone());
-    let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
     let op = StringArray::from(batch.column(op_col).data().clone());
-    let srcline_num = Int32Array::from(batch.column(srcline_num_col).data().clone());
-    let total = Float64Array::from(vec_sum);
 
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {
@@ -426,11 +410,15 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             DataType::Float64,
         ],
         vec![
-            Arc::new(srcline),
-            Arc::new(perc),
+            Arc::new(StringArray::from(batch.column(0).data().clone())),
+            Arc::new(Float64Array::from(
+                batch.column(ordered_by + 1).data().clone(),
+            )),
             Arc::new(StringArray::from(op_vec)),
-            Arc::new(srcline_num),
-            Arc::new(total),
+            Arc::new(Int32Array::from(
+                batch.column(srcline_num_col).data().clone(),
+            )),
+            Arc::new(Float64Array::from(vec_sum)),
         ],
     );
 

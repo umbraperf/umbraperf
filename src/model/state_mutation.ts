@@ -19,6 +19,7 @@ export enum StateMutationType {
     SET_CURRENT_EVENT = 'SET_CURRENT_EVENT',
     SET_CURRENT_MULTIPLE_EVENT = 'SET_CURRENT_MULTIPLE_EVENT',
     SET_CURRENT_PIPELINE = 'SET_CURRENT_PIPELINE',
+    SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME = 'SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME',
     SET_CURRENT_OPERATOR = 'SET_CURRENT_OPERATOR',
     SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE = 'SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE',
     SET_CURRENT_REQUEST = 'SET_CURRENT_REQUEST',
@@ -52,6 +53,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_EVENT, string>
     | StateMutation<StateMutationType.SET_CURRENT_MULTIPLE_EVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENT_PIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_OPERATOR, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_REQUEST, BackendQueryType>
@@ -125,6 +127,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     currentPipeline: mutation.data,
+                };
+            case StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME:
+                return {
+                    ...state,
+                    currentPipelineActiveTimeframe: mutation.data,
                 };
             case StateMutationType.SET_CURRENT_OPERATOR:
                 return {
@@ -220,6 +227,7 @@ export class AppStateMutation {
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",
+                    currentPipelineActiveTimeframe: "All",
                     currentOperator: "All",
                     currentOperatorActiveTimeframePipeline: "All",
                     currentRequest: undefined,

@@ -13,6 +13,7 @@ export interface AppState {
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
+    currentPipelineActiveTimeframe: Array<string> | "All";
     currentOperator: Array<string> | "All";
     currentOperatorActiveTimeframePipeline: Array<string> | "All";
     currentRequest: BackendQueryType | undefined;
@@ -46,6 +47,7 @@ export function createDefaultState(): AppState {
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",
+        currentPipelineActiveTimeframe: "All",
         currentOperator: "All",
         currentOperatorActiveTimeframePipeline: "All",
         currentRequest: undefined,

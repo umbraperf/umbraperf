@@ -29,7 +29,9 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
     }
 
     componentDidMount() {
-        Controller.resetTimeBucketSelection();
+        if (this.props.currentTimeBucketSelectionTuple[0] !== -1 || this.props.currentTimeBucketSelectionTuple[1] !== -1) {
+            Controller.resetTimeBucketSelection();
+        }
     }
 
     public render() {

@@ -107,12 +107,19 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             break;
 
-        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
-            const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
-            console.log(operatorsTimeframe);
+        case model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME:
+            const pipelinesTimeframe = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
-                data: operatorsTimeframe,
+                data: pipelinesTimeframe,
+            });
+            break;
+
+        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
+            const operatorsTimeframePipeline = store.getState().result?.rustResultTable.getColumn('operator').toArray();
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
+                data: operatorsTimeframePipeline,
             });
             break;
     }
@@ -188,11 +195,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(),
                         frequencyNeg: resultObject.rustResultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
@@ -208,11 +215,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(),
                         frequencyNeg: resultObject.rustResultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });

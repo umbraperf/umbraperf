@@ -175,7 +175,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeOperatorId === "root") {
                 return ["default", false];
-            } else if (Controller.isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
@@ -188,10 +188,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (nodeOperatorId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (Controller.isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
-            } else if (Controller.isNodeSelected(nodeOperatorId)) {
+            } else if (Controller.isOperatorSelected(nodeOperatorId)) {
                 //active node
                 const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeOperatorId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScale[operatorIndex]];
@@ -203,7 +203,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeTextColor = (nodeOperatorId: string) => {
-            if (Controller.isNodeUnavailable(nodeOperatorId)) {
+            if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 return '#919191';
             } else {
                 return this.props.appContext.accentBlack;
@@ -223,7 +223,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeClass = (nodeOperatorId: string) => {
             if (nodeOperatorId === "root") {
                 return "";
-            }else if (Controller.isNodeUnavailable(nodeOperatorId)){
+            }else if (Controller.isOperatorUnavailable(nodeOperatorId)){
                 return "";
             }else{
                 return styles.queryPlanNode;

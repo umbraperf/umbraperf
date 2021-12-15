@@ -217,4 +217,11 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     return false;
 }
 
+export function isNodeUnavailable(operatorId: string) {
+    return !(store.getState().operators!.operatorsId.includes(operatorId) && (store.getState().currentOperatorActiveTimeframePipeline === "All" || store.getState().currentOperatorActiveTimeframePipeline.includes(operatorId)))
+}
+
+export function isNodeSelected(operatorId: string) {
+    return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
+}
 

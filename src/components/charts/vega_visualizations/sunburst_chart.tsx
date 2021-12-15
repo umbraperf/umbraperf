@@ -18,7 +18,6 @@ interface AppstateProps {
     pipelinesShort: Array<string> | undefined;
     operators: model.IOperatorsData | undefined;
     chartData: model.ISunburstChartData,
-    currentOperatorActiveTimeframePipeline: Array<string> | "All";
     currentPipelineActiveTimeframe: Array<string> | "All";
 }
 
@@ -123,11 +122,6 @@ class SunburstChart extends React.Component<Props, {}> {
                 ]
             },
             {
-                //TODO 
-                name: "availableOperatorsTimeframePipeline",
-
-            },
-            {
                 name: "availablePipelines",
                 values: { pipelinesActiveTimeframe: this.props.currentPipelineActiveTimeframe === "All" ? this.props.pipelines : this.props.currentPipelineActiveTimeframe },
                 transform: [
@@ -215,10 +209,6 @@ class SunburstChart extends React.Component<Props, {}> {
             } else {
                 return 70;
             }
-        }
-
-        const pipelinesLegend = () => {
-            return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
         }
 
         const spec: VisualizationSpec = {
@@ -311,10 +301,12 @@ class SunburstChart extends React.Component<Props, {}> {
                             zindex: { value: 0 },
                             fillOpacity: { value: 1 },
                             fill: [
+                                { test: "datum.operator==='inner'", value: '#fff' }, //draw inner point of chart white
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
-                                { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
-                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
-                                { test: "datum.operator !== 'inner'", scale: "colorOperatorsIdInactive", field: "operator" } //use low opacity operators scale for all other cases for operators as they do not have inner as parent (inner operator not colored as not in scale domain)
+                                { test: "datum.parent==='inner'", value: this.props.appContext.secondaryColor + model.chartConfiguration.colorLowOpacityHex }, //use inactive operator color if pipeline is not selected
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected and its partent pipeline is selected (ie operator is available)   
+                                { test: "!(indata('selectedOperators', 'operatorsUsed', datum.operator)) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsIdInactive", field: "operator" }, //use inactive scale if operator not selected but available as parent pipeline is selected
+                                { test: "!(indata('selectedPipelines', 'pipelinesUsed', datum.parent))", value: this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex }, // use grey  not available color if operator is not available as parent pipeline is not selected
                             ],
                         },
                         hover: {
@@ -412,7 +404,6 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartPr
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
-    currentOperatorActiveTimeframePipeline: state.currentOperatorActiveTimeframePipeline,
     currentPipelineActiveTimeframe: state.currentPipelineActiveTimeframe,
 });
 

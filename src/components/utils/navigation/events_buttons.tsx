@@ -135,11 +135,11 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
+        type: model.StateMutationType.SET_CURRENT_EVENT,
         data: newCurrentEvent,
     }),
     setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => dispatch({
-        type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+        type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
         data: newCurrentMultipleEvent,
     }),
 });

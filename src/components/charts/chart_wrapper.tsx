@@ -342,11 +342,11 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
+        type: model.StateMutationType.SET_CHART_ID_COUNTER,
         data: newChartIdCounter,
     }),
     setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
+        type: model.StateMutationType.SET_CURRENT_CHART,
         data: newCurrentChart,
     }),
 });

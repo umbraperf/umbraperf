@@ -33,6 +33,7 @@ mod exec {
         pub mod kpis;
         pub mod statistics;
         pub mod uir;
+        pub mod op_mapping;
     }
     pub mod rest {
         pub mod rest_api;

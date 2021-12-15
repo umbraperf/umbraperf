@@ -8,6 +8,7 @@ import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
 import ChartResetButton from '../../utils/togglers/chart_reset_button';
 
+//TODO same inactive color as in qp, grey and not clickable if unavailable, visualize pipeline availability
 
 interface AppstateProps {
     appContext: Context.IAppContext;

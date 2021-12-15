@@ -124,6 +124,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             break;
     }
 
+    //Set -1 of result loading indicating no methadata loading anymore
     store.dispatch({
         type: model.StateMutationType.SET_RESULT_LOADING,
         data: { key: -1, value: false },

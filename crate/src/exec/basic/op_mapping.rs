@@ -9,8 +9,16 @@ use crate::{
 
 use super::{basic::find_unique_string, filter::filter_with};
 
-pub fn join_hashmap() -> HashMap<&'static str, String> {
+pub fn operator_hashmap() -> HashMap<&'static str, String> {
     let hashmap: HashMap<&str, String> = [
+        ("tablescan", '\u{2637}'.to_string()),
+        ("groupbyscan", '\u{2637}'.to_string()),
+        ("groupby", '\u{0393}'.to_string()),
+        ("map", '\u{03c7}'.to_string()),
+        ("sort", '\u{21de}'.to_string()),
+        ("select", '\u{03c3}'.to_string()),
+        ("groupjoin", '\u{2927}'.to_string()),
+        ("temp", '\u{1F552}'.to_string()),
         ("inner", '\u{2a1d}'.to_string()),
         ("leftouter", '\u{27d5}'.to_string()),
         ("rightouter", '\u{27d6}'.to_string()),
@@ -22,23 +30,6 @@ pub fn join_hashmap() -> HashMap<&'static str, String> {
         ("rightsemi", '\u{22ca}'.to_string()),
         ("leftanti", '\u{25b7}'.to_string()),
         ("rightanti", '\u{25c1}'.to_string()),
-    ]
-    .iter()
-    .cloned()
-    .collect();
-    return hashmap;
-}
-
-pub fn operator_hashmap() -> HashMap<&'static str, String> {
-    let hashmap: HashMap<&str, String> = [
-        ("tablescan", '\u{2637}'.to_string()),
-        ("groupbyscan", '\u{2637}'.to_string()),
-        ("groupby", '\u{0393}'.to_string()),
-        ("map", '\u{03c7}'.to_string()),
-        ("sort", '\u{21de}'.to_string()),
-        ("select", '\u{03c3}'.to_string()),
-        ("groupjoin", '\u{2927}'.to_string()),
-        ("temp", '\u{1F552}'.to_string()),
     ]
     .iter()
     .cloned()
@@ -78,18 +69,6 @@ fn get_nice_op(op_id: &str, clean_op_id: String, op_extens: String) -> String {
             str.push_str(" ");
             str.push_str("scan");
             str
-        } else if op_id.contains("join") {
-            let str = op_extens.to_owned();
-            let split = str.split_terminator("-").collect::<Vec<&str>>();
-            let mut str = join_hashmap()
-                .get(split[0])
-                .unwrap_or(&"".to_string())
-                .to_owned();
-            str.push_str(" ");
-            str.push_str(&op_extens);
-            str.push_str(" ");
-            str.push_str(&clean_op_id);
-            str
         } else {
             let str = op_extens.to_owned();
             let split = str.split_terminator("-").collect::<Vec<&str>>();
@@ -97,6 +76,7 @@ fn get_nice_op(op_id: &str, clean_op_id: String, op_extens: String) -> String {
                 .get(split[0])
                 .unwrap_or(&"".to_string())
                 .to_owned();
+            str.push_str(" ");
             str.push_str(&op_extens);
             str.push_str(" ");
             str.push_str(&clean_op_id);

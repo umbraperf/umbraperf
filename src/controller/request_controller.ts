@@ -47,6 +47,8 @@ export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
+    // requestActiveOperatorsTimeframePipeline(controller);
+    // requestActivePipelineTimeframe(controller);
 }
 
 //request events from rust, metarequest

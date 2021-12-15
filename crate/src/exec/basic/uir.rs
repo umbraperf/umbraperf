@@ -50,7 +50,6 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
 pub fn uir(record_batch: RecordBatch) -> RecordBatch {
 
     let column_ev_name = get_stringarray_column(&record_batch, RecordBatchSchema::EvName as usize);
-
     let column_srcline = get_int64_column(&record_batch, RecordBatchSchema::Uri as usize);
 
     let dict = get_serde_dict().unwrap();
@@ -65,16 +64,13 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         let mapping_to_dict_file = hashmap_samplekey_srcline
             .get(&(entry_srcline_num as u64))
             .unwrap();
-        let mut current_ev = column_ev_name.value(entry.0);
+        let current_ev = column_ev_name.value(entry.0);
         if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
             let split = mapping_to_dict_file
                 .split_terminator(":")
                 .collect::<Vec<&str>>();
             let srcline_key = split[1];
             if dict.uri_dict.get(srcline_key).is_some() {
-                if entry.0 < 30 {
-                    current_ev = "test_Event";
-                }
                 let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
                 unique_events_set.insert(current_ev);
 

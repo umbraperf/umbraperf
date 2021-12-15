@@ -257,7 +257,12 @@ class SunburstChart extends React.Component<Props, {}> {
                     type: "ordinal",
                     domain: this.props.operators!.operatorsId,
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                },
+                {
+                    name: "colorOperatorsIdInactive",
+                    type: "ordinal",
+                    domain: this.props.operators!.operatorsId,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity,
                 },
                 {
                     name: "colorOperatorsGroup",
@@ -293,7 +298,7 @@ class SunburstChart extends React.Component<Props, {}> {
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
                                 { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
-                                { test: "datum.operator !== 'inner'", value: this.props.appContext.tertiaryColor } //use grey app color for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
+                                { test: "datum.operator !== 'inner'", scale: "colorOperatorsIdInactive", field: "operator" } //use low opacity operators scale for all other cases for operators as they do not have inner as parent (inner operator not colored as not in scale domain)
                             ],
                         },
                         hover: {

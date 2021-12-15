@@ -17,19 +17,19 @@ export class RequestController {
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTREQUEST,
+            type: model.StateMutationType.SET_CURRENT_REQUEST,
             data: restQueryType,
         });
 
         if (!metaRequest && chartType) {
             store.dispatch({
-                type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
+                type: model.StateMutationType.SET_LOADING_CHART_READABLE_NAME,
                 data: chartType,
             });
         }
 
         store.dispatch({
-            type: model.StateMutationType.SET_RESULTLOADING,
+            type: model.StateMutationType.SET_RESULT_LOADING,
             data: { key: requestingChartId ? requestingChartId : -1, value: true },
         });
 
@@ -97,10 +97,10 @@ export function requestStatistics(controller: RequestController) {
 //request operators arry of active operators in current selected timeframe
 export function requestActiveOperatorsTimeframe(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
+        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
-            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, pipelines: store.getState().currentPipeline },
         }), true);
 }
 
@@ -204,7 +204,7 @@ export function resetChartDataInStore(chartId: number) {
     let newChartData: model.IChartDataKeyValue = { ...chartData }
 
     store.dispatch({
-        type: model.StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHART_DATA,
         data: newChartData,
     });
 }

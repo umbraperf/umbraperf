@@ -8,11 +8,11 @@ import _ from "lodash";
 export function setCsvReadingFinished() {
 
     store.dispatch({
-        type: model.StateMutationType.SET_CSVPARSINGFINISHED,
+        type: model.StateMutationType.SET_CSV_PARSING_FINISHED,
         data: true,
     });
     store.dispatch({
-        type: model.StateMutationType.SET_FILELOADING,
+        type: model.StateMutationType.SET_FILE_LOADING,
         data: false,
     });
 
@@ -54,12 +54,12 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
                 data: events,
             });
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTEVENT,
+                type: model.StateMutationType.SET_CURRENT_EVENT,
                 data: events[0],
             });
             if (events.length > 1) {
                 events.length > store.dispatch({
-                    type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+                    type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
                     data: [events[0], events[1]],
                 });
             }
@@ -107,18 +107,18 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             break;
 
-        case model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME:
+        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
             const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             console.log(operatorsTimeframe);
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTOPERATORTIMEFRAME,
+                type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
                 data: operatorsTimeframe,
             });
             break;
     }
 
     store.dispatch({
-        type: model.StateMutationType.SET_RESULTLOADING,
+        type: model.StateMutationType.SET_RESULT_LOADING,
         data: { key: -1, value: false },
     });
 
@@ -366,13 +366,13 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
     chartDataCollection[requestId] = chartDataElem!;
     store.dispatch({
-        type: model.StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHART_DATA,
         data: chartDataCollection,
     });
 
     if (toggleResultLoadingFlag) {
         store.dispatch({
-            type: model.StateMutationType.SET_RESULTLOADING,
+            type: model.StateMutationType.SET_RESULT_LOADING,
             data: { key: requestId, value: false },
         });
     }

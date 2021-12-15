@@ -12,11 +12,12 @@ use arrow::{
 use crate::{
     exec::{
         basic::{basic::find_unique_string, filter::filter_with},
-        freq::freq::init_mapping_operator,
     },
     state::state::{get_mapping_operator, get_record_batches},
     utils::{record_batch_util::create_new_record_batch, array_util::get_stringarray_column},
 };
+
+use super::op_mapping::init_mapping_operator;
 
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
     let vec = get_stringarray_column(batch, column_to_count);

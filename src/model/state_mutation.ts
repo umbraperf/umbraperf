@@ -12,7 +12,8 @@ export enum StateMutationType {
     SET_RESULT_LOADING = 'SET_RESULT_LOADING',
     SET_RESULT = 'SET_RESULT',
     SET_FILE = 'SET_FILE',
-    SET_CSV_PARSING_FINISHED = 'SET_CSV_PARSING_FINISHED',
+    SET_QUERYPLAN_JSON = 'SET_QUERYPLAN_JSON',
+    SET_UMBRAPERF_FILE_PARSING_FINISHED = 'SET_UMBRAPERF_FILE_PARSING_FINISHED',
     SET_RESET_STATE = 'SET_RESET_STATE',
     SET_CURRENT_CHART = 'SET_CURRENT_CHART',
     SET_LOADING_CHART_READABLE_NAME = 'SET_LOADING_CHART_READABLE_NAME',
@@ -34,7 +35,6 @@ export enum StateMutationType {
     SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
     SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
     SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
-    SET_QUERYPLAN = 'SET_QUERYPLAN',
     SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
     SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
     OTHER = 'OTHER',
@@ -46,7 +46,8 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULT_LOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
     | StateMutation<StateMutationType.SET_FILE, File>
-    | StateMutation<StateMutationType.SET_CSV_PARSING_FINISHED, boolean>
+    | StateMutation<StateMutationType.SET_QUERYPLAN_JSON, object>
+    | StateMutation<StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED, boolean>
     | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENT_CHART, ChartType>
     | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, ChartType>
@@ -98,10 +99,15 @@ export class AppStateMutation {
                     ...state,
                     file: mutation.data,
                 };
-            case StateMutationType.SET_CSV_PARSING_FINISHED:
+            case StateMutationType.SET_QUERYPLAN_JSON:
                 return {
                     ...state,
-                    csvParsingFinished: mutation.data,
+                    queryplanJson: mutation.data,
+                };
+            case StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED:
+                return {
+                    ...state,
+                    umbraperfFileParsingFinished: mutation.data,
                 };
             case StateMutationType.SET_CURRENT_CHART:
                 return {
@@ -220,8 +226,9 @@ export class AppStateMutation {
                     resultLoading: {},
                     result: undefined,
                     chunksNumber: 0,
-                    csvParsingFinished: false,
+                    umbraperfFileParsingFinished: false,
                     file: undefined,
+                    queryplanJson: undefined,
                     currentChart: [],
                     loadingChartReadableName: [],
                     currentEvent: "Default",

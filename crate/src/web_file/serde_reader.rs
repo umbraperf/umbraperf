@@ -1,10 +1,13 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::{Read}};
+use crate::{
+    bindings::send_js_query_plan,
+};
 
 use serde::Deserialize;
 use serde_json::{Map, Value};
 
-use super::parquet_reader::BufferReader;
-use crate::web_file::serde_reader::Value::Number;
+use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
+use crate::{web_file::serde_reader::Value::Number};
 
 #[derive(Deserialize, Debug, Clone)]
 struct Dictionary {
@@ -30,11 +33,12 @@ pub struct DictionaryUri {
 #[derive(Clone)]
 pub struct SerdeDict {
     pub dict: HashMap<i64, HashMap<u64, String>>,
-    pub uri_dict: HashMap<String, DictionaryUri>,
+    pub uri_dict: HashMap<String, DictionaryUri>
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
+static QUERY_PLAN_FILE_NAME: &str = "query_plan_analyzed.json";
 
 pub enum DictFields {
     Operator = 0,
@@ -47,6 +51,15 @@ pub enum DictFields {
 
 impl SerdeDict {
     pub fn read_dict(length: u64) -> Self {
+
+        let mut zip =
+            zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
+        let mut reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
+        
+        let mut buf: String = String::new();
+        let _result = reader.read_to_string(&mut buf);
+
+
         let reader = BufferReader::read_to_buffer(DICT_FILE_NAME, length as u64);
         let d: Dictionary = serde_json::from_reader(reader).unwrap();
 
@@ -120,9 +133,11 @@ impl SerdeDict {
         let reader = BufferReader::read_to_buffer(URI_DICT_FILE_NAME, length as u64);
         let d: HashMap<String, DictionaryUri> = serde_json::from_reader(reader).unwrap();
 
+        send_js_query_plan(buf);
+        
         return Self {
             dict: hash_map,
-            uri_dict: d,
+            uri_dict: d
         };
     }
 }

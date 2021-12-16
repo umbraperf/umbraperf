@@ -4,12 +4,13 @@ import * as profiler_core from '../crate/pkg/shell';
 import * as BackendApi from './model/backend_queries';
 import * as JSZip from '../node_modules/jszip/';
 
+
 //worker responses:
 
 export enum WorkerResponseType {
-  CSV_READING_FINISHED = 'CSV_READING_FINISHED',
+  UMBRAPERF_FILE_READING_FINISHED = 'UMBRAPERF_FILE_READING_FINISHED',
   STORE_RESULT = 'STORE_RESULT',
-  STORE_QUERYPLAN = 'STORE_QUERYPLAN',
+  STORE_QUERYPLAN_JSON = 'STORE_QUERYPLAN_JSON',
 };
 
 export type WorkerResponse<T, P> = {
@@ -26,15 +27,13 @@ export interface IStoreResultResponseData {
 }
 
 export interface IStoreQueryplanResponseData {
-  requestId: number,
   queryPlanData: object,
-  backendQueryType: BackendApi.BackendQueryType,
 }
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, number> |
+  WorkerResponse<WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED, number> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
-  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN, IStoreQueryplanResponseData>
+  WorkerResponse<WorkerResponseType.STORE_QUERYPLAN_JSON, IStoreQueryplanResponseData>
   ;
 
 
@@ -104,48 +103,32 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
-function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
-  console.log("HERE 1: start reading queryplan file");
-
-  JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
-    const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
-    if (undefined === queryPlanFile) {
-      notifyJsQueryResult(undefined, { queryplanResult: { "error": "no queryplan" }, queryplanRequestId: queryplanRequestId });
-    } else {
-      queryPlanFile.async('string').then(
-        function (queryPlanFileData: any) {
-          const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-          notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId });
-        },
-      )
-    }
-  })
-}
-
-
 export function notifyJsFinishedReading(registeredFileId: number) {
   worker.postMessage({
     messageId: 201,
-    type: WorkerResponseType.CSV_READING_FINISHED,
+    type: WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED,
     data: registeredFileId,
   });
 
 }
 
-export function notifyJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
-
-  if (queryPlan) {
-    console.log("HERE 2: finish queryplan reading, send result to js");
-    worker.postMessage({
-      messageId: 201,
-      type: WorkerResponseType.STORE_QUERYPLAN,
-      data: {
-        requestId: queryPlan.queryplanRequestId,
-        queryPlanData: queryPlan.queryplanResult,
-        backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
-      },
-    });
+export function notifyJsQueryPlan(queryplan: string) {
+  let queryplanObject = {};
+  if (queryplan) {
+    queryplanObject = JSON.parse(queryplan);
+  } else {
+    queryplanObject = { "error": "no queryplan" };
   }
+  worker.postMessage({
+    messageId: 201,
+    type: WorkerResponseType.STORE_QUERYPLAN_JSON,
+    data: {
+      queryPlanData: queryplanObject,
+    },
+  });
+}
+
+export function sendJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
 
   if (result) {
     worker.postMessage({
@@ -183,11 +166,6 @@ worker.onmessage = (message) => {
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
       globalBackendQueryType = (messageData as ICalculateChartDataRequestData).backendQueryType;
-      if (globalBackendQueryType === BackendApi.BackendQueryType.GET_QUERYPLAN_DATA) {
-        // extract queryplan from zip if queryplan tooltip query is send to request
-        console.log("HERE 0: qp request to frontend and to backend, request id: " + globalRequestId);
-        extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter], globalRequestId!);
-      }
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).backendQuery);
       break;
 

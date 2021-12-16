@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -6,8 +6,9 @@ export interface AppState {
     resultLoading: IResultLoading;
     result: IResult | undefined;
     chunksNumber: number;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     file: undefined | File;
+    queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
     loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
@@ -40,7 +41,8 @@ export function createDefaultState(): AppState {
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
-        csvParsingFinished: false,
+        umbraperfFileParsingFinished: false,
+        queryplanJson: undefined,
         file: undefined,
         currentChart: [],
         loadingChartReadableName: [],

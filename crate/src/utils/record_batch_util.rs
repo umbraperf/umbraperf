@@ -1,5 +1,5 @@
 use crate::{
-    bindings::notify_js_query_result, state::state::get_serde_dict,
+    bindings::send_js_query_result, state::state::get_serde_dict,
     web_file::{web_file_chunkreader::WebFileChunkReader, serde_reader::DictFields},
 };
 use arrow::{
@@ -287,5 +287,5 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let _writer_mess =
         arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
 
-    notify_js_query_result(buff.into_inner());
+    send_js_query_result(buff.into_inner());
 }

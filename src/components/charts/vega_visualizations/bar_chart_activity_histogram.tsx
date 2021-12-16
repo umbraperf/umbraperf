@@ -30,22 +30,17 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     componentDidMount() {
         if (this.props.currentTimeBucketSelectionTuple[0] !== -1 || this.props.currentTimeBucketSelectionTuple[1] !== -1) {
-            Controller.resetTimeBucketSelection();
+            Controller.resetSelectionTimeselection();
         }
     }
 
     public render() {
 
         return <div style={{ position: "relative" }} >
-            {/* {this.props.currentTimeBucketSelectionTuple[0] >= 0 && <IconButton onClick={() => Controller.resetTimeBucketSelection()} style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}> <DeleteSweepIcon /> </IconButton>} */}
-            {this.createChartResetComponent()}
+            {Controller.createChartResetComponent('timeselection')}
             <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
         </div>
 
-    }
-
-    createChartResetComponent() {
-        return this.props.currentTimeBucketSelectionTuple[0] >= 0 && <ChartResetButton chartResetButtonFunction={Controller.resetTimeBucketSelection} />;
     }
 
     createVegaSignalListeners() {
@@ -57,7 +52,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     handleDetailDomainSelection(...args: any[]) {
         if (null === args[1] || null === args[1][0] || null === args[0][1]) {
-            Controller.resetTimeBucketSelection();
+            Controller.resetSelectionTimeselection();
         }
         else if (args[1] && args[1][0] && args[1][1]) {
             const selectedTimeBuckets = args[1][0];

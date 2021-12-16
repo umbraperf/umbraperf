@@ -11,8 +11,11 @@ extern "C" {
     #[wasm_bindgen(js_name = "notifyJsFinishedReading")]
     pub fn notify_js_finished_reading(request_id: i32);
 
-    #[wasm_bindgen(js_name = "notifyJsQueryResult")]
-    pub fn notify_js_query_result(query_result: Vec<u8>);
+    #[wasm_bindgen(js_name = "sendJsQueryResult")]
+    pub fn send_js_query_result(query_result: Vec<u8>);
+
+    #[wasm_bindgen(js_name = "sendJsQueryPlan")]
+    pub fn send_js_query_plan(query_plan: String);
 
     #[wasm_bindgen(js_name = "stroreArrowResultFromRust")]
     pub fn send_arrow_result_to_js(arrow_result: Vec<u8>);

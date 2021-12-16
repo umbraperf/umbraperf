@@ -22,10 +22,10 @@ export class WorkerAPI {
             type: model.WorkerRequestType.REGISTER_FILE,
             data: file
         });
-
     }
 
     public calculateChartData(backendQuery: string, requestId: number, metaRequest: boolean, backendQueryType: BackendApi.BackendQueryType) {
+        console.log("REQ: " + backendQueryType + ", " + requestId);
         const requestData: ICalculateChartDataRequestData = {
             backendQuery: backendQuery,
             metaRequest: metaRequest,
@@ -56,6 +56,7 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
+            console.log("RESP: " + messageData.backendQueryType + ", " + messageData.requestId);
             const resultRequestId = messageData.requestId;
             const resultChartData = messageData.chartData;
             const resultArrowTable = ArrowTable.Table.from(resultChartData);

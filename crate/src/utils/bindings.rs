@@ -14,7 +14,7 @@ extern "C" {
     #[wasm_bindgen(js_name = "sendJsQueryResult")]
     pub fn send_js_query_result(query_result: Vec<u8>);
 
-    #[wasm_bindgen(js_name = "sendJsQueryPlan")]
+    #[wasm_bindgen(js_name = "notifyJsQueryPlan")]
     pub fn send_js_query_plan(query_plan: String);
 
     #[wasm_bindgen(js_name = "stroreArrowResultFromRust")]

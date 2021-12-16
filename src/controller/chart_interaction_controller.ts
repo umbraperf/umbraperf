@@ -159,7 +159,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             case model.ChartType.BAR_CHART:
                 return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline)) ?
                     true :
                     false;
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:

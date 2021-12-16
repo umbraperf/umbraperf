@@ -120,6 +120,12 @@ class BarChart extends React.Component<Props, {}> {
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
                     domain: this.props.operators!.operatorsId,
                 },
+                {
+                    name: "colorDisabled",
+                    type: "ordinal",
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity,
+                    domain: this.props.operators!.operatorsId,
+                },
             ],
 
             axes: [
@@ -177,7 +183,7 @@ class BarChart extends React.Component<Props, {}> {
                         update: {
                             fill: [
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
-                                { value: this.props.appContext.tertiaryColor },
+                                { scale: "colorDisabled", field: "operators" },
                             ],
                             fillOpacity: {
                                 value: 1,

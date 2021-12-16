@@ -36,6 +36,12 @@
     margin-bottom: 0;
 }
 
+.queryplanContainerResetButtonContainer{
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
 .warningContainer{
     display: flex;
     flex-direction: column;

@@ -20,7 +20,7 @@ export enum BackendQueryType {
     GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES = "GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES",
     GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT = "GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT",
     GET_GROUPED_UIR_LINES = "GET_GROUPED_UIR_LINES",
-    GET_QUERYPLAN_DATA = "GET_QUERYPLAN_DATA",
+    GET_QUERYPLAN_TOOLTIP_DATA = "GET_QUERYPLAN_TOOLTIP_DATA",
     other = "other",
 }
 
@@ -40,7 +40,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { events: Array<string>, timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_DATA, { event: string, timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -136,7 +136,7 @@ export function createBackendQuery(query: QueryVariant) {
             return `bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()}${memoryAccessesDifferences()}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;
-        case BackendQueryType.GET_QUERYPLAN_DATA:
+        case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
             return `scrline/perc/op/srcline_num/total${timeFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';

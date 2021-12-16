@@ -1,6 +1,6 @@
 use crate::{
     bindings::send_js_query_result, state::state::get_serde_dict,
-    web_file::web_file_chunkreader::WebFileChunkReader,
+    web_file::{web_file_chunkreader::WebFileChunkReader, serde_reader::DictFields},
 };
 use arrow::{
     array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
@@ -130,7 +130,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         .unwrap();
 
     let mut operator_vec = Vec::new();
-    let hash_map = serde.dict.get("operator").unwrap();
+    let hash_map = serde.dict.get(&(DictFields::Operator as i64)).unwrap();
     for value in operator_col {
         let value = &(value.unwrap() as u64);
         let dict_key = hash_map.get(value);
@@ -145,7 +145,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         .unwrap();
 
     let mut event_vec = Vec::new();
-    let hash_map = serde.dict.get("event").unwrap();
+    let hash_map = serde.dict.get(&(DictFields::Event as i64)).unwrap();
     for value in event_nam {
         let dict_key = hash_map.get(&(value.unwrap() as u64));
         event_vec.push(dict_key.unwrap().as_str());
@@ -169,7 +169,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         .unwrap();
 
     let mut pipeline_vec = Vec::new();
-    let hash_map = serde.dict.get("pipeline").unwrap();
+    let hash_map = serde.dict.get(&(DictFields::Pipeline as i64)).unwrap();
     for value in pipeline {
         let dict_key = hash_map.get(&(value.unwrap() as u64));
         pipeline_vec.push(dict_key.unwrap().as_str());
@@ -204,7 +204,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         .unwrap();
 
     let mut op_extension = Vec::new();
-    let hash_map = serde.dict.get("op_extension").unwrap();
+    let hash_map = serde.dict.get(&(DictFields::OpExtension as i64)).unwrap();
     for value in op_ext_col {
         let dict_key = hash_map.get(&(value.unwrap() as u64));
         op_extension.push(dict_key.unwrap().as_str());
@@ -217,7 +217,7 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         .unwrap();
 
     let mut physical_op = Vec::new();
-    let hash_map = serde.dict.get("physical_op").unwrap();
+    let hash_map = serde.dict.get(&(DictFields::PhysicalOp as i64)).unwrap();
     for value in pyhs_op_col {
         let dict_key = hash_map.get(&(value.unwrap() as u64));
         physical_op.push(dict_key.unwrap().as_str());

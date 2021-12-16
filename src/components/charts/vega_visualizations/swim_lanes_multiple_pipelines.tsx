@@ -2,15 +2,14 @@ import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Vega, View} from 'react-vega';
+import { Vega, View } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-
 
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentEvent: string;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentInterpolation: String,
     currentBucketSize: number,
     chartData: model.ISwimlanesData,
@@ -84,6 +83,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
         const chartDataElement: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
+            operatorsNice: this.props.chartData.operatorsNice,
             operators: this.props.chartData.operators,
             frequency: this.props.chartData.frequency,
         }
@@ -92,9 +92,19 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             name: "table",
             values: chartDataElement,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                {
+                    type: "flatten",
+                    fields: ["buckets", "operatorsNice", "operators", "frequency"]
+                },
+                {
+                    type: "collect",
+                    sort: { field: "operators" }
+                },
+                {
+                    type: "stack",
+                    groupby: ["buckets"],
+                    field: "frequency"
+                }
             ]
         };
 
@@ -172,8 +182,14 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 {
                     name: "color",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    domain: this.props.operators,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
+                },
+                {
+                    name: "colorOperatorsGroup",
+                    type: "ordinal",
+                    domain: this.props.operators!.operatorsGroup,
+                    range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
             axes: [
@@ -263,13 +279,13 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "color",
+                fill: "colorOperatorsGroup",
                 title: "Operators",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: this.props.operators,
+                values: [...new Set(this.props.operators!.operatorsGroup)],
             }
             ],
         } as VisualizationSpec;

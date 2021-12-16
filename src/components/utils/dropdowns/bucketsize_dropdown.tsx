@@ -52,7 +52,7 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentBucketSize: (newCurrentBucketSize: number) => dispatch({
-        type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
+        type: model.StateMutationType.SET_CURRENT_BUCKETSIZE,
         data: newCurrentBucketSize,
     }),
 });

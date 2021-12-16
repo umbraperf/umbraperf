@@ -63,7 +63,7 @@ export function changeProfile(newProfile: model.ProfileType) {
 
 function setAppstateProfile(profile: model.ProfileType) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTPROFILE,
+        type: model.StateMutationType.SET_CURRENT_PROFILE,
         data: profile,
     });
 }
@@ -72,7 +72,7 @@ function setAppstateEvent(event: string) {
     const events = store.getState().events;
     if (events && events.includes(event)) {
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTEVENT,
+            type: model.StateMutationType.SET_CURRENT_EVENT,
             data: event,
         });
     }
@@ -82,7 +82,7 @@ function setAppstateMultipleEvent(event1: string, event2: string) {
     const events = store.getState().events;
     if (events && events.includes(event1) && events.includes(event2)) {
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+            type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
             data: [event1, event2],
         });
     }
@@ -90,21 +90,21 @@ function setAppstateMultipleEvent(event1: string, event2: string) {
 
 function setAppstateView(view: model.ViewType) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTVIEW,
+        type: model.StateMutationType.SET_CURRENT_VIEW,
         data: view,
     });
 }
 
 function setAppstateInterpolation(interpolation: string) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTINTERPOLATION,
+        type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
         data: interpolation,
     });
 }
 
 function setAppstateBucketSize(bucketSize: number) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTBUCKETSIZE,
+        type: model.StateMutationType.SET_CURRENT_BUCKETSIZE,
         data: bucketSize,
     });
 }

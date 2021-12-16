@@ -10,7 +10,7 @@ import _ from 'lodash';
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentMultipleEvent: [string, string] | "Default";
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentInterpolation: String,
     chartData: model.ISwimlanesCombinedData,
 }
@@ -34,12 +34,14 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
 
         const chartDataElementPos: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
+            operatorsNice: this.props.chartData.operatorsNice,
             operators: this.props.chartData.operators,
             frequency: this.props.chartData.frequency,
         }
 
         const chartDataElementNeg: model.ISwimlanesData = {
             buckets: this.props.chartData.bucketsNeg,
+            operatorsNice: this.props.chartData.operatorsNiceNeg,
             operators: this.props.chartData.operatorsNeg,
             frequency: this.props.chartData.frequencyNeg,
         }
@@ -48,18 +50,18 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
             name: "tablePos",
             values: chartDataElementPos,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                { type: "flatten", fields: ["buckets", "operators", "frequency", "operatorsNice"] },
+                { type: "collect", sort: { "field": "operators" } },
+                { type: "stack", groupby: ["buckets"], field: "frequency" }
             ]
         },
         {
             name: "tableNeg",
             values: chartDataElementNeg,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                { type: "flatten", fields: ["buckets", "operators", "frequency", "operatorsNice"] },
+                { type: "collect", sort: { "field": "operators" } },
+                { type: "stack", groupby: ["buckets"], field: "frequency" }
             ]
         }
         ];
@@ -141,14 +143,22 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorPos",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    domain: this.props.operators,
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
                 },
                 {
                     name: "colorNeg",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    domain: this.props.operators,
+                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
+                },
+                {
+                    name: "colorOperatorsGroup",
+                    type: "ordinal",
+                    domain: this.props.operators!.operatorsGroup,
+                    range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
 
@@ -322,12 +332,13 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 }
             ],
             legends: [{
-                fill: "colorPos",
+                fill: "colorOperatorsGroup",
                 title: "Operators",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
+                values: [...new Set(this.props.operators!.operatorsGroup)],
             }
             ],
         } as VisualizationSpec;

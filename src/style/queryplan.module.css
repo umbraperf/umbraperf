@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack, colorTertiary from colors;
+@value colorAccentBlack, colorTertiary, hoverOpacity from colors;
 
 :root {
     --dagreGraphPadding: 2px;
@@ -64,6 +64,10 @@
     opacity: 100%;
 }
 
+.queryPlanNode:hover{
+    opacity: hoverOpacity !important;
+}
+
 .queryplanNodeBody{
     height: 100%;
     width: 100%;
@@ -82,11 +86,22 @@
     background-color: var(--tooltipBackgroundColor);
 }
 
+.queryplanNodeTooltipHeader{
+    text-align: left;
+    font-size: 12px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+}
+
 .queryplanNodeTooltipSubtitle{
     text-align: right;
-    margin-top: 10px;
-    margin-bottom: 3px;
     font-size: 11px;
+    margin-bottom: 3px;
+    margin-top: 10px;
+}
+
+.queryplanNodeTooltipTableBackground{
+    background-color: inherit;
 }
 
 .queryplanNodeTooltipTableCell{

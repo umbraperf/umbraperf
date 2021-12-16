@@ -1,6 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, Result, BackendQueryType, ChartDataKeyValue, ViewType, ChartType, ChartTypeReadable } from '.';
-import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
-
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -10,70 +8,66 @@ export type StateMutation<T, P> = {
 
 /// A mutation type
 export enum StateMutationType {
-    SET_FILELOADING = 'SET_FILELOADING',
-    SET_RESULTLOADING = 'SET_RESULTLOADING',
+    SET_FILE_LOADING = 'SET_FILE_LOADING',
+    SET_RESULT_LOADING = 'SET_RESULT_LOADING',
     SET_RESULT = 'SET_RESULT',
-    SET_CHUNKSNUMBER = 'SET_CHUNKSNUMBER',
     SET_FILE = 'SET_FILE',
-    SET_CSVPARSINGFINISHED = 'SET_CSVPARSINGFINISHED',
-    RESET_STATE = 'RESET_STATE',
-    SET_CURRENTCHART = 'SET_CURRENTCHART',
-    SET_LOADINGCHARTREADABLENAME = 'SET_LOADINGCHARTREADABLENAME',
-    SET_CURRENTEVENT = 'SET_CURRENTEVENT',
-    SET_CURRENTMULTIPLEEVENT = 'SET_CURRENTMULTIPLEEVENT',
-    SET_CURRENTPIPELINE = 'SET_CURRENTPIPELINE',
-    SET_CURRENTOPERATOR = 'SET_CURRENTOPERATOR',
-    SET_CURRENTOPERATORTIMEFRAME = 'SET_CURRENTOPERATORTIMEFRAME',
-    SET_CURRENTREQUEST = 'SET_CURRENTREQUEST',
+    SET_CSV_PARSING_FINISHED = 'SET_CSV_PARSING_FINISHED',
+    SET_RESET_STATE = 'SET_RESET_STATE',
+    SET_CURRENT_CHART = 'SET_CURRENT_CHART',
+    SET_LOADING_CHART_READABLE_NAME = 'SET_LOADING_CHART_READABLE_NAME',
+    SET_CURRENT_EVENT = 'SET_CURRENT_EVENT',
+    SET_CURRENT_MULTIPLE_EVENT = 'SET_CURRENT_MULTIPLE_EVENT',
+    SET_CURRENT_PIPELINE = 'SET_CURRENT_PIPELINE',
+    SET_CURRENT_OPERATOR = 'SET_CURRENT_OPERATOR',
+    SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE = 'SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE',
+    SET_CURRENT_REQUEST = 'SET_CURRENT_REQUEST',
     SET_EVENTS = 'SET_EVENTS',
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
     SET_KPIS = 'SET_KPIS',
-    SET_CHARTIDCOUNTER = 'SET_CHARTIDCOUNTER',
-    SET_CHARTDATA = 'SET_CHARTDATA',
-    SET_DASHBOARDSTATE = 'SET_DASHBOARDSTATE',
-    SET_CURRENTINTERPOLATION = 'SET_CURRENTINTERPOLATION',
-    SET_CURRENTBUCKETSIZE = 'SET_CURRENTBUCKETSIZE',
-    SET_CURRENTTIMEBUCKETSELECTIONTUPLE = 'SET_CURRENTTIMEBUCKETSELECTIONTUPLE',
-    SET_CURRENTTIMEPOSITIONSELECTIONTUPLE = 'SET_CURRENTTIMEPOSITIONSELECTIONTUPLE',
-    SET_CURRENTVIEW = 'SET_CURRENTVIEW',
+    SET_CHART_ID_COUNTER = 'SET_CHART_ID_COUNTER',
+    SET_CHART_DATA = 'SET_CHART_DATA',
+    SET_CURRENT_INTERPOLATION = 'SET_CURRENT_INTERPOLATION',
+    SET_CURRENT_BUCKETSIZE = 'SET_CURRENT_BUCKETSIZE',
+    SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
+    SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
+    SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
     SET_QUERYPLAN = 'SET_QUERYPLAN',
-    SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION = 'SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION',
-    SET_CURRENTPROFILE = 'SET_CURRENTPROFILE',
+    SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
+    SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
     OTHER = 'OTHER',
 }
 
 /// An state mutation variant
 export type StateMutationVariant =
-    | StateMutation<StateMutationType.SET_FILELOADING, boolean>
-    | StateMutation<StateMutationType.SET_RESULTLOADING, { key: number, value: boolean }>
-    | StateMutation<StateMutationType.SET_RESULT, Result | undefined>
-    | StateMutation<StateMutationType.SET_CHUNKSNUMBER, number>
+    | StateMutation<StateMutationType.SET_FILE_LOADING, boolean>
+    | StateMutation<StateMutationType.SET_RESULT_LOADING, { key: number, value: boolean }>
+    | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
     | StateMutation<StateMutationType.SET_FILE, File>
-    | StateMutation<StateMutationType.SET_CSVPARSINGFINISHED, boolean>
-    | StateMutation<StateMutationType.RESET_STATE, undefined>
-    | StateMutation<StateMutationType.SET_CURRENTCHART, ChartType>
-    | StateMutation<StateMutationType.SET_LOADINGCHARTREADABLENAME, ChartType>
-    | StateMutation<StateMutationType.SET_CURRENTEVENT, string>
-    | StateMutation<StateMutationType.SET_CURRENTMULTIPLEEVENT, [string, string]>
-    | StateMutation<StateMutationType.SET_CURRENTPIPELINE, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTOPERATOR, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTOPERATORTIMEFRAME, Array<string>>
-    | StateMutation<StateMutationType.SET_CURRENTREQUEST, BackendQueryType>
+    | StateMutation<StateMutationType.SET_CSV_PARSING_FINISHED, boolean>
+    | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
+    | StateMutation<StateMutationType.SET_CURRENT_CHART, ChartType>
+    | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, ChartType>
+    | StateMutation<StateMutationType.SET_CURRENT_EVENT, string>
+    | StateMutation<StateMutationType.SET_CURRENT_MULTIPLE_EVENT, [string, string]>
+    | StateMutation<StateMutationType.SET_CURRENT_PIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_OPERATOR, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_REQUEST, BackendQueryType>
     | StateMutation<StateMutationType.SET_EVENTS, Array<string>>
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
-    | StateMutation<StateMutationType.SET_OPERATORS, Array<string>>
+    | StateMutation<StateMutationType.SET_OPERATORS, IOperatorsData>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
-    | StateMutation<StateMutationType.SET_CHARTIDCOUNTER, number>
-    | StateMutation<StateMutationType.SET_CHARTDATA, ChartDataKeyValue>
-    | StateMutation<StateMutationType.SET_DASHBOARDSTATE, IDashboardState>
-    | StateMutation<StateMutationType.SET_CURRENTINTERPOLATION, String>
-    | StateMutation<StateMutationType.SET_CURRENTBUCKETSIZE, number>
-    | StateMutation<StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE, [number, number]>
-    | StateMutation<StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE, [number, number]>
-    | StateMutation<StateMutationType.SET_CURRENTVIEW, ViewType>
-    | StateMutation<StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION, boolean>
-    | StateMutation<StateMutationType.SET_CURRENTPROFILE, ProfileType>
+    | StateMutation<StateMutationType.SET_CHART_ID_COUNTER, number>
+    | StateMutation<StateMutationType.SET_CHART_DATA, IChartDataKeyValue>
+    | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, String>
+    | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
+    | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
+    | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
+    | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>
     ;
 
 // The action dispatch
@@ -82,12 +76,12 @@ export type Dispatch = (mutation: StateMutationVariant) => void;
 export class AppStateMutation {
     public static reduce(state: AppState, mutation: StateMutationVariant): AppState {
         switch (mutation.type) {
-            case StateMutationType.SET_FILELOADING:
+            case StateMutationType.SET_FILE_LOADING:
                 return {
                     ...state,
                     fileLoading: mutation.data,
                 };
-            case StateMutationType.SET_RESULTLOADING:
+            case StateMutationType.SET_RESULT_LOADING:
                 return {
                     ...state,
                     resultLoading: { ...state.resultLoading, [mutation.data.key]: mutation.data.value },
@@ -97,57 +91,52 @@ export class AppStateMutation {
                     ...state,
                     result: mutation.data,
                 };
-            case StateMutationType.SET_CHUNKSNUMBER:
-                return {
-                    ...state,
-                    chunksNumber: mutation.data,
-                };
             case StateMutationType.SET_FILE:
                 return {
                     ...state,
                     file: mutation.data,
                 };
-            case StateMutationType.SET_CSVPARSINGFINISHED:
+            case StateMutationType.SET_CSV_PARSING_FINISHED:
                 return {
                     ...state,
                     csvParsingFinished: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTCHART:
+            case StateMutationType.SET_CURRENT_CHART:
                 return {
                     ...state,
                     currentChart: state.currentChart.concat([mutation.data]),
                 };
-            case StateMutationType.SET_LOADINGCHARTREADABLENAME:
+            case StateMutationType.SET_LOADING_CHART_READABLE_NAME:
                 return {
                     ...state,
                     loadingChartReadableName: state.loadingChartReadableName.concat([ChartTypeReadable[mutation.data]]),
                 };
-            case StateMutationType.SET_CURRENTEVENT:
+            case StateMutationType.SET_CURRENT_EVENT:
                 return {
                     ...state,
                     currentEvent: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTMULTIPLEEVENT:
+            case StateMutationType.SET_CURRENT_MULTIPLE_EVENT:
                 return {
                     ...state,
                     currentMultipleEvent: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTPIPELINE:
+            case StateMutationType.SET_CURRENT_PIPELINE:
                 return {
                     ...state,
                     currentPipeline: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTOPERATOR:
+            case StateMutationType.SET_CURRENT_OPERATOR:
                 return {
                     ...state,
                     currentOperator: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTOPERATORTIMEFRAME:
+            case StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE:
                 return {
                     ...state,
-                    currentOperatorTimeframe: mutation.data,
+                    currentOperatorActiveTimeframePipeline: mutation.data,
                 };
-            case StateMutationType.SET_CURRENTREQUEST:
+            case StateMutationType.SET_CURRENT_REQUEST:
                 return {
                     ...state,
                     currentRequest: mutation.data,
@@ -173,57 +162,52 @@ export class AppStateMutation {
                     ...state,
                     kpis: mutation.data,
                 };
-            case StateMutationType.SET_CHARTIDCOUNTER:
+            case StateMutationType.SET_CHART_ID_COUNTER:
                 return {
                     ...state,
                     chartIdCounter: mutation.data,
                 };
-            case StateMutationType.SET_CHARTDATA:
+            case StateMutationType.SET_CHART_DATA:
                 return {
                     ...state,
                     chartData: mutation.data,
                 };
-            case StateMutationType.SET_DASHBOARDSTATE:
-                return {
-                    ...state,
-                    dashboardState: mutation.data,
-                }
-            case StateMutationType.SET_CURRENTINTERPOLATION:
+            case StateMutationType.SET_CURRENT_INTERPOLATION:
                 return {
                     ...state,
                     currentInterpolation: mutation.data,
                 }
-            case StateMutationType.SET_CURRENTBUCKETSIZE:
+            case StateMutationType.SET_CURRENT_BUCKETSIZE:
                 return {
                     ...state,
                     currentBucketSize: mutation.data,
                 }
-            case StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE:
+            case StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE:
                 return {
                     ...state,
                     currentTimeBucketSelectionTuple: mutation.data,
                 }
-            case StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE:
+            case StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE:
                 return {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
-            case StateMutationType.SET_CURRENTVIEW:
+            case StateMutationType.SET_CURRENT_VIEW:
                 return {
                     ...state,
                     currentView: mutation.data,
                 }
-            case StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION:
+            case StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION:
                 return {
                     ...state,
                     memoryHeatmapsDifferenceRepresentation: mutation.data,
                 }
-            case StateMutationType.SET_CURRENTPROFILE:
+            case StateMutationType.SET_CURRENT_PROFILE:
                 return {
                     ...state,
                     currentProfile: mutation.data,
                 }
-            case StateMutationType.RESET_STATE:
+            case StateMutationType.SET_RESET_STATE:
                 return {
                     fileLoading: false,
                     resultLoading: {},
@@ -237,7 +221,7 @@ export class AppStateMutation {
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",
                     currentOperator: "All",
-                    currentOperatorTimeframe: "All",
+                    currentOperatorActiveTimeframePipeline: "All",
                     currentRequest: undefined,
                     events: undefined,
                     pipelines: undefined,
@@ -246,7 +230,6 @@ export class AppStateMutation {
                     kpis: undefined,
                     chartIdCounter: 1,
                     chartData: {},
-                    dashboardState: undefined,
                     currentInterpolation: "basis",
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],

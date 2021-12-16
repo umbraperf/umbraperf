@@ -2,39 +2,43 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsTimeframe } from ".";
+import { requestActiveOperatorsTimeframe as requestOperatorsActiveTimeframePipeline } from ".";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
     const currentOperator = store.getState().currentOperator;
     const operators = store.getState().operators;
+    const operatorsTimefrabe = store.getState().currentOperatorActiveTimeframePipeline;
 
-    if (currentOperator === "All" || !currentOperator.includes("")) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENTOPERATOR,
-            data: operators!.map((elem, index) => (elem === selectedOperator ? elem : "")),
-        });
-    } else {
-        const selectedIndexPosition = operators!.indexOf(selectedOperator);
-        if (currentOperator[selectedIndexPosition] === "") {
-            //Operator was disbaled and will be enabled
-            
-            const currentPipeline = store.getState().currentPipeline;
-            if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                handlePipelineSelection(selectedOperatorPipeline);
-            }
+    if (operatorsTimefrabe.includes(selectedOperator) && operators!.operatorsId.includes(selectedOperator)) {
+
+        if (currentOperator === "All" || !currentOperator.includes("")) {
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTOPERATOR,
-                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators![index] : elem)),
+                type: model.StateMutationType.SET_CURRENT_OPERATOR,
+                data: operators!.operatorsId.map((elem, index) => (elem === selectedOperator ? elem : "")),
             });
         } else {
-            //Operator was enabled and will be disabled
+            const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
+            if (currentOperator[selectedIndexPosition] === "") {
+                //Operator was disbaled and will be enabled
 
-            store.dispatch({
-                type: model.StateMutationType.SET_CURRENTOPERATOR,
-                data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
-            });
+                const currentPipeline = store.getState().currentPipeline;
+                if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
+                    // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
+                    handlePipelineSelection(selectedOperatorPipeline);
+                }
+                store.dispatch({
+                    type: model.StateMutationType.SET_CURRENT_OPERATOR,
+                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
+                });
+            } else {
+                //Operator was enabled and will be disabled
+
+                store.dispatch({
+                    type: model.StateMutationType.SET_CURRENT_OPERATOR,
+                    data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
+                });
+            }
         }
     }
 
@@ -46,58 +50,61 @@ export function handlePipelineSelection(selectedPipeline: string) {
     const pipelines = store.getState().pipelines;
     if (currentPipeline === "All" || !currentPipeline.includes("")) {
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTPIPELINE,
+            type: model.StateMutationType.SET_CURRENT_PIPELINE,
             data: pipelines!.map((elem, index) => (elem === selectedPipeline ? elem : "")),
         });
     } else {
         const selectedIndexPosition = pipelines!.indexOf(selectedPipeline);
         if (currentPipeline[selectedIndexPosition] === "") {
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTPIPELINE,
+                type: model.StateMutationType.SET_CURRENT_PIPELINE,
                 data: currentPipeline.map((elem, index) => (index === selectedIndexPosition ? pipelines![index] : elem)),
             });
         } else {
             store.dispatch({
-                type: model.StateMutationType.SET_CURRENTPIPELINE,
+                type: model.StateMutationType.SET_CURRENT_PIPELINE,
                 data: currentPipeline.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
             });
         }
     }
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
+
 
 }
 
 export function handleTimeBucketSelection(selectedTimeBuckets: [number, number], selectedPosition: [number, number]) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTTIMEBUCKETSELECTIONTUPLE,
+        type: model.StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE,
         data: selectedTimeBuckets,
     });
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTTIMEPOSITIONSELECTIONTUPLE,
+        type: model.StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE,
         data: selectedPosition,
     });
-    requestActiveOperatorsTimeframe(appContext.controller);
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 export function resetTimeBucketSelection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestActiveOperatorsTimeframe(appContext.controller);
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 export function resetSunburstSelection() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
+    requestOperatorsActiveTimeframePipeline(appContext.controller);
 }
 
 function resetCurrentOperatorSelection() {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTOPERATOR,
-        data: store.getState().operators!,
+        type: model.StateMutationType.SET_CURRENT_OPERATOR,
+        data: store.getState().operators!.operatorsId,
     });
 }
 
 function resetCurrentPipelineSelection() {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENTPIPELINE,
+        type: model.StateMutationType.SET_CURRENT_PIPELINE,
         data: store.getState().pipelines!,
     });
 }
@@ -209,20 +216,5 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 
     return false;
 }
-
-// export function queryPlanRerenderNeeded(props: QueryPlanWrapperAppstateProps, prevProps: QueryPlanWrapperAppstateProps, width: number, prevWidth: number): boolean {
-//     if (props.operators &&
-//         props.queryPlan &&
-        // TODO queryplan comparison necessare?
-//         (props.queryPlan !== prevProps.queryPlan ||
-//             props.currentView !== prevProps.currentView ||
-//             width !== prevWidth ||
-//             !_.isEqual(props.operators, prevProps.operators) ||
-//             !_.isEqual(props.currentOperator, prevProps.currentOperator))) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
 
 

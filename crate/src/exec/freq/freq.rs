@@ -1,23 +1,26 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{
+    collections::HashMap,
+    sync::{Arc},
+};
 
 use arrow::{
     array::{
-        Array, Float64Array, GenericStringArray, Int32Array, PrimitiveArray, StringArray,
-        UInt64Array,
+        Array, Float64Array, Int32Array, StringArray
     },
-    datatypes::{DataType, Float64Type, Int32Type, UInt64Type},
+    datatypes::{DataType},
     record_batch::RecordBatch,
 };
 
 use crate::{
-    exec::{
-        basic::{
-            basic::{find_unique_string, sort_batch}
-        },
+    exec::basic::{
+        basic::{find_unique_string, sort_batch},
+        filter::{filter_between_int32},
+        statistics, op_mapping::init_mapping_operator,
     },
-    state::state::get_record_batches,
+    state::state::{get_mapping_operator, get_record_batches},
     utils::{
-        record_batch_util::{create_new_record_batch, send_record_batch_to_js},
+        record_batch_schema::RecordBatchSchema,
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js}, array_util::{get_stringarray_column, get_floatarray_column, get_int32_column, get_uint_column},
     },
 };
 
@@ -31,10 +34,12 @@ pub fn create_freq_bucket(
     column_for_operator: usize,
     result_bucket: Vec<f64>,
     result_vec_operator: Vec<&str>,
+    result_vec_operator_nice_format: Vec<&str>,
     result_builder: Vec<f64>,
     freq: Freq,
 ) -> RecordBatch {
     let builder_bucket = Float64Array::from(result_bucket);
+    let nice_operator_arr = StringArray::from(result_vec_operator_nice_format);
     let operator_arr = StringArray::from(result_vec_operator);
     let builder_result = Float64Array::from(result_builder);
 
@@ -49,15 +54,23 @@ pub fn create_freq_bucket(
         freq_name = "absfreq";
     }
 
-    create_new_record_batch(
-        vec!["bucket", column_for_operator_name, freq_name],
-        vec![DataType::Float64, DataType::Utf8, DataType::Float64],
+    let batch = create_new_record_batch(
+        vec!["bucket", "op_ext", column_for_operator_name, freq_name],
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
         vec![
             Arc::new(builder_bucket),
+            Arc::new(nice_operator_arr),
             Arc::new(operator_arr),
             Arc::new(builder_result),
         ],
-    )
+    );
+
+    batch
 }
 
 pub fn round(to_round: f64) -> f64 {
@@ -97,42 +110,6 @@ pub fn create_mem_bucket(
     )
 }
 
-pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Float64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UInt64Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<UInt64Array>()
-        .unwrap();
-    return column;
-}
-
-pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int32Type> {
-    let column = batch
-        .column(column)
-        .as_any()
-        .downcast_ref::<Int32Array>()
-        .unwrap();
-    return column;
-}
-
 pub fn freq_of_pipelines(
     batch: &RecordBatch,
     freq: Freq,
@@ -142,9 +119,9 @@ pub fn freq_of_pipelines(
     pipelines: Vec<&str>,
     operators: Vec<&str>,
     from: f64,
-    to: f64,
+    _to: f64,
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, 2, false);
+    let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
 
     let unique_operator =
         find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
@@ -154,11 +131,12 @@ pub fn freq_of_pipelines(
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
+    let mut result_vec_operator_nice_format = Vec::new();
     let mut result_builder = Vec::new();
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
     let time_column = get_floatarray_column(batch, column_for_time);
-    let pipeline_column = get_stringarray_column(batch, 3);
+    let pipeline_column = get_stringarray_column(batch, RecordBatchSchema::Pipeline as usize);
 
     let mut time_bucket;
     if from == -1. {
@@ -167,7 +145,6 @@ pub fn freq_of_pipelines(
         time_bucket = from + bucket_size;
     }
 
-    //time_bucket = f64::trunc(time_bucket);
     let mut column_index = 0;
 
     let mut bucket_map = HashMap::new();
@@ -179,14 +156,20 @@ pub fn freq_of_pipelines(
         bucket_map.insert("sum", 0.0);
     }
 
+    init_mapping_operator();
+    let mapping = get_mapping_operator();
+    let map = mapping.lock().unwrap();
+
     for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(column_index as usize);
         let current_pipeline = pipeline_column.value(column_index as usize);
+
         while time_bucket < time.unwrap() {
             for operator in vec_operator {
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
+                result_vec_operator_nice_format.push(map.get(operator).unwrap());
 
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket_map.get(operator).unwrap();
@@ -233,6 +216,7 @@ pub fn freq_of_pipelines(
                 let operator = operator.unwrap();
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
+                result_vec_operator_nice_format.push(map.get(operator).unwrap());
                 let bucket = bucket_map.to_owned();
                 if matches!(freq, Freq::ABS) {
                     let frequenzy = bucket.get(operator).unwrap();
@@ -257,11 +241,17 @@ pub fn freq_of_pipelines(
         column_index += 1;
     }
 
+    let result_vec_operator_nice_format: Vec<&str> = result_vec_operator_nice_format
+        .iter()
+        .map(AsRef::as_ref)
+        .collect();
+
     return create_freq_bucket(
         &batch,
         column_for_operator,
         result_bucket,
         result_vec_operator,
+        result_vec_operator_nice_format,
         result_builder,
         freq,
     );
@@ -283,8 +273,6 @@ pub fn get_earlier_entry(
     }
     let mut start = index;
     while start >= 1 {
-        //print_to_js_with_obj(&format!("curr_operator {:?} compare_with  {:?}", operator, get_stringarray_column(recordbatch, column_for_operator).value(start - 1)).into());
-
         if operator == get_stringarray_column(recordbatch, column_for_operator).value(start - 1) {
             return start;
         }
@@ -299,11 +287,11 @@ pub fn freq_of_memory(
     column_for_time: usize,
     bucket_size: f64,
     from: f64,
-    to: f64,
+    _to: f64,
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
-    let batch = &sort_batch(&batch, 2, false);
+    let batch = &sort_batch(&batch, RecordBatchSchema::Time as usize, false);
 
     let unique_operator = find_unique_string(batch, column_for_operator);
 
@@ -528,30 +516,28 @@ pub fn freq_of_memory(
             ],
         );
 
-        let mem_column = get_int32_column(&single_batch, 2);
-        let mem_vec = mem_column
-            .into_iter()
-            .map(|v| (v.unwrap() as i64))
-            .collect::<Vec<i64>>();
+        if matches!(mem_en, MEM::ABS) {
+            let mem_column = get_int32_column(&single_batch, 2);
+            let mem_vec = mem_column
+                .into_iter()
+                .map(|v| (v.unwrap() as i64))
+                .collect::<Vec<i64>>();
 
-        /* let mean = statistics::mean(&mem_vec).unwrap();
-        let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+            let mean = statistics::mean(&mem_vec).unwrap();
+            let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
 
-        let from = if matches!(mem_en, MEM::DIFF) {
-            mean - (std_deviation * 100.)
+            let from = mean - (std_deviation * 2.);
+
+            let to = mean + (std_deviation * 2.);
+
+            let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
+
+            let min_bucket = arrow::compute::min(bucket).unwrap();
+            hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         } else {
-            mean - (std_deviation)
-        };
-        let to = if matches!(mem_en, MEM::DIFF) {
-            mean + (std_deviation * 100.)
-        } else {
-            mean + (std_deviation)
-        };
-
-        let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch); */
-
-        let min_bucket = arrow::compute::min(bucket).unwrap();
-        hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+            let min_bucket = arrow::compute::min(bucket).unwrap();
+            hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
+        }
 
         offset += len;
     }

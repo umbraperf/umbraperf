@@ -3,7 +3,7 @@ use crate::{
     web_file::web_file_chunkreader::WebFileChunkReader,
 };
 use arrow::{
-    array::{Array, ArrayRef, Int64Array, StringArray},
+    array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
     datatypes::{DataType, Field, Schema, SchemaRef},
     record_batch::RecordBatch,
 };
@@ -22,7 +22,7 @@ pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
     let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
     let record_reader = reader
-        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6].into_iter(), 1024 * 8)
+        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6, 13, 14].into_iter(), 1024 * 8)
         .unwrap();
     record_reader
 }
@@ -151,7 +151,16 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         event_vec.push(dict_key.unwrap().as_str());
     }
 
-    let time = batch.column(2).to_owned();
+    let time_col = batch
+        .column(2)
+        .as_any()
+        .downcast_ref::<Float64Array>()
+        .unwrap();
+
+    let mut time = Vec::new();
+    for value in time_col {
+        time.push(value.unwrap());
+    }
 
     let pipeline = batch
         .column(1)
@@ -166,23 +175,72 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    let addr = batch.column(5).to_owned();
+    let addr_col = batch
+        .column(5)
+        .as_any()
+        .downcast_ref::<UInt64Array>()
+        .unwrap();
 
-    let uri = batch.column(4).to_owned();
-    /*  .as_any()
+    let mut addr = Vec::new();
+    for value in addr_col {
+        addr.push(value.unwrap());
+    }
+
+    let uri_col = batch
+        .column(4)
+        .as_any()
         .downcast_ref::<Int64Array>()
         .unwrap();
 
-    let mut uri_vec = Vec::new();
-    let hash_map = serde.dict.get("srclines").unwrap();
-    print_to_js_with_obj(&format!("{:?}", hash_map).into());
-    for value in uri {
+    let mut uri = Vec::new();
+    for value in uri_col {
+        uri.push(value.unwrap());
+    }
+
+    let op_ext_col = batch
+        .column(6)
+        .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();
+
+    let mut op_extension = Vec::new();
+    let hash_map = serde.dict.get("op_extension").unwrap();
+    for value in op_ext_col {
         let dict_key = hash_map.get(&(value.unwrap() as u64));
-        uri_vec.push(dict_key.unwrap().as_str());
-    } */
+        op_extension.push(dict_key.unwrap().as_str());
+    }
+
+    let pyhs_op_col = batch
+        .column(7)
+        .as_any()
+        .downcast_ref::<Int64Array>()
+        .unwrap();
+
+    let mut physical_op = Vec::new();
+    let hash_map = serde.dict.get("physical_op").unwrap();
+    for value in pyhs_op_col {
+        let dict_key = hash_map.get(&(value.unwrap() as u64));
+        physical_op.push(dict_key.unwrap().as_str());
+    }
+
+    /* operator_vec.push("test_Operator");
+    event_vec.push("test_Event");
+    time.push(99.0);
+    pipeline_vec.push("test_Pipeline");
+    addr.push(12341234);
+    uri.push(2);  */
 
     create_new_record_batch(
-        vec!["operator", "ev_name", "time", "pipeline", "addr", "uri"],
+        vec![
+            "operator",
+            "ev_name",
+            "time",
+            "pipeline",
+            "addr",
+            "uri",
+            "op_ext",
+            "physical_op",
+        ],
         vec![
             DataType::Utf8,
             DataType::Utf8,
@@ -190,18 +248,23 @@ pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
             DataType::Utf8,
             DataType::UInt64,
             DataType::Int64,
+            DataType::Utf8,
+            DataType::Utf8,
         ],
         vec![
             Arc::new(StringArray::from(operator_vec)),
             Arc::new(StringArray::from(event_vec)),
-            time,
+            Arc::new(Float64Array::from(time)),
             Arc::new(StringArray::from(pipeline_vec)),
-            addr,
-            uri,
+            Arc::new(UInt64Array::from(addr)),
+            Arc::new(Int64Array::from(uri)),
+            Arc::new(StringArray::from(op_extension)),
+            Arc::new(StringArray::from(physical_op)),
         ],
     )
 }
 
+// Sending record batch to javascript via IPC which include a schema and a message
 pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let mut buff = Cursor::new(vec![]);
 

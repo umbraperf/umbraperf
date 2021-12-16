@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::{state::state::{append_to_buffer, clear_buffer, get_buffer}, utils::print_to_cons::print_to_js_with_obj};
+use crate::{state::state::{append_to_buffer, clear_buffer, get_buffer}};
 
 use super::streambuf::WebFileReader;
 

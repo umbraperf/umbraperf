@@ -123,7 +123,7 @@ export function createChartResetComponent(resetType: "pipelinesOperators" | "tim
         return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionPipelinesOperators });
     } else if (resetType === "timeselection") {
         const isResetButtonVisible = () => {
-            if (store.getState().currentTimeBucketSelectionTuple[0] >= 0 || store.getState().currentTimeBucketSelectionTuple[1] >= 0 ) {
+            if (store.getState().currentTimeBucketSelectionTuple[0] >= 0 || store.getState().currentTimeBucketSelectionTuple[1] >= 0) {
                 return true;
             } else {
                 return false;
@@ -235,6 +235,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.operators, props.operators) ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;

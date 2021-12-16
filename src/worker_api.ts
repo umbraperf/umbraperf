@@ -51,8 +51,8 @@ worker.addEventListener('message', message => {
 
     switch (messageType) {
 
-        case model.WorkerResponseType.CSV_READING_FINISHED:
-            Controller.setCsvReadingFinished();
+        case model.WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED:
+            Controller.setUmbraperfFileReadingFinished();
             break;
 
         case model.WorkerResponseType.STORE_RESULT:

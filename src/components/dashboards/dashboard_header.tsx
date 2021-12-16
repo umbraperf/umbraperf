@@ -10,7 +10,7 @@ import { Grid, Box } from '@material-ui/core';
 
 
 interface Props {
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
 }
 
 
@@ -23,7 +23,7 @@ class DashboardHeader extends React.Component<Props, {}> {
 
     public render() {
 
-        if (!this.props.csvParsingFinished) {
+        if (!this.props.umbraperfFileParsingFinished) {
             return <Redirect to={"/upload"} />
         }
 
@@ -56,7 +56,7 @@ class DashboardHeader extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    csvParsingFinished: state.csvParsingFinished,
+    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
 });
 
 

@@ -6,7 +6,7 @@ export interface AppState {
     resultLoading: IResultLoading;
     result: IResult | undefined;
     chunksNumber: number;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     file: undefined | File;
     queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
@@ -41,7 +41,7 @@ export function createDefaultState(): AppState {
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
-        csvParsingFinished: false,
+        umbraperfFileParsingFinished: false,
         queryplanJson: undefined,
         file: undefined,
         currentChart: [],

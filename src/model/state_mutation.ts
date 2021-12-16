@@ -13,7 +13,7 @@ export enum StateMutationType {
     SET_RESULT = 'SET_RESULT',
     SET_FILE = 'SET_FILE',
     SET_QUERYPLAN_JSON = 'SET_QUERYPLAN_JSON',
-    SET_CSV_PARSING_FINISHED = 'SET_CSV_PARSING_FINISHED',
+    SET_UMBRAPERF_FILE_PARSING_FINISHED = 'SET_UMBRAPERF_FILE_PARSING_FINISHED',
     SET_RESET_STATE = 'SET_RESET_STATE',
     SET_CURRENT_CHART = 'SET_CURRENT_CHART',
     SET_LOADING_CHART_READABLE_NAME = 'SET_LOADING_CHART_READABLE_NAME',
@@ -47,7 +47,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
     | StateMutation<StateMutationType.SET_FILE, File>
     | StateMutation<StateMutationType.SET_QUERYPLAN_JSON, object>
-    | StateMutation<StateMutationType.SET_CSV_PARSING_FINISHED, boolean>
+    | StateMutation<StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED, boolean>
     | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENT_CHART, ChartType>
     | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, ChartType>
@@ -104,10 +104,10 @@ export class AppStateMutation {
                     ...state,
                     queryplanJson: mutation.data,
                 };
-            case StateMutationType.SET_CSV_PARSING_FINISHED:
+            case StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED:
                 return {
                     ...state,
-                    csvParsingFinished: mutation.data,
+                    umbraperfFileParsingFinished: mutation.data,
                 };
             case StateMutationType.SET_CURRENT_CHART:
                 return {
@@ -226,7 +226,7 @@ export class AppStateMutation {
                     resultLoading: {},
                     result: undefined,
                     chunksNumber: 0,
-                    csvParsingFinished: false,
+                    umbraperfFileParsingFinished: false,
                     file: undefined,
                     queryplanJson: undefined,
                     currentChart: [],

@@ -10,10 +10,10 @@ import { Redirect } from 'react-router-dom';
 interface Props {
     appContext: IAppContext;
     file: undefined | File;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     fileLoading: boolean;
     setFile: (newFile: File) => void;
-    setCsvParsingFinished: (newCsvParsingFinished: boolean) => void;
+    setUmbraperfFileParsingFinished: (newUmbraperfFileParsingFinished: boolean) => void;
     setFileLoading: (newFileLoading: boolean) => void;
     setCurrentView: (newCurrentView: model.ViewType) => void;
     setResetState: () => void;
@@ -39,7 +39,7 @@ class FileUploader extends React.Component<Props, State> {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             const file = acceptedFiles[0];
             this.props.setFileLoading(true);
-            this.props.setCsvParsingFinished(false);
+            this.props.setUmbraperfFileParsingFinished(false);
             this.props.setFile(file);
             this.props.appContext.controller.registerFileAtWorker(file);
         }
@@ -68,8 +68,8 @@ class FileUploader extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        if (prevProps.csvParsingFinished != this.props.csvParsingFinished) {
-            if (this.props.csvParsingFinished) {
+        if (prevProps.umbraperfFileParsingFinished != this.props.umbraperfFileParsingFinished) {
+            if (this.props.umbraperfFileParsingFinished) {
                 this.setState({
                     ...this.state,
                     allowRedirect: true,
@@ -82,12 +82,12 @@ class FileUploader extends React.Component<Props, State> {
 
         const upperLine = () => {
             let innerText;
-            if (!this.props.csvParsingFinished && !this.props.fileLoading) {
+            if (!this.props.umbraperfFileParsingFinished && !this.props.fileLoading) {
                 innerText = <p> Drag your umbraPerf file here!
                     <br></br>
                     (or click to select files)
                 </p>
-            } else if (!this.props.csvParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
+            } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
                 innerText = <Spinner />
             }
 
@@ -149,7 +149,7 @@ class FileUploader extends React.Component<Props, State> {
 
 const mapStateToProps = (state: model.AppState) => ({
     file: state.file,
-    csvParsingFinished: state.csvParsingFinished,
+    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
     fileLoading: state.fileLoading,
 });
 
@@ -158,9 +158,9 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         type: model.StateMutationType.SET_FILE,
         data: newFile,
     }),
-    setCsvParsingFinished: (newCsvParsingFinished: boolean) => dispatch({
-        type: model.StateMutationType.SET_CSV_PARSING_FINISHED,
-        data: newCsvParsingFinished,
+    setUmbraperfFileParsingFinished: (newUmbraperfFileParsingFinished: boolean) => dispatch({
+        type: model.StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED,
+        data: newUmbraperfFileParsingFinished,
     }),
     setFileLoading: (newFileLoading: boolean) =>
         dispatch({

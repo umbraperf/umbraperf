@@ -35,7 +35,7 @@ function ScrollableTabsButtonForce(props: any) {
 
     const classes = useStyles();
 
-    const csvParsingFinished = useSelector((state: model.AppState) => state.csvParsingFinished);
+    const umbraperfFileParsingFinished = useSelector((state: model.AppState) => state.umbraperfFileParsingFinished);
 
     return (
         <div className={classes.root}>
@@ -48,7 +48,7 @@ function ScrollableTabsButtonForce(props: any) {
                     indicatorColor="secondary"
                     textColor="secondary"
                     aria-label="scrollable force tabs example"
-                    className={csvParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
+                    className={umbraperfFileParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
                     {topLevelComponents.map((prop, key) => {
                         if (prop.path !== "/") {

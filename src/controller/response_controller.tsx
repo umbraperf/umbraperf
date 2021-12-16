@@ -6,9 +6,9 @@ import _ from "lodash";
 
 
 //set file reading finished flag in redux store
-export function setCsvReadingFinished() {
+export function setUmbraperfFileReadingFinished() {
     store.dispatch({
-        type: model.StateMutationType.SET_CSV_PARSING_FINISHED,
+        type: model.StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED,
         data: true,
     });
     store.dispatch({

@@ -8,7 +8,7 @@ import * as JSZip from '../node_modules/jszip/';
 //worker responses:
 
 export enum WorkerResponseType {
-  CSV_READING_FINISHED = 'CSV_READING_FINISHED',
+  UMBRAPERF_FILE_READING_FINISHED = 'UMBRAPERF_FILE_READING_FINISHED',
   STORE_RESULT = 'STORE_RESULT',
   STORE_QUERYPLAN_JSON = 'STORE_QUERYPLAN_JSON',
 };
@@ -31,7 +31,7 @@ export interface IStoreQueryplanResponseData {
 }
 
 export type WorkerResponseVariant =
-  WorkerResponse<WorkerResponseType.CSV_READING_FINISHED, number> |
+  WorkerResponse<WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED, number> |
   WorkerResponse<WorkerResponseType.STORE_RESULT, IStoreResultResponseData> |
   WorkerResponse<WorkerResponseType.STORE_QUERYPLAN_JSON, IStoreQueryplanResponseData>
   ;
@@ -106,7 +106,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
 export function notifyJsFinishedReading(registeredFileId: number) {
   worker.postMessage({
     messageId: 201,
-    type: WorkerResponseType.CSV_READING_FINISHED,
+    type: WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED,
     data: registeredFileId,
   });
 

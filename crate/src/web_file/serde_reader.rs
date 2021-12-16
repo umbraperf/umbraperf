@@ -35,6 +35,7 @@ pub struct SerdeDict {
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
+static QUERY_PLAN_FILE_NAME: &str = "query_plan_analyzed.json";
 
 impl SerdeDict {
     pub fn read_dict(length: u64) -> Self {

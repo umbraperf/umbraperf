@@ -206,6 +206,11 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> Option<RecordB
     }
 }
 
+fn exec_filters(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
+    let split_query = split_query(restful_string);
+    return eval_filters(record_batch, split_query.0);
+}
+
 pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
     if false {
         print_to_js_with_obj(&format!("{:?}", restful_string).into());
@@ -223,8 +228,9 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     if multiple_queries_concat(restful_string) {
         let split = split_at_double_and(restful_string);
         let mut vec_batch = Vec::new();
+        let filtered = exec_filters(record_batch, restful_string); 
         for query in split {
-            vec_batch.push(exec_query(record_batch.to_owned(), query).unwrap());
+            vec_batch.push(exec_query(filtered.to_owned(), query).unwrap());
         }
         finish_query_exec(concat_record_batches(vec_batch), restful_string);
     } else {

@@ -36,12 +36,10 @@ pub fn relative(
     column_index_for_denominator: usize,
 ) -> RecordBatch {
     let vec_de = get_stringarray_column(batch, column_index_for_denominator);
-
     let denominator = vec_de.len();
+
     let batch = filter::filter_with(column_index_for_numerator, vec!["No Operator"], batch);
-
     let vec_nom = get_stringarray_column(&batch, column_index_for_numerator);
-
     let numerator = vec_nom.len();
 
     let result = numerator as f64 / denominator as f64;

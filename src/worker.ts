@@ -105,7 +105,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
-  console.log("HERE 1");
+  console.log("HERE 1: start reading queryplan file");
 
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
@@ -114,7 +114,6 @@ function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
     } else {
       queryPlanFile.async('string').then(
         function (queryPlanFileData: any) {
-          console.log("HERE 2");
           const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
           notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId });
         },
@@ -136,6 +135,7 @@ export function notifyJsFinishedReading(registeredFileId: number) {
 export function notifyJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
 
   if (queryPlan) {
+    console.log("HERE 2: finish queryplan reading, send result to js");
     worker.postMessage({
       messageId: 201,
       type: WorkerResponseType.STORE_QUERYPLAN,
@@ -185,6 +185,7 @@ worker.onmessage = (message) => {
       globalBackendQueryType = (messageData as ICalculateChartDataRequestData).backendQueryType;
       if (globalBackendQueryType === BackendApi.BackendQueryType.GET_QUERYPLAN_DATA) {
         // extract queryplan from zip if queryplan tooltip query is send to request
+        console.log("HERE 0: qp request to frontend and to backend, request id: " + globalRequestId);
         extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter], globalRequestId!);
       }
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).backendQuery);

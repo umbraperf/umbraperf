@@ -349,9 +349,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
             if (resultObject.queryPlan) {
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
-                console.log("here QP1")
+                console.log("HERE: response controller: got qp file data from frontend")
             } else if (resultObject.rustResultTable.length !== 0) {
-                console.log("here QP2")
+                console.log("HERE: response controller: got qp data from backend")
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
                     uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
                     eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),

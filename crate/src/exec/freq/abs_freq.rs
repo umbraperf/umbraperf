@@ -29,12 +29,7 @@ pub fn abs_freq_of_event(
     let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
 
     let unique_event = find_unique_string(batch, column_for_event);
-
-    let vec_event = unique_event
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec_event = get_stringarray_column(&unique_event, 0);
 
     let mut result_bucket = Vec::new();
     let mut result_vec_event = Vec::new();
@@ -43,16 +38,8 @@ pub fn abs_freq_of_event(
     let mut time_bucket = bucket_size;
     let mut column_index = 0;
 
-    let event_column = batch
-        .column(column_for_event)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-    let time_column = batch
-        .column(column_for_time)
-        .as_any()
-        .downcast_ref::<Float64Array>()
-        .unwrap();
+    let event_column = get_stringarray_column(&batch, column_for_event);
+    let time_column = get_floatarray_column(&batch, column_for_time);
 
     let mut bucket_map = HashMap::new();
     for event in vec_event {

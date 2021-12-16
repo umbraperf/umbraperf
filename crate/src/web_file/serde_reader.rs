@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, io::{self, Cursor, Read, BufReader}};
+use std::{collections::HashMap, io::{Read}};
 use crate::{
     bindings::send_js_query_plan,
 };
@@ -7,7 +7,7 @@ use serde::Deserialize;
 use serde_json::{Map, Value};
 
 use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
-use crate::{web_file::serde_reader::Value::Number, utils::print_to_cons::print_to_js_with_obj};
+use crate::{web_file::serde_reader::Value::Number};
 
 #[derive(Deserialize, Debug, Clone)]
 struct Dictionary {
@@ -57,7 +57,7 @@ impl SerdeDict {
         let mut reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
         
         let mut buf: String = String::new();
-        reader.read_to_string(&mut buf);
+        let _result = reader.read_to_string(&mut buf);
 
 
         let reader = BufferReader::read_to_buffer(DICT_FILE_NAME, length as u64);

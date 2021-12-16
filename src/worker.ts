@@ -105,16 +105,18 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
+  console.log("HERE 1");
 
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
     if (undefined === queryPlanFile) {
-      notifyJsQueryResult(undefined, { queryplanResult: { "error": "no queryplan" }, queryplanRequestId: queryplanRequestId })
+      notifyJsQueryResult(undefined, { queryplanResult: { "error": "no queryplan" }, queryplanRequestId: queryplanRequestId });
     } else {
       queryPlanFile.async('string').then(
         function (queryPlanFileData: any) {
+          console.log("HERE 2");
           const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-          notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId })
+          notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId });
         },
       )
     }

@@ -247,14 +247,6 @@ class SunburstChart extends React.Component<Props, {}> {
                         { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', [datum.operator, datum.parent], null)" }
                     ]
                 },
-                {
-                    name: "cursor",
-                    value: "default",
-                    on: [
-                        { events: { type: "mouseover", marktype: "arc" }, update: { value: "pointer" } },
-                        { events: "arc:mouseout", update: { value: "default" } }
-                    ]
-                }
             ],
 
             scales: [
@@ -313,6 +305,10 @@ class SunburstChart extends React.Component<Props, {}> {
                             fillOpacity: [{
                                 test: "datum.parent==='inner' || indata('selectedPipelines', 'pipelinesUsed', datum.parent)", value: model.chartConfiguration.hoverFillOpacity, //Only hover behavior if pipeline, or if operator and available (ie. only if partent pipeline is selected)
                             }],
+                            cursor: [
+                                { test: "datum.parent==='inner' || indata('selectedPipelines', 'pipelinesUsed', datum.parent)", value: "pointer" },
+                                { value: "not-allowed" }
+                            ]
                         }
                     }
                 },

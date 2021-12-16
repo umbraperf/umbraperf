@@ -67,6 +67,7 @@ class SunburstChart extends React.Component<Props, {}> {
         const operatorOccurrencesArray = Array.from(this.props.chartData.opOccurrences);
         const pipelineOccurrencesArray = Array.from(this.props.chartData.pipeOccurrences);
 
+
         //add datum for inner circle at beginning of data only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");
         parentPipelinesArray[0] !== null && parentPipelinesArray.unshift(null);
@@ -194,6 +195,10 @@ class SunburstChart extends React.Component<Props, {}> {
             }
         }
 
+        const bigPipelinesLegendChartOffset = this.props.doubleRowSize ? 50 : 30;
+
+        const isBigPipelinesLegend = this.props.pipelines!.length > 10;
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: this.props.width - 50,
@@ -259,7 +264,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     from: { "data": "tree" },
                     encode: {
                         enter: {
-                            x: { signal: "width / 2" },
+                            x: isBigPipelinesLegend ? { signal: `width / 2 + ${bigPipelinesLegendChartOffset}` } : { signal: `width / 2` },
                             y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             tooltip: [
                                 { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
@@ -303,7 +308,7 @@ class SunburstChart extends React.Component<Props, {}> {
                         enter: {
                             fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
-                            x: { signal: "width/ 2" },
+                            x: isBigPipelinesLegend ? { signal: `width / 2 + ${bigPipelinesLegendChartOffset}` } : { signal: `width / 2` },
                             y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
                             theta: { signal: "(datum['a0'] + datum['a1'])/2" },
@@ -328,6 +333,9 @@ class SunburstChart extends React.Component<Props, {}> {
                     fill: "colorOperatorsId", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
+                    offset: isBigPipelinesLegend ? -1 : 0,
+                    columns: this.props.doubleRowSize ? 1 : (isBigPipelinesLegend ? 2 : 1),
+                    columnPadding: -1,
                     orient: this.props.doubleRowSize ? "bottom-left" : "left",
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
@@ -336,7 +344,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     encode: {
                         labels: {
                             update: {
-                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, 60)" } : { signal: "truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, 35)" },
+                                text: { signal: `truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, ${this.props.doubleRowSize ? (isBigPipelinesLegend && sunburstSize() < 120 ? 20 : 30) : (isBigPipelinesLegend ? 15 : 20)})` },
                                 fill: [
                                     {
                                         test: "indata('availablePipelines', 'pipelinesActiveTimeframe', datum.value.pipeline)",
@@ -354,9 +362,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     title: "Operators",
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
-                    rowPadding: 2,
-                    // columns:  this.props.doubleRowSize ? 1 : 3,
-                    columnPadding: 3,
+                    rowPadding: 0,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,

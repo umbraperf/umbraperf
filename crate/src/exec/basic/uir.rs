@@ -14,7 +14,7 @@ use crate::{
         basic::{basic::sort_batch, filter::filter_between_int32},
         rest::rest_api::find_name,
     },
-    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
+    state::state::{get_serde_dict},
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,

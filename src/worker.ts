@@ -4,6 +4,7 @@ import * as profiler_core from '../crate/pkg/shell';
 import * as BackendApi from './model/backend_queries';
 import * as JSZip from '../node_modules/jszip/';
 
+
 //worker responses:
 
 export enum WorkerResponseType {
@@ -102,24 +103,6 @@ export function readFileChunk(offset: number, chunkSize: number) {
   }
 }
 
-// function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
-//   console.log("HERE 1: start reading queryplan file");
-
-//   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
-//     const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
-//     if (undefined === queryPlanFile) {
-//       notifyJsQueryResult(undefined, { queryplanResult: { "error": "no queryplan" }, queryplanRequestId: queryplanRequestId });
-//     } else {
-//       queryPlanFile.async('string').then(
-//         function (queryPlanFileData: any) {
-//           const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-//           notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId });
-//         },
-//       )
-//     }
-//   })
-// }
-
 export function notifyJsFinishedReading(registeredFileId: number) {
   worker.postMessage({
     messageId: 201,
@@ -146,19 +129,6 @@ export function notifyJsQueryPlan(queryplan: string) {
 }
 
 export function sendJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
-
-  // if (queryPlan) {
-  //   console.log("HERE 2: finish queryplan reading, send result to js");
-  //   worker.postMessage({
-  //     messageId: 201,
-  //     type: WorkerResponseType.STORE_QUERYPLAN,
-  //     data: {
-  //       requestId: queryPlan.queryplanRequestId,
-  //       queryPlanData: queryPlan.queryplanResult,
-  //       backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
-  //     },
-  //   });
-  // }
 
   if (result) {
     worker.postMessage({
@@ -196,11 +166,6 @@ worker.onmessage = (message) => {
       globalRequestId = (messageData as ICalculateChartDataRequestData).requestId;
       globalMetaRequest = (messageData as ICalculateChartDataRequestData).metaRequest;
       globalBackendQueryType = (messageData as ICalculateChartDataRequestData).backendQueryType;
-      // if (globalBackendQueryType === BackendApi.BackendQueryType.GET_QUERYPLAN_DATA) {
-      //   // extract queryplan from zip if queryplan tooltip query is send to request
-      //   console.log("HERE 0: qp request to frontend and to backend, request id: " + globalRequestId);
-      //   extractQueryPlanFromZip(globalFileDictionary[globalFileIdCounter], globalRequestId!);
-      // }
       profiler_core.requestChartData((messageData as ICalculateChartDataRequestData).backendQuery);
       break;
 

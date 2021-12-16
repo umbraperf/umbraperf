@@ -133,6 +133,8 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const queryPlanJson = this.props.chartData.queryplanData;
         let queryplanContent: JSX.Element;
 
+        console.log(queryPlanJson);
+
         if (undefined === queryPlanJson || queryPlanJson.hasOwnProperty('error')) {
             queryplanContent = this.createNoQueryPlanWarning();
         } else {

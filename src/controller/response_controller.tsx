@@ -139,6 +139,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
     let chartDataCollection: model.IChartDataKeyValue = store.getState().chartData;
     let toggleResultLoadingFlag = false;
 
+    console.log(requestId);
+    console.log(requestType);
+
     switch (requestType) {
 
         case model.BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
@@ -346,7 +349,9 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
             if (resultObject.queryPlan) {
                 queryplanDataElem.queryplanData = resultObject.queryPlan;
+                console.log("here QP1")
             } else if (resultObject.rustResultTable.length !== 0) {
+                console.log("here QP2")
                 const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
                     uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
                     eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),

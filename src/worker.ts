@@ -105,36 +105,20 @@ export function readFileChunk(offset: number, chunkSize: number) {
 }
 
 function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
+
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
     const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
     if (undefined === queryPlanFile) {
-      worker.postMessage({
-        messageId: 201,
-        type: WorkerResponseType.STORE_QUERYPLAN,
-        data: {
-          requestId: queryplanRequestId,
-          queryPlanData: { "error": "no queryplan" },
-          backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
-        },
-      });
+      notifyJsQueryResult(undefined, { queryplanResult: { "error": "no queryplan" }, queryplanRequestId: queryplanRequestId })
     } else {
       queryPlanFile.async('string').then(
         function (queryPlanFileData: any) {
           const queryPlanFileDataJson = JSON.parse(queryPlanFileData);
-          worker.postMessage({
-            messageId: 201,
-            type: WorkerResponseType.STORE_QUERYPLAN,
-            data: {
-              requestId: queryplanRequestId,
-              queryPlanData: queryPlanFileDataJson,
-              backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
-            },
-          });
+          notifyJsQueryResult(undefined, { queryplanResult: queryPlanFileDataJson, queryplanRequestId: queryplanRequestId })
         },
       )
     }
   })
-
 }
 
 
@@ -147,7 +131,19 @@ export function notifyJsFinishedReading(registeredFileId: number) {
 
 }
 
-export function notifyJsQueryResult(result: any) {
+export function notifyJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
+
+  if (queryPlan) {
+    worker.postMessage({
+      messageId: 201,
+      type: WorkerResponseType.STORE_QUERYPLAN,
+      data: {
+        requestId: queryPlan.queryplanRequestId,
+        queryPlanData: queryPlan.queryplanResult,
+        backendQueryType: BackendApi.BackendQueryType.GET_QUERYPLAN_DATA,
+      },
+    });
+  }
 
   if (result) {
     worker.postMessage({

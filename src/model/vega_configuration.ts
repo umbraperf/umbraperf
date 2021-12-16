@@ -260,8 +260,8 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     //create operatorId color scale based on color object for operatorGgroup
     const createOperatorsIdColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
-        const luminanceLow = 35;
-        const luminanceHigh = 75;
+        const luminanceLow = 30;
+        const luminanceHigh = 80;
         const luminanceRange = luminanceHigh - luminanceLow;
 
         let currentOperatorsGroupCount: IOperatorsGroupCount = {};

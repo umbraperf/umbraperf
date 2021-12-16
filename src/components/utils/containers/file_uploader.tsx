@@ -122,6 +122,8 @@ class FileUploader extends React.Component<Props, State> {
     public render() {
         return <div className={styles.dropzoneContainer}>
             {this.state.allowRedirect && <Redirect to={"/dashboard-single-event"} />}
+            {/* {this.state.allowRedirect && <Redirect to={"/dashboard-uir"} />} */}
+
 
             <Dropzone
                 accept={['.umbraperf']}

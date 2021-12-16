@@ -14,7 +14,7 @@ use crate::{
         basic::{basic::sort_batch, filter::filter_between_int32},
         rest::rest_api::find_name,
     },
-    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
+    state::state::{get_serde_dict},
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
@@ -335,11 +335,11 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
-    set_uir_record_batches(out_batch);
+    /* set_uir_record_batches(out_batch);
 
-    let batch = get_uir_record_batches().unwrap().batch.clone();
+    let batch = get_uir_record_batches().unwrap().batch.clone(); */
 
-    return batch;
+    return out_batch;
 }
 
 pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {

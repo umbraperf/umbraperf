@@ -107,9 +107,16 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
     public render() {
 
-        return <div id="queryplanContainer" className={styles.queryplanContainer}>
+        return <div
+            id="queryplanContainer"
+            className={styles.queryplanContainer}
+        >
+            <div className={styles.queryplanContainerResetButtonContainer}>
+                {Controller.createChartResetComponent('pipelinesOperators')}
+            </div>
             <div className={styles.queryplanContainerTitle}>Query Plan</div>
             {this.state.renderedFlowPlan}
+
         </div>
     }
 
@@ -223,9 +230,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         const nodeClass = (nodeOperatorId: string) => {
             if (nodeOperatorId === "root") {
                 return "";
-            }else if (Controller.isOperatorUnavailable(nodeOperatorId)){
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 return "";
-            }else{
+            } else {
                 return styles.queryPlanNode;
             }
         }
@@ -306,7 +313,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (currentPlanElement.hasOwnProperty('source')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
             }
-            if(currentPlanElement.hasOwnProperty('tempRef')){
+            if (currentPlanElement.hasOwnProperty('tempRef')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['tempRef'], referenceNode: currentPlanElement, isTempRef: true });
             }
 
@@ -324,13 +331,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     return planNodes.analyzePlanId === reference.referenceTargetAnalyzePlanId;
                 });
                 const referenceOperatorId = referenceOperator!.operatorId;
-                if(reference.isTempRef){
+                if (reference.isTempRef) {
                     planData.links.push({
                         source: reference.referenceNode.operator,
                         target: referenceOperatorId,
                         isReference: true,
                     });
-                }else{
+                } else {
                     planData.links.push({
                         source: referenceOperatorId,
                         target: reference.referenceNode.operator,

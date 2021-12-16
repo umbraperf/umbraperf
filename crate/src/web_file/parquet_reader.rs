@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::state::state::{append_to_buffer, clear_buffer, get_buffer};
+use crate::{state::state::{append_to_buffer, clear_buffer, get_buffer}, utils::print_to_cons::print_to_js_with_obj};
 
 use super::streambuf::WebFileReader;
 
@@ -14,7 +14,7 @@ impl BufferReader {
 
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
         let reader = zip.by_name(filename).unwrap();
-        let length = reader.compressed_size();
+        let length = reader.size();
         let start_offset = reader.data_start();
 
         let web_file_reader = WebFileReader::new_from_file(file_size as i32);
@@ -42,6 +42,7 @@ impl Read for BufferReader {
         let read_size = buf.len();
 
         let parquet_file = get_buffer();
+
         let binary = parquet_file.lock().unwrap();
 
         let read_size = read_size.min(binary.len() - (self.offset as usize));

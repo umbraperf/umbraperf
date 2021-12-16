@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AppContextProvider } from './app_context';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Route, Router, Switch, useLocation, Redirect, Link, HashRouter, BrowserRouter } from 'react-router-dom';
+import { Route, Router, Switch, useLocation, Redirect, Link } from 'react-router-dom';
 import history from "./history";
 import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
 
@@ -38,7 +38,6 @@ export default function App() {
                 <StylesProvider injectFirst={true}>
                     <MuiThemeProvider theme={Config.materialUiTheme}>
                         <Router history={history}>
-
                             <div className={`app ${styles.app}`}>
 
                                 <div className={styles.appHeader}>

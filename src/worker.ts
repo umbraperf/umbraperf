@@ -106,7 +106,7 @@ export function readFileChunk(offset: number, chunkSize: number) {
 
 function extractQueryPlanFromZip(file: File, queryplanRequestId: number) {
   JSZip.loadAsync(file).then(function (umbraperfArchiv: any) {
-    const queryPlanFile = umbraperfArchiv.files["query_plan.json"];
+    const queryPlanFile = umbraperfArchiv.files["query_plan_analyzed.json"];
     if (undefined === queryPlanFile) {
       worker.postMessage({
         messageId: 201,

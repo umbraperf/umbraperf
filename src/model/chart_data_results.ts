@@ -1,14 +1,13 @@
 import { ChartType } from '.';
 
-export interface ChartDataKeyValue {
-    [chartId: number]: ChartDataObject;
+export interface IChartDataKeyValue {
+    [chartId: number]: IChartDataObject;
 }
 
-export interface ChartDataObject {
+export interface IChartDataObject {
     readonly chartId: number;
     readonly chartData: ChartDataVariant;
 }
-
 
 export type ChartData<T, P> = {
     readonly chartType: T;
@@ -28,7 +27,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.QUERY_PLAN, IQueryPlanData>
     ;
 
-export function createChartDataObject(chartId: number, chartData: ChartDataVariant): ChartDataObject {
+export function createChartDataObject(chartId: number, chartData: ChartDataVariant): IChartDataObject {
     return {
         chartId: chartId,
         chartData: chartData,
@@ -43,15 +42,18 @@ export interface IBarChartData {
 export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
 }
 
 export interface ISwimlanesCombinedData {
     buckets: Array<number>,
     operators: Array<string>,
+    operatorsNice: Array<string>,
     frequency: Array<number>,
     bucketsNeg: Array<number>,
     operatorsNeg: Array<string>,
+    operatorsNiceNeg: Array<string>,
     frequencyNeg: Array<number>,
 }
 
@@ -88,14 +90,12 @@ export interface IMemoryAccessHeatmapChartData {
 
 export interface IUirViewerData {
     uirLines: Array<string>;
-    event1: Array<number>;
-    event2: Array<number>;
-    event3: Array<number>;
-    event4: Array<number>;
-    relEvent1: Array<number>;
-    relEvent2: Array<number>;
-    relEvent3: Array<number>;
-    relEvent4: Array<number>;
+    eventsFrequency: {
+        [eventId:number ]: Array<number>;
+    }
+    eventsRelativeFrequency: {
+        [eventId:number ]: Array<number>;
+    }
     operators: Array<string>;
     pipelines: Array<string>;
     isFunction: Array<number>;

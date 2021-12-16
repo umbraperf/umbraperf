@@ -10,17 +10,17 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{basic::find_unique_string, filter::filter_with},
-    state::state::get_record_batches,
-    utils::record_batch_util::create_new_record_batch,
+    exec::{
+        basic::{basic::find_unique_string, filter::filter_with},
+    },
+    state::state::{get_mapping_operator, get_record_batches},
+    utils::{record_batch_util::create_new_record_batch, array_util::get_stringarray_column},
 };
 
+use super::op_mapping::init_mapping_operator;
+
 pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
-    let vec = batch
-        .column(column_to_count)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec = get_stringarray_column(batch, column_to_count);
 
     let mut result_builder = Float64Array::builder(1);
 
@@ -39,11 +39,7 @@ pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
 }
 
 pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) -> RecordBatch {
-    let vec = batch
-        .column(*column_index_for_unqiue)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec = get_stringarray_column(batch, *column_index_for_unqiue);
 
     let hash_set = vec
         .into_iter()
@@ -66,6 +62,7 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
 }
 
 pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
+
     let unique_batch =
         find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
 
@@ -78,9 +75,7 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     let mut result_builder = Float64Array::builder(vec.len());
 
     for group in vec {
-        let mut filter_str = Vec::new();
-        filter_str.push(group.unwrap());
-        let group_batch = filter_with(column_to_groupby_over, filter_str, batch);
+        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
 
         let row_count = group_batch.num_rows() as f64;
 
@@ -97,22 +92,74 @@ pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> Re
     return batch;
 }
 
+pub fn count_rows_over_with_mapping(
+    batch: &RecordBatch,
+    column_to_groupby_over: usize,
+) -> RecordBatch {
+    let unique_batch =
+        find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
+
+    let vec = unique_batch
+        .column(0)
+        .as_any()
+        .downcast_ref::<StringArray>()
+        .unwrap();
+
+    let mut result_builder = Float64Array::builder(vec.len());
+    let mut op_extension_vec = Vec::new();
+    let mut pyhsical_vec = Vec::new();
+
+    for group in vec {
+        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
+        let row_count = group_batch.num_rows() as f64;
+
+        let pyhsical_vec_col = group_batch
+            .column(7)
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+
+        init_mapping_operator();
+        let mapping = get_mapping_operator();
+        let map = mapping.lock().unwrap();
+        pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
+        op_extension_vec.push(map.get(group.unwrap()).unwrap().to_owned());
+        let _result_builder = result_builder.append_value(row_count);
+    }
+
+    let builder = result_builder.finish();
+
+    let batch = create_new_record_batch(
+        vec![
+            batch.schema().field(column_to_groupby_over).name(),
+            "op_ext",
+            "physical_op",
+            "count",
+        ],
+        vec![
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
+        vec![
+            unique_batch.column(0).to_owned(),
+            Arc::new(StringArray::from(op_extension_vec)),
+            Arc::new(StringArray::from(pyhsical_vec)),
+            Arc::new(builder),
+        ],
+    );
+
+    return batch;
+}
+
 pub fn count_rows_over_double(
     batch: &RecordBatch,
     column_pipeline: usize,
     column_operator: usize,
 ) -> RecordBatch {
-    let vec_pipe = batch
-        .column(column_pipeline)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let vec_op = batch
-        .column(column_operator)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
+    let vec_pipe = get_stringarray_column(batch, column_pipeline);
+    let vec_op = get_stringarray_column(batch, column_operator);
 
     let mut hashmap: HashMap<&str, HashMap<&str, f64>> = HashMap::new();
 

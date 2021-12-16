@@ -17,19 +17,19 @@ export class RequestController {
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
-            type: model.StateMutationType.SET_CURRENTREQUEST,
+            type: model.StateMutationType.SET_CURRENT_REQUEST,
             data: restQueryType,
         });
 
         if (!metaRequest && chartType) {
             store.dispatch({
-                type: model.StateMutationType.SET_LOADINGCHARTREADABLENAME,
+                type: model.StateMutationType.SET_LOADING_CHART_READABLE_NAME,
                 data: chartType,
             });
         }
 
         store.dispatch({
-            type: model.StateMutationType.SET_RESULTLOADING,
+            type: model.StateMutationType.SET_RESULT_LOADING,
             data: { key: requestingChartId ? requestingChartId : -1, value: true },
         });
 
@@ -97,10 +97,10 @@ export function requestStatistics(controller: RequestController) {
 //request operators arry of active operators in current selected timeframe
 export function requestActiveOperatorsTimeframe(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
+        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_OPERATORS_IN_TIMEFRAME,
-            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, pipelines: store.getState().currentPipeline },
         }), true);
 }
 
@@ -119,22 +119,6 @@ export function requestChartData(controller: RequestController, chartId: number,
                 data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
-
-        // case model.ChartType.SWIM_LANES:
-        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-        //     });
-        //     break;
-
-        // case model.ChartType.SWIM_LANES_PIPELINES:
-        //     restQueryType = model.RestQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_PIPELINE;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize },
-        //     });
-        //     break;
 
         case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
             restQueryType = model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES;
@@ -156,7 +140,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { event2: store.getState().currentMultipleEvent[1], event1: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
 
@@ -164,17 +148,9 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS;
             restQuery = model.createBackendQuery({
                 type: model.BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS,
-                data: { event1: store.getState().currentMultipleEvent[1], event0: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { event2: store.getState().currentMultipleEvent[1], event1: store.getState().currentMultipleEvent[0], bucketSize: store.getState().currentBucketSize, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
-
-        // case model.ChartType.DONUT_CHART:
-        //     restQueryType = model.RestQueryType.GET_PIPELINE_COUNT;
-        //     restQuery = model.createRestQuery({
-        //         type: restQueryType,
-        //         data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
-        //     });
-        //     break;
 
         case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
             restQueryType = model.BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT;
@@ -204,7 +180,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_GROUPED_UIR_LINES;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { events: store.getState().events!, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
 
@@ -225,10 +201,10 @@ export function resetChartDataInStore(chartId: number) {
 
     let chartData = store.getState().chartData;
     delete chartData[chartId];
-    let newChartData: model.ChartDataKeyValue = { ...chartData }
+    let newChartData: model.IChartDataKeyValue = { ...chartData }
 
     store.dispatch({
-        type: model.StateMutationType.SET_CHARTDATA,
+        type: model.StateMutationType.SET_CHART_DATA,
         data: newChartData,
     });
 }

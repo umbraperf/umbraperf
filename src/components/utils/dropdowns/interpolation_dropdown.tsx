@@ -52,7 +52,7 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentInterpolation: (newCurrentInterpolation: String) => dispatch({
-        type: model.StateMutationType.SET_CURRENTINTERPOLATION,
+        type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
         data: newCurrentInterpolation,
     }),
 });

@@ -4,60 +4,50 @@ use std::{
 };
 
 use arrow::{
-    array::{Float64Array, Int32Array, Int64Array, StringArray},
+    array::{ArrayRef, Float64Array, Int32Array, Int64Array, StringArray},
     datatypes::DataType,
     record_batch::RecordBatch,
 };
 
 use crate::{
-    exec::basic::{basic::sort_batch, filter::filter_between_int32},
+    exec::{
+        basic::{basic::sort_batch, filter::filter_between_int32},
+        rest::rest_api::find_name,
+    },
     state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
     utils::record_batch_util::{self, create_new_record_batch},
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ABSFREQ {
-    abs_freq_1: f64,
-    abs_freq_2: f64,
-    abs_freq_3: f64,
-    abs_freq_4: f64,
+    abs_freq: Vec<f64>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RELFREQ {
-    rel_freq_1: f64,
-    rel_freq_2: f64,
-    rel_freq_3: f64,
-    rel_freq_4: f64,
+    rel_freq: Vec<f64>,
 }
 
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
 }
 
-pub fn sum_of_vec(vec: Vec<f64>) -> (f64, f64, f64, f64) {
-    let mut sum1 = 0.;
-    for item in vec.iter().step_by(4) {
-        sum1 += item;
+pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
+    let mut out_vec = Vec::new();
+    for i in 0..num_of_events {
+        let mut sum = 0.;
+        for item in vec.iter().skip(i).step_by(num_of_events) {
+            sum += item;
+        }
+        out_vec.push(f64::trunc((sum) * 100.0) / 100.0);
     }
-    let mut sum2 = 0.;
-    for item in vec.iter().skip(1).step_by(4) {
-        sum2 += item;
-    }
-    let mut sum3 = 0.;
-    for item in vec.iter().skip(2).step_by(4) {
-        sum3 += item;
-    }
-    let mut sum4 = 0.;
-    for item in vec.iter().skip(3).step_by(4) {
-        sum4 += item;
-    }
-    (sum1, sum2, sum3, sum4)
+
+    out_vec
 }
 
-pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
+pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     let column_ev_name = record_batch
         .column(1)
         .as_any()
@@ -75,21 +65,26 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
     // CALCULATE
     let mut hashmap_count = HashMap::new();
     let mut unique_events_set = HashSet::new();
+
     for entry in column_srcline.into_iter().enumerate() {
         let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
         let mapping_to_dict_file = hashmap_samplekey_srcline
             .get(&(entry_srcline_num as u64))
             .unwrap();
-        let current_ev = column_ev_name.value(entry.0);
+        let mut current_ev = column_ev_name.value(entry.0);
         if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
             let split = mapping_to_dict_file
                 .split_terminator(":")
                 .collect::<Vec<&str>>();
             let srcline_key = split[1];
             if dict.uri_dict.get(srcline_key).is_some() {
+                if entry.0 < 30 {
+                    current_ev = "test_Event";
+                }
                 let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
                 unique_events_set.insert(current_ev);
+
                 inner_hashmap.entry(srcline_key).or_insert(0);
                 inner_hashmap.insert(srcline_key, inner_hashmap[split[1]] + 1);
                 inner_hashmap.entry("sum").or_insert(0);
@@ -128,10 +123,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         output_vec.push((
             dict.uir.as_ref(),
             ABSFREQ {
-                abs_freq_1: buffer_percentage[0],
-                abs_freq_2: buffer_percentage[1],
-                abs_freq_3: buffer_percentage[2],
-                abs_freq_4: buffer_percentage[3],
+                abs_freq: buffer_percentage,
             },
             dict.op.as_ref(),
             dict.pipeline.as_ref(),
@@ -151,16 +143,11 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                     let str = item.1;
                     let str = str.0;
                     if str.unwrap().contains("define") || str.unwrap().contains("declare") {
-                        let (sum1, sum2, sum3, sum4) = sum_of_vec(buffer_percentage);
+                        let sum_vec = sum_of_vec(buffer_percentage, unique_events_set.len());
                         let dict = dict.uri_dict.get(&item.0.to_string()).unwrap();
                         aggregated_output_vec.push((
                             Some(current_srcline.to_owned()),
-                            ABSFREQ {
-                                abs_freq_1: round(sum1),
-                                abs_freq_2: round(sum2),
-                                abs_freq_3: round(sum3),
-                                abs_freq_4: round(sum4),
-                            },
+                            ABSFREQ { abs_freq: sum_vec },
                             dict.op.as_ref(),
                             dict.pipeline.as_ref(),
                             1,
@@ -173,7 +160,7 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
                                 .get(&(item.0 as i64).to_string().as_str())
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
-                            let percentage = specific / total;
+                            let percentage = round(specific / total);
                             buffer_percentage.push(percentage)
                         }
                     }
@@ -202,65 +189,55 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
 
     let mut aggregated_output_vec_2 = Vec::new();
 
-    let (mut total_1, mut total_2, mut total_3, mut total_4) = (0., 0., 0., 0.);
+    let mut total_sum_vec = Vec::new();
+    for _entry in &unique_events_set {
+        total_sum_vec.push(0.);
+    }
     for item in aggregated_output_vec {
         if item.0.clone().unwrap().contains("define") {
-            total_1 = item.1.abs_freq_1;
-            total_2 = item.1.abs_freq_2;
-            total_3 = item.1.abs_freq_3;
-            total_4 = item.1.abs_freq_1;
+            total_sum_vec = Vec::new();
+            for entry in item.1.abs_freq.clone() {
+                total_sum_vec.push(entry);
+            }
+            let mut total_sum_vec_function = Vec::new();
+            for _entry in &unique_events_set {
+                total_sum_vec_function.push(0.);
+            }
             let rel_freq = RELFREQ {
-                rel_freq_1: 0.,
-                rel_freq_2: 0.,
-                rel_freq_3: 0.,
-                rel_freq_4: 0.,
+                rel_freq: total_sum_vec_function.clone(),
             };
+
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         } else {
+            let mut vec = Vec::new();
+            for curr_freq in item.1.abs_freq.clone().into_iter().enumerate() {
+                if total_sum_vec[curr_freq.0] == 0. {
+                    vec.push(0.);
+                } else {
+                    vec.push(round(curr_freq.1 / total_sum_vec[curr_freq.0]));
+                }
+            }
             let rel_freq = RELFREQ {
-                rel_freq_1: if total_1 == 0. {
-                    0.
-                } else {
-                    round(item.1.abs_freq_1 / total_1)
-                },
-                rel_freq_2: if total_2 == 0. {
-                    0.
-                } else {
-                    round(item.1.abs_freq_2 / total_2)
-                },
-                rel_freq_3: if total_3 == 0. {
-                    0.
-                } else {
-                    round(item.1.abs_freq_3 / total_3)
-                },
-                rel_freq_4: if total_4 == 0. {
-                    0.
-                } else {
-                    round(item.1.abs_freq_4 / total_4)
-                },
+                rel_freq: vec.clone(),
             };
+
             aggregated_output_vec_2.push((item.0, item.1, item.2, item.3, item.4, rel_freq));
         }
     }
 
     let mut srcline = Vec::new();
-    let (mut perc_1, mut perc_2, mut perc_3, mut perc_4) =
-        (Vec::new(), Vec::new(), Vec::new(), Vec::new());
+    let mut vec_vec_perc = Vec::new();
     let mut op = Vec::new();
     let mut pipe = Vec::new();
     let mut is_function_flag = Vec::new();
     let mut srcline_num = Vec::new();
-    let (mut rel_perc_1, mut rel_perc_2, mut rel_perc_3, mut rel_perc_4) =
-        (Vec::new(), Vec::new(), Vec::new(), Vec::new());
+    let mut vec_vec_rel_perc = Vec::new();
 
     for input in aggregated_output_vec_2.into_iter().enumerate() {
         let num = input.0;
         let input = input.1;
         srcline.push(format!("{}\n", input.0.unwrap()));
-        perc_1.push(input.1.abs_freq_1);
-        perc_2.push(input.1.abs_freq_2);
-        perc_3.push(input.1.abs_freq_3);
-        perc_4.push(input.1.abs_freq_4);
+        vec_vec_perc.push(input.1);
         if let Some(operator) = input.2 {
             op.push(operator.as_str());
         } else {
@@ -273,58 +250,88 @@ pub fn uir(_file_length: u64, record_batch: RecordBatch) -> RecordBatch {
         }
         is_function_flag.push(input.4);
         srcline_num.push((num as i32) + 1);
-        rel_perc_1.push(input.5.rel_freq_1);
-        rel_perc_2.push(input.5.rel_freq_2);
-        rel_perc_3.push(input.5.rel_freq_3);
-        rel_perc_4.push(input.5.rel_freq_4);
+        vec_vec_rel_perc.push(input.5);
+    }
+
+    let mut vec = Vec::new();
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let value = entry.0 + 1;
+        let mut str = "perc".to_owned();
+        str.push_str(&value.to_string());
+        vec.push(str);
+    }
+    let vec: Vec<&str> = vec.iter().map(AsRef::as_ref).collect();
+
+    let mut vec_rel: Vec<String> = Vec::new();
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let value = entry.0 + 1;
+        let mut str = "rel_perc".to_owned();
+        str.push_str(&value.to_string());
+        vec_rel.push(str);
+    }
+    let vec_rel: Vec<&str> = vec_rel.iter().map(AsRef::as_ref).collect();
+
+    let data = vec![
+        vec!["scrline"],
+        vec,
+        vec!["op"],
+        vec!["pipe"],
+        vec!["func_flag"],
+        vec!["srcline_num"],
+        vec_rel,
+    ];
+
+    let mut vec_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_data.push(DataType::Float64);
+    }
+    let mut vec_rel_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_rel_data.push(DataType::Float64);
+    }
+
+    let data_datatype = vec![
+        vec![DataType::Utf8],
+        vec_data,
+        vec![DataType::Utf8],
+        vec![DataType::Utf8],
+        vec![DataType::Int32],
+        vec![DataType::Int32],
+        vec_rel_data,
+    ];
+
+    let mut column_ref: Vec<ArrayRef> = Vec::new();
+
+    column_ref.push(Arc::new(StringArray::from(srcline)));
+
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let mut vec = Vec::new();
+        for vec_perc in &vec_vec_perc {
+            vec.push(vec_perc.abs_freq[entry.0]);
+        }
+        column_ref.push(Arc::new(Float64Array::from(vec)));
+    }
+
+    column_ref.push(Arc::new(StringArray::from(op)));
+    column_ref.push(Arc::new(StringArray::from(pipe)));
+    column_ref.push(Arc::new(Int32Array::from(is_function_flag)));
+    column_ref.push(Arc::new(Int32Array::from(srcline_num)));
+
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let mut vec = Vec::new();
+        for vec_perc in &vec_vec_rel_perc {
+            vec.push(vec_perc.rel_freq[entry.0]);
+        }
+        column_ref.push(Arc::new(Float64Array::from(vec)));
     }
 
     let out_batch = create_new_record_batch(
-        vec![
-            "scrline",
-            "perc1",
-            "perc2",
-            "perc3",
-            "perc4",
-            "op",
-            "pipe",
-            "func_flag",
-            "srcline_num",
-            "rel_perc1",
-            "rel_perc2",
-            "rel_perc3",
-            "rel_perc4",
-        ],
-        vec![
-            DataType::Utf8,
-            DataType::Float64,
-            DataType::Float64,
-            DataType::Float64,
-            DataType::Float64,
-            DataType::Utf8,
-            DataType::Utf8,
-            DataType::Int32,
-            DataType::Int32,
-            DataType::Float64,
-            DataType::Float64,
-            DataType::Float64,
-            DataType::Float64,
-        ],
-        vec![
-            Arc::new(StringArray::from(srcline)),
-            Arc::new(Float64Array::from(perc_1)),
-            Arc::new(Float64Array::from(perc_2)),
-            Arc::new(Float64Array::from(perc_3)),
-            Arc::new(Float64Array::from(perc_4)),
-            Arc::new(StringArray::from(op)),
-            Arc::new(StringArray::from(pipe)),
-            Arc::new(Int32Array::from(is_function_flag)),
-            Arc::new(Int32Array::from(srcline_num)),
-            Arc::new(Float64Array::from(rel_perc_1)),
-            Arc::new(Float64Array::from(rel_perc_2)),
-            Arc::new(Float64Array::from(rel_perc_3)),
-            Arc::new(Float64Array::from(rel_perc_4)),
-        ],
+        data.into_iter().flatten().collect::<Vec<&str>>(),
+        data_datatype
+            .into_iter()
+            .flatten()
+            .collect::<Vec<DataType>>(),
+        column_ref,
     );
 
     set_uir_record_batches(out_batch);
@@ -341,12 +348,14 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 }
 
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
-    let batch = uir(0, record_batch);
+    let batch = uir(record_batch);
 
-    let only_functions = filter_between_int32(7, 0, 0, &batch);
+    let function_flac_col = find_name("func_flag", &batch);
+    let only_functions = filter_between_int32(function_flac_col, 0, 0, &batch);
     let sort = sort_batch(&only_functions, ordered_by + 1, true);
 
-    let unique = find_unique_string(&sort, 5);
+    let op_col = find_name("op", &sort);
+    let unique = find_unique_string(&sort, op_col);
     let unique = unique
         .column(0)
         .as_any()
@@ -371,7 +380,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     for entry in unique {
         if entry.contains("None") {
         } else {
-            let filter = filter_with(5, vec![&entry], &sort);
+            let filter = filter_with(op_col, vec![&entry], &sort);
             let column = filter
                 .column(ordered_by + 1)
                 .as_any()
@@ -389,10 +398,12 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     let batch = record_batch_util::convert_without_mapping(vec);
 
+    let srcline_num_col = find_name("srcline_num", &batch);
+
     let srcline = StringArray::from(batch.column(0).data().clone());
     let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
-    let op = StringArray::from(batch.column(5).data().clone());
-    let srcline_num = Int32Array::from(batch.column(8).data().clone());
+    let op = StringArray::from(batch.column(op_col).data().clone());
+    let srcline_num = Int32Array::from(batch.column(srcline_num_col).data().clone());
     let total = Float64Array::from(vec_sum);
 
     let mut op_vec = Vec::new();

@@ -1,12 +1,10 @@
-import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
-import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
-    /// The registered files
     fileLoading: boolean;
-    resultLoading: ResultLoading;
-    result: Result | undefined;
+    resultLoading: IResultLoading;
+    result: IResult | undefined;
     chunksNumber: number;
     csvParsingFinished: boolean;
     file: undefined | File;
@@ -16,17 +14,15 @@ export interface AppState {
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    currentOperatorTimeframe: Array<string> | "All";
+    currentOperatorActiveTimeframePipeline: Array<string> | "All";
     currentRequest: BackendQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
-    operators: Array<string> | undefined;
+    operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
-    chartData: ChartDataKeyValue;
-    //TODO remove:
-    dashboardState: IDashboardState | undefined;
+    chartData: IChartDataKeyValue;
     currentInterpolation: String;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
@@ -51,7 +47,7 @@ export function createDefaultState(): AppState {
         currentMultipleEvent: "Default",
         currentPipeline: "All",
         currentOperator: "All",
-        currentOperatorTimeframe: "All",
+        currentOperatorActiveTimeframePipeline: "All",
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
@@ -60,7 +56,6 @@ export function createDefaultState(): AppState {
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},
-        dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],

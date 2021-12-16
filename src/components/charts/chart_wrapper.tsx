@@ -28,11 +28,11 @@ export interface ChartWrapperAppstateProps {
     appContext: Context.IAppContext;
     chartIdCounter: number;
     csvParsingFinished: boolean;
-    resultLoading: model.ResultLoading;
-    chartData: model.ChartDataKeyValue,
+    resultLoading: model.IResultLoading;
+    chartData: model.IChartDataKeyValue,
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentEvent: string;
     currentMultipleEvent: [string, string] | "Default";
     currentOperator: Array<string> | "All",
@@ -282,7 +282,7 @@ class ChartWrapper extends React.Component<Props, State> {
         return React.createElement(chartClass!, specificChart.props as any);
     }
 
-    isComponentLoading(): boolean {
+    isChartDataLoading(): boolean {
 
         if (this.props.resultLoading[this.state.chartId] || !this.props.chartData[this.state.chartId]) {
             return true;
@@ -311,7 +311,7 @@ class ChartWrapper extends React.Component<Props, State> {
 
         return <div className={styles.elementWrapper} ref={this.elementWrapper}>
             {this.renderChartOptions()}
-            {this.isComponentLoading()
+            {this.isChartDataLoading()
                 ? <Spinner />
                 : <div className={styles.chartContainer}>
                     {this.createChildChart()}
@@ -342,11 +342,11 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHARTIDCOUNTER,
+        type: model.StateMutationType.SET_CHART_ID_COUNTER,
         data: newChartIdCounter,
     }),
     setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
-        type: model.StateMutationType.SET_CURRENTCHART,
+        type: model.StateMutationType.SET_CURRENT_CHART,
         data: newCurrentChart,
     }),
 });

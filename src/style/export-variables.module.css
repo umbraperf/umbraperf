@@ -22,5 +22,5 @@
     --tooltipBorderWidth: 1px;
     --tooltipBorderRadius: 7px;
     --tooltipBorderColor: colorTertiary;
-    --tooltipBackgroundColor: rgba(255,255,255,0.9);
+    --tooltipBackgroundColor: rgba(255,255,255);
 }

@@ -4,7 +4,7 @@ use std::{
 };
 
 use arrow::{
-    array::{ArrayRef, Float64Array, Int32Array, Int64Array, StringArray},
+    array::{ArrayRef, Float64Array, Int32Array, StringArray},
     datatypes::DataType,
     record_batch::RecordBatch,
 };

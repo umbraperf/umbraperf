@@ -65,8 +65,6 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_QUERYPLAN_JSON:
-            console.log(messageType);
-            console.log(messageData);
             Controller.setQueryPlanJson(messageData.queryPlanData);
             break;
 

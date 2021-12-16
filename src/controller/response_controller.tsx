@@ -144,9 +144,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
     let chartDataCollection: model.IChartDataKeyValue = store.getState().chartData;
     let toggleResultLoadingFlag = false;
 
-    console.log(requestId);
-    console.log(requestType);
-
     switch (requestType) {
 
         case model.BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
@@ -367,7 +364,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                         queryplanData: store.getState().queryplanJson,
                     },
                 });
-            console.log(chartDataElem);
             toggleResultLoadingFlag = true;
             break;
     }

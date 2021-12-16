@@ -40,7 +40,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { events: Array<string>, timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -137,7 +137,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
-            return `scrline/perc/op/srcline_num/total${timeFilter()}/top(srclines)?${event()}`;
+            return `scrline/perc/op/srcline_num/total${timeFilter()}${pipelinesFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

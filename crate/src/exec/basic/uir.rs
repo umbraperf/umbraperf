@@ -335,11 +335,11 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
-    set_uir_record_batches(out_batch);
+    /* set_uir_record_batches(out_batch);
 
-    let batch = get_uir_record_batches().unwrap().batch.clone();
+    let batch = get_uir_record_batches().unwrap().batch.clone(); */
 
-    return batch;
+    return out_batch;
 }
 
 pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {

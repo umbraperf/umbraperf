@@ -33,28 +33,11 @@ class SunburstChart extends React.Component<Props, {}> {
         this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
-
-
     public render() {
         return <div style={{ position: "relative" }} >
-            {this.createChartResetComponent()}
+            {Controller.createChartResetComponent('pipelinesOperators')}
             <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
         </div>
-    }
-
-    createChartResetComponent() {
-        return this.isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={Controller.resetSunburstSelection} />;
-    }
-
-    isResetButtonVisible() {
-        if ((this.props.currentOperator !== "All"
-            && !_.isEqual(this.props.currentOperator, this.props.operators!.operatorsId))
-            || (this.props.currentPipeline !== "All"
-                && !_.isEqual(this.props.currentPipeline, this.props.pipelines))) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     createVegaSignalListeners() {

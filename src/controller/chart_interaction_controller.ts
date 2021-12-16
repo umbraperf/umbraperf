@@ -3,6 +3,8 @@ import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
 import { requestActiveOperatorsTimeframePipeline, requestActivePipelineTimeframe } from ".";
+import ChartResetButton from '../components/utils/togglers/chart_reset_button';
+import React from "react";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
@@ -80,13 +82,13 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
     requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
-export function resetTimeBucketSelection() {
+export function resetSelectionTimeselection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActivePipelineTimeframe(appContext.controller);
     requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
-export function resetSunburstSelection() {
+export function resetSelectionPipelinesOperators() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
     requestActiveOperatorsTimeframePipeline(appContext.controller);
@@ -105,6 +107,38 @@ function resetCurrentPipelineSelection() {
         data: store.getState().pipelines!,
     });
 }
+
+export function createChartResetComponent(resetType: "pipelinesOperators" | "timeselection") {
+    if (resetType === "pipelinesOperators") {
+        const isResetButtonVisible = () => {
+            if ((store.getState().currentOperator !== "All"
+                && !_.isEqual(store.getState().currentOperator, store.getState().operators!.operatorsId))
+                || (store.getState().currentPipeline !== "All"
+                    && !_.isEqual(store.getState().currentPipeline, store.getState().pipelines))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionPipelinesOperators });
+    } else if (resetType === "timeselection") {
+        const isResetButtonVisible = () => {
+            if (store.getState().currentTimeBucketSelectionTuple[0] >= 0 || store.getState().currentTimeBucketSelectionTuple[1] >= 0 ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
+    }
+}
+
+// export function createChartResetComponentTimeselection() {
+//     const isResetButtonVisible = () => {
+
+//     }
+//     return isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={resetSunburstSelection} />;
+// }
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 

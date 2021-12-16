@@ -64,12 +64,14 @@ worker.addEventListener('message', message => {
             Controller.storeResultFromRust(resultRequestId, resultArrowTable, metaRequest, resultBackendQueryType);
             break;
 
-        case model.WorkerResponseType.STORE_QUERYPLAN:
+        case model.WorkerResponseType.STORE_QUERYPLAN_JSON:
             // Controller.storeQueryPlan(messageData);
-            const queryPlanData = messageData.queryPlanData;
-            const queryPlanRequestId = messageData.requestId;
-            const queryPlanBackendQueryType = messageData.backendQueryType;
-            Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanBackendQueryType, queryPlanData);
+            // const queryPlanData = messageData.queryPlanData;
+            // const queryPlanRequestId = messageData.requestId;
+            // const queryPlanBackendQueryType = messageData.backendQueryType;
+            // Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanBackendQueryType, queryPlanData);
+            console.log(messageType);
+            console.log(messageData);
             break;
 
         default:

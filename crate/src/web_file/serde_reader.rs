@@ -29,12 +29,21 @@ pub struct DictionaryUri {
 
 #[derive(Clone)]
 pub struct SerdeDict {
-    pub dict: HashMap<String, HashMap<u64, String>>,
+    pub dict: HashMap<i64, HashMap<u64, String>>,
     pub uri_dict: HashMap<String, DictionaryUri>,
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
+
+pub enum DictFields {
+    Operator = 0,
+    Pipeline = 1,
+    Event = 2,
+    Srcline = 3,
+    OpExtension = 4,
+    PhysicalOp = 5,
+}
 
 impl SerdeDict {
     pub fn read_dict(length: u64) -> Self {
@@ -44,7 +53,7 @@ impl SerdeDict {
         let mut hash_map = HashMap::new();
         for operator in d.operators {
             let inner_hash_map = hash_map
-                .entry("operator".to_string())
+                .entry(DictFields::Operator as i64)
                 .or_insert(HashMap::new());
             let string = operator.0;
             if let Number(x) = operator.1 {
@@ -55,7 +64,7 @@ impl SerdeDict {
 
         for pipeline in d.pipelines {
             let inner_hash_map = hash_map
-                .entry("pipeline".to_string())
+                .entry(DictFields::Pipeline as i64)
                 .or_insert(HashMap::new());
             let string = pipeline.0;
             if let Number(x) = pipeline.1 {
@@ -66,7 +75,7 @@ impl SerdeDict {
 
         for event in d.events {
             let inner_hash_map = hash_map
-                .entry("event".to_string())
+                .entry(DictFields::Event as i64)
                 .or_insert(HashMap::new());
             let string = event.0;
             if let Number(x) = event.1 {
@@ -77,7 +86,7 @@ impl SerdeDict {
 
         for srclines in d.srclines {
             let inner_hash_map = hash_map
-                .entry("srclines".to_string())
+                .entry(DictFields::Srcline as i64)
                 .or_insert(HashMap::new());
             let string = srclines.0;
             if let Number(x) = srclines.1 {
@@ -88,7 +97,7 @@ impl SerdeDict {
 
         for op_extension in d.op_extension{
             let inner_hash_map = hash_map
-                .entry("op_extension".to_string())
+                .entry(DictFields::OpExtension as i64)
                 .or_insert(HashMap::new());
             let string = op_extension.0;
             if let Number(x) = op_extension.1 {
@@ -99,7 +108,7 @@ impl SerdeDict {
 
         for physical_op in d.physical_op {
             let inner_hash_map = hash_map
-                .entry("physical_op".to_string())
+                .entry(DictFields::PhysicalOp as i64)
                 .or_insert(HashMap::new());
             let string = physical_op.0;
             if let Number(x) = physical_op.1 {

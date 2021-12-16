@@ -20,7 +20,7 @@ use crate::{
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{self, create_new_record_batch},
         string_util::split_at_colon,
-    },
+    }, web_file::serde_reader::DictFields,
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -66,12 +66,12 @@ pub fn calculate(
 
     for entry in column_srcline.into_iter().enumerate() {
         let entry_srcline_num = entry.1.unwrap();
-        let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
+        let hashmap_samplekey_srcline = dict.dict.get(&(DictFields::Srcline as i64)).unwrap();
         let mapping_to_dict_file = hashmap_samplekey_srcline
             .get(&(entry_srcline_num as u64))
             .unwrap();
         let current_ev = column_ev_name.value(entry.0);
-        if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
+        if mapping_to_dict_file.starts_with("dump") || mapping_to_dict_file.starts_with("proxy") {
             let split = split_at_colon(mapping_to_dict_file);
             let srcline_key = split[1];
             let inner_hashmap = hashmap_count

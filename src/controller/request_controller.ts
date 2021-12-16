@@ -30,7 +30,7 @@ export class RequestController {
 
         store.dispatch({
             type: model.StateMutationType.SET_RESULT_LOADING,
-            data: { key: requestingChartId ? requestingChartId : -1, value: true },
+            data: { key: requestingChartId ? requestingChartId : -1, value: true }, //id -1 if metarequest
         });
 
         store.dispatch({

@@ -65,13 +65,9 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_QUERYPLAN_JSON:
-            // Controller.storeQueryPlan(messageData);
-            // const queryPlanData = messageData.queryPlanData;
-            // const queryPlanRequestId = messageData.requestId;
-            // const queryPlanBackendQueryType = messageData.backendQueryType;
-            // Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanBackendQueryType, queryPlanData);
             console.log(messageType);
             console.log(messageData);
+            Controller.setQueryPlanJson(messageData.queryPlanData);
             break;
 
         default:

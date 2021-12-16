@@ -197,7 +197,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
 
         case model.ChartType.QUERY_PLAN:
-            restQueryType = model.BackendQueryType.GET_QUERYPLAN_DATA;
+            restQueryType = model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
                 data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },

@@ -196,8 +196,17 @@ class SunburstChart extends React.Component<Props, {}> {
         }
 
         const bigPipelinesLegendChartOffset = this.props.doubleRowSize ? 50 : 30;
-
         const isBigPipelinesLegend = this.props.pipelines!.length > 10;
+        const isSmallRepresentation = this.props.width < 400;
+        const isLargeRepresentation = sunburstSize() >= 120;
+
+        const getPipelineLegendEntryLength = () => {
+            return this.props.doubleRowSize ?
+                (isBigPipelinesLegend && isLargeRepresentation ? 20 : 30) :
+                (isBigPipelinesLegend ?
+                    (isSmallRepresentation ? 10 : 15) :
+                    20)
+        }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -328,6 +337,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     }
                 }
             ],
+
             legends: [
                 {
                     fill: "colorOperatorsId", //just as dummy
@@ -344,7 +354,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: `truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, ${this.props.doubleRowSize ? (isBigPipelinesLegend && sunburstSize() < 120 ? 20 : 30) : (isBigPipelinesLegend ? 15 : 20)})` },
+                                text: { signal: `truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, ${getPipelineLegendEntryLength()})` },
                                 fill: [
                                     {
                                         test: "indata('availablePipelines', 'pipelinesActiveTimeframe', datum.value.pipeline)",
@@ -363,6 +373,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
                     rowPadding: 0,
+                    offset: isSmallRepresentation ? 40 : 0,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,

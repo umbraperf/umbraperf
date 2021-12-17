@@ -65,22 +65,21 @@ pub fn calculate(
     let mut unique_events_set = HashSet::new();
 
     for entry in column_srcline.into_iter().enumerate() {
-        let entry_srcline_num = entry.1.unwrap();
         let hashmap_samplekey_srcline = dict.dict.get(&(DictFields::Srcline as i64)).unwrap();
         let mapping_to_dict_file = hashmap_samplekey_srcline
-            .get(&(entry_srcline_num as u64))
+            .get(&(entry.1.unwrap() as u64))
             .unwrap();
         let current_ev = column_ev_name.value(entry.0);
-        if mapping_to_dict_file.starts_with("dump") || mapping_to_dict_file.starts_with("proxy") {
-            let split = split_at_colon(mapping_to_dict_file);
-            let srcline_key = split[1];
+        if mapping_to_dict_file.starts_with("dump") {
+            let split = mapping_to_dict_file.split_once(":").unwrap();
+            let srcline_key = split.1;
             let inner_hashmap = hashmap_count
                 .entry(current_ev.to_string())
                 .or_insert(HashMap::new());
             unique_events_set.insert(current_ev.to_string());
 
             inner_hashmap.entry(srcline_key.to_string()).or_insert(0);
-            inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[split[1]] + 1);
+            inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[srcline_key] + 1);
             inner_hashmap.entry("sum".to_string()).or_insert(0);
             inner_hashmap.insert("sum".to_string(), inner_hashmap["sum"] + 1);
         }
@@ -335,9 +334,132 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
-    /* set_uir_record_batches(out_batch);
+    return out_batch;
+}
 
-    let batch = get_uir_record_batches().unwrap().batch.clone(); */
+pub fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
+    let dict = get_serde_dict().unwrap();
+    let (hashmap_count, unique_events_set) = calculate(record_batch);
+
+    let mut output_vec = Vec::new();
+    let keys = dict.uri_dict.keys();
+    let vec = keys.collect::<Vec<&String>>();
+    let mut uirs = vec
+        .into_iter()
+        .map(|i| i.parse::<i64>().unwrap())
+        .collect::<Vec<i64>>();
+    uirs.sort();
+    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<String>>();
+    unique_events_set.sort();
+
+    for uir in uirs {
+        let entry = uir.to_string();
+
+        let mut buffer_percentage = Vec::new();
+
+        for event in &unique_events_set {
+            let inner_hashmap = hashmap_count.get(event).unwrap();
+            let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
+            let total = *inner_hashmap.get("sum").unwrap() as f64;
+            let percentage = specific / total;
+            let percentage = round(percentage);
+            buffer_percentage.push(percentage)
+        }
+
+        let dict = dict.uri_dict.get(&entry).unwrap();
+
+        output_vec.push((
+            dict.uir.as_ref(),
+            ABSFREQ {
+                abs_freq: buffer_percentage,
+            },
+            dict.op.as_ref(),
+            dict.pipeline.as_ref(),
+        ));
+    }
+
+    let mut srcline = Vec::new();
+    let mut vec_vec_perc = Vec::new();
+    let mut op = Vec::new();
+    let mut pipe = Vec::new();
+    let mut srcline_num = Vec::new();
+
+    for input in output_vec.into_iter().enumerate() {
+        let num = input.0;
+        let input = input.1;
+        srcline.push(format!("{}\n", input.0.unwrap()));
+        vec_vec_perc.push(input.1);
+        if let Some(operator) = input.2 {
+            op.push(operator.as_str());
+        } else {
+            op.push("None");
+        }
+        if let Some(pipeline) = input.3 {
+            pipe.push(pipeline.as_str());
+        } else {
+            pipe.push("None");
+        }
+        srcline_num.push((num as i32) + 1);
+    }
+
+    let mut vec = Vec::new();
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let value = entry.0 + 1;
+        let mut str = "perc".to_owned();
+        str.push_str(&value.to_string());
+        vec.push(str);
+    }
+    let vec: Vec<&str> = vec.iter().map(AsRef::as_ref).collect();
+
+    let data = vec![
+        vec!["scrline"],
+        vec,
+        vec!["op"],
+        vec!["pipe"],
+        vec!["srcline_num"],
+    ];
+
+    let mut vec_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_data.push(DataType::Float64);
+    }
+    let mut vec_rel_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_rel_data.push(DataType::Float64);
+    }
+
+    let data_datatype = vec![
+        vec![DataType::Utf8],
+        vec_data,
+        vec![DataType::Utf8],
+        vec![DataType::Utf8],
+        vec![DataType::Int32],
+    ];
+
+    let mut column_ref: Vec<ArrayRef> = Vec::new();
+
+    column_ref.push(Arc::new(StringArray::from(srcline)));
+
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let mut vec = Vec::new();
+        for vec_perc in &vec_vec_perc {
+            vec.push(vec_perc.abs_freq[entry.0]);
+        }
+        column_ref.push(Arc::new(Float64Array::from(vec)));
+    }
+
+    column_ref.push(Arc::new(StringArray::from(op)));
+    column_ref.push(Arc::new(StringArray::from(pipe)));
+    column_ref.push(Arc::new(Int32Array::from(srcline_num)));
+
+    let out_batch = create_new_record_batch(
+        data.into_iter().flatten().collect::<Vec<&str>>(),
+        data_datatype
+            .into_iter()
+            .flatten()
+            .collect::<Vec<DataType>>(),
+        column_ref,
+    );
 
     return out_batch;
 }
@@ -349,10 +471,9 @@ pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 }
 
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
-    let batch = uir(record_batch);
+    let batch = uir_without_rel(record_batch);
 
-    let only_functions = filter_between_int32(find_name("func_flag", &batch), 0, 0, &batch);
-    let sort = sort_batch(&only_functions, ordered_by + 1, true);
+    let sort = sort_batch(&batch, ordered_by + 1, true);
 
     let op_col = find_name("op", &sort);
     let unique = find_unique_string(&sort, op_col);

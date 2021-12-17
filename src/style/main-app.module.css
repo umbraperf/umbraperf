@@ -28,24 +28,22 @@
 
 @media not all and (min-width: 400px) {
     
-    .app{
-        composes: app;
-        position: absolute;
-        width: inherit;
-    }
     .appHeader{
         composes: app;
         position: absolute;
+        width: 400px;
     }
     
     .appNavigation{
         composes: app;
         position: absolute;
+        width: 400px;
     }
 
     .appBody{
         composes: appBody;
-        position: fixed;
+        position: absolute;
+        width: 400px;
     }
     
   }

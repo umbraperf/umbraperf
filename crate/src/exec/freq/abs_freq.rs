@@ -26,7 +26,7 @@ pub fn abs_freq_of_event(
     column_for_time: usize,
     bucket_size: f64,
 ) -> RecordBatch {
-    let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
+    // let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false); //experimental
 
     let unique_event = find_unique_string(batch, column_for_event);
     let vec_event = get_stringarray_column(&unique_event, 0);

@@ -3,6 +3,7 @@
 
 .app{
     background-color: appBackgroundColor;
+    overflow-x: visible;
 }
 
 .appHeader{
@@ -23,4 +24,16 @@
     bottom: 0px;
     width: 100%;
 }
+
+@media not all and (min-width: 400px) {
+    .appBody{
+        composes: appBody;
+        min-width: 400px;
+        overflow-x: scroll;
+    }
+    .appNavigation{
+        composes: appNavigation;
+        width: 400px;
+    }
+  }
 

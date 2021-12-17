@@ -198,11 +198,11 @@ class SunburstChart extends React.Component<Props, {}> {
         const bigPipelinesLegendChartOffset = this.props.doubleRowSize ? 50 : 30;
         const isBigPipelinesLegend = this.props.pipelines!.length > 10;
         const isSmallRepresentation = this.props.width < 400;
-        const isLargeRepresentation = sunburstSize() >= 120;
+        const isLargeRepresentation = sunburstSize() >= 100;
 
         const getPipelineLegendEntryLength = () => {
             return this.props.doubleRowSize ?
-                (isBigPipelinesLegend && isLargeRepresentation ? 20 : 30) :
+                (isBigPipelinesLegend && !isLargeRepresentation ? 20 : 30) :
                 (isBigPipelinesLegend ?
                     (isSmallRepresentation ? 10 : 15) :
                     20)

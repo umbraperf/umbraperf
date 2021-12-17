@@ -1,5 +1,5 @@
-@value colors: "./export-variables.module.css";
-@value appBackgroundColor from colors;
+@value globals: "./export-variables.module.css";
+@value appBackgroundColor, mobileScreenSizeAppWidth from globals;
 
 .app{
     background-color: appBackgroundColor;
@@ -26,24 +26,24 @@
     width: 100%;
 }
 
-@media not all and (min-width: 400px) {
+@media not all and (min-width: mobileScreenSizeAppWidth) {
     
     .appHeader{
         composes: app;
         position: absolute;
-        width: 400px;
+        width: var(--mobileScreenSizeAppWidth);
     }
     
     .appNavigation{
         composes: app;
         position: absolute;
-        width: 400px;
+        width: var(--mobileScreenSizeAppWidth);
     }
 
     .appBody{
         composes: appBody;
         position: absolute;
-        width: 400px;
+        width: var(--mobileScreenSizeAppWidth);
     }
     
   }

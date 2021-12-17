@@ -72,9 +72,13 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
         case model.BackendQueryType.GET_PIPELINES:
             const pipelines = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
+            const pipelinestemp = pipelines.concat(["test", "test", "test", "test", "test", "test", "test", "test", "test", "test"]);
+
             store.dispatch({
                 type: model.StateMutationType.SET_PIPELINES,
-                data: pipelines,
+                // data: pipelines,
+                data: pipelinestemp,
+
             });
             break;
 

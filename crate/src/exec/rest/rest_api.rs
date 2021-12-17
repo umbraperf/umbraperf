@@ -5,7 +5,7 @@ use crate::{
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
-    state::state::{get_query_from_cache, insert_query_to_cache},
+    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
     utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::concat_record_batches,
@@ -170,6 +170,18 @@ fn query_already_calculated(restful_string: &str) -> bool {
     return false;
 }
 
+fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBatch {
+    let str_raw = filter_vec.join("");
+    let cache = get_filter_query_from_cache();
+    let mut query = cache.lock().unwrap();
+    if let Some(batch) = query.get(&str_raw) {
+        return batch.to_owned();
+    }
+    let filtered_batch = eval_filters(batch, filter_vec);
+    query.insert(str_raw, filtered_batch.to_owned());
+    return filtered_batch;
+}
+
 fn split_query(restful_string: &str) -> (Vec<&str>, Vec<&str>, Vec<&str>) {
     let split = restful_string.split_terminator("/");
 
@@ -196,7 +208,18 @@ fn multiple_queries_concat(restful_string: &str) -> bool {
 
 fn exec_query(record_batch: RecordBatch, restful_string: &str) -> Option<RecordBatch> {
     let split_query = split_query(restful_string);
-    let record_batch = eval_filters(record_batch, split_query.0);
+    let record_batch = filter_already_applied(record_batch, split_query.0);
+    let record_batch = eval_operations(record_batch, split_query.1);
+    if let Some(batch) = record_batch {
+        let record_batch = eval_selections(batch, split_query.2);
+        return Some(record_batch);
+    } else {
+        return None;
+    }
+}
+
+fn exec_query_without_filters(record_batch: RecordBatch, restful_string: &str) -> Option<RecordBatch> {
+    let split_query = split_query(restful_string);
     let record_batch = eval_operations(record_batch, split_query.1);
     if let Some(batch) = record_batch {
         let record_batch = eval_selections(batch, split_query.2);
@@ -230,7 +253,7 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
         let mut vec_batch = Vec::new();
         let filtered = exec_filters(record_batch, restful_string); 
         for query in split {
-            vec_batch.push(exec_query(filtered.to_owned(), query).unwrap());
+            vec_batch.push(exec_query_without_filters(filtered.to_owned(), query).unwrap());
         }
         finish_query_exec(concat_record_batches(vec_batch), restful_string);
     } else {

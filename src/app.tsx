@@ -43,7 +43,7 @@ export default function App() {
                                 <div className={styles.appHeader}>
                                     <HeaderAppbar />
                                 </div>
-
+                                
                                 <div className={`appNavigation ${styles.appNavigation}`}>
                                     <TabPanel />
                                 </div>

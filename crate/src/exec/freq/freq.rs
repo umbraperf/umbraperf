@@ -17,7 +17,7 @@ use crate::{
         filter::{filter_between_int32},
         statistics, op_mapping::init_mapping_operator,
     },
-    state::state::{get_mapping_operator, get_record_batches},
+    state::state::{get_mapping_operator, get_record_batches, set_swimlane_record_batch, get_swimlane_record_batch, reset_swimlane_record_batch},
     utils::{
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{create_new_record_batch, send_record_batch_to_js}, array_util::{get_stringarray_column, get_floatarray_column, get_int32_column, get_uint_column},
@@ -121,6 +121,15 @@ pub fn freq_of_pipelines(
     from: f64,
     _to: f64,
 ) -> RecordBatch {
+
+
+    if let Some(pre_calc_batch) =  get_swimlane_record_batch() {
+        let batch = pre_calc_batch.batch.to_owned();
+        reset_swimlane_record_batch();
+        return batch;
+    }
+
+
     let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
 
     let unique_operator =
@@ -132,7 +141,8 @@ pub fn freq_of_pipelines(
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
     let mut result_vec_operator_nice_format = Vec::new();
-    let mut result_builder = Vec::new();
+    let mut result_builder_abs = Vec::new();
+    let mut result_builder_rel = Vec::new();
 
     let operator_column = get_stringarray_column(batch, column_for_operator);
     let time_column = get_floatarray_column(batch, column_for_time);
@@ -152,9 +162,7 @@ pub fn freq_of_pipelines(
         bucket_map.insert(operator.unwrap(), 0.0);
     }
 
-    if matches!(freq, Freq::REL) {
-        bucket_map.insert("sum", 0.0);
-    }
+    bucket_map.insert("sum", 0.0);
 
     init_mapping_operator();
     let mapping = get_mapping_operator();
@@ -171,26 +179,23 @@ pub fn freq_of_pipelines(
                 result_vec_operator.push(operator);
                 result_vec_operator_nice_format.push(map.get(operator).unwrap());
 
-                if matches!(freq, Freq::ABS) {
-                    let frequenzy = bucket_map.get(operator).unwrap();
-                    result_builder.push(frequenzy.to_owned());
+                let frequenzy = bucket_map.get(operator).unwrap();
+                result_builder_abs.push(frequenzy.to_owned());
+                if bucket_map.get(operator).unwrap() == &0.0 {
+                    let frequenzy = 0.0;
+                    result_builder_rel.push(frequenzy);
                 } else {
-                    if bucket_map.get(operator).unwrap() == &0.0 {
-                        let frequenzy = 0.0;
-                        result_builder.push(frequenzy);
-                    } else {
-                        let frequenzy =
-                            bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                        result_builder.push(frequenzy_rounded);
-                    }
+                    let frequenzy =
+                        bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                    let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                    result_builder_rel.push(frequenzy_rounded);
                 }
+                
                 // reset bucket_map
                 bucket_map.insert(operator, 0.0);
             }
-            if matches!(freq, Freq::REL) {
-                bucket_map.insert("sum", 0.0);
-            }
+            bucket_map.insert("sum", 0.0);
+
             time_bucket += bucket_size;
         }
 
@@ -207,9 +212,8 @@ pub fn freq_of_pipelines(
             );
         }
 
-        if matches!(freq, Freq::REL) {
-            bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
-        }
+        bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
+        
 
         if i == time_column.len() - 1 {
             for operator in vec_operator {
@@ -218,19 +222,17 @@ pub fn freq_of_pipelines(
                 result_vec_operator.push(operator);
                 result_vec_operator_nice_format.push(map.get(operator).unwrap());
                 let bucket = bucket_map.to_owned();
-                if matches!(freq, Freq::ABS) {
-                    let frequenzy = bucket.get(operator).unwrap();
-                    result_builder.push(frequenzy.to_owned());
+                
+                let frequenzy = bucket_map.get(operator).unwrap();
+                result_builder_abs.push(frequenzy.to_owned());
+                if bucket_map.get(operator).unwrap() == &0.0 {
+                    let frequenzy = 0.0;
+                    result_builder_rel.push(frequenzy);
                 } else {
-                    if bucket_map.get(operator).unwrap() == &0.0 {
-                        let frequenzy = 0.0;
-                        result_builder.push(frequenzy);
-                    } else {
-                        let frequenzy =
-                            bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                        let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
-                        result_builder.push(frequenzy_rounded);
-                    }
+                    let frequenzy =
+                        bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
+                    let frequenzy_rounded = f64::trunc(frequenzy * 100.0) / 100.0;
+                    result_builder_rel.push(frequenzy_rounded);
                 }
                 // reset bucket_map
                 bucket_map.insert(operator, 0.0);
@@ -246,13 +248,26 @@ pub fn freq_of_pipelines(
         .map(AsRef::as_ref)
         .collect();
 
+    if matches!(freq, Freq::REL) {
+        let pre_calc_batch = create_freq_bucket(
+            &batch,
+            column_for_operator,
+            result_bucket.to_owned(),
+            result_vec_operator.to_owned(),
+            result_vec_operator_nice_format.to_owned(),
+            result_builder_abs.to_owned(),
+            Freq::ABS,
+        );
+        set_swimlane_record_batch(pre_calc_batch);
+    }
+
     return create_freq_bucket(
         &batch,
         column_for_operator,
         result_bucket,
         result_vec_operator,
         result_vec_operator_nice_format,
-        result_builder,
+        if matches!(freq, Freq::ABS) { result_builder_abs } else { result_builder_rel },
         freq,
     );
 }

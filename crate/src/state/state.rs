@@ -16,7 +16,7 @@ pub struct State {
     pub dict: Option<Arc<SerdeDict>>,
     pub parquet_file_binary: Arc<Mutex<Vec<u8>>>,
     pub file_size: Option<u64>,
-    pub uir_record_batches: Option<Arc<RecordBatchShared>>
+    pub swimlane_batch: Option<Arc<RecordBatchShared>>
 }
 
 thread_local! {
@@ -27,7 +27,7 @@ thread_local! {
         dict: None,
         parquet_file_binary: Arc::new(Mutex::new(Vec::new())),
         file_size: None,
-        uir_record_batches: None
+        swimlane_batch: None
     });
 }
 
@@ -46,7 +46,21 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-// RECORD BATCH STATE
+// RECORD BATCH STATE - GLOBAL BATCH
+pub fn get_swimlane_record_batch() -> Option<Arc<RecordBatchShared>> {
+    with_state(|s| s.swimlane_batch.clone())
+}
+pub fn set_swimlane_record_batch(record_batches: RecordBatch) {
+    let shared_record_batch = RecordBatchShared {
+        batch: record_batches,
+    };
+    _with_state_mut(|s| s.swimlane_batch = Some(Arc::new(shared_record_batch)));
+}
+pub fn reset_swimlane_record_batch() {
+    _with_state_mut(|s| s.swimlane_batch = None);
+}
+
+// RECORD BATCH STATE - Swimlanes
 pub fn get_record_batches() -> Option<Arc<RecordBatchShared>> {
     with_state(|s| s.record_batches.clone())
 }

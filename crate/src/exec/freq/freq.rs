@@ -129,8 +129,7 @@ pub fn freq_of_pipelines(
         return batch;
     }
 
-
-    let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false);
+    // let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false); //experimental
 
     let unique_operator =
         find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);

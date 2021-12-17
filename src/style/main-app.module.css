@@ -4,6 +4,7 @@
 .app{
     background-color: appBackgroundColor;
     overflow-x: visible;
+    width: 100%;
 }
 
 .appHeader{
@@ -26,14 +27,26 @@
 }
 
 @media not all and (min-width: 400px) {
+    
+    .app{
+        composes: app;
+        position: absolute;
+        width: inherit;
+    }
+    .appHeader{
+        composes: app;
+        position: absolute;
+    }
+    
+    .appNavigation{
+        composes: app;
+        position: absolute;
+    }
+
     .appBody{
         composes: appBody;
-        min-width: 400px;
-        overflow-x: scroll;
+        position: fixed;
     }
-    .appNavigation{
-        composes: appNavigation;
-        width: 400px;
-    }
+    
   }
 

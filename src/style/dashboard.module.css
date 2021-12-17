@@ -185,9 +185,3 @@
     }
   }
 
-  @media not all and (min-width: 400px) {
-    .dashboardGrid{
-        composes: dashboardGrid;
-        /* width: 400px; */
-    }
-  }

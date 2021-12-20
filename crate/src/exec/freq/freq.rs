@@ -275,25 +275,6 @@ pub enum MEM {
     ABS,
 }
 
-pub fn get_earlier_entry(
-    recordbatch: &RecordBatch,
-    index: usize,
-    operator: &str,
-    column_for_operator: usize,
-) -> usize {
-    if index == 0 {
-        return usize::MAX;
-    }
-    let mut start = index;
-    while start >= 1 {
-        if operator == get_stringarray_column(recordbatch, column_for_operator).value(start - 1) {
-            return start;
-        }
-        start -= 1;
-    }
-    return usize::MAX;
-}
-
 pub fn freq_of_memory(
     batch: &RecordBatch,
     column_for_operator: usize,
@@ -347,16 +328,19 @@ pub fn freq_of_memory(
         }
         out
     } else {
-        1000000000
+        100000000000
     };
+
+    let mut hashmap_operator_before = HashMap::new();
 
     'outer: for (i, time) in time_column.into_iter().enumerate() {
         let current_operator = operator_column.value(i as usize);
         if i == 0 && matches!(mem_en, MEM::DIFF) {
             continue 'outer;
         }
-        let value_earlier_index =
-            get_earlier_entry(&batch, i, current_operator, column_for_operator);
+        let value_earlier_index = hashmap_operator_before.get(current_operator).unwrap_or(&usize::MAX).to_owned();
+        hashmap_operator_before.insert(current_operator, i);
+      
         if (value_earlier_index as usize) == usize::MAX && matches!(mem_en, MEM::DIFF) {
             continue 'outer;
         }

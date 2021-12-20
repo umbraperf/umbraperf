@@ -170,19 +170,14 @@ fn query_already_calculated(restful_string: &str) -> bool {
     return false;
 }
 
-
-
 fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBatch {
     let str_raw = filter_vec.join("");
     let cache = get_filter_query_from_cache();
     let mut query = cache.lock().unwrap();
-
-    // FILTER EQUALS 1:1
     if let Some(batch) = query.get(&str_raw) {
         return batch.to_owned();
     }
 
-    // time filter inside?
     let mut vec_without_time = Vec::new();
     let mut vec_time = Vec::new();
     let mut has_time = false;

@@ -2,7 +2,7 @@ import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormControl, FormControlLabel, FormLabel, Switch, Typography } from '@material-ui/core';
+import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
 import styles from '../../../style/utils.module.css';
 
 
@@ -20,7 +20,7 @@ function HeatmapsDiffToggler(props: Props) {
 
 
     return (
-        <div className={styles.HeatmapsDiffTogglerContainer}>
+        <div>
             <FormControl
                 component="fieldset"
                 variant="standard">

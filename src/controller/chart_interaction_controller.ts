@@ -81,6 +81,13 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
+export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [number, number]) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
+        data: selectedMemoryAddressTuple,
+    });
+}
+
 export function resetSelectionTimeselection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActiveOperatorsPipelines(appContext.controller);

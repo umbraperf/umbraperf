@@ -42,6 +42,7 @@ function HeatmapsMemoryAddressSelector(props: Props) {
     };
 
     const handleChangeCommitted = (event: any, newValue: number | number[]) => {
+        //commit changes of slider to redux after mouseup
         Controller.handleMemoryAddressSelectionTuple(value);
     }
 

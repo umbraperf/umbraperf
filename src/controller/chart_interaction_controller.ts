@@ -2,7 +2,7 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsTimeframePipeline, requestActivePipelineTimeframe } from ".";
+import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from ".";
 import ChartResetButton from '../components/utils/togglers/chart_reset_button';
 import React from "react";
 
@@ -78,20 +78,18 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE,
         data: selectedPosition,
     });
-    requestActivePipelineTimeframe(appContext.controller);
-    requestActiveOperatorsTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
 export function resetSelectionTimeselection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestActivePipelineTimeframe(appContext.controller);
-    requestActiveOperatorsTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
 export function resetSelectionPipelinesOperators() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
-    requestActiveOperatorsTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
 function resetCurrentOperatorSelection() {
@@ -132,13 +130,6 @@ export function createChartResetComponent(resetType: "pipelinesOperators" | "tim
         return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
     }
 }
-
-// export function createChartResetComponentTimeselection() {
-//     const isResetButtonVisible = () => {
-
-//     }
-//     return isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={resetSunburstSelection} />;
-// }
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
 
@@ -251,6 +242,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 }
 
 export function isOperatorUnavailable(operatorId: string) {
+    console.log(store.getState().currentOperatorActiveTimeframePipeline);
     return !(store.getState().operators!.operatorsId.includes(operatorId) && (store.getState().currentOperatorActiveTimeframePipeline === "All" || store.getState().currentOperatorActiveTimeframePipeline.includes(operatorId)))
 }
 

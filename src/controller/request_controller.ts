@@ -47,6 +47,11 @@ export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
+    requestActiveOperatorsPipelines(controller);
+}
+
+// request current active pipelines and operators
+export function requestActiveOperatorsPipelines(controller: RequestController) {
     requestActiveOperatorsTimeframePipeline(controller);
     requestActivePipelineTimeframe(controller);
 }

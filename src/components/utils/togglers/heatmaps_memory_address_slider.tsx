@@ -3,7 +3,7 @@ import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormControl, FormControlLabel, FormLabel, Slider, Switch, Typography } from '@material-ui/core';
+import { Slider, Tooltip, Typography } from '@material-ui/core';
 import styles from '../../../style/utils.module.css';
 
 
@@ -46,11 +46,25 @@ function HeatmapsMemoryAddressSelector(props: Props) {
         Controller.handleMemoryAddressSelectionTuple(value);
     }
 
+    function ValueLabelComponent(props: any) {
+        const { children, open, value } = props;
+    
+        return (
+            <Tooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
+                {children}
+            </Tooltip>
+        );
+    }
+
 
     return (
         <div className={styles.heatmapsMemoryAddressSelectorContainer}>
-            <Typography id="range-slider" gutterBottom>
-                Temperature range
+            <Typography
+                className={styles.heatmapsMemoryAddrressSelectorTogglerLabel}
+                variant="caption"
+                id="range-slider"
+            >
+                Select Memory Address Range:
             </Typography>
             <Slider
                 disabled={isSliderDisabled()}
@@ -62,10 +76,13 @@ function HeatmapsMemoryAddressSelector(props: Props) {
                 getAriaValueText={(value: number) => valueText(value)}
                 min={props.memoryAddressDomain[0]}
                 max={props.memoryAddressDomain[1]}
+                ValueLabelComponent={ValueLabelComponent}
             />
         </div>
     );
 }
+
+
 
 const mapStateToProps = (state: model.AppState) => ({
     currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,

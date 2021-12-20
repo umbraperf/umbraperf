@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::{state::state::{append_to_buffer, clear_buffer, get_buffer}};
+use crate::state::state::{append_to_buffer, clear_buffer, get_buffer};
 
 use super::streambuf::WebFileReader;
 
@@ -49,6 +49,14 @@ impl Read for BufferReader {
 
         if read_size == 0 {
             return Ok(0);
+        }
+
+        if read_size < buf.len() {
+            for i in 0..read_size {
+                buf[i] = binary[self.offset as usize + i];
+            }
+            self.offset = self.offset + (read_size as u64);
+            return Ok(read_size);
         }
 
         buf.clone_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);

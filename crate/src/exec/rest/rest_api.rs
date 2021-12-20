@@ -170,13 +170,45 @@ fn query_already_calculated(restful_string: &str) -> bool {
     return false;
 }
 
+
+
 fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBatch {
     let str_raw = filter_vec.join("");
     let cache = get_filter_query_from_cache();
     let mut query = cache.lock().unwrap();
+
+    // FILTER EQUALS 1:1
     if let Some(batch) = query.get(&str_raw) {
         return batch.to_owned();
     }
+
+    // time filter inside?
+    let mut vec_without_time = Vec::new();
+    let mut vec_time = Vec::new();
+    let mut has_time = false;
+    for entry in filter_vec.to_owned() {
+        if entry.starts_with("?time") {
+            vec_time.push(entry);
+            has_time = true;
+        } else {
+            vec_without_time.push(entry);
+        }
+    }
+
+    if has_time {
+        let str_raw_without_time = vec_without_time.join("");
+        if let Some(batch) = query.get(&str_raw_without_time) {
+            let time_filtered_batch = eval_filters(batch.to_owned(), vec_time);
+            return time_filtered_batch;
+        } else {
+            let filtered_batch = eval_filters(batch.to_owned(), vec_without_time);
+            query.insert(str_raw_without_time, filtered_batch.to_owned());
+            eval_filters(batch.to_owned(), vec_time);
+            return filtered_batch;
+        }
+    }
+    
+
     let filtered_batch = eval_filters(batch, filter_vec);
     query.insert(str_raw, filtered_batch.to_owned());
     return filtered_batch;

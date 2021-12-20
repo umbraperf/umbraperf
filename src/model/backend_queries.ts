@@ -9,8 +9,8 @@ export enum BackendQueryType {
     GET_PIPELINES = "GET_PIPELINES",
     GET_OPERATORS = "GET_OPERATORS",
     GET_STATISTICS = "GET_STATISTICS",
-    GET_PIPELINES_ACTIVE_IN_TIMEFRAME = "GET_PIPELINES_ACTIVE_IN_TIMEFRAME",
-    GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE = "GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE",
+    GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT = "GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT",
+    GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT = "GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT",
     GET_OPERATOR_FREQUENCY_PER_EVENT = "GET_OPERATOR_FREQUENCY_PER_EVENT",
     GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES = "GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES",
     GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES = "GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES",
@@ -29,8 +29,8 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINES, {}>
     | BackendQuery<BackendQueryType.GET_OPERATORS, { event: string }>
     | BackendQuery<BackendQueryType.GET_STATISTICS, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME, { event: string, timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE, { event: string, timeBucketFrame: [number, number], pipelines: Array<string> | "All" }>
+    | BackendQuery<BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT, { event: string, timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT, { event: string, timeBucketFrame: [number, number], pipelines: Array<string> | "All" }>
     | BackendQuery<BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, bucketSize: number, pipelines: Array<string> | "All", operators: Array<string> | "All", timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES, { event: string, bucketSize: number, pipelines: Array<string> | "All", operators: Array<string> | "All", timeBucketFrame: [number, number] }>
@@ -114,9 +114,9 @@ export function createBackendQuery(query: QueryVariant) {
             return 'operator/op_ext/physical_op/count_with_mapping?operator/sort?count,desc';
         case BackendQueryType.GET_STATISTICS:
             return `count${eventFilter()}${pipelinesFilter()}${timeFilter()}/basic_count?operator&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/count(distinct)?pipeline&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/count(distinct)?operator&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/max(time)?time&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/relative?operator`;
-        case BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME:
+        case BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT:
             return `pipeline${eventFilter()}${timeFilter()}/distinct?pipeline`;
-        case BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
+        case BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT:
             return `operator${eventFilter()}${pipelinesFilter()}${timeFilter()}/distinct?operator`;
         case BackendQueryType.GET_OPERATOR_FREQUENCY_PER_EVENT:
             return `operator/count${eventFilter()}${pipelinesFilter()}${timeFilter()}/count?operator/sort?operator`;

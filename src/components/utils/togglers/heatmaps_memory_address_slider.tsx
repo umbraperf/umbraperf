@@ -6,16 +6,21 @@ import { FormControl, FormControlLabel, FormLabel, Switch, Typography } from '@m
 import styles from '../../../style/utils.module.css';
 
 
-interface Props {
+interface AppstateProps {
     appContext: Context.IAppContext;
-    memoryHeatmapsDifferenceRepresentation: boolean,
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => void;
+    currentMemoryAddressSelectionTuple: [number, number]
 }
 
-function HeatmapsDiffToggler(props: Props) {
+interface HeatmapsMemoryAddressSelectorProps{
+    memoryAddressDomain: [number, number],
+}
+
+type Props = AppstateProps & HeatmapsMemoryAddressSelectorProps;
+
+
+function HeatmapsMemoryAddressSelector(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
     }
 
 
@@ -27,7 +32,7 @@ function HeatmapsDiffToggler(props: Props) {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={props.memoryHeatmapsDifferenceRepresentation}
+                            // checked={props.memoryHeatmapsDifferenceRepresentation}
                             onChange={handleHeatmapsDiffTogglerChange}
                             name="HeatmapsDiffToggler"
                             size="small"
@@ -49,15 +54,7 @@ function HeatmapsDiffToggler(props: Props) {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
+    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => dispatch({
-        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
-        data: newMemoryHeatmapsDifferenceRepresentation,
-    }),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(HeatmapsDiffToggler));
+export default connect(mapStateToProps, undefined)(Context.withAppContext(HeatmapsMemoryAddressSelector));

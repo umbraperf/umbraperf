@@ -189,7 +189,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation },
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation, memoryAddressDomain: store.getState().currentMemoryAddressSelectionTuple },
             });
             break;
 

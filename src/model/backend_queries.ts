@@ -113,7 +113,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_OPERATORS:
             return 'operator/op_ext/physical_op/count_with_mapping?operator/sort?count,desc';
         case BackendQueryType.GET_STATISTICS:
-            return `count${timeFilter()}${pipelinesFilter()}${eventFilter()}/basic_count?operator&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/count(distinct)?pipeline&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/count(distinct)?operator&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/max(time)?time&&count${timeFilter()}${pipelinesFilter()}${eventFilter()}/relative?operator`;
+            return `count${eventFilter()}${pipelinesFilter()}${timeFilter()}/basic_count?operator&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/count(distinct)?pipeline&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/count(distinct)?operator&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/max(time)?time&&count${eventFilter()}${pipelinesFilter()}${timeFilter()}/relative?operator`;
         case BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME:
             return `pipeline${eventFilter()}${timeFilter()}/distinct?pipeline`;
         case BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
@@ -137,7 +137,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
-            return `scrline/perc/op/srcline_num/total${timeFilter()}${pipelinesFilter()}/top(srclines)?${event()}`;
+            return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${timeFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

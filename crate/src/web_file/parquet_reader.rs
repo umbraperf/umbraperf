@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::io::{Read, BufReader};
 
 use crate::state::state::{append_to_buffer, clear_buffer, get_buffer};
 
@@ -18,7 +18,9 @@ impl BufferReader {
         let start_offset = reader.data_start();
 
         let web_file_reader = WebFileReader::new_from_file(file_size as i32);
-        let mut reader = web_file_reader.set_offset(start_offset as i32);
+        let reader = web_file_reader.set_offset(start_offset as i32);
+        let mut reader = BufReader::new(reader);
+
 
         let mut offset = 0;
         while offset != length {
@@ -59,7 +61,7 @@ impl Read for BufferReader {
             return Ok(read_size);
         }
 
-        buf.clone_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);
+        buf.copy_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);
 
         self.offset = self.offset + (read_size as u64);
 

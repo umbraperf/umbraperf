@@ -34,6 +34,7 @@ export enum StateMutationType {
     SET_CURRENT_BUCKETSIZE = 'SET_CURRENT_BUCKETSIZE',
     SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
     SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
+    SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE = 'SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE',
     SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
     SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
     SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
@@ -68,6 +69,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
     | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>
@@ -205,6 +207,11 @@ export class AppStateMutation {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
+            case StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE:
+                return {
+                    ...state,
+                    currentMemoryAddressSelectionTuple: mutation.data,
+                }
             case StateMutationType.SET_CURRENT_VIEW:
                 return {
                     ...state,
@@ -249,6 +256,7 @@ export class AppStateMutation {
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
+                    currentMemoryAddressSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
                     memoryHeatmapsDifferenceRepresentation: true,
                     currentProfile: ProfileType.OVERVIEW,

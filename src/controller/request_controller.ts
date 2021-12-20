@@ -104,9 +104,9 @@ export function requestStatistics(controller: RequestController) {
 //request pipelines arry of active pipelines in current selected timeframe
 export function requestActivePipelineTimeframe(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME,
+        model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME,
+            type: model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT,
             data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
         }), true);
 }
@@ -114,9 +114,9 @@ export function requestActivePipelineTimeframe(controller: RequestController) {
 //request operators arry of active operators in current selected timeframe and pipeline
 export function requestActiveOperatorsTimeframePipeline(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT,
             data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, pipelines: store.getState().currentPipeline },
         }), true);
 }

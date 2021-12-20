@@ -112,7 +112,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             break;
 
-        case model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME:
+        case model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT:
             const pipelinesTimeframe = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME,
@@ -120,7 +120,7 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             break;
 
-        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
+        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT:
             const operatorsTimeframePipeline = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,

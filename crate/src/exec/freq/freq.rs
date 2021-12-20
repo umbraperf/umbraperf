@@ -282,13 +282,13 @@ pub fn freq_of_memory(
     bucket_size: f64,
     from: f64,
     _to: f64,
+    from_y: f64,
+    to_y: f64,
     len_of_mem: Option<i64>,
     mem_en: MEM,
 ) {
     let batch = &sort_batch(&batch, RecordBatchSchema::Time as usize, false);
-
     let unique_operator = find_unique_string(batch, column_for_operator);
-
     let unique_operator = &sort_batch(&unique_operator, 0, false);
 
     let vec_operator = get_stringarray_column(&unique_operator, 0);
@@ -512,6 +512,8 @@ pub fn freq_of_memory(
                 Arc::new(Float64Array::from(freq_vec)),
             ],
         );
+
+        let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
 
         if matches!(mem_en, MEM::ABS) {
             let mem_column = get_int32_column(&single_batch, 2);

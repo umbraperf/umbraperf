@@ -11,7 +11,7 @@ use arrow::{
 
 use crate::{
     exec::{
-        basic::{basic::sort_batch, filter::filter_between_int32},
+        basic::{basic::sort_batch},
         rest::rest_api::find_name,
     },
     state::state::{get_serde_dict},
@@ -19,7 +19,6 @@ use crate::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{self, create_new_record_batch},
-        string_util::split_at_colon,
     }, web_file::serde_reader::DictFields,
 };
 

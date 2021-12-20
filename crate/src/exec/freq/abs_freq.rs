@@ -8,7 +8,7 @@ use arrow::{
 
 use crate::{
     exec::basic::{
-        basic::{find_unique_string, sort_batch},
+        basic::{find_unique_string},
         filter,
     },
     utils::{

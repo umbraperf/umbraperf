@@ -220,7 +220,6 @@ pub fn freq_of_pipelines(
                 result_bucket.push(round(round(time_bucket) - bucket_size));
                 result_vec_operator.push(operator);
                 result_vec_operator_nice_format.push(map.get(operator).unwrap());
-                let bucket = bucket_map.to_owned();
                 
                 let frequenzy = bucket_map.get(operator).unwrap();
                 result_builder_abs.push(frequenzy.to_owned());

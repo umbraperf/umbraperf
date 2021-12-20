@@ -130,7 +130,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
         const createHeatmapTitle = () => {
             const operatorId = this.props.chartData.heatmapsData[id].operator[0];
             const operatorNice = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(operatorId)];
-            let title = `${operatorId}`;
+            let title = operatorId;
             if (operatorNice !== "-") {
                 title = title + ` (${operatorNice})`;
             }

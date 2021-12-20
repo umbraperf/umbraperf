@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::{Read}};
+use std::{collections::HashMap, io::{Read, BufReader}};
 use crate::{
     bindings::send_js_query_plan,
 };
@@ -54,14 +54,15 @@ impl SerdeDict {
 
         let mut zip =
             zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
-        let mut reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
+        let reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
+        let mut buf_reader = BufReader::new(reader);
         
         let mut buf: String = String::new();
-        let _result = reader.read_to_string(&mut buf);
-
+        let _result = buf_reader.read_to_string(&mut buf);
 
         let reader = BufferReader::read_to_buffer(DICT_FILE_NAME, length as u64);
-        let d: Dictionary = serde_json::from_reader(reader).unwrap();
+        let buf_reader = BufReader::new(reader);
+        let d: Dictionary = serde_json::from_reader(buf_reader).unwrap();
 
         let mut hash_map = HashMap::new();
         for operator in d.operators {
@@ -131,7 +132,8 @@ impl SerdeDict {
         }
 
         let reader = BufferReader::read_to_buffer(URI_DICT_FILE_NAME, length as u64);
-        let d: HashMap<String, DictionaryUri> = serde_json::from_reader(reader).unwrap();
+        let buf_reader = BufReader::new(reader);
+        let d: HashMap<String, DictionaryUri> = serde_json::from_reader(buf_reader).unwrap();
 
         send_js_query_plan(buf);
         

@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller  from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -16,8 +17,8 @@ function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
+        Controller.resetMemoryAddressSelectionTuple();
     }
-
 
     return (
         <div>

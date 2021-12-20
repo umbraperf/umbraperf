@@ -172,7 +172,7 @@ fn query_already_calculated(restful_string: &str) -> bool {
 
 fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBatch {
     let str_raw = filter_vec.join("");
-    let cache = get_filter_query_from_cache();
+    let cache =    ();
     let mut query = cache.lock().unwrap();
     if let Some(batch) = query.get(&str_raw) {
         return batch.to_owned();

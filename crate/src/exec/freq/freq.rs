@@ -513,8 +513,6 @@ pub fn freq_of_memory(
             ],
         );
 
-        let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
-
         if matches!(mem_en, MEM::ABS) {
             let mem_column = get_int32_column(&single_batch, 2);
             let mem_vec = mem_column
@@ -530,11 +528,13 @@ pub fn freq_of_memory(
             let to = mean + (std_deviation * 2.);
 
             let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
+            let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
 
             let min_bucket = arrow::compute::min(bucket).unwrap();
             hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         } else {
             let min_bucket = arrow::compute::min(bucket).unwrap();
+            let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
             hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         }
 

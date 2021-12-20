@@ -85,10 +85,10 @@ export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [n
     // const currentMemoryAddressTuple = store.getState().currentMemoryAddressSelectionTuple;
     // if (currentMemoryAddressTuple[0] !== selectedMemoryAddressTuple[0] ||
     //     currentMemoryAddressTuple[1] !== selectedMemoryAddressTuple[1]) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
-            data: selectedMemoryAddressTuple,
-        });
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
+        data: selectedMemoryAddressTuple,
+    });
 }
 
 export function resetSelectionTimeselection() {
@@ -100,6 +100,10 @@ export function resetSelectionPipelinesOperators() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
     requestActiveOperatorsPipelines(appContext.controller);
+}
+
+export function resetMemoryAddressSelectionTuple() {
+    handleMemoryAddressSelectionTuple([-1, -1]);
 }
 
 function resetCurrentOperatorSelection() {

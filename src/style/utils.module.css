@@ -241,6 +241,14 @@
     padding-bottom: 5px;
     width: 80%;
     max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heatmapsMemoryAddrressSelectorTogglerLabel{
+    composes: togglerLabel;
+    margin-bottom: -10px;
 }
 
 @keyframes fadeIn {

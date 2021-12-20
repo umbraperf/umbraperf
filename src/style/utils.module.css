@@ -129,11 +129,6 @@
 }
 
 .eventButton{
-    /* animation: fadeIn 1s;
-    width: 135px;
-    border-radius: 70px;
-    margin: 7px;
-    font-size: 10px; */
     animation: fadeIn 1s;
     max-width: 135px;
     min-width: 125px;
@@ -240,6 +235,12 @@
     left: 20px;
     margin-top: -9px;
     z-index: 2;
+}
+
+.heatmapsMemoryAddressSelectorContainer{
+    padding-bottom: 5px;
+    width: 80%;
+    max-width: 1000px;
 }
 
 @keyframes fadeIn {

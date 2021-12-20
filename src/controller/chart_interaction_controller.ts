@@ -82,10 +82,13 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
 }
 
 export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [number, number]) {
-    store.dispatch({
-        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
-        data: selectedMemoryAddressTuple,
-    });
+    // const currentMemoryAddressTuple = store.getState().currentMemoryAddressSelectionTuple;
+    // if (currentMemoryAddressTuple[0] !== selectedMemoryAddressTuple[0] ||
+    //     currentMemoryAddressTuple[1] !== selectedMemoryAddressTuple[1]) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
+            data: selectedMemoryAddressTuple,
+        });
 }
 
 export function resetSelectionTimeselection() {
@@ -220,7 +223,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
+                    !_.isEqual(nextProps.currentMemoryAddressSelectionTuple, props.currentMemoryAddressSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.UIR_VIEWER:
@@ -249,7 +253,6 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 }
 
 export function isOperatorUnavailable(operatorId: string) {
-    console.log(store.getState().currentOperatorActiveTimeframePipeline);
     return !(store.getState().operators!.operatorsId.includes(operatorId) && (store.getState().currentOperatorActiveTimeframePipeline === "All" || store.getState().currentOperatorActiveTimeframePipeline.includes(operatorId)))
 }
 

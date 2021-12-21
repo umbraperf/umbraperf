@@ -284,18 +284,21 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            const planNodeCursor = nodeCursor(currentPlanElement.operator);
-            const planNodeColor = nodeColor(currentPlanElement.operator);
-            const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
-            const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator, currentPlanElement.cardinality);
-            const planNodeLabel = nodeLabel(currentPlanElement.operator);
-            const planNodeCssClass = nodeClass(currentPlanElement.operator);
+            const currentOperatorId = currentPlanElement.operator;
+            const currentEstimatedCardinality = currentPlanElement.cardinality:
+
+            const planNodeCursor = nodeCursor(currentOperatorId);
+            const planNodeColor = nodeColor(currentOperatorId);
+            const planNodeTextColor = nodeTextColor(currentOperatorId);
+            const planNodeTooltipData = nodeTooltipData(currentOperatorId, currentEstimatedCardinality);
+            const planNodeLabel = nodeLabel(currentOperatorId);
+            const planNodeCssClass = nodeClass(currentOperatorId);
 
             planData.nodes.push({
                 label: planNodeLabel,
-                operatorId: currentPlanElement.operator,
+                operatorId: currentOperatorId,
                 analyzePlanId: currentPlanElement.analyzePlanId,
-                estimatedCardinality: currentPlanElement.cardinality,
+                estimatedCardinality: currentEstimatedCardinality,
                 parent: parent,
                 nodeCursor: planNodeCursor[0] as string,
                 isNodeSelectable: planNodeCursor[1] as boolean,

@@ -8,7 +8,6 @@ use crate::{
     utils::record_batch_util::create_record_batch,
 };
 
-
 fn filter_help(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
         .column(column_num)
@@ -31,7 +30,6 @@ fn filter_help(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -
 
     create_record_batch(batch.schema(), arrays)
 }
-
 
 // Filter record batch given a Vec of strings
 // All: Return record batch not filtered

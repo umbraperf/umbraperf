@@ -7,10 +7,7 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{
-        basic::{find_unique_string},
-        filter,
-    },
+    exec::basic::{basic::find_unique_string, filter},
     utils::{
         array_util::{get_floatarray_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
@@ -22,42 +19,39 @@ use super::freq;
 
 pub fn abs_freq_of_event(
     batch: &RecordBatch,
-    column_for_event: usize,
-    column_for_time: usize,
+    event_col: usize,
+    time_col: usize,
     bucket_size: f64,
 ) -> RecordBatch {
-    // let batch = &sort_batch(batch, RecordBatchSchema::Time as usize, false); //experimental
+    let unique_event_batch = find_unique_string(batch, event_col);
+    let event_arr = get_stringarray_column(&unique_event_batch, 0);
 
-    let unique_event = find_unique_string(batch, column_for_event);
-    let vec_event = get_stringarray_column(&unique_event, 0);
-
-    let mut result_bucket = Vec::new();
-    let mut result_vec_event = Vec::new();
-    let mut result_builder = Vec::new();
+    let mut result_time_bucket = Vec::new();
+    let mut result_event = Vec::new();
+    let mut result_freq = Vec::new();
 
     let mut time_bucket = bucket_size;
-    let mut column_index = 0;
 
-    let event_column = get_stringarray_column(&batch, column_for_event);
-    let time_column = get_floatarray_column(&batch, column_for_time);
+    let event_column = get_stringarray_column(&batch, event_col);
+    let time_column = get_floatarray_column(&batch, time_col);
 
     let mut bucket_map = HashMap::new();
-    for event in vec_event {
+    for event in event_arr {
         bucket_map.insert(event.unwrap(), 0.0);
     }
 
     bucket_map.insert("sum", 0.0);
 
     for (i, time) in time_column.into_iter().enumerate() {
-        let current_event = event_column.value(column_index as usize);
+        let current_event = event_column.value(i);
 
         while time_bucket < time.unwrap() {
-            for event in vec_event {
+            for event in event_arr {
                 let event = event.unwrap();
-                result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
-                result_vec_event.push(event);
+                result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                result_event.push(event);
                 let frequenzy = bucket_map.get("sum").unwrap();
-                result_builder.push(frequenzy.to_owned());
+                result_freq.push(frequenzy.to_owned());
                 // reset bucket_map
                 bucket_map.insert(event, 0.0);
             }
@@ -72,31 +66,29 @@ pub fn abs_freq_of_event(
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
 
         if i == time_column.len() - 1 {
-            for event in vec_event {
+            for event in event_arr {
                 let event = event.unwrap();
-                result_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
-                result_vec_event.push(event);
+                result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+                result_event.push(event);
                 let frequenzy = bucket_map.get("sum").unwrap();
-                result_builder.push(frequenzy.to_owned());
+                result_freq.push(frequenzy.to_owned());
             }
         }
-
-        column_index += 1;
     }
 
     let batch = create_new_record_batch(
         vec!["bucket", "absfreq"],
         vec![DataType::Float64, DataType::Float64],
         vec![
-            Arc::new(Float64Array::from(result_bucket)),
-            Arc::new(Float64Array::from(result_builder)),
+            Arc::new(Float64Array::from(result_time_bucket)),
+            Arc::new(Float64Array::from(result_freq)),
         ],
     );
 
     batch
 }
 
-pub fn abs_freq_of_pipelines(
+pub fn abs_freq_operators(
     batch: &RecordBatch,
     column_for_operator: usize,
     column_for_time: usize,
@@ -119,7 +111,7 @@ pub fn abs_freq_of_pipelines(
     )
 }
 
-pub fn abs_freq_with_pipelines_with_double_events(
+pub fn abs_freq_operators_doub_event(
     batch: &RecordBatch,
     column_for_operator: usize,
     column_for_time: usize,
@@ -130,7 +122,6 @@ pub fn abs_freq_with_pipelines_with_double_events(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-
     let (
         mut bucket_vec,
         mut op_vec,
@@ -153,7 +144,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
 
     let f_batch = filter::filter_with(RecordBatchSchema::EvName as usize, vec![events[0]], batch);
 
-    let batch_abs = abs_freq_of_pipelines(
+    let batch_abs = abs_freq_operators(
         &f_batch,
         column_for_operator,
         column_for_time,
@@ -183,7 +174,7 @@ pub fn abs_freq_with_pipelines_with_double_events(
     }
 
     let batch = filter::filter_with(1, vec![events[1]], &batch);
-    let batch_rel = abs_freq_of_pipelines(
+    let batch_rel = abs_freq_operators(
         &batch,
         column_for_operator,
         column_for_time,

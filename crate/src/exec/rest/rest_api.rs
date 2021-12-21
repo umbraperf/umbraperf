@@ -77,7 +77,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
 
         match operator {
             "sunburst" => {
-                record_batch = count::count_rows_over_double(
+                record_batch = count::groupby_two_cols(
                     &record_batch,
                     RecordBatchSchema::Pipeline as usize,
                     RecordBatchSchema::Operator as usize,
@@ -110,7 +110,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                     count::group_by(&record_batch, find_name(params, &record_batch))
             }
             "count_with_mapping" => {
-                record_batch = count::count_rows_over_with_mapping(
+                record_batch = count::group_by_with_nice_op(
                     &record_batch,
                     find_name(params, &record_batch),
                 )

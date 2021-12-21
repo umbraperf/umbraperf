@@ -32,7 +32,7 @@ pub struct RELFREQ {
     rel_freq: Vec<f64>,
 }
 
-// round to one decimal 
+// round to one decimal
 // multiply with 100 to get percentage value
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
@@ -50,7 +50,6 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
 
     out_vec
 }
-
 
 fn calculate(
     record_batch: RecordBatch,
@@ -530,7 +529,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         }
     }
 
-    // Return created Record Batch 
+    // Return created Record Batch
     let srcline_num_col = find_name("srcline_num", &one_batch);
     create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num", "total"],

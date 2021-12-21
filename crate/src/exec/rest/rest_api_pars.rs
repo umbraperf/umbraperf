@@ -43,7 +43,7 @@ pub fn abs_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
             let operator_vec = split_at_comma(split[2]);
             let range = split_at_to(split[3]);
 
-            return abs_freq::abs_freq_of_pipelines(
+            return abs_freq::abs_freq_operators(
                 &record_batch,
                 find_name("operator", &record_batch),
                 find_name("time", &record_batch),
@@ -79,7 +79,7 @@ pub fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -
         .parse::<f64>()
         .unwrap();
 
-    return abs_freq::abs_freq_with_pipelines_with_double_events(
+    return abs_freq::abs_freq_operators_doub_event(
         &record_batch,
         find_name("operator", &record_batch),
         find_name(time, &record_batch),

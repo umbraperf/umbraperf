@@ -285,7 +285,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         function fillGraph(currentPlanElement: any, parent: string) {
 
             const currentOperatorId = currentPlanElement.operator;
-            const currentEstimatedCardinality = currentPlanElement.cardinality:
+            const currentEstimatedCardinality = currentPlanElement.cardinality;
 
             const planNodeCursor = nodeCursor(currentOperatorId);
             const planNodeColor = nodeColor(currentOperatorId);

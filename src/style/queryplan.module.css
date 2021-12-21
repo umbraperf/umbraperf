@@ -99,11 +99,30 @@
     margin-top: 3px;
 }
 
-.queryplanNodeTooltipSubtitle{
-    text-align: right;
-    font-size: 11px;
+.queryplanNodeTooltipSubtitleContainer{
     margin-bottom: 3px;
     margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.queryplanNodeTooltipSubtitle{
+    font-size: 11px;
+    flex: 1;
+}
+
+.queryplanNodeTooltipSubtitleCardinality{
+    composes: queryplanNodeTooltipSubtitle;
+    text-align: left;
+}
+
+.queryplanNodeTooltipSubtitleFrequency{
+    composes: queryplanNodeTooltipSubtitle;
+    text-align: right;
 }
 
 .queryplanNodeTooltipTableBackground{

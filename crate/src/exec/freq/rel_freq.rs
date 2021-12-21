@@ -1,7 +1,7 @@
 use super::freq;
 use arrow::record_batch::RecordBatch;
 
-pub fn rel_freq_with_pipelines(
+pub fn rel_freq_operators(
     batch: &RecordBatch,
     column_for_operator: usize,
     column_for_time: usize,

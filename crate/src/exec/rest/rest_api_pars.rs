@@ -113,7 +113,7 @@ pub fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> R
     let _pipeline = field_vec[0];
     let time = field_vec[1];
 
-    return rel_freq::rel_freq_with_pipelines(
+    return rel_freq::rel_freq_operators(
         &record_batch,
         find_name("operator", &record_batch),
         find_name(time, &record_batch),

@@ -23,56 +23,34 @@ pub fn abs_freq_of_event(
     time_col: usize,
     bucket_size: f64,
 ) -> RecordBatch {
-    let unique_event_batch = find_unique_string(batch, event_col);
-    let event_arr = get_stringarray_column(&unique_event_batch, 0);
 
     let mut result_time_bucket = Vec::new();
-    let mut result_event = Vec::new();
     let mut result_freq = Vec::new();
 
     let mut time_bucket = bucket_size;
-
-    let event_column = get_stringarray_column(&batch, event_col);
     let time_column = get_floatarray_column(&batch, time_col);
 
     let mut bucket_map = HashMap::new();
-    for event in event_arr {
-        bucket_map.insert(event.unwrap(), 0.0);
-    }
-
     bucket_map.insert("sum", 0.0);
 
     for (i, time) in time_column.into_iter().enumerate() {
-        let current_event = event_column.value(i);
 
         while time_bucket < time.unwrap() {
-            for event in event_arr {
-                let event = event.unwrap();
-                result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
-                result_event.push(event);
-                let frequenzy = bucket_map.get("sum").unwrap();
-                result_freq.push(frequenzy.to_owned());
-                // reset bucket_map
-                bucket_map.insert(event, 0.0);
-            }
-
-            // reset sum
+            result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+            let frequenzy = bucket_map.get("sum").unwrap();
+            result_freq.push(frequenzy.to_owned());
+            // Reset
             bucket_map.insert("sum", 0.0);
             time_bucket += bucket_size;
         }
 
-        bucket_map.insert(current_event, bucket_map.get(current_event).unwrap() + 1.0);
-
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
 
         if i == time_column.len() - 1 {
-            for event in event_arr {
-                let event = event.unwrap();
-                result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
-                result_event.push(event);
-                let frequenzy = bucket_map.get("sum").unwrap();
-                result_freq.push(frequenzy.to_owned());
-            }
+            result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
+            let frequenzy = bucket_map.get("sum").unwrap();
+            result_freq.push(frequenzy.to_owned());
+            
         }
     }
 
@@ -173,7 +151,7 @@ pub fn abs_freq_operators_doub_event(
         i = i + 1;
     }
 
-    let batch = filter::filter_with(1, vec![events[1]], &batch);
+    let batch = filter::filter_with(RecordBatchSchema::EvName as usize, vec![events[1]], &batch);
     let batch_rel = abs_freq_operators(
         &batch,
         column_for_operator,

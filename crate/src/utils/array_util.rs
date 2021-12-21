@@ -1,5 +1,8 @@
 use arrow::{record_batch::RecordBatch, array::{GenericStringArray, PrimitiveArray, StringArray, Float64Array, Int32Array, UInt64Array, Int64Array}, datatypes::{Float64Type, UInt64Type, Int32Type, Int64Type}};
 
+// Functions for shorter code in base class
+
+// String column
 pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStringArray<i32> {
     let column = batch
         .column(column)
@@ -9,6 +12,7 @@ pub fn get_stringarray_column(batch: &RecordBatch, column: usize) -> &GenericStr
     return column;
 }
 
+// Float64 column
 pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Float64Type> {
     let column = batch
         .column(column)
@@ -18,6 +22,7 @@ pub fn get_floatarray_column(batch: &RecordBatch, column: usize) -> &PrimitiveAr
     return column;
 }
 
+// UInt64 column
 pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UInt64Type> {
     let column = batch
         .column(column)
@@ -27,6 +32,7 @@ pub fn get_uint_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<UI
     return column;
 }
 
+// Int32 column
 pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int32Type> {
     let column = batch
         .column(column)
@@ -36,6 +42,7 @@ pub fn get_int32_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<I
     return column;
 }
 
+// Int64 column
 pub fn get_int64_column(batch: &RecordBatch, column: usize) -> &PrimitiveArray<Int64Type> {
     let column = batch
         .column(column)

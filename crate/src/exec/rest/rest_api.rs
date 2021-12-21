@@ -100,14 +100,14 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
             }
             "count(distinct)" => {
                 record_batch =
-                    count::count_total_unique(&record_batch, &find_name(params, &record_batch));
+                    count::count_unqiue(&record_batch, &find_name(params, &record_batch));
             }
             "basic_count" => {
                 record_batch = count::count(&record_batch, find_name(params, &record_batch));
             }
             "count" => {
                 record_batch =
-                    count::count_rows_over(&record_batch, find_name(params, &record_batch))
+                    count::group_by(&record_batch, find_name(params, &record_batch))
             }
             "count_with_mapping" => {
                 record_batch = count::count_rows_over_with_mapping(

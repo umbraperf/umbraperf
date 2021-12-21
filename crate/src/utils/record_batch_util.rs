@@ -129,6 +129,7 @@ pub fn convert_without_mapping(batches: Vec<RecordBatch>) -> RecordBatch {
 pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
     let serde = get_serde_dict().unwrap();
 
+    // Operator
     let operator_col = get_int64_column(&batch, 0);
     let mut operator_vec = Vec::new();
     let hash_map = serde.dict.get(&(DictFields::Operator as i64)).unwrap();
@@ -139,8 +140,8 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         operator_vec.push(dict_key.unwrap().as_str());
     }
 
+    // Event
     let event_nam = get_int64_column(&batch, 3);
-
     let mut event_vec = Vec::new();
     let hash_map = serde.dict.get(&(DictFields::Event as i64)).unwrap();
     for value in event_nam {
@@ -148,15 +149,15 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         event_vec.push(dict_key.unwrap().as_str());
     }
 
+    // Time
     let time_col = get_floatarray_column(&batch, 2);
-
     let mut time = Vec::new();
     for value in time_col {
         time.push(value.unwrap());
     }
 
+    // Pipeline
     let pipeline = get_int64_column(&batch, 1);
-
     let mut pipeline_vec = Vec::new();
     let hash_map = serde.dict.get(&(DictFields::Pipeline as i64)).unwrap();
     for value in pipeline {
@@ -164,22 +165,22 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
+    // Address
     let addr_col = get_uint_column(&batch, 5);
-
     let mut addr = Vec::new();
     for value in addr_col {
         addr.push(value.unwrap());
     }
 
+    // URI
     let uri_col = get_int64_column(&batch, 4);
-
     let mut uri = Vec::new();
     for value in uri_col {
         uri.push(value.unwrap());
     }
 
+    // Opt_ext
     let op_ext_col = get_int64_column(&batch, 6);
-
     let mut op_extension = Vec::new();
     let hash_map = serde.dict.get(&(DictFields::OpExtension as i64)).unwrap();
     for value in op_ext_col {
@@ -187,8 +188,8 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         op_extension.push(dict_key.unwrap().as_str());
     }
 
+    // Physical operation
     let pyhs_op_col = get_int64_column(&batch, 7);
-
     let mut physical_op = Vec::new();
     let hash_map = serde.dict.get(&(DictFields::PhysicalOp as i64)).unwrap();
     for value in pyhs_op_col {

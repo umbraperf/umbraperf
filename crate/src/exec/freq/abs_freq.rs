@@ -106,7 +106,7 @@ pub fn abs_freq_of_pipelines(
     from: f64,
     to: f64,
 ) -> RecordBatch {
-    freq::freq_of_pipelines(
+    freq::freq_of_operators(
         batch,
         freq::Freq::ABS,
         column_for_operator,

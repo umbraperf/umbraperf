@@ -8,7 +8,7 @@ use crate::{
     state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
     utils::{
         print_to_cons::print_to_js_with_obj,
-        record_batch_util::concat_record_batches,
+        record_batch_util::combine_to_one_record_batch,
         string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}, record_batch_schema::RecordBatchSchema,
     },
 };
@@ -282,7 +282,7 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
         for query in split {
             vec_batch.push(exec_query_without_filters(filtered.to_owned(), query).unwrap());
         }
-        finish_query_exec(concat_record_batches(vec_batch), restful_string);
+        finish_query_exec(combine_to_one_record_batch(vec_batch), restful_string);
     } else {
         let batch = exec_query(record_batch, restful_string);
         if let Some(batch) = batch {

@@ -1,6 +1,7 @@
 use crate::{
-    bindings::send_js_query_result, state::state::get_serde_dict,
-    web_file::{web_file_chunkreader::WebFileChunkReader, serde_reader::DictFields},
+    bindings::send_js_query_result,
+    state::state::get_serde_dict,
+    web_file::{serde_reader::DictFields, web_file_chunkreader::WebFileChunkReader},
 };
 use arrow::{
     array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
@@ -17,6 +18,11 @@ pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordB
     return RecordBatch::try_new(schema, columns).unwrap();
 }
 
+fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
+    nested.into_iter().flatten().collect()
+}
+
+// Parquet Reader, specify columns which are read
 pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let webfile_chunkreader = WebFileChunkReader::new(file_size as i32);
     let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
@@ -27,6 +33,7 @@ pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     record_reader
 }
 
+// Record is read in batches
 pub fn init_record_batches(file_size: i32) -> Vec<RecordBatch> {
     let mut record_reader = init_reader(file_size);
     let mut vec = Vec::new();
@@ -36,21 +43,18 @@ pub fn init_record_batches(file_size: i32) -> Vec<RecordBatch> {
     vec
 }
 
-fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
-    nested.into_iter().flatten().collect()
-}
-
-pub fn concat_record_batches(vec_batch: Vec<RecordBatch>) -> RecordBatch {
-    let mut vec_fields = Vec::new();
-    let mut vec_columns = Vec::new();
+// Combine multiple record batches to one
+pub fn combine_to_one_record_batch(vec_batch: Vec<RecordBatch>) -> RecordBatch {
+    let mut fields_vec = Vec::new();
+    let mut col_vec = Vec::new();
 
     for batch in vec_batch {
-        vec_fields.push(batch.schema().fields().to_owned());
-        vec_columns.push(batch.columns().to_owned());
+        fields_vec.push(batch.schema().fields().to_owned());
+        col_vec.push(batch.columns().to_owned());
     }
 
-    let fields = flatten::<Field>(vec_fields);
-    let columns = flatten::<Arc<dyn Array>>(vec_columns);
+    let fields = flatten::<Field>(fields_vec);
+    let columns = flatten::<Arc<dyn Array>>(col_vec);
 
     let schema = Schema::new(fields);
     let batch = RecordBatch::try_new(Arc::new(schema), columns);
@@ -58,6 +62,7 @@ pub fn concat_record_batches(vec_batch: Vec<RecordBatch>) -> RecordBatch {
     batch.unwrap()
 }
 
+// Creating a new record batch, this method simplfies record batch creation
 pub fn create_new_record_batch(
     field_names: Vec<&str>,
     data_type: Vec<DataType>,
@@ -71,7 +76,6 @@ pub fn create_new_record_batch(
     }
 
     let schema = Schema::new(fields);
-
     let batch = RecordBatch::try_new(Arc::new(schema), columns_ref).unwrap();
     return batch;
 }
@@ -96,7 +100,7 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     }
 
     let batch = create_record_batch(batches[0].schema(), columns);
-    mapping_with_dict(batch)
+    apply_mapping_to_record_batch(batch)
 }
 
 pub fn convert_without_mapping(batches: Vec<RecordBatch>) -> RecordBatch {
@@ -120,7 +124,7 @@ pub fn convert_without_mapping(batches: Vec<RecordBatch>) -> RecordBatch {
     create_record_batch(batches[0].schema(), columns)
 }
 
-pub fn mapping_with_dict(batch: RecordBatch) -> RecordBatch {
+pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
     let serde = get_serde_dict().unwrap();
 
     let operator_col = batch

@@ -305,11 +305,10 @@ pub fn freq_of_memory(
     len_of_mem: Option<i64>,
     mem_type: MEM,
 ) {
-    let batch = &sort_batch(&batch, RecordBatchSchema::Time as usize, false);
+    // Vector of unqiue operators
     let unique_operator = find_unique_string(batch, column_for_operator);
     let unique_operator = &sort_batch(&unique_operator, 0, false);
-
-    let vec_operator = get_stringarray_column(&unique_operator, 0);
+    let op_arr = get_stringarray_column(&unique_operator, 0);
 
     let mut result_bucket = Vec::new();
     let mut result_vec_operator = Vec::new();
@@ -320,22 +319,21 @@ pub fn freq_of_memory(
     let time_column = get_floatarray_column(batch, column_for_time);
     let memory_column = get_uint_column(batch, 4);
 
-    let mut time_bucket;
-    if from == -1. {
-        time_bucket = 0. + bucket_size;
+    // Time bucket starts at zero or from the time given by the query
+    let mut time_bucket = if from == -1. {
+        0. + bucket_size
     } else {
-        time_bucket = from + bucket_size;
-    }
-
+        from + bucket_size
+    };
     time_bucket = f64::trunc(time_bucket);
 
     let mut bucket_map = HashMap::new();
-    for operator in vec_operator {
+    for operator in op_arr {
         bucket_map.insert(operator.unwrap(), HashMap::<i32, f64>::new());
     }
 
     let mut bucket_map_count = HashMap::new();
-    for operator in vec_operator {
+    for operator in op_arr {
         bucket_map_count.insert(operator.unwrap(), 0.);
     }
 
@@ -378,7 +376,7 @@ pub fn freq_of_memory(
             diff as i32
         };
         while time_bucket < time.unwrap() {
-            for operator in vec_operator {
+            for operator in op_arr {
                 let operator = operator.unwrap();
 
                 let frequenzy = bucket_map.get(operator).unwrap();
@@ -404,7 +402,7 @@ pub fn freq_of_memory(
         inner_hashmap.insert(current_memory, inner_hashmap[&current_memory] + 1.);
 
         if i == time_column.len() - 1 {
-            for operator in vec_operator {
+            for operator in op_arr {
                 let operator = operator.unwrap();
 
                 let frequenzy = bucket_map.get(operator).unwrap();
@@ -419,7 +417,7 @@ pub fn freq_of_memory(
                         bucket_map_count.insert(operator, current_value);
                     }
                 }
-                // reset bucket_map
+                // Reset
                 bucket_map.insert(operator, HashMap::new());
             }
         }
@@ -440,7 +438,7 @@ pub fn freq_of_memory(
     let min_time = arrow::compute::min(get_floatarray_column(&batch, 0)).unwrap();
     let max_freq = arrow::compute::max(get_floatarray_column(&batch, 3)).unwrap();
     let min_freq = arrow::compute::min(get_floatarray_column(&batch, 3)).unwrap();
-    let num_op = vec_operator.len() as f64;
+    let num_op = op_arr.len() as f64;
 
     let meta_info = create_new_record_batch(
         vec![
@@ -472,7 +470,7 @@ pub fn freq_of_memory(
     let mut offset = 0.;
     let mut hashmap = HashMap::new();
 
-    for entry in vec_operator.into_iter().enumerate() {
+    for entry in op_arr.into_iter().enumerate() {
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 
         if len == 0. {

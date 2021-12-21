@@ -136,12 +136,6 @@ pub fn get_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
 }
 
 // FILTER CACHE STATE
-pub fn insert_filter_query_to_cache(filter_string: &str, record_batch: RecordBatch) {
-    _with_state_mut(|s| {
-        let mut hashmap = s.filtered_queries.lock().unwrap();
-        hashmap.insert(filter_string.to_string(), record_batch)
-    });
-}
 pub fn get_filter_query_from_cache() -> Arc<Mutex<HashMap<String, RecordBatch>>> {
     with_state(|s| s.filtered_queries.clone())
 }

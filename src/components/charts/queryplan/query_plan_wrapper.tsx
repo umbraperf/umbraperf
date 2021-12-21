@@ -35,6 +35,7 @@ export type PlanNode = {
     label: string
     operatorId: string,
     analyzePlanId: number,
+    estimatedCardinality?: number,
     parent: string,
     borderFill: string,
     backgroundFill: string,
@@ -48,7 +49,7 @@ export type PlanNode = {
 export type PlanEdge = {
     source: string,
     target: string,
-    cardinality?: number,
+    analyzedCardinality?: number,
     isReference?: boolean,
 }
 
@@ -237,7 +238,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
         }
 
-        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
+        const nodeTooltipData = (nodeId: string, estimatedCardinality?: number): QueryplanNodeTooltipData => {
             const tooltipUirLines: string[] = [];
             const tooltipUirLineNumbers: number[] = [];
             const tooltipUirOccurrences: number[] = [];
@@ -255,6 +256,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 uirLineNumber: tooltipUirLineNumbers,
                 eventOccurrences: tooltipUirOccurrences,
                 totalEventOccurrence: tooltipUirTotalOccurrences,
+                estimatedCardinality,
             }
         }
 
@@ -285,7 +287,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             const planNodeCursor = nodeCursor(currentPlanElement.operator);
             const planNodeColor = nodeColor(currentPlanElement.operator);
             const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
-            const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
+            const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator, currentPlanElement.cardinality);
             const planNodeLabel = nodeLabel(currentPlanElement.operator);
             const planNodeCssClass = nodeClass(currentPlanElement.operator);
 
@@ -293,6 +295,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 label: planNodeLabel,
                 operatorId: currentPlanElement.operator,
                 analyzePlanId: currentPlanElement.analyzePlanId,
+                estimatedCardinality: currentPlanElement.cardinality,
                 parent: parent,
                 nodeCursor: planNodeCursor[0] as string,
                 isNodeSelectable: planNodeCursor[1] as boolean,
@@ -305,7 +308,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             planData.links.push({
                 source: parent,
                 target: currentPlanElement.operator,
-                cardinality: currentPlanElement.cardinality,
+                analyzedCardinality: currentPlanElement.analyzePlanCardinality,
             });
             if (currentPlanElement.hasOwnProperty('groupBy')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
@@ -410,7 +413,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     strokeWidth: '1px'
                 },
                 animated: planEdge.isReference ? true : false,
-                label: planEdge.cardinality ? `${model.chartConfiguration.nFormatter(+planEdge.cardinality, 1)}` : "",
+                label: planEdge.analyzedCardinality ? `${model.chartConfiguration.nFormatter(+planEdge.analyzedCardinality, 1)}` : "",
                 labelStyle: {
                     fill: this.props.appContext.tertiaryColor,
                 }

@@ -10,16 +10,14 @@ use arrow::{
 };
 
 use crate::{
-    exec::{
-        basic::{basic::sort_batch},
-        rest::rest_api::find_name,
-    },
-    state::state::{get_serde_dict},
+    exec::{basic::basic::sort_batch, rest::rest_api::find_name},
+    state::state::get_serde_dict,
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
         record_batch_util::{self, create_new_record_batch},
-    }, web_file::serde_reader::DictFields,
+    },
+    web_file::serde_reader::DictFields,
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -34,6 +32,8 @@ pub struct RELFREQ {
     rel_freq: Vec<f64>,
 }
 
+// round to one decimal 
+// multiply with 100 to get percentage value
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
 }
@@ -51,7 +51,8 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
     out_vec
 }
 
-pub fn calculate(
+
+fn calculate(
     record_batch: RecordBatch,
 ) -> (HashMap<String, HashMap<String, i32>>, HashSet<String>) {
     let column_ev_name = get_stringarray_column(&record_batch, RecordBatchSchema::EvName as usize);
@@ -59,7 +60,6 @@ pub fn calculate(
 
     let dict = get_serde_dict().unwrap();
 
-    // CALCULATE
     let mut hashmap_count = HashMap::new();
     let mut unique_events_set = HashSet::new();
 
@@ -336,7 +336,9 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     return out_batch;
 }
 
-pub fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
+// This method is faster than pure uir() as it doesn't calculate
+// the relative frequency and not the aggregated coverage of a function
+fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
     let dict = get_serde_dict().unwrap();
     let (hashmap_count, unique_events_set) = calculate(record_batch);
 
@@ -463,54 +465,62 @@ pub fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
     return out_batch;
 }
 
-pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
+fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
     let num_rows = record_batch.num_rows();
     let max = 5.min(num_rows);
     return record_batch.slice(0, max);
 }
 
+// Get the top five srclines with the highest coverage
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
-    let batch = uir_without_rel(record_batch);
+    let srcline_batch = uir_without_rel(record_batch);
+    let srcline_batch_sorted_after_coverage = sort_batch(&srcline_batch, ordered_by + 1, true);
 
-    let sort = sort_batch(&batch, ordered_by + 1, true);
-
-    let op_col = find_name("op", &sort);
-    let unique = find_unique_string(&sort, op_col);
-
-    let unique = get_stringarray_column(&unique, 0);
-
-    let mut unique = unique
+    // Unqiue, sorted array of operators
+    let operator_col = find_name("op", &srcline_batch_sorted_after_coverage);
+    let unique_operator_batch =
+        find_unique_string(&srcline_batch_sorted_after_coverage, operator_col);
+    let unique_arr = get_stringarray_column(&unique_operator_batch, 0);
+    let mut unique_op = unique_arr
         .into_iter()
         .map(|e| e.unwrap().to_string())
         .collect::<Vec<String>>();
-    unique.sort();
+    unique_op.sort();
 
-    let mut vec = Vec::new();
-    vec.push(get_max_top_five(sort.clone()));
-    let mut vec_sum = Vec::new();
+    let mut top_five = Vec::new();
+    let mut total_coverage = Vec::new();
 
+    // Setting the global top five
+    top_five.push(get_max_top_five(
+        srcline_batch_sorted_after_coverage.clone(),
+    ));
     for _i in 0..5 {
-        vec_sum.push(0.);
+        total_coverage.push(0.);
     }
 
-    for entry in unique {
-        if entry.contains("None") {
+    // Setting for the other operator the top five
+    for op in unique_op {
+        if op.contains("None") {
         } else {
-            let filter = filter_with(op_col, vec![&entry], &sort);
-            let column = get_floatarray_column(&filter, ordered_by + 1);
-            let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
+            let unique_op_batch = filter_with(
+                operator_col,
+                vec![&op],
+                &srcline_batch_sorted_after_coverage,
+            );
+            let coverage_col = get_floatarray_column(&unique_op_batch, ordered_by + 1);
+            let sum_cov = f64::trunc((arrow::compute::sum(coverage_col).unwrap()) * 100.0) / 100.0;
             for _i in 0..5 {
-                vec_sum.push(sum);
+                total_coverage.push(sum_cov);
             }
-            vec.push(get_max_top_five(filter));
+            top_five.push(get_max_top_five(unique_op_batch));
         }
     }
 
-    let batch = record_batch_util::convert_without_mapping(vec);
+    // Convert to one record batch
+    let one_batch = record_batch_util::convert_without_mapping(top_five);
 
-    let srcline_num_col = find_name("srcline_num", &batch);
-    let op = StringArray::from(batch.column(op_col).data().clone());
-
+    // Setting root for the global top five
+    let op = StringArray::from(one_batch.column(operator_col).data().clone());
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {
         if entry.0 < 5 {
@@ -520,7 +530,9 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         }
     }
 
-    let out_batch = create_new_record_batch(
+    // Return created Record Batch 
+    let srcline_num_col = find_name("srcline_num", &one_batch);
+    create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num", "total"],
         vec![
             DataType::Utf8,
@@ -530,17 +542,15 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             DataType::Float64,
         ],
         vec![
-            Arc::new(StringArray::from(batch.column(0).data().clone())),
+            Arc::new(StringArray::from(one_batch.column(0).data().clone())),
             Arc::new(Float64Array::from(
-                batch.column(ordered_by + 1).data().clone(),
+                one_batch.column(ordered_by + 1).data().clone(),
             )),
             Arc::new(StringArray::from(op_vec)),
             Arc::new(Int32Array::from(
-                batch.column(srcline_num_col).data().clone(),
+                one_batch.column(srcline_num_col).data().clone(),
             )),
-            Arc::new(Float64Array::from(vec_sum)),
+            Arc::new(Float64Array::from(total_coverage)),
         ],
-    );
-
-    out_batch
+    )
 }

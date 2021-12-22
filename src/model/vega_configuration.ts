@@ -94,7 +94,6 @@ export let chartConfiguration: ChartConfiguration = {
             let delta = Math.floor(bucketsUniqueLength / numberOfTicks) + 1;
             delta = (numberOfTicks % 2 === 0 && delta > 2) ? --delta : delta;
             for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
-                console.log(i);
                 ticks.push(bucketsUnique[i]);
             }
             return ticks;

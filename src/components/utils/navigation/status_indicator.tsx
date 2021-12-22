@@ -1,11 +1,11 @@
-// TODO fix bug last chart not showing
-
 import * as model from '../../../model';
-import * as Context from '../../../app_context';
 import styles from '../../../style/utils.module.css';
 import MiniSpinner from '../spinner/mini_spinner';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
+import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
+import Zoom from '@material-ui/core/Zoom';
 
 
 interface Props {
@@ -22,26 +22,32 @@ interface Props {
 
 function StatusIndicator(props: Props) {
 
-    const [isLoading, setIsLoading] = useState(false);
+    enum LoadingState {
+        NO_FILE_SELECTED = 'NO_FILE_SELECTED',
+        LOADING = 'LOADING',
+        DONE = 'DONE',
+    }
+
+    const [isLoading, setIsLoading] = useState(LoadingState.NO_FILE_SELECTED);
 
     const truncateString = (text: string) => {
         const length = 20;
-        return text.length > length ? text.substring(0, length - 1) + '&hellip;' : text;
+        return text.length > length ? text.substring(0, length - 1) + '...' : text;
     }
 
-    const getCurrentStatus = () => {
+    const getCurrentStatusString = () => {
         const loading = isResultLoading();
         if (undefined === props.file && false === props.fileLoading) {
-            if (isLoading === true) {
-                setIsLoading(false);
+            if (isLoading !== LoadingState.NO_FILE_SELECTED) {
+                setIsLoading(LoadingState.NO_FILE_SELECTED);
             }
             return "No file selected.";
         }
         if (true === props.fileLoading && props.file) {
-            if (isLoading === false) {
-                setIsLoading(true);
+            if (isLoading !== LoadingState.LOADING) {
+                setIsLoading(LoadingState.LOADING);
             }
-            return `Reading file "${truncateString(props.file.name)}"...`;
+            return `Reading file... (${truncateString(props.file.name)})`;
         }
 
         if ((loading && props.resultLoading[-1] === true) ||
@@ -49,22 +55,22 @@ function StatusIndicator(props: Props) {
             undefined === props.pipelines ||
             undefined === props.operators ||
             undefined === props.kpis) {
-            if (isLoading === false) {
-                setIsLoading(true);
+            if (isLoading !== LoadingState.LOADING) {
+                setIsLoading(LoadingState.LOADING);
             }
             return "Fetching metadata..."
         }
         if (loading) {
-            if (isLoading === false) {
-                setIsLoading(true);
+            if (isLoading !== LoadingState.LOADING) {
+                setIsLoading(LoadingState.LOADING);
             }
             return `Rendering "${getLoadingChartName()}"...`
         }
-        if (!loading && Object.keys(props.resultLoading).length > 0) {
-            if (isLoading === true) {
-                setIsLoading(false);
+        if (!loading && Object.keys(props.resultLoading).length > 0 && props.file) {
+            if (isLoading !== LoadingState.DONE) {
+                setIsLoading(LoadingState.DONE);
             }
-            return "Done.";
+            return `Done. (${truncateString(props.file.name)})`;
         }
         return "Loading...";
     }
@@ -83,8 +89,19 @@ function StatusIndicator(props: Props) {
         return props.loadingChartReadableName[currentLoadingIndex];
     }
 
-    const getCurrentStatusString = () => {
-        return "Status: " + getCurrentStatus();
+    // const getCurrentStatusString = () => {
+    //     return "Status: " + getCurrentStatus();
+    // }
+
+    const getCurrentStatusSymbol = () => {
+        switch (isLoading) {
+            case LoadingState.NO_FILE_SELECTED:
+                return <ErrorRoundedIcon fontSize='small' />;
+            case LoadingState.LOADING:
+                return <MiniSpinner />;
+            case LoadingState.DONE:
+                return <Zoom in={true}><CheckCircleRoundedIcon fontSize='small' /></Zoom>;
+        }
     }
 
     return (
@@ -92,7 +109,9 @@ function StatusIndicator(props: Props) {
             <div className={styles.statusString}>
                 {getCurrentStatusString()}
             </div>
-            {isLoading && <MiniSpinner />}
+            <div className={styles.statusSymbol}>
+                {getCurrentStatusSymbol()}
+            </div>
         </div>
     );
 }

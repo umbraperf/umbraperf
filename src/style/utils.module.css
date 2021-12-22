@@ -282,6 +282,7 @@
     .statusContainer{
         composes: statusContainer;
         flex-basis: 50px;
+        padding-right: 10px;
     }
 
     .statusString{

@@ -113,26 +113,32 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     createVisualizationSpec() {
+
+        console.log(this.props.width);
         const visData = this.createVisualizationData();
 
-        const xTicks = () => {
+        // const xTicks = () => {
 
-            const bucketsArrayLength = visData.chartDataElement.buckets.length;
-            const numberOfTicks = 20;
+        //     const bucketsUnique = _.uniq(visData.chartDataElement.buckets);
+        //     const bucketsUniqueLength = bucketsUnique.length;
+        //     console.log(bucketsUnique);
+        //     console.log(bucketsUniqueLength);
 
-            if (bucketsArrayLength > numberOfTicks) {
+        //     const numberOfTicks = model.chartConfiguration.isLargeSwimLane(this.props.width) ? 50 : 20;
 
-                let ticks = [];
+        //     if (bucketsUniqueLength > numberOfTicks) {
+        //         let ticks = [];
+        //         let delta = Math.floor(bucketsUniqueLength / numberOfTicks) + 1;
+        //         delta = (numberOfTicks % 2 === 0 && delta > 2) ? --delta : delta;
+        //         for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
+        //             console.log(i);
+        //             ticks.push(bucketsUnique[i]);
+        //         }
+        //         console.log(ticks);
+        //         return ticks;
+        //     }
 
-                const delta = Math.floor(bucketsArrayLength / numberOfTicks);
-
-                for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-                    ticks.push(visData.chartDataElement.buckets[i]);
-                }
-                return ticks;
-            }
-
-        };
+        // };
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -198,7 +204,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     scale: "x",
                     zindex: 1,
                     labelOverlap: true,
-                    values: xTicks(),
+                    values: model.chartConfiguration.getSwimLanesXTicks(visData.chartDataElement.buckets, 50, 20, this.props.width),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,

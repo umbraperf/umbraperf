@@ -6,9 +6,6 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import ChartResetButton from '../../utils/togglers/chart_reset_button';
-
-//TODO same inactive color as in qp, grey and not clickable if unavailable, visualize pipeline availability
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -66,7 +63,6 @@ class SunburstChart extends React.Component<Props, {}> {
         const parentPipelinesArray = this.props.chartData.pipeline;
         const operatorOccurrencesArray = Array.from(this.props.chartData.opOccurrences);
         const pipelineOccurrencesArray = Array.from(this.props.chartData.pipeOccurrences);
-
 
         //add datum for inner circle at beginning of data only on first rerender
         operatorIdArray[0] !== "inner" && operatorIdArray.unshift("inner");

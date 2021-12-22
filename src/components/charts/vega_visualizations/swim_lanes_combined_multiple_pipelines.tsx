@@ -74,22 +74,21 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        const xTicks = () => {
+        // const xTicks = () => {
 
-            const numberOfTicks = 20;
+        //     const numberOfTicks = model.chartConfiguration.isLargeSwimLane(this.props.width) ? 60 : 30;
+        //     const mergedBucketsPosNegLength = visData.mergedBucketsPosNeg.length;
 
-            const mergedBucketsPosNegLength = visData.mergedBucketsPosNeg.length;
+        //     if (mergedBucketsPosNegLength > numberOfTicks) {
+        //         let ticks = [];
+        //         const delta = Math.floor(mergedBucketsPosNegLength / numberOfTicks) + 1;
+        //         for (let i = 0; i < mergedBucketsPosNegLength; i = i + delta) {
+        //             ticks.push(visData.mergedBucketsPosNeg[i]);
+        //         }
+        //         return ticks;
+        //     }
 
-            if (mergedBucketsPosNegLength > numberOfTicks) {
-                let ticks = [];
-                const delta = Math.floor(mergedBucketsPosNegLength / numberOfTicks);
-                for (let i = 0; i < mergedBucketsPosNegLength; i = i + delta) {
-                    ticks.push(visData.mergedBucketsPosNeg[i]);
-                }
-                return ticks;
-            }
-
-        }
+        // }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -143,14 +142,12 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorPos",
                     type: "ordinal",
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
                     domain: this.props.operators!.operatorsId,
                 },
                 {
                     name: "colorNeg",
                     type: "ordinal",
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
                     domain: this.props.operators!.operatorsId,
                 },
@@ -168,7 +165,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                     scale: "x",
                     zindex: 1,
                     labelOverlap: true,
-                    values: xTicks(),
+                    values: model.chartConfiguration.getSwimLanesXTicks(visData.mergedBucketsPosNeg, 60, 30, this.props.width),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,

@@ -78,7 +78,8 @@ function HeatmapsMemoryAddressSelector(props: Props) {
                 max={props.memoryAddressDomain[1]}
                 ValueLabelComponent={ValueLabelComponent}
                 color='secondary'
-            />
+/*                 scale={(memAddr) => Math.log(memAddr)}
+ */            />
         </div>
     );
 }

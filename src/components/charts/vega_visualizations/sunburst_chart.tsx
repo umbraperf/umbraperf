@@ -369,7 +369,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
                     rowPadding: 0,
-                    offset: isSmallRepresentation ? 40 : 0,
+                    offset: (isSmallRepresentation && !this.props.doubleRowSize) ? 40 : 0,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,

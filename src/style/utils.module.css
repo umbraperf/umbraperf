@@ -216,12 +216,24 @@
 }
 
 .statusContainer{
-    justify-content: right;
     display: flex;
+    align-items: center;
+    justify-content: right;
     font-size: var(--labelFonSize);
     flex-basis: 300px;
     flex-grow: 0;
     flex-shrink: 0;
+}
+
+.statusString{
+    padding-right: 7px;
+    display: flex;
+    align-items: center;
+}
+
+.statusSymbol{
+    display: flex;
+    align-items: center;
 }
 
 .togglerLabel{
@@ -282,7 +294,6 @@
     .statusContainer{
         composes: statusContainer;
         flex-basis: 50px;
-        padding-right: 10px;
     }
 
     .statusString{

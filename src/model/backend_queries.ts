@@ -134,7 +134,6 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter()}${timeFilter()}/sunburst?pipeline`;
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
-            console.log(`bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()},${memoryAdressDomain()}${memoryAccessesDifferences()}`);
             return `bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()},${memoryAdressDomain()}${memoryAccessesDifferences()}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;

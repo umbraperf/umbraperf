@@ -48,7 +48,7 @@ function HeatmapsMemoryAddressSelector(props: Props) {
 
     function ValueLabelComponent(props: any) {
         const { children, open, value } = props;
-    
+
         return (
             <Tooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
                 {children}

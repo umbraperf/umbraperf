@@ -37,6 +37,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
 
     componentDidUpdate(prevProps: Props, prevState: State): void {
+        console.log("here")
         this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
     }
 
@@ -113,10 +114,9 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     }
 
     createVisualizationSpec() {
-
-        console.log(this.props.width);
         const visData = this.createVisualizationData();
 
+        console.log("render spec");
         // const xTicks = () => {
 
         //     const bucketsUnique = _.uniq(visData.chartDataElement.buckets);

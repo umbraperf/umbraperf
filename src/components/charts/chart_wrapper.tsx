@@ -39,7 +39,7 @@ export interface ChartWrapperAppstateProps {
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
-    currentMemoryAddressSelectionTuple: [number, number],
+    currentHeatmapsOutlierDetection: model.HeatmapsOutlierDetection,
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
 
@@ -337,7 +337,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
+    currentHeatmapsOutlierDetection: state.currentHeatmapsOutlierDetection,
     currentBucketSize: state.currentBucketSize,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });

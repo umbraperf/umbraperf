@@ -1,6 +1,7 @@
 import * as model from '../model';
 import { store, topLevelComponents } from '../app_config';
 import history from '../history';
+import { setEvent } from '.';
 
 
 export function changeProfile(newProfile: model.ProfileType) {
@@ -71,20 +72,14 @@ function setAppstateProfile(profile: model.ProfileType) {
 function setAppstateEvent(event: string) {
     const events = store.getState().events;
     if (events && events.includes(event)) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_EVENT,
-            data: event,
-        });
+        setEvent(event);
     }
 }
 
 function setAppstateMultipleEvent(event1: string, event2: string) {
     const events = store.getState().events;
     if (events && events.includes(event1) && events.includes(event2)) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
-            data: [event1, event2],
-        });
+        setEvent(event1, event2);
     }
 }
 

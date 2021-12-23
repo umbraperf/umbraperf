@@ -81,7 +81,7 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetectionDegree: model.HeatmapsOutlierDetection) {
+export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetectionDegree: model.HeatmapsOutlierDetectionDegrees) {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION,
         data: selectedoutlierDetectionDegree,

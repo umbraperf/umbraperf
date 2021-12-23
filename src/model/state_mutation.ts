@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetection } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetectionDegrees } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -70,7 +70,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>
-    | StateMutation<StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION, HeatmapsOutlierDetection>
+    | StateMutation<StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION, HeatmapsOutlierDetectionDegrees>
     | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
     | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>

@@ -44,6 +44,8 @@
 
 .chartOptionsContainer{
     padding-bottom: 5px;
+    display: flex;
+    width: 600px;
 }
 
 .vegaHeatmapsContainer{

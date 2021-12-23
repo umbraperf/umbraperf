@@ -17,7 +17,6 @@ interface AppstateProps {
 
 interface State {
     maxYDomainAbsoluteValues: number,
-    currentDomainAbsoluteValues: number,
 }
 
 type Props = model.ISwimlanesProps & AppstateProps;
@@ -28,7 +27,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         super(props);
         this.state = {
             maxYDomainAbsoluteValues: 0,
-            currentDomainAbsoluteValues: 0,
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
@@ -51,22 +49,17 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
-            this.setMaxAndCurrentAbsoluteYDomain(maxY1Value);
+            this.setMaxAbsoluteYDomain(maxY1Value);
         }
     }
 
-    setMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
-        if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
-            this.setState((state, props) => ({
-                ...state,
-                maxYDomainAbsoluteValues: currentMaxFreqStacked,
-            }));
-        } else {
-            this.setState((state, props) => ({
-                ...state,
-                currentDomainAbsoluteValues: currentMaxFreqStacked,
-            }));
-        }
+    setMaxAbsoluteYDomain(currentMaxFreqStacked: number) {
+        // if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
+        //     this.setState((state, props) => ({
+        //         ...state,
+        //         maxYDomainAbsoluteValues: currentMaxFreqStacked,
+        //     }));
+        // }
     }
 
     resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props) {

@@ -103,7 +103,7 @@ export function createBackendQuery(query: QueryVariant) {
     }
 
     const outlierDetectionDegree = () => {
-        return `${(query.data as any).currentHeatmapsOutlierDetection}`;
+        return `${(query.data as any).outlierDetectionDegree}`;
     }
 
 

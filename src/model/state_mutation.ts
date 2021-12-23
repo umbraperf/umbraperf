@@ -38,6 +38,7 @@ export enum StateMutationType {
     SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
     SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
     SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
+    SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN = 'SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN',
     OTHER = 'OTHER',
 }
 
@@ -73,6 +74,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
     | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>
+    | StateMutation<StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN, number>
     ;
 
 // The action dispatch
@@ -227,6 +229,11 @@ export class AppStateMutation {
                     ...state,
                     currentProfile: mutation.data,
                 }
+            case StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN:
+                return {
+                    ...state,
+                    currentAbsoluteSwimLaneMaxYDomain: mutation.data,
+                }
             case StateMutationType.SET_RESET_STATE:
                 return {
                     fileLoading: false,
@@ -261,6 +268,7 @@ export class AppStateMutation {
                     memoryHeatmapsDifferenceRepresentation: true,
                     currentProfile: ProfileType.OVERVIEW,
                     profiles: createProfiles(),
+                    currentAbsoluteSwimLaneMaxYDomain: 0,
                 }
         }
     }

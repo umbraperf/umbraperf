@@ -34,6 +34,7 @@ export interface AppState {
     memoryHeatmapsDifferenceRepresentation: boolean;
     currentProfile: ProfileType;
     profiles: Array<ProfileVariant>;
+    currentAbsoluteSwimLaneMaxYDomain: number;
 }
 
 export function createDefaultState(): AppState {
@@ -70,5 +71,6 @@ export function createDefaultState(): AppState {
         memoryHeatmapsDifferenceRepresentation: true,
         currentProfile: ProfileType.OVERVIEW,
         profiles: createProfiles(),
+        currentAbsoluteSwimLaneMaxYDomain: 0,
     };
 }

@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData  } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -6,13 +6,15 @@ export interface AppState {
     resultLoading: IResultLoading;
     result: IResult | undefined;
     chunksNumber: number;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     file: undefined | File;
+    queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
     loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
+    currentPipelineActiveTimeframe: Array<string> | "All";
     currentOperator: Array<string> | "All";
     currentOperatorActiveTimeframePipeline: Array<string> | "All";
     currentRequest: BackendQueryType | undefined;
@@ -27,10 +29,12 @@ export interface AppState {
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
+    currentMemoryAddressSelectionTuple: [number, number];
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
     currentProfile: ProfileType;
     profiles: Array<ProfileVariant>;
+    currentAbsoluteSwimLaneMaxYDomain: number;
 }
 
 export function createDefaultState(): AppState {
@@ -39,13 +43,15 @@ export function createDefaultState(): AppState {
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
-        csvParsingFinished: false,
+        umbraperfFileParsingFinished: false,
+        queryplanJson: undefined,
         file: undefined,
         currentChart: [],
         loadingChartReadableName: [],
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",
+        currentPipelineActiveTimeframe: "All",
         currentOperator: "All",
         currentOperatorActiveTimeframePipeline: "All",
         currentRequest: undefined,
@@ -60,9 +66,11 @@ export function createDefaultState(): AppState {
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],
         currentTimePositionSelectionTuple: [-1, -1],
+        currentMemoryAddressSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
         memoryHeatmapsDifferenceRepresentation: true,
         currentProfile: ProfileType.OVERVIEW,
         profiles: createProfiles(),
+        currentAbsoluteSwimLaneMaxYDomain: 0,
     };
 }

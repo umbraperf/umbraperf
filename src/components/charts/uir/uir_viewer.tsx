@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/uir-viewer.module.css';
 import '../../../style/uir-view-monaco-editor.css';
@@ -9,6 +10,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
+import {  } from '@material-ui/icons';
 
 
 interface AppstateProps {
@@ -366,10 +368,10 @@ class UirViewer extends React.Component<Props, State> {
             //color line glyph for operator
             const operator = this.props.chartData.operators[i];
             if (!this.state.operatorsColorHidden && operator !== "None") {
-                if (!(this.props.operators!.operatorsId.includes(operator) && (this.props.currentOperatorActiveTimeframePipeline === "All" || this.props.currentOperatorActiveTimeframePipeline.includes(operator)))) {
+                if (Controller.isOperatorUnavailable(operator)) {
                     //node not available, not in sample or nor in time selection
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", -1);
-                } else if (this.props.currentOperator === "All" || this.props.currentOperator.includes(operator)) {
+                } else if (Controller.isOperatorSelected(operator)) {
                     //node available and selected
                     const operatorColorGroup = this.props.operators!.operatorsId.indexOf(operator);
                     elemGlyphClasses[1] = this.createCustomCssGlyphClass("Operator", operatorColorGroup);

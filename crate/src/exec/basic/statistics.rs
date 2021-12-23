@@ -1,3 +1,4 @@
+// Mean 
 pub fn mean(data: &[i64]) -> Option<f64> {
     let sum = data.iter().sum::<i64>() as f64;
     let count = data.len();
@@ -8,6 +9,7 @@ pub fn mean(data: &[i64]) -> Option<f64> {
     }
 }
 
+// Standard deviation
 pub fn std_deviation(data: &[i64]) -> Option<f64> {
     match (mean(data), data.len()) {
         (Some(data_mean), count) if count > 0 => {

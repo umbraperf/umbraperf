@@ -35,6 +35,7 @@ export type PlanNode = {
     label: string
     operatorId: string,
     analyzePlanId: number,
+    estimatedCardinality?: number,
     parent: string,
     borderFill: string,
     backgroundFill: string,
@@ -48,7 +49,7 @@ export type PlanNode = {
 export type PlanEdge = {
     source: string,
     target: string,
-    cardinality?: number,
+    analyzedCardinality?: number,
     isReference?: boolean,
 }
 
@@ -107,9 +108,16 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
     public render() {
 
-        return <div id="queryplanContainer" className={styles.queryplanContainer}>
+        return <div
+            id="queryplanContainer"
+            className={styles.queryplanContainer}
+        >
+            <div className={styles.queryplanContainerResetButtonContainer}>
+                {Controller.createChartResetComponent('pipelinesOperators')}
+            </div>
             <div className={styles.queryplanContainerTitle}>Query Plan</div>
             {this.state.renderedFlowPlan}
+
         </div>
     }
 
@@ -169,19 +177,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             isTempRef?: boolean,
         }>();
 
-        const isNodeUnavailable = (nodeOperatorId: string) => {
-            return !(this.props.operators!.operatorsId.includes(nodeOperatorId) && (this.props.currentOperatorActiveTimeframePipeline === "All" || this.props.currentOperatorActiveTimeframePipeline.includes(nodeOperatorId)))
-        }
 
-        const isNodeSelected = (nodeOperatorId: string) => {
-            return this.props.currentOperator === "All" || this.props.currentOperator.includes(nodeOperatorId);
-        }
 
         const nodeCursor = (nodeOperatorId: string) => {
             //return tuple with 0: cursor style, 1: node selectable flag
             if (nodeOperatorId === "root") {
                 return ["default", false];
-            } else if (isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ["not-allowed", false];
             } else {
@@ -194,10 +196,10 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (nodeOperatorId === "root") {
                 //root node
                 return [this.props.appContext.secondaryColor, '#fff'];
-            } else if (isNodeUnavailable(nodeOperatorId)) {
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 //node does not appear in measurement data or in uri data, hence enable/disable makes no sense
                 return ['#fff', this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex];
-            } else if (isNodeSelected(nodeOperatorId)) {
+            } else if (Controller.isOperatorSelected(nodeOperatorId)) {
                 //active node
                 const operatorIndex = this.props.operators!.operatorsId.indexOf(nodeOperatorId);
                 return ['#fff', model.chartConfiguration.colorScale!.operatorsIdColorScale[operatorIndex]];
@@ -209,7 +211,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         }
 
         const nodeTextColor = (nodeOperatorId: string) => {
-            if (isNodeUnavailable(nodeOperatorId)) {
+            if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 return '#919191';
             } else {
                 return this.props.appContext.accentBlack;
@@ -224,20 +226,19 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             } else {
                 return nodeOperatorId;
             }
-            // return nodeLabel.length > 15 ? nodeLabel.substring(0, 14) + "..." : nodeLabel;
         }
 
         const nodeClass = (nodeOperatorId: string) => {
             if (nodeOperatorId === "root") {
                 return "";
-            }else if (isNodeUnavailable(nodeOperatorId)){
+            } else if (Controller.isOperatorUnavailable(nodeOperatorId)) {
                 return "";
-            }else{
+            } else {
                 return styles.queryPlanNode;
             }
         }
 
-        const nodeTooltipData = (nodeId: string): QueryplanNodeTooltipData => {
+        const nodeTooltipData = (nodeId: string, estimatedCardinality?: number): QueryplanNodeTooltipData => {
             const tooltipUirLines: string[] = [];
             const tooltipUirLineNumbers: number[] = [];
             const tooltipUirOccurrences: number[] = [];
@@ -255,6 +256,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                 uirLineNumber: tooltipUirLineNumbers,
                 eventOccurrences: tooltipUirOccurrences,
                 totalEventOccurrence: tooltipUirTotalOccurrences,
+                estimatedCardinality,
             }
         }
 
@@ -282,17 +284,21 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
         function fillGraph(currentPlanElement: any, parent: string) {
 
-            const planNodeCursor = nodeCursor(currentPlanElement.operator);
-            const planNodeColor = nodeColor(currentPlanElement.operator);
-            const planNodeTextColor = nodeTextColor(currentPlanElement.operator);
-            const planNodeTooltipData = nodeTooltipData(currentPlanElement.operator);
-            const planNodeLabel = nodeLabel(currentPlanElement.operator);
-            const planNodeCssClass = nodeClass(currentPlanElement.operator);
+            const currentOperatorId = currentPlanElement.operator;
+            const currentEstimatedCardinality = currentPlanElement.cardinality;
+
+            const planNodeCursor = nodeCursor(currentOperatorId);
+            const planNodeColor = nodeColor(currentOperatorId);
+            const planNodeTextColor = nodeTextColor(currentOperatorId);
+            const planNodeTooltipData = nodeTooltipData(currentOperatorId, currentEstimatedCardinality);
+            const planNodeLabel = nodeLabel(currentOperatorId);
+            const planNodeCssClass = nodeClass(currentOperatorId);
 
             planData.nodes.push({
                 label: planNodeLabel,
-                operatorId: currentPlanElement.operator,
+                operatorId: currentOperatorId,
                 analyzePlanId: currentPlanElement.analyzePlanId,
+                estimatedCardinality: currentEstimatedCardinality,
                 parent: parent,
                 nodeCursor: planNodeCursor[0] as string,
                 isNodeSelectable: planNodeCursor[1] as boolean,
@@ -305,7 +311,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             planData.links.push({
                 source: parent,
                 target: currentPlanElement.operator,
-                cardinality: currentPlanElement.cardinality,
+                analyzedCardinality: currentPlanElement.analyzePlanCardinality,
             });
             if (currentPlanElement.hasOwnProperty('groupBy')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['groupBy'], referenceNode: currentPlanElement });
@@ -313,7 +319,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (currentPlanElement.hasOwnProperty('source')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
             }
-            if(currentPlanElement.hasOwnProperty('tempRef')){
+            if (currentPlanElement.hasOwnProperty('tempRef')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['tempRef'], referenceNode: currentPlanElement, isTempRef: true });
             }
 
@@ -331,13 +337,13 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     return planNodes.analyzePlanId === reference.referenceTargetAnalyzePlanId;
                 });
                 const referenceOperatorId = referenceOperator!.operatorId;
-                if(reference.isTempRef){
+                if (reference.isTempRef) {
                     planData.links.push({
                         source: reference.referenceNode.operator,
                         target: referenceOperatorId,
                         isReference: true,
                     });
-                }else{
+                } else {
                     planData.links.push({
                         source: referenceOperatorId,
                         target: reference.referenceNode.operator,
@@ -410,7 +416,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     strokeWidth: '1px'
                 },
                 animated: planEdge.isReference ? true : false,
-                label: planEdge.cardinality ? `${model.chartConfiguration.nFormatter(+planEdge.cardinality, 1)}` : "",
+                label: planEdge.analyzedCardinality ? `${model.chartConfiguration.nFormatter(+planEdge.analyzedCardinality, 1)}` : "",
                 labelStyle: {
                     fill: this.props.appContext.tertiaryColor,
                 }

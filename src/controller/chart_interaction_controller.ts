@@ -2,7 +2,9 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsTimeframe as requestOperatorsActiveTimeframePipeline } from ".";
+import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from ".";
+import ChartResetButton from '../components/utils/togglers/chart_reset_button';
+import React from "react";
 
 export function handleOperatorSelection(selectedOperator: string, selectedOperatorPipeline?: string) {
 
@@ -21,19 +23,17 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
             if (currentOperator[selectedIndexPosition] === "") {
                 //Operator was disbaled and will be enabled
-
-                const currentPipeline = store.getState().currentPipeline;
-                if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                    // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                    handlePipelineSelection(selectedOperatorPipeline);
-                }
+                // const currentPipeline = store.getState().currentPipeline;
+                // if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
+                //     // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
+                //     handlePipelineSelection(selectedOperatorPipeline);
+                // }
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENT_OPERATOR,
                     data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
                 });
             } else {
                 //Operator was enabled and will be disabled
-
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENT_OPERATOR,
                     data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? "" : elem)),
@@ -41,7 +41,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             }
         }
     }
-
 }
 
 export function handlePipelineSelection(selectedPipeline: string) {
@@ -67,9 +66,7 @@ export function handlePipelineSelection(selectedPipeline: string) {
             });
         }
     }
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
-
-
+    requestActiveOperatorsTimeframePipeline(appContext.controller);
 }
 
 export function handleTimeBucketSelection(selectedTimeBuckets: [number, number], selectedPosition: [number, number]) {
@@ -81,18 +78,32 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
         type: model.StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE,
         data: selectedPosition,
     });
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetTimeBucketSelection() {
+export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [number, number]) {
+    // const currentMemoryAddressTuple = store.getState().currentMemoryAddressSelectionTuple;
+    // if (currentMemoryAddressTuple[0] !== selectedMemoryAddressTuple[0] ||
+    //     currentMemoryAddressTuple[1] !== selectedMemoryAddressTuple[1]) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
+        data: selectedMemoryAddressTuple,
+    });
+}
+
+export function resetSelectionTimeselection() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetSunburstSelection() {
+export function resetSelectionPipelinesOperators() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
-    requestOperatorsActiveTimeframePipeline(appContext.controller);
+    requestActiveOperatorsPipelines(appContext.controller);
+}
+
+export function resetMemoryAddressSelectionTuple() {
+    handleMemoryAddressSelectionTuple([-1, -1]);
 }
 
 function resetCurrentOperatorSelection() {
@@ -107,6 +118,31 @@ function resetCurrentPipelineSelection() {
         type: model.StateMutationType.SET_CURRENT_PIPELINE,
         data: store.getState().pipelines!,
     });
+}
+
+export function createChartResetComponent(resetType: "pipelinesOperators" | "timeselection") {
+    if (resetType === "pipelinesOperators") {
+        const isResetButtonVisible = () => {
+            if ((store.getState().currentOperator !== "All"
+                && !_.isEqual(store.getState().currentOperator, store.getState().operators!.operatorsId))
+                || (store.getState().currentPipeline !== "All"
+                    && !_.isEqual(store.getState().currentPipeline, store.getState().pipelines))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionPipelinesOperators });
+    } else if (resetType === "timeselection") {
+        const isResetButtonVisible = () => {
+            if (store.getState().currentTimeBucketSelectionTuple[0] >= 0 || store.getState().currentTimeBucketSelectionTuple[1] >= 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
+    }
 }
 
 export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props: ChartWrapperAppstateProps, chartType: model.ChartType): boolean {
@@ -162,7 +198,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             case model.ChartType.BAR_CHART:
                 return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline)) ?
                     true :
                     false;
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
@@ -190,7 +227,8 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
-                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
+                    !_.isEqual(nextProps.currentMemoryAddressSelectionTuple, props.currentMemoryAddressSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.UIR_VIEWER:
@@ -203,6 +241,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.operators, props.operators) ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
+                    !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
@@ -217,4 +256,20 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
     return false;
 }
 
+export function isOperatorUnavailable(operatorId: string) {
+    return !(store.getState().operators!.operatorsId.includes(operatorId) && (store.getState().currentOperatorActiveTimeframePipeline === "All" || store.getState().currentOperatorActiveTimeframePipeline.includes(operatorId)))
+}
+
+export function isOperatorSelected(operatorId: string) {
+    return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
+}
+
+export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
+    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+            data: newYDomainValue,
+        });
+    }
+}
 

@@ -10,37 +10,42 @@ use arrow::{
 };
 
 use crate::{
-    exec::{
-        basic::{basic::find_unique_string, filter::filter_with},
-    },
+    exec::basic::{basic::find_unique_string, filter::filter_with},
     state::state::{get_mapping_operator, get_record_batches},
-    utils::{record_batch_util::create_new_record_batch, array_util::get_stringarray_column},
+    utils::{array_util::get_stringarray_column, record_batch_util::create_new_record_batch, record_batch_schema::RecordBatchSchema},
 };
 
 use super::op_mapping::init_mapping_operator;
 
-pub fn count(batch: &RecordBatch, column_to_count: usize) -> RecordBatch {
-    let vec = get_stringarray_column(batch, column_to_count);
+// Count the number fields of a column
+pub fn count(batch: &RecordBatch, col_to_count: usize) -> RecordBatch {
 
-    let mut result_builder = Float64Array::builder(1);
+    // Init
+    let col = get_stringarray_column(batch, col_to_count);
+    let mut count_arr = Float64Array::builder(1);
 
-    let row_count = vec.len() as f64;
-    let _result_builder = result_builder.append_value(row_count);
+    // Calc
+    let row_count = col.len() as f64;
 
-    let builder = result_builder.finish();
+    // Finish
+    let _result = count_arr.append_value(row_count);
 
-    let batch = create_new_record_batch(
+    // Return
+    create_new_record_batch(
         vec!["count"],
         vec![DataType::Float64],
-        vec![Arc::new(builder)],
-    );
-
-    return batch;
+        vec![Arc::new(count_arr.finish())],
+    )
 }
 
-pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) -> RecordBatch {
-    let vec = get_stringarray_column(batch, *column_index_for_unqiue);
+// Count the unique occ of a string column
+pub fn count_unqiue(batch: &RecordBatch, col_for_unique: &usize) -> RecordBatch {
 
+    // Init
+    let vec = get_stringarray_column(batch, *col_for_unique);
+    let mut count_arr = Float64Array::builder(1);
+
+    // Calc
     let hash_set = vec
         .into_iter()
         .map(|item| item.unwrap())
@@ -48,90 +53,71 @@ pub fn count_total_unique(batch: &RecordBatch, column_index_for_unqiue: &usize) 
         .into_iter()
         .collect::<Vec<&str>>();
 
-    let mut result_builder = Float64Array::builder(1);
-    let _result_builder = result_builder.append_value(hash_set.len() as f64);
-    let builder = result_builder.finish();
+    // Finish
+    let _result = count_arr.append_value(hash_set.len() as f64);
 
-    let batch = create_new_record_batch(
+    // Return
+    create_new_record_batch(
         vec!["count"],
         vec![DataType::Float64],
-        vec![Arc::new(builder)],
-    );
-
-    return batch;
+        vec![Arc::new(count_arr.finish())],
+    )
 }
 
-pub fn count_rows_over(batch: &RecordBatch, column_to_groupby_over: usize) -> RecordBatch {
+// Group by column
+pub fn group_by(batch: &RecordBatch, col_to_groupby: usize) -> RecordBatch {
 
+    // Init
     let unique_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
+        find_unique_string(&get_record_batches().unwrap().batch, col_to_groupby);
+    let vec = get_stringarray_column(&unique_batch, 0);
+    let mut count_arr = Float64Array::builder(vec.len());
 
-    let vec = unique_batch
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let mut result_builder = Float64Array::builder(vec.len());
-
+    // Calc & Finish
     for group in vec {
-        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
-
+        let group_batch = filter_with(col_to_groupby, vec![group.unwrap()], batch);
         let row_count = group_batch.num_rows() as f64;
-
-        let _result_builder = result_builder.append_value(row_count);
+        let _result = count_arr.append_value(row_count);
     }
 
-    let builder = result_builder.finish();
-    let batch = create_new_record_batch(
-        vec![batch.schema().field(column_to_groupby_over).name(), "count"],
+    // Return
+    create_new_record_batch(
+        vec![batch.schema().field(col_to_groupby).name(), "count"],
         vec![DataType::Utf8, DataType::Float64],
-        vec![unique_batch.column(0).to_owned(), Arc::new(builder)],
-    );
-
-    return batch;
+        vec![unique_batch.column(0).to_owned(), Arc::new(count_arr.finish())],
+    )
 }
 
-pub fn count_rows_over_with_mapping(
+// Group by column with "nice" operator
+pub fn group_by_with_nice_op(
     batch: &RecordBatch,
-    column_to_groupby_over: usize,
+    col_to_groupby: usize,
 ) -> RecordBatch {
+
+    // Init
     let unique_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, column_to_groupby_over);
-
-    let vec = unique_batch
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let mut result_builder = Float64Array::builder(vec.len());
+        find_unique_string(&get_record_batches().unwrap().batch, col_to_groupby);
+    let vec = get_stringarray_column(&unique_batch, 0);
+    let mut count_arr = Float64Array::builder(vec.len());
     let mut op_extension_vec = Vec::new();
     let mut pyhsical_vec = Vec::new();
 
+    // Calc
     for group in vec {
-        let group_batch = filter_with(column_to_groupby_over, vec![group.unwrap()], batch);
+        let group_batch = filter_with(col_to_groupby, vec![group.unwrap()], batch);
         let row_count = group_batch.num_rows() as f64;
-
-        let pyhsical_vec_col = group_batch
-            .column(7)
-            .as_any()
-            .downcast_ref::<StringArray>()
-            .unwrap();
-
+        let pyhsical_vec_col = get_stringarray_column(&group_batch, RecordBatchSchema::Physical as usize);
         init_mapping_operator();
         let mapping = get_mapping_operator();
         let map = mapping.lock().unwrap();
         pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
         op_extension_vec.push(map.get(group.unwrap()).unwrap().to_owned());
-        let _result_builder = result_builder.append_value(row_count);
+        let _result = count_arr.append_value(row_count);
     }
 
-    let builder = result_builder.finish();
-
-    let batch = create_new_record_batch(
+    create_new_record_batch(
         vec![
-            batch.schema().field(column_to_groupby_over).name(),
+            batch.schema().field(col_to_groupby).name(),
             "op_ext",
             "physical_op",
             "count",
@@ -146,32 +132,32 @@ pub fn count_rows_over_with_mapping(
             unique_batch.column(0).to_owned(),
             Arc::new(StringArray::from(op_extension_vec)),
             Arc::new(StringArray::from(pyhsical_vec)),
-            Arc::new(builder),
+            Arc::new(count_arr.finish()),
         ],
-    );
-
-    return batch;
+    )
 }
 
-pub fn count_rows_over_double(
+// Group by for two columns (Sunburst)
+pub fn groupby_two_cols(
     batch: &RecordBatch,
     column_pipeline: usize,
     column_operator: usize,
 ) -> RecordBatch {
+
+    // Init
     let vec_pipe = get_stringarray_column(batch, column_pipeline);
     let vec_op = get_stringarray_column(batch, column_operator);
-
     let mut hashmap: HashMap<&str, HashMap<&str, f64>> = HashMap::new();
 
+
+    // Calc
     let mut i = 0;
     while i < batch.column(0).len() {
         let current_pipe = vec_pipe.value(i);
         let current_op = vec_op.value(i);
-
         let inner_hashmap = hashmap.entry(current_pipe).or_insert(HashMap::new());
         inner_hashmap.entry(current_op).or_insert(0.);
         inner_hashmap.insert(current_op, inner_hashmap[current_op] + 1.);
-
         i += 1;
     }
 
@@ -201,12 +187,7 @@ pub fn count_rows_over_double(
         opcount.push(0.);
     }
 
-    let pip_arr = StringArray::from(pip_builder);
-    let op_arr = StringArray::from(op_builder);
-    let builder_pipe = Float64Array::from(pipecount);
-    let builder_op = Float64Array::from(opcount);
-
-    let batch = create_new_record_batch(
+    create_new_record_batch(
         vec!["pipeline", "operator", "pipecount", "opcount"],
         vec![
             DataType::Utf8,
@@ -215,12 +196,10 @@ pub fn count_rows_over_double(
             DataType::Float64,
         ],
         vec![
-            Arc::new(pip_arr),
-            Arc::new(op_arr),
-            Arc::new(builder_pipe),
-            Arc::new(builder_op),
+            Arc::new(StringArray::from(pip_builder)),
+            Arc::new(StringArray::from(op_builder)),
+            Arc::new(Float64Array::from(pipecount)),
+            Arc::new(Float64Array::from(opcount)),
         ],
-    );
-
-    return batch;
+    )
 }

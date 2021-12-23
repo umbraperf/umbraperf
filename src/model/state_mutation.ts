@@ -12,13 +12,15 @@ export enum StateMutationType {
     SET_RESULT_LOADING = 'SET_RESULT_LOADING',
     SET_RESULT = 'SET_RESULT',
     SET_FILE = 'SET_FILE',
-    SET_CSV_PARSING_FINISHED = 'SET_CSV_PARSING_FINISHED',
+    SET_QUERYPLAN_JSON = 'SET_QUERYPLAN_JSON',
+    SET_UMBRAPERF_FILE_PARSING_FINISHED = 'SET_UMBRAPERF_FILE_PARSING_FINISHED',
     SET_RESET_STATE = 'SET_RESET_STATE',
     SET_CURRENT_CHART = 'SET_CURRENT_CHART',
     SET_LOADING_CHART_READABLE_NAME = 'SET_LOADING_CHART_READABLE_NAME',
     SET_CURRENT_EVENT = 'SET_CURRENT_EVENT',
     SET_CURRENT_MULTIPLE_EVENT = 'SET_CURRENT_MULTIPLE_EVENT',
     SET_CURRENT_PIPELINE = 'SET_CURRENT_PIPELINE',
+    SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME = 'SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME',
     SET_CURRENT_OPERATOR = 'SET_CURRENT_OPERATOR',
     SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE = 'SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE',
     SET_CURRENT_REQUEST = 'SET_CURRENT_REQUEST',
@@ -32,10 +34,11 @@ export enum StateMutationType {
     SET_CURRENT_BUCKETSIZE = 'SET_CURRENT_BUCKETSIZE',
     SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
     SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
+    SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE = 'SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE',
     SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
-    SET_QUERYPLAN = 'SET_QUERYPLAN',
     SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
     SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
+    SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN = 'SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN',
     OTHER = 'OTHER',
 }
 
@@ -45,13 +48,15 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_RESULT_LOADING, { key: number, value: boolean }>
     | StateMutation<StateMutationType.SET_RESULT, IResult | undefined>
     | StateMutation<StateMutationType.SET_FILE, File>
-    | StateMutation<StateMutationType.SET_CSV_PARSING_FINISHED, boolean>
+    | StateMutation<StateMutationType.SET_QUERYPLAN_JSON, object>
+    | StateMutation<StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED, boolean>
     | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENT_CHART, ChartType>
     | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, ChartType>
     | StateMutation<StateMutationType.SET_CURRENT_EVENT, string>
     | StateMutation<StateMutationType.SET_CURRENT_MULTIPLE_EVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENT_PIPELINE, Array<string>>
+    | StateMutation<StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_OPERATOR, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE, Array<string>>
     | StateMutation<StateMutationType.SET_CURRENT_REQUEST, BackendQueryType>
@@ -65,9 +70,11 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
     | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>
+    | StateMutation<StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN, number>
     ;
 
 // The action dispatch
@@ -96,10 +103,15 @@ export class AppStateMutation {
                     ...state,
                     file: mutation.data,
                 };
-            case StateMutationType.SET_CSV_PARSING_FINISHED:
+            case StateMutationType.SET_QUERYPLAN_JSON:
                 return {
                     ...state,
-                    csvParsingFinished: mutation.data,
+                    queryplanJson: mutation.data,
+                };
+            case StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED:
+                return {
+                    ...state,
+                    umbraperfFileParsingFinished: mutation.data,
                 };
             case StateMutationType.SET_CURRENT_CHART:
                 return {
@@ -125,6 +137,11 @@ export class AppStateMutation {
                 return {
                     ...state,
                     currentPipeline: mutation.data,
+                };
+            case StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME:
+                return {
+                    ...state,
+                    currentPipelineActiveTimeframe: mutation.data,
                 };
             case StateMutationType.SET_CURRENT_OPERATOR:
                 return {
@@ -192,6 +209,11 @@ export class AppStateMutation {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
+            case StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE:
+                return {
+                    ...state,
+                    currentMemoryAddressSelectionTuple: mutation.data,
+                }
             case StateMutationType.SET_CURRENT_VIEW:
                 return {
                     ...state,
@@ -207,19 +229,26 @@ export class AppStateMutation {
                     ...state,
                     currentProfile: mutation.data,
                 }
+            case StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN:
+                return {
+                    ...state,
+                    currentAbsoluteSwimLaneMaxYDomain: mutation.data,
+                }
             case StateMutationType.SET_RESET_STATE:
                 return {
                     fileLoading: false,
                     resultLoading: {},
                     result: undefined,
                     chunksNumber: 0,
-                    csvParsingFinished: false,
+                    umbraperfFileParsingFinished: false,
                     file: undefined,
+                    queryplanJson: undefined,
                     currentChart: [],
                     loadingChartReadableName: [],
                     currentEvent: "Default",
                     currentMultipleEvent: "Default",
                     currentPipeline: "All",
+                    currentPipelineActiveTimeframe: "All",
                     currentOperator: "All",
                     currentOperatorActiveTimeframePipeline: "All",
                     currentRequest: undefined,
@@ -234,10 +263,12 @@ export class AppStateMutation {
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
+                    currentMemoryAddressSelectionTuple: [-1, -1],
                     currentView: ViewType.UPLOAD,
                     memoryHeatmapsDifferenceRepresentation: true,
                     currentProfile: ProfileType.OVERVIEW,
                     profiles: createProfiles(),
+                    currentAbsoluteSwimLaneMaxYDomain: 0,
                 }
         }
     }

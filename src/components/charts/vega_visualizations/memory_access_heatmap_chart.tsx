@@ -1,6 +1,8 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/charts.module.css';
+import HeatmapsMemoryAddressSelector from '../../utils/togglers/heatmaps_memory_address_slider';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
@@ -23,9 +25,11 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     }
 
     public render() {
-        return <div
-            className={styles.vegaHeatmapsContainer}>
-            {this.renderChartPerOperator()}
+        return <div className={styles.vegaHeatmapsContainer}>
+            <HeatmapsMemoryAddressSelector memoryAddressDomain={[this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max]} />
+            <div className={styles.vegaHeatmaps}>
+                {this.renderChartPerOperator()}
+            </div>
         </div>
     }
 
@@ -124,17 +128,15 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
         const isSmallWindow = this.props.width < 500;
 
         const createHeatmapTitle = () => {
-            const titlePrefix = "Memory Access Heatmap"
             const operatorId = this.props.chartData.heatmapsData[id].operator[0];
             const operatorNice = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(operatorId)];
-            let title = `: ${operatorId}`;
-            if(operatorNice !== "-"){
+            let title = operatorId;
+            if (operatorNice !== "-") {
                 title = title + ` (${operatorNice})`;
             }
-            if(this.props.memoryHeatmapsDifferenceRepresentation){
-                title = " (Differences)" + title;
-            }
-            title= titlePrefix + title;
+            // if (this.props.memoryHeatmapsDifferenceRepresentation) {
+            //     title = " (Differences)" + title;
+            // }
             return title;
         }
 

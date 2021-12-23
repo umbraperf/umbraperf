@@ -248,9 +248,8 @@
 
 .chartRestButton{
     position: absolute;
-    left: 20px;
-    margin-top: -9px;
-    z-index: 2;
+    left: 11px;
+    z-index: 10;
 }
 
 .heatmapsOption{

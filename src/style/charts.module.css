@@ -43,20 +43,18 @@
 }
 
 .chartOptionsContainer{
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .vegaHeatmapsContainer{
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    width: 100%;
-}
-
-.vegaHeatmaps{
-    display: flex;
-    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
 }
+

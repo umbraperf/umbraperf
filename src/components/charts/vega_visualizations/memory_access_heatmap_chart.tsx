@@ -2,7 +2,6 @@ import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/charts.module.css';
-import HeatmapsMemoryAddressSelector from '../../utils/togglers/heatmaps_memory_address_slider';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
@@ -26,10 +25,7 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
     public render() {
         return <div className={styles.vegaHeatmapsContainer}>
-            <HeatmapsMemoryAddressSelector memoryAddressDomain={[this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max]} />
-            <div className={styles.vegaHeatmaps}>
-                {this.renderChartPerOperator()}
-            </div>
+            {this.renderChartPerOperator()}
         </div>
     }
 

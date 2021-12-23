@@ -81,13 +81,10 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [number, number]) {
-    // const currentMemoryAddressTuple = store.getState().currentMemoryAddressSelectionTuple;
-    // if (currentMemoryAddressTuple[0] !== selectedMemoryAddressTuple[0] ||
-    //     currentMemoryAddressTuple[1] !== selectedMemoryAddressTuple[1]) {
+export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetectionDegree: model.HeatmapsOutlierDetectionDegrees) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
-        data: selectedMemoryAddressTuple,
+        type: model.StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION,
+        data: selectedoutlierDetectionDegree,
     });
 }
 
@@ -102,8 +99,8 @@ export function resetSelectionPipelinesOperators() {
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetMemoryAddressSelectionTuple() {
-    handleMemoryAddressSelectionTuple([-1, -1]);
+export function resetHeatmapsOutlierDetectionSelection() {
+    handleHeatmapsOutlierDetectionSelection(0);
 }
 
 function resetCurrentOperatorSelection() {
@@ -228,7 +225,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
-                    !_.isEqual(nextProps.currentMemoryAddressSelectionTuple, props.currentMemoryAddressSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentHeatmapsOutlierDetection, props.currentHeatmapsOutlierDetection)) ?
                     true :
                     false;
             case model.ChartType.UIR_VIEWER:

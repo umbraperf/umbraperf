@@ -10,6 +10,7 @@ import { createRef } from 'react';
 import _ from "lodash";
 
 import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
+import HeatmapsOutlierDetectionSlider from '../utils/togglers/heatmaps_outlier_detection_slider';
 import SunburstChart from './vega_visualizations/sunburst_chart';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
@@ -39,7 +40,7 @@ export interface ChartWrapperAppstateProps {
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
-    currentMemoryAddressSelectionTuple: [number, number],
+    currentHeatmapsOutlierDetection: model.HeatmapsOutlierDetectionDegrees,
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
 
@@ -296,7 +297,7 @@ class ChartWrapper extends React.Component<Props, State> {
         //return div with chart options or undefined if there are no chart options
         let chartOptions = undefined;
         if (this.props.chartType === model.ChartType.MEMORY_ACCESS_HEATMAP_CHART) {
-            chartOptions = <HeatmapsDiffToggler />
+            chartOptions = <><HeatmapsDiffToggler /> <HeatmapsOutlierDetectionSlider/></>
         }
         return chartOptions ? <div className={styles.chartOptionsContainer}>
             {chartOptions}
@@ -337,7 +338,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
+    currentHeatmapsOutlierDetection: state.currentHeatmapsOutlierDetection,
     currentBucketSize: state.currentBucketSize,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });

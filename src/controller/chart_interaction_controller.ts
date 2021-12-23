@@ -23,11 +23,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
             if (currentOperator[selectedIndexPosition] === "") {
                 //Operator was disbaled and will be enabled
-                // const currentPipeline = store.getState().currentPipeline;
-                // if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                //     // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                //     handlePipelineSelection(selectedOperatorPipeline);
-                // }
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENT_OPERATOR,
                     data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
@@ -268,5 +263,9 @@ export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
             data: newYDomainValue,
         });
     }
+}
+
+export function resetCurrentAbsoluteSwimLaneMaxYDomain(){
+    setCurrentAbsoluteSwimLaneMaxYDomain(0);
 }
 

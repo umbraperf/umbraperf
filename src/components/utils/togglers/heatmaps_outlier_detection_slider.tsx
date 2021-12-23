@@ -56,13 +56,15 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
 
 
     return (
-        <div className={styles.heatmapsOutlierDetectionSliderContainer}>
+        <div className={styles.heatmapsOption}>
             <FormControl
                 component="fieldset"
                 variant="standard">
                 <FormControlLabel
+                    className={styles.formControlLabel}
                     control={
                         <Slider
+                            className={styles.heatmapsOutlierDetectionSlider}
                             disabled={isSliderDisabled()}
                             value={value}
                             marks
@@ -72,7 +74,6 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
                             onChange={handleChange}
                             onChangeCommitted={handleChangeCommitted}
                             valueLabelDisplay="auto"
-                            aria-labelledby="range-slider"
                             getAriaValueText={(value: number) => valueText(value)}
                             ValueLabelComponent={ValueLabelComponent}
                             color='secondary'
@@ -82,8 +83,9 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
                         <Typography
                             className={styles.heatmapsOutlierDetectionSliderLabel}
                             variant="caption"
-                            id="range-slider"
-                        />
+                        >
+                            Outlier Detection Degree:
+                        </Typography>
                     }
                     labelPlacement="start"
                 />

@@ -1,5 +1,5 @@
 import * as model from '../../../model';
-import * as Controller  from '../../../controller';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -21,11 +21,14 @@ function HeatmapsDiffToggler(props: Props) {
     }
 
     return (
-        <div>
+        <div className={styles.heatmapsOption}>
             <FormControl
                 component="fieldset"
-                variant="standard">
+                variant="standard"
+            >
+
                 <FormControlLabel
+                    className={styles.formControlLabel}
                     control={
                         <Switch
                             checked={props.memoryHeatmapsDifferenceRepresentation}

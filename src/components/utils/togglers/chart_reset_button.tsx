@@ -19,7 +19,7 @@ function ChartResetButton(props: Props) {
         <IconButton
             className={styles.chartRestButton}
             onClick={() => chartResetButtonClicked()}
-            // style={{ position: "absolute", left: 20, marginTop: -9, zIndex: 2 }}
+            size='small'
         >
             <DeleteSweepIcon />
         </IconButton>

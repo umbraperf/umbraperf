@@ -28,7 +28,15 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
     const [value, setValue] = React.useState<model.HeatmapsOutlierDetectionDegrees>(getSliderValue());
 
     const valueText = (value: number): string => {
-        return "" + value;
+        const stepLables: {[outlierDetectionDegree: number]: string} = {
+            0: "off",
+            1: "very weak",
+            2: "weak",
+            3: "middle",
+            4: "strong",
+            5: "very strong",
+        }
+        return stepLables[value];
     }
 
     const isSliderDisabled = () => {
@@ -48,7 +56,7 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
         const { children, open, value } = props;
 
         return (
-            <Tooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
+            <Tooltip open={open} enterTouchDelay={0} placement="bottom" title={valueText(value)}>
                 {children}
             </Tooltip>
         );
@@ -69,12 +77,11 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
                             value={value}
                             marks
                             min={0}
-                            max={6}
+                            max={5}
                             step={1}
                             onChange={handleChange}
                             onChangeCommitted={handleChangeCommitted}
                             valueLabelDisplay="auto"
-                            getAriaValueText={(value: number) => valueText(value)}
                             ValueLabelComponent={ValueLabelComponent}
                             color='secondary'
                         />
@@ -90,7 +97,6 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
                     labelPlacement="start"
                 />
             </FormControl>
-
         </div>
     );
 }

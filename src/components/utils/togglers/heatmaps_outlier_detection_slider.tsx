@@ -39,10 +39,6 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
         return stepLables[value];
     }
 
-    const isSliderDisabled = () => {
-        return props.memoryHeatmapsDifferenceRepresentation;
-    }
-
     const handleChange = (event: object, newValue: number | number[]) => {
         setValue(newValue as model.HeatmapsOutlierDetectionDegrees);
     };
@@ -73,7 +69,6 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
                     control={
                         <Slider
                             className={styles.heatmapsOutlierDetectionSlider}
-                            disabled={isSliderDisabled()}
                             value={value}
                             marks
                             min={0}

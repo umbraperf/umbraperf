@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import _ from "lodash";
-
+import CountUp from 'react-countup';
 
 
 interface Props {
@@ -52,32 +52,44 @@ class KpiContainer extends React.Component<Props, {}> {
     }
 
     mapKpiArrayToCards() {
-        //get array of kpis from redux, map to multiple cards
+        //get array of kpis from redux, create countup element for each and map to multiple cards
         return this.props.kpis!.map((elem, index) => {
             if (elem.id === "noSamples") {
-                return this.createKpiCard(index, elem.title, model.chartConfiguration.nFormatter(+elem.value, 1));
+                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
+                const countupElement = this.createCountup(+nFormatedString.slice(0, -1), nFormatedString.slice(-1), 1)
+                return this.createKpiCard(index, elem.title, countupElement);
             } else if (elem.id === "execTime") {
-                const valueRounded = Math.round(+elem.value) / 1000;
-                const valueString = valueRounded + "s";
-                return this.createKpiCard(index, elem.title, valueString);
+                const countupElement = this.createCountup(Math.round(+elem.value) / 1000, "s", 3)
+                return this.createKpiCard(index, elem.title, countupElement);
             } else if (elem.id === "errRate") {
-                const valueString = isNaN(+elem.value) ? "-" : (Math.round(+elem.value * 100) + "%");
-                return this.createKpiCard(index, elem.title, valueString);
+                const countupElement = this.createCountup(Math.round(+elem.value * 100), "%", 0)
+                return this.createKpiCard(index, elem.title, countupElement,  isNaN(+elem.value));
             } else {
-                return this.createKpiCard(index, elem.title, elem.value);
+                const countupElement = this.createCountup(+elem.value, "", 0)
+                return this.createKpiCard(index, elem.title, countupElement);
             }
         });
 
     }
 
-    createKpiCard(key: number, title: string, value: string | number) {
+    createCountup(value: number, suffix: string, numberDecimals: number) {
+        return <CountUp
+            start={0}
+            end={value}
+            duration={2}
+            suffix={suffix}
+            decimals={numberDecimals}
+        />
+    }
+
+    createKpiCard(key: number, title: string, countupElement: JSX.Element, isUnfedined?: boolean) {
         return <div key={key} className={styles.kpiCard} >
             <div>
                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
                 </Typography>
-                <Typography className={styles.kpiCardValue} key={value} variant="h5" component="div">
-                    {value}
+                <Typography className={styles.kpiCardValue} variant="h5" component="div">
+                    {isUnfedined ? "-" : countupElement}
                 </Typography>
             </div>
         </div>

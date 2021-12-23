@@ -95,7 +95,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             className={styles.queryplanNodeTooltipSubtitleContainer}
         >
             {this.props.tooltipData.estimatedCardinality && this.createEstimatedCardinalityLine()}
-            {this.createTotalSumLine()}
+            {this.props.operatorId !== "root" && this.createTotalSumLine()}
         </div>
     }
 

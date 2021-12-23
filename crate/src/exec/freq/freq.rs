@@ -529,7 +529,7 @@ pub fn freq_of_memory(
             ],
         );
 
-        if matches!(mem_type, MEM::ABS) && outlier > 0. {
+        if outlier > 0. {
             let mem_column = get_int32_column(&single_batch, 2);
             let mem_vec = mem_column
                 .into_iter()

@@ -4,7 +4,7 @@ import * as Context from '../../app_context';
 import styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner/spinner';
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";

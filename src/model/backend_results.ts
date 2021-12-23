@@ -6,7 +6,7 @@ export interface IResult {
 }
 
 export interface IResultLoading {
-    [chartId:number ]: boolean;
+    [chartId: number]: boolean;
 }
 
 export function createResultObject(request: number, resultTable: ArrowTable.Table<any>): IResult {
@@ -16,14 +16,16 @@ export function createResultObject(request: number, resultTable: ArrowTable.Tabl
     };
 }
 
-export interface IKpiData{
+export interface IKpiData {
     id: string,
     title: string,
     value: string,
 }
 
-export interface IOperatorsData{
+export interface IOperatorsData {
     operatorsId: Array<string>,
     operatorsGroup: Array<string>,
     operatorsNice: Array<string>,
 }
+
+export type HeatmapsOutlierDetectionDegrees = 0 | 1 | 2 | 3 | 4 | 5 | 6;

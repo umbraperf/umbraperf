@@ -5,7 +5,6 @@ import { Store } from 'redux';
 import { StateMutationVariant } from './state_mutation';
 import * as model from '../model';
 
-
 export * from './state_mutation';
 export * from './state';
 export * from './chart_data_results';

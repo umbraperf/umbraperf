@@ -23,11 +23,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
             if (currentOperator[selectedIndexPosition] === "") {
                 //Operator was disbaled and will be enabled
-                // const currentPipeline = store.getState().currentPipeline;
-                // if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                //     // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                //     handlePipelineSelection(selectedOperatorPipeline);
-                // }
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENT_OPERATOR,
                     data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
@@ -88,7 +83,7 @@ export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetection
     });
 }
 
-export function resetSelectionTimeselection() {
+export function resetSelectionTimeframe() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActiveOperatorsPipelines(appContext.controller);
 }
@@ -99,8 +94,24 @@ export function resetSelectionPipelinesOperators() {
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetHeatmapsOutlierDetectionSelection() {
+export function resetSelectionHeatmapsOutlierDetectionSelection() {
     handleHeatmapsOutlierDetectionSelection(0);
+}
+
+export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
+    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+            data: newYDomainValue,
+        });
+    }
+}
+
+export function resetSelectionCurrentAbsoluteSwimLaneMaxYDomain() {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+        data: 0,
+    });
 }
 
 function resetCurrentOperatorSelection() {
@@ -138,7 +149,7 @@ export function createChartResetComponent(resetType: "pipelinesOperators" | "tim
                 return false;
             }
         }
-        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeframe });
     }
 }
 
@@ -261,12 +272,5 @@ export function isOperatorSelected(operatorId: string) {
     return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
 }
 
-export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
-    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
-            data: newYDomainValue,
-        });
-    }
-}
+
 

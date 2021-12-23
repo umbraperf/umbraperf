@@ -1,6 +1,6 @@
 import * as model from "../model";
 import { store, appContext } from '../app_config';
-import { requestActiveOperatorsPipelines, resetCurrentAbsoluteSwimLaneMaxYDomain } from ".";
+import { requestActiveOperatorsPipelines, resetSelectionCurrentAbsoluteSwimLaneMaxYDomain, resetSelectionTimeframe } from ".";
 
 export function setEvent(newEvent1: string, newEvent2?: string) {
 
@@ -34,5 +34,6 @@ function dispachMultipleEvent(event1: string, event2: string) {
 
 function performEventChangeSideActions() {
     requestActiveOperatorsPipelines(appContext.controller);
-    resetCurrentAbsoluteSwimLaneMaxYDomain();
+    resetSelectionTimeframe();
+    resetSelectionCurrentAbsoluteSwimLaneMaxYDomain();
 }

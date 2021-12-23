@@ -83,7 +83,7 @@ export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetection
     });
 }
 
-export function resetSelectionTimeselection() {
+export function resetSelectionTimeframe() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActiveOperatorsPipelines(appContext.controller);
 }
@@ -94,8 +94,21 @@ export function resetSelectionPipelinesOperators() {
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetHeatmapsOutlierDetectionSelection() {
+export function resetSelectionHeatmapsOutlierDetectionSelection() {
     handleHeatmapsOutlierDetectionSelection(0);
+}
+
+export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
+    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+            data: newYDomainValue,
+        });
+    }
+}
+
+export function resetSelectionCurrentAbsoluteSwimLaneMaxYDomain() {
+    setCurrentAbsoluteSwimLaneMaxYDomain(0);
 }
 
 function resetCurrentOperatorSelection() {
@@ -133,7 +146,7 @@ export function createChartResetComponent(resetType: "pipelinesOperators" | "tim
                 return false;
             }
         }
-        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeframe });
     }
 }
 
@@ -256,16 +269,5 @@ export function isOperatorSelected(operatorId: string) {
     return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
 }
 
-export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
-    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
-            data: newYDomainValue,
-        });
-    }
-}
 
-export function resetCurrentAbsoluteSwimLaneMaxYDomain(){
-    setCurrentAbsoluteSwimLaneMaxYDomain(0);
-}
 

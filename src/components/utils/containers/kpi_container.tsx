@@ -76,7 +76,7 @@ class KpiContainer extends React.Component<Props, {}> {
         return <CountUp
             start={0}
             end={value}
-            duration={2}
+            duration={1}
             suffix={suffix}
             decimals={numberDecimals}
         />

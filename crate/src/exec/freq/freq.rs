@@ -177,7 +177,6 @@ pub fn freq_of_operators(
         // write sum of operators found before in result vectors
         while time_bucket < current_time {
             for operator in unique_op {
-
                 let operator = operator.unwrap();
                 let abs_freq = bucket_map.get(operator).unwrap();
 
@@ -224,12 +223,11 @@ pub fn freq_of_operators(
         // For relative freq
         bucket_map.insert("sum", bucket_map.get("sum").unwrap() + 1.0);
 
-        // Edge case: If you have the last entry 
+        // Edge case: If you have the last entry
         // you need to write down all data which
         // goes into that bucket
         if i == time_column.len() - 1 {
             for operator in unique_op {
-
                 let operator = operator.unwrap();
                 let frequenzy = bucket_map.get(operator).unwrap();
 
@@ -540,13 +538,37 @@ pub fn freq_of_memory(
 
             let mean = statistics::mean(&mem_vec).unwrap();
             let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
+            let mut outlier_multiple = std_deviation;
 
-            let from = mean - (std_deviation * outlier);
+            // very weak
+            if outlier == 1. {
+                outlier_multiple = outlier_multiple * 100.;
+            }
 
-            let to = mean + (std_deviation * outlier);
+            // weak
+            if outlier == 2. {
+                outlier_multiple = outlier_multiple * 5.;
+            }
+
+            // middle
+            if outlier == 3. {
+                outlier_multiple = outlier_multiple * 2.;
+            }
+
+            // strong
+            if outlier == 4. {
+                outlier_multiple = outlier_multiple;
+            }
+
+            // very strong
+            if outlier == 5. {
+                outlier_multiple = outlier_multiple / 10.;
+            }
+
+            let from = mean - outlier_multiple;
+            let to = mean + outlier_multiple;
 
             let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
-
             let min_bucket = arrow::compute::min(bucket).unwrap();
             hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         } else {

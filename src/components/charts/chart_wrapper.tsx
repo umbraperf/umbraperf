@@ -19,6 +19,7 @@ import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
 import UirViewer from './uir/uir_viewer';
 import QueryPlan from './queryplan/query_plan_wrapper';
+import { Grow } from '@material-ui/core';
 
 
 interface OwnProps {
@@ -315,9 +316,12 @@ class ChartWrapper extends React.Component<Props, State> {
             {this.renderChartOptions()}
             {this.isChartDataLoading()
                 ? <Spinner />
-                : <div className={styles.chartContainer}>
-                    {this.createChildChart()}
-                </div>
+                : <Grow in={true}>
+                    <div className={styles.chartContainer}>
+                        {this.createChildChart()}
+                    </div>
+                </Grow>
+
             }
         </div>;
     }

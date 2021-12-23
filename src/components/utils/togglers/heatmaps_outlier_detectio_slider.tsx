@@ -10,7 +10,7 @@ import styles from '../../../style/utils.module.css';
 interface AppstateProps {
     appContext: Context.IAppContext;
     memoryHeatmapsDifferenceRepresentation: boolean,
-    currentMemoryAddressSelectionTuple: [number, number]
+    currentHeatmapsOutlierDetection: model.HeatmapsOutlierDetection,
 }
 
 interface HeatmapsMemoryAddressSelectorProps {
@@ -20,14 +20,14 @@ interface HeatmapsMemoryAddressSelectorProps {
 type Props = AppstateProps & HeatmapsMemoryAddressSelectorProps;
 
 
-function HeatmapsMemoryAddressSelector(props: Props) {
+function HeatmapsOutlierDetectionSlider(props: Props) {
 
-    const getSliderValue = (): [number, number] => {
-        return [props.currentMemoryAddressSelectionTuple[0] === -1 ? props.memoryAddressDomain[0] : props.currentMemoryAddressSelectionTuple[0],
-        props.currentMemoryAddressSelectionTuple[1] === -1 ? props.memoryAddressDomain[1] : props.currentMemoryAddressSelectionTuple[1]]
+    const getSliderValue = () => {
+        // return [props.currentMemoryAddressSelectionTuple[0] === -1 ? props.memoryAddressDomain[0] : props.currentMemoryAddressSelectionTuple[0],
+        // props.currentMemoryAddressSelectionTuple[1] === -1 ? props.memoryAddressDomain[1] : props.currentMemoryAddressSelectionTuple[1]]
     }
 
-    const [value, setValue] = React.useState<[number, number]>(getSliderValue());
+    const [value, setValue] = React.useState<any>(getSliderValue());
 
     const valueText = (value: number): string => {
         return "" + value;
@@ -43,7 +43,7 @@ function HeatmapsMemoryAddressSelector(props: Props) {
 
     const handleChangeCommitted = (event: any, newValue: number | number[]) => {
         //commit changes of slider to redux after mouseup
-        Controller.handleMemoryAddressSelectionTuple(value);
+        // Controller.handleHeatmapsOutlierDetectionSelection(value);
     }
 
     function ValueLabelComponent(props: any) {
@@ -87,8 +87,8 @@ function HeatmapsMemoryAddressSelector(props: Props) {
 
 
 const mapStateToProps = (state: model.AppState) => ({
-    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
+    currentHeatmapsOutlierDetection: state.currentHeatmapsOutlierDetection,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
-export default connect(mapStateToProps)(Context.withAppContext(HeatmapsMemoryAddressSelector));
+export default connect(mapStateToProps)(Context.withAppContext(HeatmapsOutlierDetectionSlider));

@@ -50,13 +50,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    width: 100%;
-}
-
-.vegaHeatmaps{
-    display: flex;
-    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
 }
+

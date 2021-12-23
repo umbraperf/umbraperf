@@ -108,7 +108,10 @@ export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
 }
 
 export function resetSelectionCurrentAbsoluteSwimLaneMaxYDomain() {
-    setCurrentAbsoluteSwimLaneMaxYDomain(0);
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+        data: 0,
+    });
 }
 
 function resetCurrentOperatorSelection() {

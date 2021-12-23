@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetection } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -29,7 +29,7 @@ export interface AppState {
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
-    currentHeatmapsOutlierDetection: HeatmapsOutlierDetection;
+    currentHeatmapsOutlierDetection: HeatmapsOutlierDetectionDegrees;
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
     currentProfile: ProfileType;

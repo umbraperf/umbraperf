@@ -43,7 +43,7 @@ pub fn abs_freq_pars(record_batch: RecordBatch, params: &str) -> RecordBatch {
             let operator_vec = split_at_comma(split[2]);
             let range = split_at_to(split[3]);
 
-            return abs_freq::abs_freq_of_pipelines(
+            return abs_freq::abs_freq_operators(
                 &record_batch,
                 find_name("operator", &record_batch),
                 find_name("time", &record_batch),
@@ -79,7 +79,7 @@ pub fn abs_freq_double_event_pipeline(record_batch: RecordBatch, params: &str) -
         .parse::<f64>()
         .unwrap();
 
-    return abs_freq::abs_freq_with_pipelines_with_double_events(
+    return abs_freq::abs_freq_operators_doub_event(
         &record_batch,
         find_name("operator", &record_batch),
         find_name(time, &record_batch),
@@ -113,7 +113,7 @@ pub fn rel_freq_specific_pipelines(record_batch: RecordBatch, params: &str) -> R
     let _pipeline = field_vec[0];
     let time = field_vec[1];
 
-    return rel_freq::rel_freq_with_pipelines(
+    return rel_freq::rel_freq_operators(
         &record_batch,
         find_name("operator", &record_batch),
         find_name(time, &record_batch),
@@ -150,7 +150,9 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
 
     let before_excl_mark = 0;
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
-    let range = split_at_to(split_numop[0]);
+    let range_x_range_y = split_at_comma(split_numop[0]);
+    let range_x = split_at_to(range_x_range_y[0]);
+    let range_y = split_at_to(range_x_range_y[1]);
 
     let abs_or_diff = if let Some(x) = split_numop.get(1) {
         match *x {
@@ -173,8 +175,10 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         find_name("operator", &record_batch),
         find_name("time", &record_batch),
         bucket_size,
-        range[0].parse::<f64>().unwrap(),
-        range[1].parse::<f64>().unwrap(),
+        range_x[0].parse::<f64>().unwrap(),
+        range_x[1].parse::<f64>().unwrap(),
+        range_y[0].parse::<f64>().unwrap(),
+        range_y[1].parse::<f64>().unwrap(),
         None,
         abs_or_diff,
     );

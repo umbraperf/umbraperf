@@ -33,6 +33,7 @@ mod exec {
         pub mod kpis;
         pub mod statistics;
         pub mod uir;
+        pub mod op_mapping;
     }
     pub mod rest {
         pub mod rest_api;
@@ -48,6 +49,8 @@ mod utils {
     pub mod print_to_cons;
     pub mod record_batch_util;
     pub mod string_util;
+    pub mod record_batch_schema;
+    pub mod array_util;
 }
 
 use crate::utils::bindings::notify_js_finished_reading;

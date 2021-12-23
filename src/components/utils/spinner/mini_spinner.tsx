@@ -3,7 +3,7 @@ import styles from '../../../style/mini-spinner.module.css';
 
 function MiniSpinner() {
 
-    return <div className={styles.spinner}/>
+    return <div className={styles.miniSpinner}/>
 
 }
 

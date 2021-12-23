@@ -6,6 +6,8 @@
 @value colorAccentBlack: #040404;
 @value colorAccentDarkGreen: #379634;
 @value colorAccentDarkBlue: #454E9E;
+@value hoverOpacity: 0.5;
+@value mobileScreenSizeAppWidth: 400px;
 
 :export {
     colorPrimary: colorPrimary;
@@ -14,11 +16,14 @@
     colorAccentBlack: colorAccentBlack;
     colorAccentDarkGreen: colorAccentDarkGreen;
     colorAccentDarkBlue: colorAccentDarkBlue;
+    hoverOpacity: hoverOpacity;
+    mobileScreenSizeAppWidth: mobileScreenSizeAppWidth;
 }
 
 :root {
     --tooltipBorderWidth: 1px;
     --tooltipBorderRadius: 7px;
     --tooltipBorderColor: colorTertiary;
-    --tooltipBackgroundColor: rgba(255,255,255,0.9);
+    --tooltipBackgroundColor: rgba(255,255,255);
+    --mobileScreenSizeAppWidth: mobileScreenSizeAppWidth;
 }

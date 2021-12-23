@@ -1,89 +1,67 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Vega, View} from 'react-vega';
+import { Vega, View } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-
 
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentEvent: string;
-    operators: Array<string> | undefined;
+    operators: model.IOperatorsData | undefined;
     currentInterpolation: String,
     currentBucketSize: number,
     chartData: model.ISwimlanesData,
-}
-
-interface State {
-    maxYDomainAbsoluteValues: number,
-    currentDomainAbsoluteValues: number,
+    currentAbsoluteSwimLaneMaxYDomain: number,
 }
 
 type Props = model.ISwimlanesProps & AppstateProps;
+
+interface State {
+    currentAbsoluteYDomainValue: number;
+}
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
         this.state = {
-            maxYDomainAbsoluteValues: 0,
-            currentDomainAbsoluteValues: 0,
+            currentAbsoluteYDomainValue: 0,
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleVegaView = this.handleVegaView.bind(this);
     }
 
-
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-        this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
-    }
-
     public render() {
-        return <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
+        return <Vega
+            className={`vegaSwimlaneMultiplePipelines}`}
+            spec={this.createVisualizationSpec()}
+            onNewView={this.handleVegaView}
+        />
     }
 
     handleVegaView(view: View) {
-        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max
+        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max, set max to global state to keep for remountings eg. on event change
         if (this.props.absoluteValues) {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
-            this.setMaxAndCurrentAbsoluteYDomain(maxY1Value);
-        }
-    }
-
-    setMaxAndCurrentAbsoluteYDomain(currentMaxFreqStacked: number) {
-        if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
             this.setState((state, props) => ({
                 ...state,
-                maxYDomainAbsoluteValues: currentMaxFreqStacked,
+                currentAbsoluteYDomainValue: maxY1Value,
             }));
-        } else {
-            this.setState((state, props) => ({
-                ...state,
-                currentDomainAbsoluteValues: currentMaxFreqStacked,
-            }));
+            Controller.setCurrentAbsoluteSwimLaneMaxYDomain(maxY1Value);
         }
     }
-
-    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props) {
-        //reset max y domain for absolute chart on event and bucketsize change
-        if (props.currentEvent !== prevProps.currentEvent || props.currentBucketSize !== prevProps.currentBucketSize) {
-            this.setState((state, props) => ({
-                ...state,
-                maxYDomainAbsoluteValues: 0,
-            }));
-        }
-    }
-
 
     createVisualizationData() {
 
         const chartDataElement: model.ISwimlanesData = {
             buckets: this.props.chartData.buckets,
+            operatorsNice: this.props.chartData.operatorsNice,
             operators: this.props.chartData.operators,
             frequency: this.props.chartData.frequency,
         }
@@ -92,9 +70,19 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             name: "table",
             values: chartDataElement,
             transform: [
-                { "type": "flatten", "fields": ["buckets", "operators", "frequency"] },
-                { "type": "collect", "sort": { "field": "operators" } },
-                { "type": "stack", "groupby": ["buckets"], "field": "frequency" }
+                {
+                    type: "flatten",
+                    fields: ["buckets", "operatorsNice", "operators", "frequency"]
+                },
+                {
+                    type: "collect",
+                    sort: { field: "operators" }
+                },
+                {
+                    type: "stack",
+                    groupby: ["buckets"],
+                    field: "frequency"
+                }
             ]
         };
 
@@ -105,24 +93,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        const xTicks = () => {
-
-            const bucketsArrayLength = visData.chartDataElement.buckets.length;
-            const numberOfTicks = 20;
-
-            if (bucketsArrayLength > numberOfTicks) {
-
-                let ticks = [];
-
-                const delta = Math.floor(bucketsArrayLength / numberOfTicks);
-
-                for (let i = 0; i < bucketsArrayLength; i = i + delta) {
-                    ticks.push(visData.chartDataElement.buckets[i]);
-                }
-                return ticks;
+        const getAbsoluteYDomain = () => {
+            //use current plus percentage of difference to max if smaller then half of max, else use max
+            const differenceCurrentMaxYDomain = this.props.currentAbsoluteSwimLaneMaxYDomain - this.state.currentAbsoluteYDomainValue;
+            if (differenceCurrentMaxYDomain > this.props.currentAbsoluteSwimLaneMaxYDomain / 2) {
+                const differencePercentage = 30;
+                return this.state.currentAbsoluteYDomainValue + ((differenceCurrentMaxYDomain * differencePercentage) / 100);
+            } else {
+                return this.props.currentAbsoluteSwimLaneMaxYDomain;
             }
-
-        };
+        }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -148,7 +128,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     name: "getMaxY1Absolute",
                     value: 10
                 }
-
             ],
 
             scales: [
@@ -167,13 +146,19 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: this.props.absoluteValues ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
+                    domain: this.props.absoluteValues ? [0, getAbsoluteYDomain()] : [0, 1]
                 },
                 {
                     name: "color",
                     type: "ordinal",
-                    range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
-                    domain: this.props.operators,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
+                },
+                {
+                    name: "colorOperatorsGroup",
+                    type: "ordinal",
+                    domain: this.props.operators!.operatorsGroup,
+                    range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
             axes: [
@@ -182,7 +167,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     scale: "x",
                     zindex: 1,
                     labelOverlap: true,
-                    values: xTicks(),
+                    values: model.chartConfiguration.getSwimLanesXTicks(visData.chartDataElement.buckets, 50, 20, this.props.width),
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
@@ -263,13 +248,13 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "color",
+                fill: "colorOperatorsGroup",
                 title: "Operators",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: this.props.operators,
+                values: [...new Set(this.props.operators!.operatorsGroup)],
             }
             ],
         } as VisualizationSpec;
@@ -285,6 +270,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps)
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,
+    currentAbsoluteSwimLaneMaxYDomain: state.currentAbsoluteSwimLaneMaxYDomain,
 });
 
 

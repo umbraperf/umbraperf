@@ -1,5 +1,3 @@
-import { createBrowserHistory, createHashHistory } from "history";
+import { createHashHistory } from "history";
 
-//export default createBrowserHistory({ basename: '/' });
-export default createHashHistory({basename: '/'});
-
+export default createHashHistory(/* {basename: '/'} */);

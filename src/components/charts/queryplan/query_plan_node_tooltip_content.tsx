@@ -1,3 +1,4 @@
+import * as model from '../../../model';
 import * as Context from '../../../app_context';
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
@@ -8,11 +9,13 @@ export type QueryplanNodeTooltipData = {
     uirLineNumber: Array<number>,
     eventOccurrences: Array<number>,
     totalEventOccurrence: number,
+    estimatedCardinality: number | undefined,
 }
 
 interface Props {
     appContext: Context.IAppContext;
     operatorName: string,
+    operatorId: string,
     tooltipData: QueryplanNodeTooltipData,
 }
 
@@ -45,7 +48,9 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             }
 
             return (
-                <Paper>
+                <Paper
+                    className={styles.queryplanNodeTooltipTableBackground}
+                >
                     <Table
                         size="small"
                         aria-label="a dense table">
@@ -85,9 +90,18 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         return DenseTable(this.props.tooltipData);
     }
 
+    createNodeSubtitleLine() {
+        return <div
+            className={styles.queryplanNodeTooltipSubtitleContainer}
+        >
+            {this.props.tooltipData.estimatedCardinality && this.createEstimatedCardinalityLine()}
+            {this.createTotalSumLine()}
+        </div>
+    }
+
     createTotalSumLine() {
         return <Typography
-            className={styles.queryplanNodeTooltipSubtitle}
+            className={styles.queryplanNodeTooltipSubtitleFrequency}
             variant="subtitle2"
         >
             Total Frequency: {this.props.tooltipData.totalEventOccurrence}%
@@ -95,10 +109,35 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
         </Typography>
     }
 
+    createEstimatedCardinalityLine() {
+        return <Typography
+            className={styles.queryplanNodeTooltipSubtitleCardinality}
+            variant="subtitle2"
+        >
+            Estimated Cardinality: {model.chartConfiguration.nFormatter(this.props.tooltipData.estimatedCardinality!, 1)}
+
+        </Typography>
+    }
+
+    createHeaderOperatorName() {
+        const showOperatorId = () => {
+            return this.props.operatorName === this.props.operatorId.replace(/\d+/g, '') ? "" : ` (${this.props.operatorId})`;
+        }
+
+        return <Typography
+            className={styles.queryplanNodeTooltipHeader}
+            variant="subtitle2"
+        >
+            {this.props.operatorName} {showOperatorId()}
+
+        </Typography>
+    }
+
     createNodeTooltip() {
         return <div>
+            {this.createHeaderOperatorName()}
             {this.createContentTable()}
-            {this.createTotalSumLine()}
+            {this.createNodeSubtitleLine()}
         </div >
     }
 

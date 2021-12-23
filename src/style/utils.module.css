@@ -130,10 +130,15 @@
 
 .eventButton{
     animation: fadeIn 1s;
-    width: 135px;
+    max-width: 135px;
+    min-width: 125px;
     border-radius: 70px;
-    margin: 7px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     font-size: 10px;
+    flex: 1 1 125px;     /* In flex use minwidth to ensure first shirnk then wrap of buttons */
 }
 
 .kpiContainer{
@@ -211,12 +216,24 @@
 }
 
 .statusContainer{
-    justify-content: right;
     display: flex;
+    align-items: center;
+    justify-content: right;
     font-size: var(--labelFonSize);
     flex-basis: 300px;
     flex-grow: 0;
     flex-shrink: 0;
+}
+
+.statusString{
+    padding-right: 7px;
+    display: flex;
+    align-items: center;
+}
+
+.statusSymbol{
+    display: flex;
+    align-items: center;
 }
 
 .togglerLabel{
@@ -230,6 +247,20 @@
     left: 20px;
     margin-top: -9px;
     z-index: 2;
+}
+
+.heatmapsMemoryAddressSelectorContainer{
+    padding-bottom: 5px;
+    width: 80%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heatmapsMemoryAddrressSelectorTogglerLabel{
+    composes: togglerLabel;
+    margin-bottom: -10px;
 }
 
 @keyframes fadeIn {

@@ -1,3 +1,4 @@
+import * as Controller from '../../../controller';
 import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
@@ -11,7 +12,6 @@ interface Props {
     height: number;
     width: number;
     graphElements: FlowGraphElements,
-    handleOperatorSelection: (elementId: string) => void;
 }
 
 class QueryPlanViewer extends React.Component<Props, {}> {
@@ -22,7 +22,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
     }
 
     handleNodeClick(event: React.MouseEvent, element: FlowGraphNode) {
-        this.props.handleOperatorSelection(element.id);
+        Controller.handleOperatorSelection(element.id);
     }
 
     onLoad(reactFlowInstance: any) {
@@ -45,7 +45,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     minZoom={0.1}
                     maxZoom={3}
                     // onNodeMouseEnter={(event, element) => this.handleNodeMouseEnter(event, element as FlowGraphNode)}
-                    // onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
+                    //onNodeMouseLeave={(event, element) => this.handleNodeMouseLeave(event, element as FlowGraphNode)}
                     nodesConnectable={false}
                     nodesDraggable={true}
                     connectionLineType={ConnectionLineType.SmoothStep}
@@ -53,7 +53,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                     onElementClick={(event, element) => this.handleNodeClick(event, element as FlowGraphNode)}
                     nodeTypes={nodeTypes}
                 >
-                    <Controls className={styles.reactFlowControls}/>
+                    <Controls className={styles.reactFlowControls} />
                 </ReactFlow>
 
 

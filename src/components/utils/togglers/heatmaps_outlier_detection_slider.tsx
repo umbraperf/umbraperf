@@ -28,7 +28,7 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
     const [value, setValue] = React.useState<model.HeatmapsOutlierDetectionDegrees>(getSliderValue());
 
     const valueText = (value: number): string => {
-        const stepLables: {[outlierDetectionDegree: number]: string} = {
+        const stepLables: { [outlierDetectionDegree: number]: string } = {
             0: "off",
             1: "very weak",
             2: "weak",
@@ -49,7 +49,7 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
 
     const handleChangeCommitted = (event: any, newValue: number | number[]) => {
         //commit changes of slider to redux after mouseup
-        // Controller.handleHeatmapsOutlierDetectionSelection(value);
+        Controller.handleHeatmapsOutlierDetectionSelection(value);
     }
 
     function ValueLabelComponent(props: any) {

@@ -17,7 +17,7 @@ function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
-        Controller.resetMemoryAddressSelectionTuple();
+        Controller.resetHeatmapsOutlierDetectionSelection();
     }
 
     return (

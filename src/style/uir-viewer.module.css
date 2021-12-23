@@ -53,7 +53,7 @@
 
 .glyphClassEvent00{
     composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='%23919191'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 0 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='%23919191'/%3E%3Ccircle r='12.5' transform='matrix(1 0 0 -1 49.5 49.5)' fill='%23919191'/%3E%3C/svg%3E%0A");
 }
 
 /* .glyphClassEvent00{
@@ -108,15 +108,10 @@
 
 /* global glyps: */
 
- .glyphClassEvent10{
-    composes: glyphClassEventCommon;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle r='50' transform='matrix(1 0 0 -1 50 50)' fill='%23C7C7C7'/%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='%237E7C7C'/%3E%3C/svg%3E%0A");
-}
-
-/* .glyphClassEvent10{
+.glyphClassEvent10{
     composes: glyphClassEventCommon;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915L50 50L50 0Z' fill='%23919191'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
-} */
+}
 
 .glyphClassEvent11{
     composes: glyphClassEventCommon; 

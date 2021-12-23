@@ -264,3 +264,12 @@ export function isOperatorSelected(operatorId: string) {
     return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
 }
 
+export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
+    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+            data: newYDomainValue,
+        });
+    }
+}
+

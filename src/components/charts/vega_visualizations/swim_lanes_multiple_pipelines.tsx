@@ -97,7 +97,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
             //use current plus percentage of difference to max if smaller then half of max, else use max
             const differenceCurrentMaxYDomain = this.props.currentAbsoluteSwimLaneMaxYDomain - this.state.currentAbsoluteYDomainValue;
             if (differenceCurrentMaxYDomain > this.props.currentAbsoluteSwimLaneMaxYDomain / 2) {
-                const differencePercentage = 30;
+                const differencePercentage = 70;
                 return this.state.currentAbsoluteYDomainValue + ((differenceCurrentMaxYDomain * differencePercentage) / 100);
             } else {
                 return this.props.currentAbsoluteSwimLaneMaxYDomain;

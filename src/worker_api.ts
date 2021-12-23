@@ -22,10 +22,10 @@ export class WorkerAPI {
             type: model.WorkerRequestType.REGISTER_FILE,
             data: file
         });
-
     }
 
     public calculateChartData(backendQuery: string, requestId: number, metaRequest: boolean, backendQueryType: BackendApi.BackendQueryType) {
+        console.log("REQ: " + backendQueryType + ", " + requestId);
         const requestData: ICalculateChartDataRequestData = {
             backendQuery: backendQuery,
             metaRequest: metaRequest,
@@ -51,11 +51,12 @@ worker.addEventListener('message', message => {
 
     switch (messageType) {
 
-        case model.WorkerResponseType.CSV_READING_FINISHED:
-            Controller.setCsvReadingFinished();
+        case model.WorkerResponseType.UMBRAPERF_FILE_READING_FINISHED:
+            Controller.setUmbraperfFileReadingFinished();
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
+            console.log("RESP: " + messageData.backendQueryType + ", " + messageData.requestId);
             const resultRequestId = messageData.requestId;
             const resultChartData = messageData.chartData;
             const resultArrowTable = ArrowTable.Table.from(resultChartData);
@@ -64,12 +65,8 @@ worker.addEventListener('message', message => {
             Controller.storeResultFromRust(resultRequestId, resultArrowTable, metaRequest, resultBackendQueryType);
             break;
 
-        case model.WorkerResponseType.STORE_QUERYPLAN:
-            // Controller.storeQueryPlan(messageData);
-            const queryPlanData = messageData.queryPlanData;
-            const queryPlanRequestId = messageData.requestId;
-            const queryPlanBackendQueryType = messageData.backendQueryType;
-            Controller.storeResultFromRust(queryPlanRequestId, ArrowTable.Table.empty(), false, queryPlanBackendQueryType, queryPlanData);
+        case model.WorkerResponseType.STORE_QUERYPLAN_JSON:
+            Controller.setQueryPlanJson(messageData.queryPlanData);
             break;
 
         default:

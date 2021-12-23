@@ -1,8 +1,9 @@
 import * as model from '../../../model';
 import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Vega } from 'react-vega';
+import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
 
@@ -23,11 +24,25 @@ class BarChart extends React.Component<Props, {}> {
         super(props);
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
+        this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
 
     public render() {
-        return <Vega spec={this.createVisualizationSpec()} />
+        return <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
+    }
+
+    createVegaSignalListeners() {
+        const signalListeners: SignalListeners = {
+            clickOperator: this.handleClickOperator,
+        }
+        return signalListeners;
+    }
+
+    handleClickOperator(...args: any[]) {
+        if (args[1]) {
+            Controller.handleOperatorSelection(args[1]);
+        }
     }
 
     createVisualizationData() {
@@ -101,6 +116,15 @@ class BarChart extends React.Component<Props, {}> {
 
             data: visData,
 
+            signals: [
+                {
+                    name: "clickOperator",
+                    on: [
+                        { events: { marktype: "rect", type: "click" }, update: "datum.operators" }
+                    ]
+                },
+            ],
+
             scales: [
                 {
                     name: 'xscale',
@@ -118,6 +142,12 @@ class BarChart extends React.Component<Props, {}> {
                     name: "color",
                     type: "ordinal",
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
+                    domain: this.props.operators!.operatorsId,
+                },
+                {
+                    name: "colorDisabled",
+                    type: "ordinal",
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity,
                     domain: this.props.operators!.operatorsId,
                 },
             ],
@@ -177,7 +207,7 @@ class BarChart extends React.Component<Props, {}> {
                         update: {
                             fill: [
                                 { test: "indata('selectedOperators', 'operatorsUsed', datum.operators)", scale: "color", field: "operators" },
-                                { value: this.props.appContext.tertiaryColor },
+                                { scale: "colorDisabled", field: "operators" },
                             ],
                             fillOpacity: {
                                 value: 1,
@@ -187,6 +217,7 @@ class BarChart extends React.Component<Props, {}> {
                             fillOpacity: {
                                 value: model.chartConfiguration.hoverFillOpacity,
                             },
+                            cursor: {value: "pointer"}
                         },
                     },
                 },

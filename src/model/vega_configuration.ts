@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import styles from '../style/export-variables.module.css';
 
 export interface ChartConfiguration {
@@ -45,12 +46,12 @@ export interface ChartConfiguration {
     memoryChartXLabelSeparation: number,
     // memoryChartTooltip: string,
     colorLowOpacityHex: string,
+    getSwimLanesXTicks: (bucketsArray: number[], numberTicksLarge: number, numberTicksSmall: number, chartWidth: number) => number[] | undefined;
     nFormatter: (num: number, digits: number) => string,
     colorScale: { operatorsIdColorScale: string[], operatorsIdColorScaleLowOpacity: string[], operatorsGroupScale: string[] } | undefined;
 }
 
 export let chartConfiguration: ChartConfiguration = {
-
     //Title:
     titlePadding: -5,
     titleAlign: 'center',
@@ -79,6 +80,28 @@ export let chartConfiguration: ChartConfiguration = {
     memoryChartYLabelSeparation: 2,
     memoryChartXLabelSeparation: 2,
 
+    getSwimLanesXTicks: (bucketsArray: number[], numberTicksLarge: number, numberTicksSmall: number, chartWidth: number): number[] | undefined => {
+        const isLargeSwimLane = (swimLaneWidth: number) => {
+            return swimLaneWidth >= 1000 ? true : false;
+        };
+        const bucketsUnique = _.uniq(bucketsArray);
+        const bucketsUniqueLength = bucketsUnique.length;
+
+        const numberOfTicks = isLargeSwimLane(chartWidth) ? numberTicksLarge : numberTicksSmall;
+
+        if (bucketsUniqueLength > numberOfTicks) {
+            let ticks = [];
+            let delta = Math.floor(bucketsUniqueLength / numberOfTicks) + 1;
+            delta = (numberOfTicks % 2 === 0 && delta > 2) ? --delta : delta;
+            for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
+                ticks.push(bucketsUnique[i]);
+            }
+            return ticks;
+        }else{
+            return undefined;
+        }
+    },
+
     //Legend:
     legendTitleFontSize: 9,
     legendLabelFontSize: 8,
@@ -101,10 +124,9 @@ export let chartConfiguration: ChartConfiguration = {
     sunburstChartTooltip: (pipeline) => {
         return pipeline ?
             "{'Pipeline': datum.pipelineShort, 'Pipeline Name': datum.operator, 'Occurences': datum.pipeOccurrences}" :
-            "{'Operator': datum.operatorsNice, 'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}"
+            "{'Operator': datum.operatorsNice, 'Operator ID': datum.operator, 'Occurences': datum.opOccurrences, 'Pipeline': datum.parentShort}";
     },
     // memoryChartTooltip: "'Time': datum.bucket, 'Memory-Address': datum.memAdr, 'Memory-Loads': datum.occurrences",
-
     //Color Scale
     colorScale: undefined,
 
@@ -131,43 +153,6 @@ export let chartConfiguration: ChartConfiguration = {
         });
         return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
     },
-
-    //Color scale depreciated:
-    // getOperatorColorScheme: (domainLength, higSaturation, hsla) => {
-    //     //TODO remove
-
-    //     const colorValueRange: Array<Array<number>> = operatorColorScemeHsl.slice(0, domainLength);
-
-    //     const parsedColorValueRange = colorValueRange.map((elem) => {
-
-    //         let elemSaturation = elem[1];
-    //         if (higSaturation) {
-    //             const saturationOffset = 20;
-    //             let adjustedSaturation = elemSaturation - saturationOffset;
-    //             if (adjustedSaturation > 100) {
-    //                 adjustedSaturation = 100;
-    //             } else if (adjustedSaturation < 0) {
-    //                 adjustedSaturation = 0;
-    //             }
-    //             elemSaturation = adjustedSaturation;
-    //         }
-
-    //         if (hsla) {
-    //             return `hsla(${elem[0]},${elemSaturation}%,${elem[2]}%,${hsla})`
-    //         }
-    //         return `hsl(${elem[0]},${elemSaturation}%,${elem[2]}%)`
-    //     });
-
-    //     return parsedColorValueRange;
-    // },
-
-    // getOrangeColor: (opacity) => {
-    //     //depreciated
-    //     //TODO remove, not used
-
-    //     return orangeColorSchemeHex[opacity];
-    // },
-
 }
 
 // const operatorColorScemeHsl: Array<[number, number, number]> = [
@@ -260,8 +245,8 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     //create operatorId color scale based on color object for operatorGgroup
     const createOperatorsIdColorScale = (baseOperatorColors: IBaseOperatorsGroupColors) => {
-        const luminanceLow = 35;
-        const luminanceHigh = 75;
+        const luminanceLow = 30;
+        const luminanceHigh = 80;
         const luminanceRange = luminanceHigh - luminanceLow;
 
         let currentOperatorsGroupCount: IOperatorsGroupCount = {};

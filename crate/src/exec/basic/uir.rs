@@ -4,18 +4,20 @@ use std::{
 };
 
 use arrow::{
-    array::{ArrayRef, Float64Array, Int32Array, Int64Array, StringArray},
+    array::{ArrayRef, Float64Array, Int32Array, StringArray},
     datatypes::DataType,
     record_batch::RecordBatch,
 };
 
 use crate::{
-    exec::{
-        basic::{basic::sort_batch, filter::filter_between_int32},
-        rest::rest_api::find_name,
+    exec::{basic::basic::sort_batch, rest::rest_api::find_name},
+    state::state::get_serde_dict,
+    utils::{
+        array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
+        record_batch_schema::RecordBatchSchema,
+        record_batch_util::{self, create_new_record_batch},
     },
-    state::state::{get_serde_dict, get_uir_record_batches, set_uir_record_batches},
-    utils::record_batch_util::{self, create_new_record_batch},
+    web_file::serde_reader::DictFields,
 };
 
 use super::{basic::find_unique_string, filter::filter_with};
@@ -30,6 +32,8 @@ pub struct RELFREQ {
     rel_freq: Vec<f64>,
 }
 
+// round to one decimal
+// multiply with 100 to get percentage value
 pub fn round(to_round: f64) -> f64 {
     f64::trunc((to_round) * 1000.0) / 10.0
 }
@@ -47,51 +51,44 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
     out_vec
 }
 
-pub fn uir(record_batch: RecordBatch) -> RecordBatch {
-    let column_ev_name = record_batch
-        .column(1)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let column_srcline = record_batch
-        .column(5)
-        .as_any()
-        .downcast_ref::<Int64Array>()
-        .unwrap();
+fn calculate(
+    record_batch: RecordBatch,
+) -> (HashMap<String, HashMap<String, i32>>, HashSet<String>) {
+    let column_ev_name = get_stringarray_column(&record_batch, RecordBatchSchema::EvName as usize);
+    let column_srcline = get_int64_column(&record_batch, RecordBatchSchema::Uri as usize);
 
     let dict = get_serde_dict().unwrap();
 
-    // CALCULATE
     let mut hashmap_count = HashMap::new();
     let mut unique_events_set = HashSet::new();
 
     for entry in column_srcline.into_iter().enumerate() {
-        let entry_srcline_num = entry.1.unwrap();
-        let hashmap_samplekey_srcline = dict.dict.get("srclines").unwrap();
+        let hashmap_samplekey_srcline = dict.dict.get(&(DictFields::Srcline as i64)).unwrap();
         let mapping_to_dict_file = hashmap_samplekey_srcline
-            .get(&(entry_srcline_num as u64))
+            .get(&(entry.1.unwrap() as u64))
             .unwrap();
-        let mut current_ev = column_ev_name.value(entry.0);
-        if mapping_to_dict_file.contains("dump") || mapping_to_dict_file.contains("proxy") {
-            let split = mapping_to_dict_file
-                .split_terminator(":")
-                .collect::<Vec<&str>>();
-            let srcline_key = split[1];
-            if dict.uri_dict.get(srcline_key).is_some() {
-                if entry.0 < 30 {
-                    current_ev = "test_Event";
-                }
-                let inner_hashmap = hashmap_count.entry(current_ev).or_insert(HashMap::new());
-                unique_events_set.insert(current_ev);
+        let current_ev = column_ev_name.value(entry.0);
+        if mapping_to_dict_file.starts_with("dump") {
+            let split = mapping_to_dict_file.split_once(":").unwrap();
+            let srcline_key = split.1;
+            let inner_hashmap = hashmap_count
+                .entry(current_ev.to_string())
+                .or_insert(HashMap::new());
+            unique_events_set.insert(current_ev.to_string());
 
-                inner_hashmap.entry(srcline_key).or_insert(0);
-                inner_hashmap.insert(srcline_key, inner_hashmap[split[1]] + 1);
-                inner_hashmap.entry("sum").or_insert(0);
-                inner_hashmap.insert("sum", inner_hashmap["sum"] + 1);
-            }
+            inner_hashmap.entry(srcline_key.to_string()).or_insert(0);
+            inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[srcline_key] + 1);
+            inner_hashmap.entry("sum".to_string()).or_insert(0);
+            inner_hashmap.insert("sum".to_string(), inner_hashmap["sum"] + 1);
         }
     }
+
+    return (hashmap_count, unique_events_set);
+}
+
+pub fn uir(record_batch: RecordBatch) -> RecordBatch {
+    let dict = get_serde_dict().unwrap();
+    let (hashmap_count, unique_events_set) = calculate(record_batch);
 
     let mut output_vec = Vec::new();
     let keys = dict.uri_dict.keys();
@@ -101,7 +98,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         .map(|i| i.parse::<i64>().unwrap())
         .collect::<Vec<i64>>();
     uirs.sort();
-    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<&str>>();
+    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<String>>();
     unique_events_set.sort();
 
     for uir in uirs {
@@ -111,7 +108,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
 
         for event in &unique_events_set {
             let inner_hashmap = hashmap_count.get(event).unwrap();
-            let specific = *inner_hashmap.get(&(entry.as_str())).unwrap_or(&0) as f64;
+            let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = specific / total;
             let percentage = round(percentage);
@@ -133,13 +130,13 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     // Special treatment for functions with define, declare and aggregated output
     let mut aggregated_output_vec = Vec::new();
     for item in output_vec.clone().into_iter().enumerate() {
-        let iter = item.0;
-        let item = item.1;
-        let current_srcline = item.0.unwrap();
+        let current_index = item.0;
+        let all_entries = item.1;
+        let current_srcline = all_entries.0.unwrap();
         if current_srcline.contains("define") || current_srcline.contains("declare") {
             let mut buffer_percentage = Vec::new();
             for item in output_vec.clone().into_iter().enumerate() {
-                if item.0 > iter {
+                if item.0 > current_index {
                     let str = item.1;
                     let str = str.0;
                     if str.unwrap().contains("define") || str.unwrap().contains("declare") {
@@ -157,7 +154,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                         for event in &unique_events_set {
                             let inner_hashmap = hashmap_count.get(event).unwrap();
                             let specific = *inner_hashmap
-                                .get(&(item.0 as i64).to_string().as_str())
+                                .get(&(item.0 as i64).to_string())
                                 .unwrap_or(&0) as f64;
                             let total = *inner_hashmap.get("sum").unwrap() as f64;
                             let percentage = round(specific / total);
@@ -167,20 +164,21 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 }
             }
         } else {
-            if item.0.unwrap().contains("const") || item.0.unwrap().starts_with("  ") {
+            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ")
+            {
                 aggregated_output_vec.push((
-                    Some(format!("{}", item.0.unwrap())),
-                    item.1,
-                    item.2,
-                    item.3,
+                    Some(format!("{}", all_entries.0.unwrap())),
+                    all_entries.1,
+                    all_entries.2,
+                    all_entries.3,
                     0,
                 ));
             } else {
                 aggregated_output_vec.push((
-                    Some(format!("  {}", item.0.unwrap())),
-                    item.1,
-                    item.2,
-                    item.3,
+                    Some(format!("  {}", all_entries.0.unwrap())),
+                    all_entries.1,
+                    all_entries.2,
+                    all_entries.3,
                     0,
                 ));
             }
@@ -334,78 +332,194 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
-    set_uir_record_batches(out_batch);
-
-    let batch = get_uir_record_batches().unwrap().batch.clone();
-
-    return batch;
+    return out_batch;
 }
 
-pub fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
+// This method is faster than pure uir() as it doesn't calculate
+// the relative frequency and not the aggregated coverage of a function
+fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
+    let dict = get_serde_dict().unwrap();
+    let (hashmap_count, unique_events_set) = calculate(record_batch);
+
+    let mut output_vec = Vec::new();
+    let keys = dict.uri_dict.keys();
+    let vec = keys.collect::<Vec<&String>>();
+    let mut uirs = vec
+        .into_iter()
+        .map(|i| i.parse::<i64>().unwrap())
+        .collect::<Vec<i64>>();
+    uirs.sort();
+    let mut unique_events_set = unique_events_set.into_iter().collect::<Vec<String>>();
+    unique_events_set.sort();
+
+    for uir in uirs {
+        let entry = uir.to_string();
+
+        let mut buffer_percentage = Vec::new();
+
+        for event in &unique_events_set {
+            let inner_hashmap = hashmap_count.get(event).unwrap();
+            let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
+            let total = *inner_hashmap.get("sum").unwrap() as f64;
+            let percentage = specific / total;
+            let percentage = round(percentage);
+            buffer_percentage.push(percentage)
+        }
+
+        let dict = dict.uri_dict.get(&entry).unwrap();
+
+        output_vec.push((
+            dict.uir.as_ref(),
+            ABSFREQ {
+                abs_freq: buffer_percentage,
+            },
+            dict.op.as_ref(),
+            dict.pipeline.as_ref(),
+        ));
+    }
+
+    let mut srcline = Vec::new();
+    let mut vec_vec_perc = Vec::new();
+    let mut op = Vec::new();
+    let mut pipe = Vec::new();
+    let mut srcline_num = Vec::new();
+
+    for input in output_vec.into_iter().enumerate() {
+        let num = input.0;
+        let input = input.1;
+        srcline.push(format!("{}\n", input.0.unwrap()));
+        vec_vec_perc.push(input.1);
+        if let Some(operator) = input.2 {
+            op.push(operator.as_str());
+        } else {
+            op.push("None");
+        }
+        if let Some(pipeline) = input.3 {
+            pipe.push(pipeline.as_str());
+        } else {
+            pipe.push("None");
+        }
+        srcline_num.push((num as i32) + 1);
+    }
+
+    let mut vec = Vec::new();
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let value = entry.0 + 1;
+        let mut str = "perc".to_owned();
+        str.push_str(&value.to_string());
+        vec.push(str);
+    }
+    let vec: Vec<&str> = vec.iter().map(AsRef::as_ref).collect();
+
+    let data = vec![
+        vec!["scrline"],
+        vec,
+        vec!["op"],
+        vec!["pipe"],
+        vec!["srcline_num"],
+    ];
+
+    let mut vec_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_data.push(DataType::Float64);
+    }
+    let mut vec_rel_data = Vec::new();
+    for _entry in &unique_events_set.clone() {
+        vec_rel_data.push(DataType::Float64);
+    }
+
+    let data_datatype = vec![
+        vec![DataType::Utf8],
+        vec_data,
+        vec![DataType::Utf8],
+        vec![DataType::Utf8],
+        vec![DataType::Int32],
+    ];
+
+    let mut column_ref: Vec<ArrayRef> = Vec::new();
+
+    column_ref.push(Arc::new(StringArray::from(srcline)));
+
+    for entry in unique_events_set.clone().into_iter().enumerate() {
+        let mut vec = Vec::new();
+        for vec_perc in &vec_vec_perc {
+            vec.push(vec_perc.abs_freq[entry.0]);
+        }
+        column_ref.push(Arc::new(Float64Array::from(vec)));
+    }
+
+    column_ref.push(Arc::new(StringArray::from(op)));
+    column_ref.push(Arc::new(StringArray::from(pipe)));
+    column_ref.push(Arc::new(Int32Array::from(srcline_num)));
+
+    let out_batch = create_new_record_batch(
+        data.into_iter().flatten().collect::<Vec<&str>>(),
+        data_datatype
+            .into_iter()
+            .flatten()
+            .collect::<Vec<DataType>>(),
+        column_ref,
+    );
+
+    return out_batch;
+}
+
+fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
     let num_rows = record_batch.num_rows();
     let max = 5.min(num_rows);
     return record_batch.slice(0, max);
 }
 
+// Get the top five srclines with the highest coverage
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
-    let batch = uir(record_batch);
+    let srcline_batch = uir_without_rel(record_batch);
+    let srcline_batch_sorted_after_coverage = sort_batch(&srcline_batch, ordered_by + 1, true);
 
-    let function_flac_col = find_name("func_flag", &batch);
-    let only_functions = filter_between_int32(function_flac_col, 0, 0, &batch);
-    let sort = sort_batch(&only_functions, ordered_by + 1, true);
-
-    let op_col = find_name("op", &sort);
-    let unique = find_unique_string(&sort, op_col);
-    let unique = unique
-        .column(0)
-        .as_any()
-        .downcast_ref::<StringArray>()
-        .unwrap();
-
-    let mut unique = unique
+    // Unqiue, sorted array of operators
+    let operator_col = find_name("op", &srcline_batch_sorted_after_coverage);
+    let unique_operator_batch =
+        find_unique_string(&srcline_batch_sorted_after_coverage, operator_col);
+    let unique_arr = get_stringarray_column(&unique_operator_batch, 0);
+    let mut unique_op = unique_arr
         .into_iter()
         .map(|e| e.unwrap().to_string())
         .collect::<Vec<String>>();
-    unique.sort();
+    unique_op.sort();
 
-    let mut vec = Vec::new();
-    vec.push(get_max_top_five(sort.clone()));
-    let mut vec_sum = Vec::new();
+    let mut top_five = Vec::new();
+    let mut total_coverage = Vec::new();
 
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    vec_sum.push(0.);
-    for entry in unique {
-        if entry.contains("None") {
+    // Setting the global top five
+    top_five.push(get_max_top_five(
+        srcline_batch_sorted_after_coverage.clone(),
+    ));
+    for _i in 0..5 {
+        total_coverage.push(0.);
+    }
+
+    // Setting for the other operator the top five
+    for op in unique_op {
+        if op.contains("None") {
         } else {
-            let filter = filter_with(op_col, vec![&entry], &sort);
-            let column = filter
-                .column(ordered_by + 1)
-                .as_any()
-                .downcast_ref::<Float64Array>()
-                .unwrap();
-            let sum = f64::trunc((arrow::compute::sum(column).unwrap()) * 100.0) / 100.0;
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec_sum.push(sum);
-            vec.push(get_max_top_five(filter));
+            let unique_op_batch = filter_with(
+                operator_col,
+                vec![&op],
+                &srcline_batch_sorted_after_coverage,
+            );
+            let coverage_col = get_floatarray_column(&unique_op_batch, ordered_by + 1);
+            let sum_cov = f64::trunc((arrow::compute::sum(coverage_col).unwrap()) * 100.0) / 100.0;
+            for _i in 0..5 {
+                total_coverage.push(sum_cov);
+            }
+            top_five.push(get_max_top_five(unique_op_batch));
         }
     }
 
-    let batch = record_batch_util::convert_without_mapping(vec);
+    // Convert to one record batch
+    let one_batch = record_batch_util::convert_without_mapping(top_five);
 
-    let srcline_num_col = find_name("srcline_num", &batch);
-
-    let srcline = StringArray::from(batch.column(0).data().clone());
-    let perc = Float64Array::from(batch.column(ordered_by + 1).data().clone());
-    let op = StringArray::from(batch.column(op_col).data().clone());
-    let srcline_num = Int32Array::from(batch.column(srcline_num_col).data().clone());
-    let total = Float64Array::from(vec_sum);
-
+    // Setting root for the global top five
+    let op = StringArray::from(one_batch.column(operator_col).data().clone());
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {
         if entry.0 < 5 {
@@ -415,7 +529,9 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         }
     }
 
-    let out_batch = create_new_record_batch(
+    // Return created Record Batch
+    let srcline_num_col = find_name("srcline_num", &one_batch);
+    create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num", "total"],
         vec![
             DataType::Utf8,
@@ -425,13 +541,15 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             DataType::Float64,
         ],
         vec![
-            Arc::new(srcline),
-            Arc::new(perc),
+            Arc::new(StringArray::from(one_batch.column(0).data().clone())),
+            Arc::new(Float64Array::from(
+                one_batch.column(ordered_by + 1).data().clone(),
+            )),
             Arc::new(StringArray::from(op_vec)),
-            Arc::new(srcline_num),
-            Arc::new(total),
+            Arc::new(Int32Array::from(
+                one_batch.column(srcline_num_col).data().clone(),
+            )),
+            Arc::new(Float64Array::from(total_coverage)),
         ],
-    );
-
-    out_batch
+    )
 }

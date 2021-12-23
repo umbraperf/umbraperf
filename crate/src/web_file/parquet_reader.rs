@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::io::{Read, BufReader};
 
 use crate::state::state::{append_to_buffer, clear_buffer, get_buffer};
 
@@ -14,11 +14,13 @@ impl BufferReader {
 
         let mut zip = zip::ZipArchive::new(WebFileReader::new_from_file(file_size as i32)).unwrap();
         let reader = zip.by_name(filename).unwrap();
-        let length = reader.compressed_size();
+        let length = reader.size();
         let start_offset = reader.data_start();
 
         let web_file_reader = WebFileReader::new_from_file(file_size as i32);
-        let mut reader = web_file_reader.set_offset(start_offset as i32);
+        let reader = web_file_reader.set_offset(start_offset as i32);
+        let mut reader = BufReader::new(reader);
+
 
         let mut offset = 0;
         while offset != length {
@@ -42,6 +44,7 @@ impl Read for BufferReader {
         let read_size = buf.len();
 
         let parquet_file = get_buffer();
+
         let binary = parquet_file.lock().unwrap();
 
         let read_size = read_size.min(binary.len() - (self.offset as usize));
@@ -50,7 +53,15 @@ impl Read for BufferReader {
             return Ok(0);
         }
 
-        buf.clone_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);
+        if read_size < buf.len() {
+            for i in 0..read_size {
+                buf[i] = binary[self.offset as usize + i];
+            }
+            self.offset = self.offset + (read_size as u64);
+            return Ok(read_size);
+        }
+
+        buf.copy_from_slice(&binary[self.offset as usize..(self.offset as usize) + read_size]);
 
         self.offset = self.offset + (read_size as u64);
 

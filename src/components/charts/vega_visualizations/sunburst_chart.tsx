@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import ChartResetButton from '../../utils/togglers/chart_reset_button';
-
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -17,6 +15,7 @@ interface AppstateProps {
     pipelinesShort: Array<string> | undefined;
     operators: model.IOperatorsData | undefined;
     chartData: model.ISunburstChartData,
+    currentPipelineActiveTimeframe: Array<string> | "All";
 }
 
 type Props = model.ISunburstChartProps & AppstateProps;
@@ -31,28 +30,11 @@ class SunburstChart extends React.Component<Props, {}> {
         this.handleClickOperator = this.handleClickOperator.bind(this);
     }
 
-
-
     public render() {
         return <div style={{ position: "relative" }} >
-            {this.createChartResetComponent()}
+            {Controller.createChartResetComponent('pipelinesOperators')}
             <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
         </div>
-    }
-
-    createChartResetComponent() {
-        return this.isResetButtonVisible() && <ChartResetButton chartResetButtonFunction={Controller.resetSunburstSelection} />;
-    }
-
-    isResetButtonVisible() {
-        if ((this.props.currentOperator !== "All"
-            && !_.isEqual(this.props.currentOperator, this.props.operators!.operatorsId))
-            || (this.props.currentPipeline !== "All"
-                && !_.isEqual(this.props.currentPipeline, this.props.pipelines))) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     createVegaSignalListeners() {
@@ -100,7 +82,7 @@ class SunburstChart extends React.Component<Props, {}> {
                 ]
             },
             {
-                name: "pipelinesShort",
+                name: "pipelinesShortMapping",
                 values: { pipeline: this.props.pipelines, pipelineShort: this.props.pipelinesShort },
                 transform: [
                     {
@@ -116,6 +98,16 @@ class SunburstChart extends React.Component<Props, {}> {
                     {
                         type: "flatten",
                         fields: ["operatorsUsed"]
+                    }
+                ]
+            },
+            {
+                name: "availablePipelines",
+                values: { pipelinesActiveTimeframe: this.props.currentPipelineActiveTimeframe === "All" ? this.props.pipelines : this.props.currentPipelineActiveTimeframe },
+                transform: [
+                    {
+                        type: "flatten",
+                        fields: ["pipelinesActiveTimeframe"]
                     }
                 ]
             },
@@ -153,14 +145,14 @@ class SunburstChart extends React.Component<Props, {}> {
                     },
                     {
                         type: "lookup", //join short pipeline names to tree table
-                        from: "pipelinesShort",
+                        from: "pipelinesShortMapping",
                         key: "pipeline",
                         fields: ["operator"],
                         values: ["pipelineShort"],
                     },
                     {
                         type: "lookup", //join short parent pipeline names colum 
-                        from: "pipelinesShort",
+                        from: "pipelinesShortMapping",
                         key: "pipeline",
                         fields: ["parent"],
                         values: ["pipelineShort"],
@@ -199,8 +191,17 @@ class SunburstChart extends React.Component<Props, {}> {
             }
         }
 
-        const pipelinesLegend = () => {
-            return this.props.pipelines!.map((elem, index) => (this.props.pipelinesShort![index] + ": " + elem));
+        const bigPipelinesLegendChartOffset = this.props.doubleRowSize ? 50 : 30;
+        const isBigPipelinesLegend = this.props.pipelines!.length > 10;
+        const isSmallRepresentation = this.props.width < 400;
+        const isLargeRepresentation = sunburstSize() >= 100;
+
+        const getPipelineLegendEntryLength = () => {
+            return this.props.doubleRowSize ?
+                (isBigPipelinesLegend && !isLargeRepresentation ? 20 : 30) :
+                (isBigPipelinesLegend ?
+                    (isSmallRepresentation ? 10 : 15) :
+                    20)
         }
 
         const spec: VisualizationSpec = {
@@ -209,7 +210,6 @@ class SunburstChart extends React.Component<Props, {}> {
             height: this.props.height - 10,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: false },
-
 
             title: {
                 text: "Shares of Pipelines and Operators",
@@ -240,14 +240,6 @@ class SunburstChart extends React.Component<Props, {}> {
                         { events: { marktype: "arc", type: "click" }, update: "if(datum.parent !== 'inner' && datum.operator !== 'inner', [datum.operator, datum.parent], null)" }
                     ]
                 },
-                {
-                    name: "cursor",
-                    value: "default",
-                    on: [
-                        { events: { type: "mouseover", marktype: "arc" }, update: { value: "pointer" } },
-                        { events: "arc:mouseout", update: { value: "default" } }
-                    ]
-                }
             ],
 
             scales: [
@@ -256,7 +248,12 @@ class SunburstChart extends React.Component<Props, {}> {
                     type: "ordinal",
                     domain: this.props.operators!.operatorsId,
                     range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
-                    // range: model.chartConfiguration.getOperatorColorScheme(this.props.operators!.length),
+                },
+                {
+                    name: "colorOperatorsIdInactive",
+                    type: "ordinal",
+                    domain: this.props.operators!.operatorsId,
+                    range: model.chartConfiguration.colorScale!.operatorsIdColorScaleLowOpacity,
                 },
                 {
                     name: "colorOperatorsGroup",
@@ -272,7 +269,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     from: { "data": "tree" },
                     encode: {
                         enter: {
-                            x: { signal: "width / 2" },
+                            x: isBigPipelinesLegend ? { signal: `width / 2 + ${bigPipelinesLegendChartOffset}` } : { signal: `width / 2` },
                             y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             tooltip: [
                                 { test: "datum.parent === 'inner'", signal: model.chartConfiguration.sunburstChartTooltip(true) },
@@ -289,16 +286,22 @@ class SunburstChart extends React.Component<Props, {}> {
                             zindex: { value: 0 },
                             fillOpacity: { value: 1 },
                             fill: [
+                                { test: "datum.operator==='inner'", value: '#fff' }, //draw inner point of chart white
                                 { test: "datum.parent==='inner' && indata('selectedPipelines', 'pipelinesUsed', datum.operator)", value: this.props.appContext.secondaryColor }, // use orange app color if pipeline is selected
-                                { test: "datum.parent==='inner'", value: this.props.appContext.tertiaryColor }, //use grey app color if pipeline is not selected
-                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected (inner operator not colored as not in scale domain), do not use normal scale if whole pipeline is not selected   
-                                { test: "datum.operator !== 'inner'", value: this.props.appContext.tertiaryColor } //use grey app color for operators operators as they do not have inner as parent (inner operator not colored as not in scale domain)
+                                { test: "datum.parent==='inner'", value: this.props.appContext.secondaryColor + model.chartConfiguration.colorLowOpacityHex }, //use inactive operator color if pipeline is not selected
+                                { test: "indata('selectedOperators', 'operatorsUsed', datum.operator) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsId", field: "operator" }, // use normal operator color scale if operator is selected and its partent pipeline is selected (ie operator is available)   
+                                { test: "!(indata('selectedOperators', 'operatorsUsed', datum.operator)) && indata('selectedPipelines', 'pipelinesUsed', datum.parent)", scale: "colorOperatorsIdInactive", field: "operator" }, //use inactive scale if operator not selected but available as parent pipeline is selected
+                                { test: "!(indata('selectedPipelines', 'pipelinesUsed', datum.parent))", value: this.props.appContext.tertiaryColor + model.chartConfiguration.colorLowOpacityHex }, // use grey  not available color if operator is not available as parent pipeline is not selected
                             ],
                         },
                         hover: {
-                            fillOpacity: {
-                                value: model.chartConfiguration.hoverFillOpacity,
-                            },
+                            fillOpacity: [{
+                                test: "datum.parent==='inner' || indata('selectedPipelines', 'pipelinesUsed', datum.parent)", value: model.chartConfiguration.hoverFillOpacity, //Only hover behavior if pipeline, or if operator and available (ie. only if partent pipeline is selected)
+                            }],
+                            cursor: [
+                                { test: "datum.parent==='inner' || indata('selectedPipelines', 'pipelinesUsed', datum.parent)", value: "pointer" },
+                                { value: "not-allowed" }
+                            ]
                         }
                     }
                 },
@@ -310,7 +313,7 @@ class SunburstChart extends React.Component<Props, {}> {
                         enter: {
                             fontSize: { value: model.chartConfiguration.sunburstChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
-                            x: { signal: "width/ 2" },
+                            x: isBigPipelinesLegend ? { signal: `width / 2 + ${bigPipelinesLegendChartOffset}` } : { signal: `width / 2` },
                             y: this.props.doubleRowSize ? { signal: "height / 2.5" } : { signal: "height / 2" },
                             radius: { signal: "(datum['r0'] + datum['r1'])/2 " },
                             theta: { signal: "(datum['a0'] + datum['a1'])/2" },
@@ -330,21 +333,33 @@ class SunburstChart extends React.Component<Props, {}> {
                     }
                 }
             ],
+
             legends: [
                 {
                     fill: "colorOperatorsId", //just as dummy
                     labelOffset: -11,
                     title: "Pipelines",
+                    offset: isBigPipelinesLegend ? -1 : 0,
+                    columns: this.props.doubleRowSize ? 1 : (isBigPipelinesLegend ? 2 : 1),
+                    columnPadding: -1,
                     orient: this.props.doubleRowSize ? "bottom-left" : "left",
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
-                    values: pipelinesLegend(),
+                    values: { signal: "data('pipelinesShortMapping')" },
                     rowPadding: 0,
                     encode: {
                         labels: {
                             update: {
-                                text: this.props.doubleRowSize ? { signal: "truncate(datum.value, 60)" } : { signal: "truncate(datum.value, 35)" },
+                                text: { signal: `truncate(datum.value.pipelineShort + ': ' + datum.value.pipeline, ${getPipelineLegendEntryLength()})` },
+                                fill: [
+                                    {
+                                        test: "indata('availablePipelines', 'pipelinesActiveTimeframe', datum.value.pipeline)",
+                                        value: this.props.appContext.secondaryColor
+                                    },
+                                    { value: this.props.appContext.tertiaryColor }
+                                ]
                             }
+
                         }
                     }
                 },
@@ -353,9 +368,8 @@ class SunburstChart extends React.Component<Props, {}> {
                     title: "Operators",
                     orient: this.props.doubleRowSize ? "bottom-right" : "right",
                     direction: "vertical",
-                    rowPadding: 2,
-                    // columns:  this.props.doubleRowSize ? 1 : 3,
-                    columnPadding: 3,
+                    rowPadding: 0,
+                    offset: (isSmallRepresentation && !this.props.doubleRowSize) ? 40 : 0,
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,
@@ -382,6 +396,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISunburstChartPr
     pipelinesShort: state.pipelinesShort,
     operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISunburstChartData,
+    currentPipelineActiveTimeframe: state.currentPipelineActiveTimeframe,
 });
 
 

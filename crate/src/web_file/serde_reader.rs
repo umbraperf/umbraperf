@@ -1,10 +1,13 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::{Read, BufReader}};
+use crate::{
+    bindings::send_js_query_plan,
+};
 
 use serde::Deserialize;
 use serde_json::{Map, Value};
 
-use super::parquet_reader::BufferReader;
-use crate::web_file::serde_reader::Value::Number;
+use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
+use crate::{web_file::serde_reader::Value::Number};
 
 #[derive(Deserialize, Debug, Clone)]
 struct Dictionary {
@@ -29,22 +32,42 @@ pub struct DictionaryUri {
 
 #[derive(Clone)]
 pub struct SerdeDict {
-    pub dict: HashMap<String, HashMap<u64, String>>,
-    pub uri_dict: HashMap<String, DictionaryUri>,
+    pub dict: HashMap<i64, HashMap<u64, String>>,
+    pub uri_dict: HashMap<String, DictionaryUri>
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
+static QUERY_PLAN_FILE_NAME: &str = "query_plan_analyzed.json";
+
+pub enum DictFields {
+    Operator = 0,
+    Pipeline = 1,
+    Event = 2,
+    Srcline = 3,
+    OpExtension = 4,
+    PhysicalOp = 5,
+}
 
 impl SerdeDict {
     pub fn read_dict(length: u64) -> Self {
+
+        let mut zip =
+            zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
+        let reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
+        let mut buf_reader = BufReader::new(reader);
+        
+        let mut buf: String = String::new();
+        let _result = buf_reader.read_to_string(&mut buf);
+
         let reader = BufferReader::read_to_buffer(DICT_FILE_NAME, length as u64);
-        let d: Dictionary = serde_json::from_reader(reader).unwrap();
+        let buf_reader = BufReader::new(reader);
+        let d: Dictionary = serde_json::from_reader(buf_reader).unwrap();
 
         let mut hash_map = HashMap::new();
         for operator in d.operators {
             let inner_hash_map = hash_map
-                .entry("operator".to_string())
+                .entry(DictFields::Operator as i64)
                 .or_insert(HashMap::new());
             let string = operator.0;
             if let Number(x) = operator.1 {
@@ -55,7 +78,7 @@ impl SerdeDict {
 
         for pipeline in d.pipelines {
             let inner_hash_map = hash_map
-                .entry("pipeline".to_string())
+                .entry(DictFields::Pipeline as i64)
                 .or_insert(HashMap::new());
             let string = pipeline.0;
             if let Number(x) = pipeline.1 {
@@ -66,7 +89,7 @@ impl SerdeDict {
 
         for event in d.events {
             let inner_hash_map = hash_map
-                .entry("event".to_string())
+                .entry(DictFields::Event as i64)
                 .or_insert(HashMap::new());
             let string = event.0;
             if let Number(x) = event.1 {
@@ -77,7 +100,7 @@ impl SerdeDict {
 
         for srclines in d.srclines {
             let inner_hash_map = hash_map
-                .entry("srclines".to_string())
+                .entry(DictFields::Srcline as i64)
                 .or_insert(HashMap::new());
             let string = srclines.0;
             if let Number(x) = srclines.1 {
@@ -88,7 +111,7 @@ impl SerdeDict {
 
         for op_extension in d.op_extension{
             let inner_hash_map = hash_map
-                .entry("op_extension".to_string())
+                .entry(DictFields::OpExtension as i64)
                 .or_insert(HashMap::new());
             let string = op_extension.0;
             if let Number(x) = op_extension.1 {
@@ -99,7 +122,7 @@ impl SerdeDict {
 
         for physical_op in d.physical_op {
             let inner_hash_map = hash_map
-                .entry("physical_op".to_string())
+                .entry(DictFields::PhysicalOp as i64)
                 .or_insert(HashMap::new());
             let string = physical_op.0;
             if let Number(x) = physical_op.1 {
@@ -109,11 +132,14 @@ impl SerdeDict {
         }
 
         let reader = BufferReader::read_to_buffer(URI_DICT_FILE_NAME, length as u64);
-        let d: HashMap<String, DictionaryUri> = serde_json::from_reader(reader).unwrap();
+        let buf_reader = BufReader::new(reader);
+        let d: HashMap<String, DictionaryUri> = serde_json::from_reader(buf_reader).unwrap();
 
+        send_js_query_plan(buf);
+        
         return Self {
             dict: hash_map,
-            uri_dict: d,
+            uri_dict: d
         };
     }
 }

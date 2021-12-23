@@ -27,7 +27,7 @@ interface OwnProps {
 export interface ChartWrapperAppstateProps {
     appContext: Context.IAppContext;
     chartIdCounter: number;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     resultLoading: model.IResultLoading;
     chartData: model.IChartDataKeyValue,
     events: Array<string> | undefined;
@@ -39,6 +39,7 @@ export interface ChartWrapperAppstateProps {
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
+    currentMemoryAddressSelectionTuple: [number, number],
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
 
@@ -109,7 +110,7 @@ class ChartWrapper extends React.Component<Props, State> {
             height: this.elementWrapper.current!.offsetHeight,
         }));
 
-        if (this.props.csvParsingFinished) {
+        if (this.props.umbraperfFileParsingFinished) {
 
             addEventListener('resize', (event) => {
                 this.resizeListener();
@@ -305,7 +306,7 @@ class ChartWrapper extends React.Component<Props, State> {
 
     public render() {
 
-        if (!this.props.csvParsingFinished) {
+        if (!this.props.umbraperfFileParsingFinished) {
             return <Redirect to={"/upload"} />
         }
 
@@ -323,7 +324,7 @@ class ChartWrapper extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: model.AppState) => ({
-    csvParsingFinished: state.csvParsingFinished,
+    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
     chartIdCounter: state.chartIdCounter,
     resultLoading: state.resultLoading,
     chartData: state.chartData,
@@ -336,6 +337,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
+    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
     currentBucketSize: state.currentBucketSize,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });

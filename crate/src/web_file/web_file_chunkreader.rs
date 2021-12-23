@@ -9,9 +9,11 @@ pub struct WebFileChunkReader {
     length: u64,
 }
 
+static PARQUET_FILE_NAME: &str = "samples.parquet";
+
 impl WebFileChunkReader {
     pub fn new(file_size: i32) -> Self {
-        BufferReader::read_to_buffer("samples.parquet", file_size as u64);
+        BufferReader::read_to_buffer(PARQUET_FILE_NAME, file_size as u64);
         Self {
             length: file_size as u64,
         }
@@ -31,7 +33,6 @@ impl Length for WebFileChunkReader {
     fn len(&self) -> u64 {
         let mut zip =
             zip::ZipArchive::new(WebFileReader::new_from_file(self.length as i32)).unwrap();
-        const PARQUET_FILE_NAME: &str = "samples.parquet";
         let reader = zip.by_name(PARQUET_FILE_NAME).unwrap();
         reader.size()
     }

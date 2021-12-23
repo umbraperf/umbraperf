@@ -5,26 +5,31 @@ import * as RequestController from "./request_controller";
 import _ from "lodash";
 
 
-export function setCsvReadingFinished() {
-
+//set file reading finished flag in redux store
+export function setUmbraperfFileReadingFinished() {
     store.dispatch({
-        type: model.StateMutationType.SET_CSV_PARSING_FINISHED,
+        type: model.StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED,
         data: true,
     });
     store.dispatch({
         type: model.StateMutationType.SET_FILE_LOADING,
         data: false,
     });
-
     RequestController.requestMetadata(appContext.controller);
 }
 
+//set json of queryplan in redux store
+export function setQueryPlanJson(queryPlanJson: object) {
+    store.dispatch({
+        type: model.StateMutationType.SET_QUERYPLAN_JSON,
+        data: queryPlanJson,
+    });
+}
 
-
-export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType, queryPlan?: object) {
+export function storeResultFromRust(requestId: number, rustResult: ArrowTable.Table<any>, metaRequest: boolean, restQueryType: model.BackendQueryType) {
 
     //store result of current request in redux store result variable 
-    const resultObject: model.IResult = model.createResultObject(requestId, rustResult, queryPlan);
+    const resultObject: model.IResult = model.createResultObject(requestId, rustResult);
 
     store.dispatch({
         type: model.StateMutationType.SET_RESULT,
@@ -107,16 +112,24 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             break;
 
-        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE:
-            const operatorsTimeframe = store.getState().result?.rustResultTable.getColumn('operator').toArray();
-            console.log(operatorsTimeframe);
+        case model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT:
+            const pipelinesTimeframe = store.getState().result?.rustResultTable.getColumn('pipeline').toArray();
+            store.dispatch({
+                type: model.StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME,
+                data: pipelinesTimeframe,
+            });
+            break;
+
+        case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT:
+            const operatorsTimeframePipeline = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             store.dispatch({
                 type: model.StateMutationType.SET_CURRENT_OPERATOR_ACTIVE_TIMEFRAME_PIPELINE,
-                data: operatorsTimeframe,
+                data: operatorsTimeframePipeline,
             });
             break;
     }
 
+    //Set -1 of result loading indicating no methadata loading anymore
     store.dispatch({
         type: model.StateMutationType.SET_RESULT_LOADING,
         data: { key: -1, value: false },
@@ -188,11 +201,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(),
                         frequencyNeg: resultObject.rustResultTable.getColumn('relfreqNEG').toArray(),
                     }
                 });
@@ -208,11 +221,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     data: {
                         buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         operators: resultObject.rustResultTable.getColumn('operator').toArray(),
-                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(), 
+                        operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
                         frequency: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                         bucketsNeg: resultObject.rustResultTable.getColumn('bucketNEG').toArray(),
                         operatorsNeg: resultObject.rustResultTable.getColumn('operatorNEG').toArray(),
-                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(), 
+                        operatorsNiceNeg: resultObject.rustResultTable.getColumn('op_extNEG').toArray(),
                         frequencyNeg: resultObject.rustResultTable.getColumn('absfreqNEG').toArray(),
                     }
                 });
@@ -251,7 +264,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
         case model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
 
-            //let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.ChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
             let chartData: model.IMemoryAccessHeatmapChartData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.IChartDataObject).chartData.data as model.IMemoryAccessHeatmapChartData : { domain: {} as model.IMemoryAccessHeatmapChartDomainData, heatmapsData: [] };
 
             if (resultObject.rustResultTable.schema.fields.length === 7) {
@@ -333,20 +345,14 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
             toggleResultLoadingFlag = true;
             break;
 
-        case model.BackendQueryType.GET_QUERYPLAN_DATA:
-            let queryplanDataElem: model.IQueryPlanData = store.getState().chartData[requestId] ? (store.getState().chartData[requestId] as model.IChartDataObject).chartData.data as model.IQueryPlanData : { queryplanData: {}, nodeTooltipData: {} as model.IQueryPlanNodeTooltipData };
+        case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
 
-            if (resultObject.queryPlan) {
-                queryplanDataElem.queryplanData = resultObject.queryPlan;
-            } else if (resultObject.rustResultTable.length !== 0) {
-                const nodeTooltipData: model.IQueryPlanNodeTooltipData = {
-                    uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
-                    eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),
-                    operators: resultObject.rustResultTable.getColumn('op').toArray(),
-                    uirLineNumbers: resultObject.rustResultTable.getColumn('srcline_num').toArray(),
-                    operatorTotalFrequency: resultObject.rustResultTable.getColumn('total').toArray(),
-                }
-                queryplanDataElem.nodeTooltipData = nodeTooltipData;
+            const queryplanTooltipData: model.IQueryPlanNodeTooltipData = {
+                uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
+                eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),
+                operators: resultObject.rustResultTable.getColumn('op').toArray(),
+                uirLineNumbers: resultObject.rustResultTable.getColumn('srcline_num').toArray(),
+                operatorTotalFrequency: resultObject.rustResultTable.getColumn('total').toArray(),
             }
 
             chartDataElem = model.createChartDataObject(
@@ -354,13 +360,11 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                 {
                     chartType: model.ChartType.QUERY_PLAN,
                     data: {
-                        ...queryplanDataElem,
-                    }
+                        nodeTooltipData: queryplanTooltipData,
+                        queryplanData: store.getState().queryplanJson,
+                    },
                 });
-
-            if (!_.isEmpty(queryplanDataElem.queryplanData) && !_.isEmpty(queryplanDataElem.nodeTooltipData)) {
-                toggleResultLoadingFlag = true;
-            }
+            toggleResultLoadingFlag = true;
             break;
     }
 

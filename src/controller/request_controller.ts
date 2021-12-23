@@ -30,7 +30,7 @@ export class RequestController {
 
         store.dispatch({
             type: model.StateMutationType.SET_RESULT_LOADING,
-            data: { key: requestingChartId ? requestingChartId : -1, value: true },
+            data: { key: requestingChartId ? requestingChartId : -1, value: true }, //id -1 if metarequest
         });
 
         store.dispatch({
@@ -47,6 +47,13 @@ export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
+    requestActiveOperatorsPipelines(controller);
+}
+
+// request current active pipelines and operators
+export function requestActiveOperatorsPipelines(controller: RequestController) {
+    requestActiveOperatorsTimeframePipeline(controller);
+    requestActivePipelineTimeframe(controller);
 }
 
 //request events from rust, metarequest
@@ -94,12 +101,22 @@ export function requestStatistics(controller: RequestController) {
         }), true);
 }
 
-//request operators arry of active operators in current selected timeframe
-export function requestActiveOperatorsTimeframe(controller: RequestController) {
+//request pipelines arry of active pipelines in current selected timeframe
+export function requestActivePipelineTimeframe(controller: RequestController) {
     controller.calculateChartData(
-        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+        model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT,
         model.createBackendQuery({
-            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE,
+            type: model.BackendQueryType.GET_PIPELINES_ACTIVE_IN_TIMEFRAME_PER_EVENT,
+            data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+        }), true);
+}
+
+//request operators arry of active operators in current selected timeframe and pipeline
+export function requestActiveOperatorsTimeframePipeline(controller: RequestController) {
+    controller.calculateChartData(
+        model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT,
+        model.createBackendQuery({
+            type: model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT,
             data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, pipelines: store.getState().currentPipeline },
         }), true);
 }
@@ -172,7 +189,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation },
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation, memoryAddressDomain: store.getState().currentMemoryAddressSelectionTuple },
             });
             break;
 
@@ -185,10 +202,10 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
 
         case model.ChartType.QUERY_PLAN:
-            restQueryType = model.BackendQueryType.GET_QUERYPLAN_DATA;
+            restQueryType = model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event: store.getState().currentEvent, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
     }

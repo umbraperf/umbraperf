@@ -300,8 +300,7 @@ pub fn freq_of_memory(
     bucket_size: f64,
     from: f64,
     _to: f64,
-    from_y: f64,
-    to_y: f64,
+    outlier: f64,
     len_of_mem: Option<i64>,
     mem_type: MEM,
 ) {
@@ -532,7 +531,7 @@ pub fn freq_of_memory(
             ],
         );
 
-        if matches!(mem_type, MEM::ABS) {
+        if matches!(mem_type, MEM::ABS) && outlier > 0. {
             let mem_column = get_int32_column(&single_batch, 2);
             let mem_vec = mem_column
                 .into_iter()
@@ -542,18 +541,16 @@ pub fn freq_of_memory(
             let mean = statistics::mean(&mem_vec).unwrap();
             let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
 
-            let from = mean - (std_deviation * 2.);
+            let from = mean - (std_deviation * outlier);
 
-            let to = mean + (std_deviation * 2.);
+            let to = mean + (std_deviation * outlier);
 
             let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
-            let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
 
             let min_bucket = arrow::compute::min(bucket).unwrap();
             hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         } else {
             let min_bucket = arrow::compute::min(bucket).unwrap();
-            let single_batch = filter_between_int32(2, from_y as i32, to_y as i32, &single_batch);
             hashmap.insert((entry.1.unwrap(), min_bucket as usize), single_batch);
         }
 

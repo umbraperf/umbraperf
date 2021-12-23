@@ -17,7 +17,7 @@ function UirToggler(props: Props) {
 
 
     return (
-        <div className={styles.HeatmapsDiffTogglerContainer}>
+        <div>
             <FormControl
                 component="fieldset"
                 variant="standard">

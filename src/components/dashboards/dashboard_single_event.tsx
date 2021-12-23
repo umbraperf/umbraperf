@@ -14,7 +14,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} >
                     <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} />
+                            {/* <ChartWrapper chartType={model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM} /> */}
                         </div>
                     </Box>
                 </Grid>
@@ -25,7 +25,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                            <ChartWrapper chartType={model.ChartType.BAR_CHART} />
+                            {/* <ChartWrapper chartType={model.ChartType.BAR_CHART} /> */}
                         </div>
                     </Box>
                 </Grid>
@@ -34,7 +34,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            <ChartWrapper chartType={model.ChartType.QUERY_PLAN} />
+                            {/* <ChartWrapper chartType={model.ChartType.QUERY_PLAN} /> */}
                         </div>
                     </Box>
                 </Grid>
@@ -45,7 +45,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 <Grid item className={styles.dashboardGridCellItemDoubleRow} xs={12} md={6} lg={4}>
                     <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
-                            <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} />
+                            {/* <ChartWrapper chartType={model.ChartType.SUNBURST_CHART} /> */}
                         </div>
                     </Box>
                 </Grid>

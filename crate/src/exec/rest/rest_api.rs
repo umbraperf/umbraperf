@@ -1,20 +1,19 @@
+use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 use crate::{
     exec::basic::{
         basic, count, filter, kpis,
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
-    state::state::{get_file_size, get_query_from_cache, insert_query_to_cache},
+    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
     utils::{
         print_to_cons::print_to_js_with_obj,
-        record_batch_util::concat_record_batches,
-        string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to},
+        record_batch_util::combine_to_one_record_batch,
+        string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}, record_batch_schema::RecordBatchSchema,
     },
 };
 use arrow::record_batch::RecordBatch;
 use std::usize;
-
-use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 
 // Find name in Record Batch
 // Panic if error, else usize of column
@@ -78,7 +77,11 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
 
         match operator {
             "sunburst" => {
-                record_batch = count::count_rows_over_double(&record_batch, 3, 0);
+                record_batch = count::groupby_two_cols(
+                    &record_batch,
+                    RecordBatchSchema::Pipeline as usize,
+                    RecordBatchSchema::Operator as usize,
+                );
             }
             "distinct" => {
                 record_batch =
@@ -97,14 +100,20 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
             }
             "count(distinct)" => {
                 record_batch =
-                    count::count_total_unique(&record_batch, &find_name(params, &record_batch));
+                    count::count_unqiue(&record_batch, &find_name(params, &record_batch));
             }
             "basic_count" => {
                 record_batch = count::count(&record_batch, find_name(params, &record_batch));
             }
             "count" => {
                 record_batch =
-                    count::count_rows_over(&record_batch, find_name(params, &record_batch))
+                    count::group_by(&record_batch, find_name(params, &record_batch))
+            }
+            "count_with_mapping" => {
+                record_batch = count::group_by_with_nice_op(
+                    &record_batch,
+                    find_name(params, &record_batch),
+                )
             }
             "absfreq" => {
                 record_batch = abs_freq_pars(record_batch, params);
@@ -120,7 +129,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 return None;
             }
             "uir" => {
-                record_batch = uir(get_file_size().unwrap(), record_batch);
+                record_batch = uir(record_batch);
             }
             "top(srclines)" => {
                 let order = match params {
@@ -161,6 +170,45 @@ fn query_already_calculated(restful_string: &str) -> bool {
     return false;
 }
 
+fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBatch {
+    let str_raw = filter_vec.join("");
+    let cache = get_filter_query_from_cache();
+    let mut query = cache.lock().unwrap();
+    if let Some(batch) = query.get(&str_raw) {
+        return batch.to_owned();
+    }
+
+    let mut vec_without_time = Vec::new();
+    let mut vec_time = Vec::new();
+    let mut has_time = false;
+    for entry in filter_vec.to_owned() {
+        if entry.starts_with("?time") {
+            vec_time.push(entry);
+            has_time = true;
+        } else {
+            vec_without_time.push(entry);
+        }
+    }
+
+    if has_time {
+        let str_raw_without_time = vec_without_time.join("");
+        if let Some(batch) = query.get(&str_raw_without_time) {
+            let time_filtered_batch = eval_filters(batch.to_owned(), vec_time);
+            return time_filtered_batch;
+        } else {
+            let filtered_batch = eval_filters(batch.to_owned(), vec_without_time);
+            query.insert(str_raw_without_time, filtered_batch.to_owned());
+            eval_filters(batch.to_owned(), vec_time);
+            return filtered_batch;
+        }
+    }
+    
+
+    let filtered_batch = eval_filters(batch, filter_vec);
+    query.insert(str_raw, filtered_batch.to_owned());
+    return filtered_batch;
+}
+
 fn split_query(restful_string: &str) -> (Vec<&str>, Vec<&str>, Vec<&str>) {
     let split = restful_string.split_terminator("/");
 
@@ -187,7 +235,7 @@ fn multiple_queries_concat(restful_string: &str) -> bool {
 
 fn exec_query(record_batch: RecordBatch, restful_string: &str) -> Option<RecordBatch> {
     let split_query = split_query(restful_string);
-    let record_batch = eval_filters(record_batch, split_query.0);
+    let record_batch = filter_already_applied(record_batch, split_query.0);
     let record_batch = eval_operations(record_batch, split_query.1);
     if let Some(batch) = record_batch {
         let record_batch = eval_selections(batch, split_query.2);
@@ -195,6 +243,22 @@ fn exec_query(record_batch: RecordBatch, restful_string: &str) -> Option<RecordB
     } else {
         return None;
     }
+}
+
+fn exec_query_without_filters(record_batch: RecordBatch, restful_string: &str) -> Option<RecordBatch> {
+    let split_query = split_query(restful_string);
+    let record_batch = eval_operations(record_batch, split_query.1);
+    if let Some(batch) = record_batch {
+        let record_batch = eval_selections(batch, split_query.2);
+        return Some(record_batch);
+    } else {
+        return None;
+    }
+}
+
+fn exec_filters(record_batch: RecordBatch, restful_string: &str) -> RecordBatch {
+    let split_query = split_query(restful_string);
+    return eval_filters(record_batch, split_query.0);
 }
 
 pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
@@ -207,8 +271,6 @@ pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
-    print_to_js_with_obj(&format!("{:?}", restful_string).into());
-
     if query_already_calculated(restful_string) {
         return;
     }
@@ -216,10 +278,11 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     if multiple_queries_concat(restful_string) {
         let split = split_at_double_and(restful_string);
         let mut vec_batch = Vec::new();
+        let filtered = exec_filters(record_batch, restful_string); 
         for query in split {
-            vec_batch.push(exec_query(record_batch.to_owned(), query).unwrap());
+            vec_batch.push(exec_query_without_filters(filtered.to_owned(), query).unwrap());
         }
-        finish_query_exec(concat_record_batches(vec_batch), restful_string);
+        finish_query_exec(combine_to_one_record_batch(vec_batch), restful_string);
     } else {
         let batch = exec_query(record_batch, restful_string);
         if let Some(batch) = batch {

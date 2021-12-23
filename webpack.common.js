@@ -20,7 +20,7 @@ export function configure(params) {
             assetModuleFilename: 'static/assets/[name].[contenthash].[ext]',
             webassemblyModuleFilename: 'static/wasm/[hash].wasm',
             clean: true,
-            publicPath: '/',
+            publicPath: '/umbraperf/',
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.wasm', '.mjs'],

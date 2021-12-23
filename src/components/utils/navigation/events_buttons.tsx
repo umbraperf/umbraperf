@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import Spinner from '../spinner/spinner';
 import React, { useEffect, useState } from 'react';
@@ -35,19 +36,6 @@ function EventsButtons(props: Props) {
 
     //allow for multiple events selection if multiple events dashboard
     useEffect(() => {
-
-        // if (events && props.currentView === model.ViewType.DASHBOARD_MEMORY) {
-        //     if (events.includes("mem_inst_retired.all_loads")) {
-        //         handleEventButtonClick("mem_inst_retired.all_loads");
-        //     }
-        // }
-
-        // if (events && props.currentView === model.ViewType.DASHBOARD_UIR) {
-        //     if (events.includes("cycles:ppp")) {
-        //         handleEventButtonClick("cycles:ppp");
-        //     }
-        // }
-
         if (events && props.currentView === model.ViewType.DASHBOARD_MULTIPLE_EVENTS) {
             setMultipleEvents(true);
         } else {
@@ -60,6 +48,7 @@ function EventsButtons(props: Props) {
         props.setCurrentEvent(event);
         const newMultipleEventsTuple: [string, string] = [event, props.currentMultipleEvent[0]];
         props.setCurrentMultipleEvent(newMultipleEventsTuple);
+        Controller.requestActiveOperatorsPipelines(props.appContext.controller);
     }
 
     const createEventShortString = (event: string) => {
@@ -135,11 +124,11 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENTEVENT,
+        type: model.StateMutationType.SET_CURRENT_EVENT,
         data: newCurrentEvent,
     }),
     setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => dispatch({
-        type: model.StateMutationType.SET_CURRENTMULTIPLEEVENT,
+        type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
         data: newCurrentMultipleEvent,
     }),
 });

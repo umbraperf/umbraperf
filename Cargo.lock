@@ -1155,7 +1155,7 @@ dependencies = [
 
 [[package]]
 name = "umbra_profiler"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "arrow",
  "boolvec",
@@ -1168,6 +1168,7 @@ dependencies = [
  "lazy_static",
  "log",
  "parquet",
+ "regex",
  "serde",
  "serde_json",
  "unicode-width",

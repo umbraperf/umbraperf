@@ -1,9 +1,9 @@
 import * as model from '../../../model';
+import * as Controller  from '../../../controller';
 import * as Context from '../../../app_context';
-import Spinner from '../spinner/spinner';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { FormControl, FormControlLabel, FormLabel, Switch, Typography } from '@material-ui/core';
+import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
 import styles from '../../../style/utils.module.css';
 
 
@@ -17,11 +17,11 @@ function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
+        Controller.resetMemoryAddressSelectionTuple();
     }
 
-
     return (
-        <div className={styles.HeatmapsDiffTogglerContainer}>
+        <div>
             <FormControl
                 component="fieldset"
                 variant="standard">
@@ -55,7 +55,7 @@ const mapStateToProps = (state: model.AppState) => ({
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => dispatch({
-        type: model.StateMutationType.SET_MEMORYHEATMAPSDIFFERENCEREPRESENTATION,
+        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
         data: newMemoryHeatmapsDifferenceRepresentation,
     }),
 

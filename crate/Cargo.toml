@@ -1,9 +1,12 @@
 [package]
 name = "umbra_profiler"
-version = "0.1.0"
-authors = []
+version = "1.0.0"
+authors = ["michael schott"]
 edition = "2018"
 publish = false
+license = "mlp2.0"
+description = "umbra_profiler"
+repository = "https://github.com/umbraperf/umbraperf"
 
 workspace = "../"
 
@@ -13,7 +16,8 @@ default = ["ed25519-dalek/nightly", "rand/wasm-bindgen", "js-sys"]
 [lib]
 crate-type = ["cdylib", "rlib"]
 
-
+[profile.dev]
+incremental = true
 
 [dependencies.web-sys]
 version = "0.3.51"
@@ -54,6 +58,7 @@ serde = { version = "^1.0.129", features = [ "derive" ] }
 serde_json = "1.0.64"
 zip = { version = "0.5.13",  default-features = false, features = [ "deflate" ] }
 parquet = { path = "parquet", version = "5.5.0", default_features=false, features=["arrow", "snap", "base64"]}
+regex = "1.5.4"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12"

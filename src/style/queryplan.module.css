@@ -1,5 +1,5 @@
 @value colors: "./export-variables.module.css";
-@value colorAccentBlack, colorTertiary from colors;
+@value colorAccentBlack, colorTertiary, hoverOpacity from colors;
 
 :root {
     --dagreGraphPadding: 2px;
@@ -36,6 +36,12 @@
     margin-bottom: 0;
 }
 
+.queryplanContainerResetButtonContainer{
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
 .warningContainer{
     display: flex;
     flex-direction: column;
@@ -64,6 +70,10 @@
     opacity: 100%;
 }
 
+.queryPlanNode:hover{
+    opacity: hoverOpacity !important;
+}
+
 .queryplanNodeBody{
     height: 100%;
     width: 100%;
@@ -82,11 +92,41 @@
     background-color: var(--tooltipBackgroundColor);
 }
 
-.queryplanNodeTooltipSubtitle{
-    text-align: right;
-    margin-top: 10px;
+.queryplanNodeTooltipHeader{
+    text-align: left;
+    font-size: 12px;
     margin-bottom: 3px;
+    margin-top: 3px;
+}
+
+.queryplanNodeTooltipSubtitleContainer{
+    margin-bottom: 3px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.queryplanNodeTooltipSubtitle{
     font-size: 11px;
+    flex: 1;
+}
+
+.queryplanNodeTooltipSubtitleCardinality{
+    composes: queryplanNodeTooltipSubtitle;
+    text-align: left;
+}
+
+.queryplanNodeTooltipSubtitleFrequency{
+    composes: queryplanNodeTooltipSubtitle;
+    text-align: right;
+}
+
+.queryplanNodeTooltipTableBackground{
+    background-color: inherit;
 }
 
 .queryplanNodeTooltipTableCell{

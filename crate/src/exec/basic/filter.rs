@@ -8,7 +8,7 @@ use crate::{
     utils::record_batch_util::create_record_batch,
 };
 
-fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
+fn filter_help(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     let filter_array = batch
         .column(column_num)
         .as_any()
@@ -31,23 +31,27 @@ fn filter(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> Rec
     create_record_batch(batch.schema(), arrays)
 }
 
+// Filter record batch given a Vec of strings
+// All: Return record batch not filtered
+// Default: Filter record batch with first occurences of event
 pub fn filter_with(column_num: usize, filter_strs: Vec<&str>, batch: &RecordBatch) -> RecordBatch {
     if filter_strs.len() == 1 && filter_strs[0] == "All" {
         return batch.to_owned();
     } else if filter_strs.len() == 1 && filter_strs[0] == "Default" {
         let unique_batch = find_unique_string(batch, 1);
         let unique_batch = sort_batch(&unique_batch, 0, false);
-        let first_appearance = unique_batch
+        let fst_occ = unique_batch
             .column(0)
             .as_any()
             .downcast_ref::<StringArray>()
             .unwrap();
-        return filter(column_num, vec![first_appearance.value(0)], batch);
+        return filter_help(column_num, vec![fst_occ.value(0)], batch);
     } else {
-        return filter(column_num, filter_strs, batch);
+        return filter_help(column_num, filter_strs, batch);
     }
 }
 
+// Filter given two values, value needs to be >= filter_from and <= filter_to
 pub fn filter_between(
     column_num: usize,
     filter_from: f64,

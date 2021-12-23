@@ -1,40 +1,40 @@
-import { BackendQueryType, ProfileType, ChartDataKeyValue, IKpiData, Result, ResultLoading, ProfileVariant, createProfiles  } from ".";
-import { State as IDashboardState } from "../components/dashboards/dummy-dashboard"
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
-    /// The registered files
     fileLoading: boolean;
-    resultLoading: ResultLoading;
-    result: Result | undefined;
+    resultLoading: IResultLoading;
+    result: IResult | undefined;
     chunksNumber: number;
-    csvParsingFinished: boolean;
+    umbraperfFileParsingFinished: boolean;
     file: undefined | File;
+    queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
     loadingChartReadableName: Array<ChartTypeReadable>;
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
+    currentPipelineActiveTimeframe: Array<string> | "All";
     currentOperator: Array<string> | "All";
-    currentOperatorTimeframe: Array<string> | "All";
+    currentOperatorActiveTimeframePipeline: Array<string> | "All";
     currentRequest: BackendQueryType | undefined;
     events: Array<string> | undefined;
     pipelines: Array<string> | undefined;
     pipelinesShort: Array<string> | undefined;
-    operators: Array<string> | undefined;
+    operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
     chartIdCounter: number;
-    chartData: ChartDataKeyValue;
-    //TODO remove:
-    dashboardState: IDashboardState | undefined;
+    chartData: IChartDataKeyValue;
     currentInterpolation: String;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
+    currentMemoryAddressSelectionTuple: [number, number];
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
     currentProfile: ProfileType;
     profiles: Array<ProfileVariant>;
+    currentAbsoluteSwimLaneMaxYDomain: number;
 }
 
 export function createDefaultState(): AppState {
@@ -43,15 +43,17 @@ export function createDefaultState(): AppState {
         resultLoading: {},
         result: undefined,
         chunksNumber: 0,
-        csvParsingFinished: false,
+        umbraperfFileParsingFinished: false,
+        queryplanJson: undefined,
         file: undefined,
         currentChart: [],
         loadingChartReadableName: [],
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",
+        currentPipelineActiveTimeframe: "All",
         currentOperator: "All",
-        currentOperatorTimeframe: "All",
+        currentOperatorActiveTimeframePipeline: "All",
         currentRequest: undefined,
         events: undefined,
         pipelines: undefined,
@@ -60,14 +62,15 @@ export function createDefaultState(): AppState {
         kpis: undefined,
         chartIdCounter: 1,
         chartData: {},
-        dashboardState: undefined,
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],
         currentTimePositionSelectionTuple: [-1, -1],
+        currentMemoryAddressSelectionTuple: [-1, -1],
         currentView: ViewType.UPLOAD,
         memoryHeatmapsDifferenceRepresentation: true,
         currentProfile: ProfileType.OVERVIEW,
         profiles: createProfiles(),
+        currentAbsoluteSwimLaneMaxYDomain: 0,
     };
 }

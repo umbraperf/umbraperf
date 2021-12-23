@@ -1,6 +1,8 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import styles from '../../../style/charts.module.css';
+import HeatmapsMemoryAddressSelector from '../../utils/togglers/heatmaps_memory_address_slider';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
@@ -9,9 +11,9 @@ import _ from 'lodash';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
-    operators: Array<string> | undefined;
     chartData: model.IMemoryAccessHeatmapChartData,
     memoryHeatmapsDifferenceRepresentation: boolean,
+    operators: model.IOperatorsData | undefined;
 }
 
 type Props = AppstateProps & model.ISwimlanesProps
@@ -23,9 +25,11 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
     }
 
     public render() {
-        return <div
-            className={styles.vegaHeatmapsContainer}>
-            {this.renderChartPerOperator()}
+        return <div className={styles.vegaHeatmapsContainer}>
+            <HeatmapsMemoryAddressSelector memoryAddressDomain={[this.props.chartData.domain.memoryDomain.min, this.props.chartData.domain.memoryDomain.max]} />
+            <div className={styles.vegaHeatmaps}>
+                {this.renderChartPerOperator()}
+            </div>
         </div>
     }
 
@@ -123,6 +127,19 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 
         const isSmallWindow = this.props.width < 500;
 
+        const createHeatmapTitle = () => {
+            const operatorId = this.props.chartData.heatmapsData[id].operator[0];
+            const operatorNice = this.props.operators!.operatorsNice[this.props.operators!.operatorsId.indexOf(operatorId)];
+            let title = operatorId;
+            if (operatorNice !== "-") {
+                title = title + ` (${operatorNice})`;
+            }
+            // if (this.props.memoryHeatmapsDifferenceRepresentation) {
+            //     title = " (Differences)" + title;
+            // }
+            return title;
+        }
+
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: isSmallWindow ? 150 : 300,
@@ -130,55 +147,52 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
             padding: { left: 5, right: 5, top: 10, bottom: 10 },
             autosize: { type: "pad", resize: false },
 
-
             title: {
-                text: `Memory Access Heatmap${this.props.memoryHeatmapsDifferenceRepresentation ? " (Differences)" : ""}: ${this.props.chartData.heatmapsData[id].operator[0]}`,
+                text: createHeatmapTitle(),
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
                 font: model.chartConfiguration.titleFont,
             },
 
-            // data: visData,
             data: visData,
 
-            "scales": [
+            scales: [
                 {
-                    "name": "x",
-                    "type": "linear",
+                    name: "x",
+                    type: "linear",
                     domain: [this.props.chartData.domain.timeDomain.min, this.props.chartData.domain.timeDomain.max],
                     domainMin: this.props.chartData.domain.timeDomain.min,
                     domainMax: this.props.chartData.domain.timeDomain.max,
-                    "range": "width",
-                    "zero": true,
-                    "nice": true,
-                    "round": true,
+                    range: "width",
+                    zero: true,
+                    nice: true,
+                    round: true,
                 },
                 {
-                    "name": "y",
-                    "type": "linear",
+                    name: "y",
+                    type: "linear",
                     domain: yDomain().domain,
                     domainMax: yDomain().domainMax,
                     domainMin: yDomain().domainMin,
-                    "range": "height",
-                    "zero": true,
-                    "nice": true,
-                    "round": true,
+                    range: "height",
+                    zero: true,
+                    nice: true,
+                    round: true,
                 },
                 {
-                    "name": "density",
-                    "type": "linear",
-                    "range": { "scheme": "Viridis" },
-                    "domain": [0, { "signal": "extentOccurrences[1]" }],
-                    // domain: [0, this.props.chartData.domain.frequencyDomain.max],
-                    "zero": true,
+                    name: "density",
+                    type: "linear",
+                    range: { scheme: "Viridis" },
+                    domain: [0, { signal: "extentOccurrences[1]" }],
+                    zero: true,
                 }
             ],
 
-            "axes": [
+            axes: [
                 {
-                    "orient": "bottom",
-                    "scale": "x",
+                    orient: "bottom",
+                    scale: "x",
                     labelOverlap: true,
                     title: model.chartConfiguration.memoryChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
@@ -203,42 +217,37 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
                 }
             ],
 
-            "marks": [
+            marks: [
                 {
-                    "type": "image",
-                    "from": { "data": "density" },
-                    "encode": {
-                        "enter": {
-                            // tooltip: {
-                            //     signal: `{'Operator': '${operator}', ${model.chartConfiguration.memoryChartTooltip}}`,
-                            // },
-                        },
-                        "update": {
-                            "x": { "value": 0 },
-                            "y": { "value": 0 },
-                            "image": [
-                                { "test": "extentOccurrences[1] > 0", "field": "image" },
+                    type: "image",
+                    from: { "data": "density" },
+                    encode: {
+                        update: {
+                            x: { value: 0 },
+                            y: { value: 0 },
+                            image: [
+                                { test: "extentOccurrences[1] > 0", field: "image" },
                             ],
-                            "width": { "signal": "width" },
-                            "height": { "signal": "height" },
-                            "aspect": { "value": false },
-                            "smooth": { "value": true }
+                            width: { signal: "width" },
+                            height: { signal: "height" },
+                            aspect: { value: false },
+                            smooth: { value: true }
                         }
                     }
                 }
             ],
 
-            "legends": [
+            legends: [
                 {
-                    "fill": "density",
-                    "type": "gradient",
-                    "title": "Number of Accesses",
+                    fill: "density",
+                    type: "gradient",
+                    title: "Number of Accesses",
                     titleFontSize: model.chartConfiguration.legendTitleFontSize,
-                    "titlePadding": 4,
-                    "gradientLength": { "signal": "height - 20" },
-                    "labelOpacity": [
-                        { "test": "extentOccurrences[1] > 0", "value": 1 },
-                        { "value": 0 }
+                    titlePadding: 4,
+                    gradientLength: { signal: "height - 20" },
+                    labelOpacity: [
+                        { test: "extentOccurrences[1] > 0", value: 1 },
+                        { value: 0 }
                     ]
                 }
             ],
@@ -250,9 +259,9 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: model.AppState, ownProps: model.IMemoryAccessHeatmapChartProps) => ({
-    operators: state.operators,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.IMemoryAccessHeatmapChartData,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
+    operators: state.operators,
 });
 
 

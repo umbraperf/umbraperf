@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -13,65 +14,48 @@ interface AppstateProps {
     currentInterpolation: String,
     currentBucketSize: number,
     chartData: model.ISwimlanesData,
-}
-
-interface State {
-    maxYDomainAbsoluteValues: number,
+    currentAbsoluteSwimLaneMaxYDomain: number,
 }
 
 type Props = model.ISwimlanesProps & AppstateProps;
+
+interface State {
+    currentAbsoluteYDomainValue: number;
+}
 
 class SwimLanesMultiplePipelines extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
         this.state = {
-            maxYDomainAbsoluteValues: 0,
+            currentAbsoluteYDomainValue: 0,
         };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleVegaView = this.handleVegaView.bind(this);
     }
 
-
-    componentDidUpdate(prevProps: Props, prevState: State): void {
-        console.log("here")
-        this.resetMaxAndCurrentAbsoluteYDomain(this.props, prevProps);
-    }
-
     public render() {
-        return <Vega className={`vegaSwimlaneMultiplePipelines}`} spec={this.createVisualizationSpec()} onNewView={this.handleVegaView} />
+        return <Vega
+            className={`vegaSwimlaneMultiplePipelines}`}
+            spec={this.createVisualizationSpec()}
+            onNewView={this.handleVegaView}
+        />
     }
 
     handleVegaView(view: View) {
-        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max
+        //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max, set max to global state to keep for remountings eg. on event change
         if (this.props.absoluteValues) {
             const viewData = view.data("table");
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
-            this.setMaxAbsoluteYDomain(maxY1Value);
-        }
-    }
-
-    setMaxAbsoluteYDomain(currentMaxFreqStacked: number) {
-        // if (0 === this.state.maxYDomainAbsoluteValues || currentMaxFreqStacked > this.state.maxYDomainAbsoluteValues) {
-        //     this.setState((state, props) => ({
-        //         ...state,
-        //         maxYDomainAbsoluteValues: currentMaxFreqStacked,
-        //     }));
-        // }
-    }
-
-    resetMaxAndCurrentAbsoluteYDomain(props: Props, prevProps: Props) {
-        //reset max y domain for absolute chart on event and bucketsize change
-        if (props.currentEvent !== prevProps.currentEvent || props.currentBucketSize !== prevProps.currentBucketSize) {
             this.setState((state, props) => ({
                 ...state,
-                maxYDomainAbsoluteValues: 0,
+                currentAbsoluteYDomainValue: maxY1Value,
             }));
+            Controller.setCurrentAbsoluteSwimLaneMaxYDomain(maxY1Value);
         }
     }
-
 
     createVisualizationData() {
 
@@ -109,29 +93,16 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        console.log("render spec");
-        // const xTicks = () => {
-
-        //     const bucketsUnique = _.uniq(visData.chartDataElement.buckets);
-        //     const bucketsUniqueLength = bucketsUnique.length;
-        //     console.log(bucketsUnique);
-        //     console.log(bucketsUniqueLength);
-
-        //     const numberOfTicks = model.chartConfiguration.isLargeSwimLane(this.props.width) ? 50 : 20;
-
-        //     if (bucketsUniqueLength > numberOfTicks) {
-        //         let ticks = [];
-        //         let delta = Math.floor(bucketsUniqueLength / numberOfTicks) + 1;
-        //         delta = (numberOfTicks % 2 === 0 && delta > 2) ? --delta : delta;
-        //         for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
-        //             console.log(i);
-        //             ticks.push(bucketsUnique[i]);
-        //         }
-        //         console.log(ticks);
-        //         return ticks;
-        //     }
-
-        // };
+        const getAbsoluteYDomain = () => {
+            //use current plus percentage of difference to max if smaller then half of max, else use max
+            const differenceCurrentMaxYDomain = this.props.currentAbsoluteSwimLaneMaxYDomain - this.state.currentAbsoluteYDomainValue;
+            if (differenceCurrentMaxYDomain > this.props.currentAbsoluteSwimLaneMaxYDomain / 2) {
+                const differencePercentage = 30;
+                return this.state.currentAbsoluteYDomainValue + ((differenceCurrentMaxYDomain * differencePercentage) / 100);
+            } else {
+                return this.props.currentAbsoluteSwimLaneMaxYDomain;
+            }
+        }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -157,7 +128,6 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     name: "getMaxY1Absolute",
                     value: 10
                 }
-
             ],
 
             scales: [
@@ -176,7 +146,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: this.props.absoluteValues ? [0, this.state.maxYDomainAbsoluteValues] : [0, 1]
+                    domain: this.props.absoluteValues ? [0, getAbsoluteYDomain()] : [0, 1]
                 },
                 {
                     name: "color",
@@ -300,6 +270,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps)
     currentInterpolation: state.currentInterpolation,
     currentBucketSize: state.currentBucketSize,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,
+    currentAbsoluteSwimLaneMaxYDomain: state.currentAbsoluteSwimLaneMaxYDomain,
 });
 
 

@@ -175,12 +175,10 @@
 .kpiCardLabel{
     max-width: 80px;
     font-size: var(--labelFonSize);
-    animation: fadeIn 1s;
 }
 
 .kpiCardValue{
     font-size: 20px;
-    animation: fadeIn 2s;
     font-weight: 400;
 }
 

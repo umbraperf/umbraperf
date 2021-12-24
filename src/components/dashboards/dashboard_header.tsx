@@ -1,31 +1,14 @@
-import * as model from '../../model';
 import React from 'react';
 import styles from '../../style/dashboard.module.css';
-import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
 import EventsButtons from '../utils/navigation/events_buttons';
 import KpiContainer from '../utils/containers/kpi_container';
 import DropdownsOptions from '../utils/dropdowns/dropdowns_options';
 import { Grid, Box } from '@material-ui/core';
 
 
-interface Props {
-    umbraperfFileParsingFinished: boolean;
-}
-
-
-class DashboardHeader extends React.Component<Props, {}> {
-
-
-    constructor(props: Props) {
-        super(props);
-    }
+class DashboardHeader extends React.Component<{}, {}> {
 
     public render() {
-
-        if (!this.props.umbraperfFileParsingFinished) {
-            return <Redirect to={"/upload"} />
-        }
 
         return <Grid container>
             <Box clone order={{ xs: 1, lg: 1, xl: 1 }}>
@@ -52,15 +35,10 @@ class DashboardHeader extends React.Component<Props, {}> {
         </Grid>;
     }
 
-
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
-});
 
-
-export default connect(mapStateToProps)(DashboardHeader);
+export default DashboardHeader;
 
 
 

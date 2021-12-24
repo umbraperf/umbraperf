@@ -8,12 +8,14 @@ import DashboardSingleEvent from '../dashboards/dashboard_single_event';
 import DashboardMultipleEvents from '../dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from '../dashboards/dashboard_memory_accesses';
 import DashboardUir from '../dashboards/dashboard_uir';
+import { Redirect } from 'react-router-dom';
 
 interface OwnProps {
     dashboardView: model.ViewType;
 }
 
 interface DashboardWrapperAppstateProps {
+    umbraperfFileParsingFinished: boolean;
     setCurrentView: (newCurrentView: model.ViewType) => void;
 }
 
@@ -48,6 +50,10 @@ class DashboardWrapper extends React.Component<Props, {}> {
 
     public render() {
 
+        if (!this.props.umbraperfFileParsingFinished) {
+            return <Redirect to={"/upload"} />
+        }
+
         return <div className={styles.dashboardGrid}>
             <DashboardHeader />
 
@@ -55,6 +61,10 @@ class DashboardWrapper extends React.Component<Props, {}> {
         </div >;
     }
 }
+
+const mapStateToProps = (state: model.AppState) => ({
+    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
+});
 
 const mapDispatchToProps = (dispatch: model.Dispatch) => ({
     setCurrentView: (newCurrentView: model.ViewType) =>
@@ -64,7 +74,7 @@ const mapDispatchToProps = (dispatch: model.Dispatch) => ({
         })
 });
 
-export default connect(undefined, mapDispatchToProps)(DashboardWrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardWrapper);
 
 
 

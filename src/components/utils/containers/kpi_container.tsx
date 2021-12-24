@@ -16,7 +16,6 @@ interface Props {
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
-    chartIdCounter: number,
 }
 
 class KpiContainer extends React.Component<Props, {}> {
@@ -42,7 +41,6 @@ class KpiContainer extends React.Component<Props, {}> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.currentEvent !== "Default" &&
             (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 props.currentEvent !== prevProps.currentEvent)) {
             return true;
@@ -123,8 +121,6 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
-    chartIdCounter: state.chartIdCounter,
-
 });
 
 

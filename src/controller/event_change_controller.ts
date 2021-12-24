@@ -18,14 +18,14 @@ export function setEvent(newEvent1: string, newEvent2?: string) {
     }
 }
 
-function dispachSingleEvent(event: string) {
+export function dispachSingleEvent(event: string) {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_EVENT,
         data: event,
     });
 }
 
-function dispachMultipleEvent(event1: string, event2: string) {
+export function dispachMultipleEvent(event1: string, event2: string) {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
         data: [event1, event2],

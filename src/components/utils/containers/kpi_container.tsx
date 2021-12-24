@@ -13,38 +13,46 @@ import CountUp from 'react-countup';
 interface Props {
     appContext: Context.IAppContext;
     kpis: Array<model.IKpiData> | undefined;
+    kpiValuesFormated: model.KpiValuesFormated;
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
+    setKpiValuesFormated: (newKpiValuesFormated: model.KpiValuesFormated) => void;
 }
 
-interface State {
-    kpiCards: JSX.Element[] | undefined;
-}
+class KpiContainer extends React.Component<Props, {}> {
 
-class KpiContainer extends React.Component<Props, State> {
+    globalNewKpiValuesFormated: model.KpiValuesFormated;
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            ...this.state,
-            kpiCards: undefined,
+        this.globalNewKpiValuesFormated = {};
+    }
+
+    shouldComponentUpdate(nextProps: Props) {
+
+        if (!_.isEqual(nextProps.kpiValuesFormated, this.props.kpiValuesFormated)) {
+            return false;
         }
+
+        return true;
     }
 
     componentDidUpdate(prevProps: Props): void {
         this.requestNewChartData(this.props, prevProps);
-        this.storeNewKpiCards(prevProps.kpis, prevProps.currentView);
-
+        this.writeNewFormatedKpisToAppstate(prevProps.kpiValuesFormated);
     }
+
+    writeNewFormatedKpisToAppstate(oldKpiValuesFormated: model.KpiValuesFormated) {
+        if (Object.keys(oldKpiValuesFormated).length === 0 || !_.isEqual(this.globalNewKpiValuesFormated, this.props.kpiValuesFormated)) {
+            this.props.setKpiValuesFormated(this.globalNewKpiValuesFormated);
+        }
+    }
+
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
-            this.setState((state, props) => ({
-                ...state,
-                kpiCards: undefined,
-            }));
             Controller.requestStatistics(this.props.appContext.controller);
         }
     }
@@ -60,22 +68,7 @@ class KpiContainer extends React.Component<Props, State> {
         }
     }
 
-    storeNewKpiCards(oldKpis: model.IKpiData[] |undefined, oldView: model.ViewType) {
-
-        if (!_.isEqual(this.props.kpis, oldKpis)) {
-            this.setState((state, props) => ({
-                ...state,
-                kpiCards: this.mapKpiArrayToCards(true),
-            }));
-        }else if(this.props.kpis && (undefined === oldKpis || this.props.currentView !== oldView)){
-            this.setState((state, props) => ({
-                ...state,
-                kpiCards: this.mapKpiArrayToCards(false),
-            }));
-        }
-    }
-
-    mapKpiArrayToCards(counterEffect: boolean) {
+    mapKpiArrayToCards() {
         //get array of kpis from redux, create countup or static element for each and map to multiple cards
         return this.props.kpis!.map((elem, index) => {
             let value = +elem.value;
@@ -84,8 +77,12 @@ class KpiContainer extends React.Component<Props, State> {
 
             if (elem.id === "noSamples") {
                 const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
-                value = +nFormatedString.slice(0, -1);
-                suffix = nFormatedString.slice(-1);
+                if(isNaN(+nFormatedString.slice(-1))){
+                    value = +nFormatedString.slice(0, -1);
+                    suffix = nFormatedString.slice(-1);
+                }else{
+                    value = +nFormatedString;
+                }
             } else if (elem.id === "execTime") {
                 value = Math.round(+elem.value) / 1000;
                 suffix = "s";
@@ -94,30 +91,27 @@ class KpiContainer extends React.Component<Props, State> {
                 suffix = "%";
             }
 
-            if(counterEffect){
-                const countupValueElement = this.createCountupValue(value, suffix, numberDeciamls);
-                return this.createKpiCard(index, elem.title, countupValueElement);
-            }else{
-                const staticValueElement = this.createStaticValue(value, suffix);
-                console.log(staticValueElement);
-                return this.createKpiCard(index, elem.title, staticValueElement);
+            const countupValueElement = this.createCountupValue(value, suffix, numberDeciamls, index);
+            const kpiCard = this.createKpiCard(index, elem.title, countupValueElement);
+
+            this.globalNewKpiValuesFormated = {
+                ...this.globalNewKpiValuesFormated, 
+                [index]: value,
             }
+
+            return kpiCard;
         });
 
     }
 
-    createCountupValue(value: number, suffix: string, numberDecimals: number) {
+    createCountupValue(value: number, suffix: string, numberDecimals: number, kpiIndex: number) {
         return <CountUp
-            start={0}
+            start={this.props.kpiValuesFormated[kpiIndex] ? this.props.kpiValuesFormated[kpiIndex] : 0}
             end={value}
             duration={1}
             suffix={suffix}
             decimals={numberDecimals}
         />
-    }
-
-    createStaticValue(value: number, suffix: string){
-        return value + suffix;
     }
 
     createKpiCard(key: number, title: string, valueElement: JSX.Element | string, isUnfedined?: boolean) {
@@ -147,22 +141,28 @@ class KpiContainer extends React.Component<Props, State> {
             {this.isComponentLoading() ?
                 <Spinner />
                 : <div className={styles.kpiCardsArea}>
-                    {this.state.kpiCards}
+                    {this.mapKpiArrayToCards()}
                 </div>
             }
         </div>
     }
-
-
 }
 
 const mapStateToProps = (state: model.AppState) => ({
     kpis: state.kpis,
+    kpiValuesFormated: state.kpiValuesFormated,
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
     currentView: state.currentView,
 });
 
+const mapDispatchToProps = (dispatch: model.Dispatch) => ({
+    setKpiValuesFormated: (newKpiValuesFormated: model.KpiValuesFormated) => dispatch({
+        type: model.StateMutationType.SET_KPI_VALUES_FORMATED,
+        data: newKpiValuesFormated,
+    }),
+});
 
-export default connect(mapStateToProps)(Context.withAppContext(KpiContainer));
+
+export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(KpiContainer));

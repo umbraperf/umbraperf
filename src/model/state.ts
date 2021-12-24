@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees, KpiValuesFormated } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -23,6 +23,7 @@ export interface AppState {
     pipelinesShort: Array<string> | undefined;
     operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
+    kpiValuesFormated: KpiValuesFormated;
     chartIdCounter: number;
     chartData: IChartDataKeyValue;
     currentInterpolation: String;
@@ -60,6 +61,7 @@ export function createDefaultState(): AppState {
         pipelinesShort: undefined,
         operators: undefined,
         kpis: undefined,
+        kpiValuesFormated: {},
         chartIdCounter: 1,
         chartData: {},
         currentInterpolation: "basis",

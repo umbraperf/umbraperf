@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetectionDegrees } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetectionDegrees, KpiValuesFormated } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -28,6 +28,7 @@ export enum StateMutationType {
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
     SET_KPIS = 'SET_KPIS',
+    SET_KPI_VALUES_FORMATED = 'SET_KPI_VALUES_FORMATED',
     SET_CHART_ID_COUNTER = 'SET_CHART_ID_COUNTER',
     SET_CHART_DATA = 'SET_CHART_DATA',
     SET_CURRENT_INTERPOLATION = 'SET_CURRENT_INTERPOLATION',
@@ -64,6 +65,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, IOperatorsData>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
+    | StateMutation<StateMutationType.SET_KPI_VALUES_FORMATED, KpiValuesFormated>
     | StateMutation<StateMutationType.SET_CHART_ID_COUNTER, number>
     | StateMutation<StateMutationType.SET_CHART_DATA, IChartDataKeyValue>
     | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, String>
@@ -179,6 +181,11 @@ export class AppStateMutation {
                     ...state,
                     kpis: mutation.data,
                 };
+            case StateMutationType.SET_KPI_VALUES_FORMATED:
+                return {
+                    ...state,
+                    kpiValuesFormated: mutation.data,
+                };
             case StateMutationType.SET_CHART_ID_COUNTER:
                 return {
                     ...state,
@@ -257,6 +264,7 @@ export class AppStateMutation {
                     pipelinesShort: undefined,
                     operators: undefined,
                     kpis: undefined,
+                    kpiValuesFormated: {},
                     chartIdCounter: 1,
                     chartData: {},
                     currentInterpolation: "basis",

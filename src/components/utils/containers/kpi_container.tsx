@@ -31,11 +31,9 @@ class KpiContainer extends React.Component<Props, {}> {
     }
 
     shouldComponentUpdate(nextProps: Props) {
-
         if (!_.isEqual(nextProps.kpiValuesFormated, this.props.kpiValuesFormated)) {
             return false;
         }
-
         return true;
     }
 
@@ -49,7 +47,6 @@ class KpiContainer extends React.Component<Props, {}> {
             this.props.setKpiValuesFormated(this.globalNewKpiValuesFormated);
         }
     }
-
 
     requestNewChartData(props: Props, prevProps: Props): void {
         if (this.newChartDataNeeded(props, prevProps)) {
@@ -77,10 +74,10 @@ class KpiContainer extends React.Component<Props, {}> {
 
             if (elem.id === "noSamples") {
                 const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
-                if(isNaN(+nFormatedString.slice(-1))){
+                if (isNaN(+nFormatedString.slice(-1))) {
                     value = +nFormatedString.slice(0, -1);
                     suffix = nFormatedString.slice(-1);
-                }else{
+                } else {
                     value = +nFormatedString;
                 }
             } else if (elem.id === "execTime") {
@@ -91,15 +88,13 @@ class KpiContainer extends React.Component<Props, {}> {
                 suffix = "%";
             }
 
-            const countupValueElement = this.createCountupValue(value, suffix, numberDeciamls, index);
-            const kpiCard = this.createKpiCard(index, elem.title, countupValueElement);
-
             this.globalNewKpiValuesFormated = {
-                ...this.globalNewKpiValuesFormated, 
+                ...this.globalNewKpiValuesFormated,
                 [index]: value,
             }
 
-            return kpiCard;
+            const countupValueElement = this.createCountupValue(value, suffix, numberDeciamls, index);
+            return this.createKpiCard(index, elem.title, countupValueElement);;
         });
 
     }
@@ -114,7 +109,7 @@ class KpiContainer extends React.Component<Props, {}> {
         />
     }
 
-    createKpiCard(key: number, title: string, valueElement: JSX.Element | string, isUnfedined?: boolean) {
+    createKpiCard(key: number, title: string, valueElement: JSX.Element, isUnfedined?: boolean) {
         return <div key={key} className={styles.kpiCard} >
             <div>
                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>

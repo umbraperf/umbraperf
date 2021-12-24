@@ -29,3 +29,5 @@ export interface IOperatorsData {
 }
 
 export type HeatmapsOutlierDetectionDegrees = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export type KpiValuesFormated = {[kpi: number]: number};

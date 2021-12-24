@@ -1,7 +1,8 @@
-import React from 'react';
 import * as model from '../../model';
+import * as Controller from '../../controller';
 import styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
+import React from 'react';
 import { Grid, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -9,7 +10,6 @@ import _ from 'lodash';
 interface Props {
     events: Array<string> | undefined;
     currentEvent: string,
-    setCurrentEvent: (newCurrentEvent: string) => void;
 }
 
 
@@ -18,15 +18,15 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
     constructor(props: Props) {
         super(props);
         //switch current event to memory loads
-        this.props.setCurrentEvent("mem_inst_retired.all_loads");
+        Controller.setEvent("mem_inst_retired.all_loads");
     }
 
     componentDidUpdate(prevProps: Props) {
-        //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to use cycles as current event 
+        //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to avoid use cycles as current event 
         if (!_.isEqual(prevProps.events, this.props.events)
             && this.props.events
             && !this.props.events.includes("mem_inst_retired.all_loads")) {
-            this.props.setCurrentEvent(this.props.events[this.props.events.length - 1]);
+                Controller.setEvent(this.props.events[this.props.events.length - 1])
         }
     }
 
@@ -63,20 +63,7 @@ const mapStateToProps = (state: model.AppState) => ({
     currentEvent: state.currentEvent,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentView: (newCurrentView: model.ViewType) =>
-        dispatch({
-            type: model.StateMutationType.SET_CURRENT_VIEW,
-            data: newCurrentView,
-        }),
-    setCurrentEvent: (newCurrentEvent: string) =>
-        dispatch({
-            type: model.StateMutationType.SET_CURRENT_EVENT,
-            data: newCurrentEvent,
-        }),
-});
-
-export default connect(mapDispatchToProps, mapDispatchToProps)(DashboardMemoryAccesses);
+export default connect(mapStateToProps)(DashboardMemoryAccesses);
 
 
 

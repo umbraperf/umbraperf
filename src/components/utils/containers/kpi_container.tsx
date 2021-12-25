@@ -73,7 +73,8 @@ class KpiContainer extends React.Component<Props, {}> {
             let numberDeciamls = 0;
 
             if (elem.id === "noSamples") {
-                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
+                numberDeciamls = 1;
+                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, numberDeciamls);
                 if (isNaN(+nFormatedString.slice(-1))) {
                     value = +nFormatedString.slice(0, -1);
                     suffix = nFormatedString.slice(-1);
@@ -81,6 +82,7 @@ class KpiContainer extends React.Component<Props, {}> {
                     value = +nFormatedString;
                 }
             } else if (elem.id === "execTime") {
+                numberDeciamls = 3;
                 value = Math.round(+elem.value) / 1000;
                 suffix = "s";
             } else if (elem.id === "errRate") {

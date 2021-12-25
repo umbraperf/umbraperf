@@ -70,11 +70,11 @@ class KpiContainer extends React.Component<Props, {}> {
         return this.props.kpis!.map((elem, index) => {
             let value = +elem.value;
             let suffix = "";
-            let numberDeciamls = 0;
+            let numberDecimals = 0;
 
             if (elem.id === "noSamples") {
-                numberDeciamls = 1;
-                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, numberDeciamls);
+                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
+                numberDecimals = nFormatedString.includes(".") ? 1 : 0;
                 if (isNaN(+nFormatedString.slice(-1))) {
                     value = +nFormatedString.slice(0, -1);
                     suffix = nFormatedString.slice(-1);
@@ -82,9 +82,18 @@ class KpiContainer extends React.Component<Props, {}> {
                     value = +nFormatedString;
                 }
             } else if (elem.id === "execTime") {
-                numberDeciamls = 3;
-                value = Math.round(+elem.value) / 1000;
+                const valueRounded = Math.round(+elem.value);
                 suffix = "s";
+                if (valueRounded % 1000 === 0) {
+                    numberDecimals = 0;
+                } else if (valueRounded % 100 === 0) {
+                    numberDecimals = 1;
+                } else if (valueRounded % 10 === 0) {
+                    numberDecimals = 2;
+                } else {
+                    numberDecimals = 3;
+                }
+                value = valueRounded / 1000;
             } else if (elem.id === "errRate") {
                 value = Math.round(+elem.value * 100);
                 suffix = "%";
@@ -95,7 +104,7 @@ class KpiContainer extends React.Component<Props, {}> {
                 [index]: value,
             }
 
-            const countupValueElement = this.createCountupValue(value, suffix, numberDeciamls, index);
+            const countupValueElement = this.createCountupValue(value, suffix, numberDecimals, index);
             return this.createKpiCard(index, elem.title, countupValueElement);;
         });
 

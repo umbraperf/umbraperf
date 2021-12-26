@@ -16,8 +16,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         height: '38px',
         minHeight: '38px',
-        //backgroundColor: theme.palette.background.default,
-        //backgroundColor: theme.palette.background.paper,
     },
     tabsDisabled: {
         color: 'white',
@@ -27,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     tabRoot: {
         height: '38px',
         minHeight: '38px',
-        //minWidth: '200px',
     }
 }));
 
@@ -41,10 +38,9 @@ function ScrollableTabsButtonForce(props: any) {
         <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Tabs
-                    value={props.location.pathname}
+                    value={props.location.pathname === "/" ? "/upload" : props.location.pathname}
                     scrollButtons="on"
-/*                     variant="scrollable"
- */                    variant="fullWidth"
+                    variant="fullWidth"
                     indicatorColor="secondary"
                     textColor="secondary"
                     aria-label="scrollable force tabs example"

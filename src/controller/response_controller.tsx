@@ -342,6 +342,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
         case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
 
+        console.log("should be here also with no pipeline");
+
             const queryplanTooltipData: model.IQueryPlanNodeTooltipData = {
                 uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),
                 eventOccurrences: resultObject.rustResultTable.getColumn('perc').toArray(),

@@ -92,7 +92,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             loading: true,
             renderedFlowPlan: undefined,
             renderFlowPlan: true,
-            // currentUirOperators: this.getCurrentUirOperators(),
         };
     }
 

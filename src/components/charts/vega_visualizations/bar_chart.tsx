@@ -157,21 +157,20 @@ class BarChart extends React.Component<Props, {}> {
                     orient: 'bottom',
                     scale: 'xscale',
                     labelOverlap: 'true',
-                    labelSeparation: -20, 
+                    labelSeparation: model.chartConfiguration.barChartXLabelSeparation, 
                     title: "Operators",
-                    titleY: -5,
-                    titleX: { signal: 'width', mult: 1.02 },
+                    titleY: model.chartConfiguration.barChartXTitleY,
+                    titleX: { signal: 'width', mult: model.chartConfiguration.barChartXTitleXOffsetMult },
                     titleAlign: "left",
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelFont: model.chartConfiguration.axisLabelFont,
-                    labelAngle: -45,
+                    labelAngle: model.chartConfiguration.barChartXLabelAngle,
                     encode: {
                         labels: {
                             update: {
                                 text: { signal: "truncate(datum.value, 9)" },
-                                // angle: { value: -45 },
                                 align: { value: "right" }
                             }
                         }

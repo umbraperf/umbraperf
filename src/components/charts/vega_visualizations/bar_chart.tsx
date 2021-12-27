@@ -99,8 +99,8 @@ class BarChart extends React.Component<Props, {}> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
-        const hideBarValues = () => {
-            if(this.props.operators!.operatorsId.length >= 20){
+        const hideAllBarValues = () => {
+            if (this.props.operators!.operatorsId.length >= 20) {
                 return true;
             }
             if (this.props.operators!.operatorsId.length >= 15 && this.props.width < 500) {
@@ -131,11 +131,11 @@ class BarChart extends React.Component<Props, {}> {
 
             signals: [
                 {
-                    name: "hoverBar",
-                    value: false,
+                    name: "hoverBarDatum",
+                    value: {},
                     on: [
-                        { events: "rect:mouseover", update: "true" },
-                        { events: "rect:mouseout", update: "false" }
+                        { events: "rect:mouseover", update: "datum" },
+                        { events: "rect:mouseout", update: "{}" }
                     ]
                 },
                 {
@@ -177,7 +177,7 @@ class BarChart extends React.Component<Props, {}> {
                 {
                     orient: 'bottom',
                     scale: 'xscale',
-                    labelOverlap: 'true',
+                    labelOverlap: true,
                     labelSeparation: model.chartConfiguration.barChartXLabelSeparation,
                     title: "Operators",
                     titleY: model.chartConfiguration.barChartXTitleY,
@@ -253,19 +253,16 @@ class BarChart extends React.Component<Props, {}> {
                             fill: { value: "black" },
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { field: "datum.values" },
                             fontSize: { value: model.chartConfiguration.barChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
 
                         },
                         update: {
-                            //test logic if necessary -> more then 10 operators and small representation, mehr als 15 operatoren und egal welche representation
-                            fillOpacity: {
-                                value: hideBarValues() ? 0 : 1,
-                            }
+                            //if all bar values hidden because of small representation or too many operators, show value of hovered bar and empty string as value for all other bars
+                            text: hideAllBarValues() ?
+                                { signal: "hoverBarDatum.operators===datum.datum.operators ? hoverBarDatum.values : ''" } :
+                                { signal: "datum.datum.values" },
                         },
-                        // { test: "hoverBar", value: 1 },
-
                     }
                 },
             ],

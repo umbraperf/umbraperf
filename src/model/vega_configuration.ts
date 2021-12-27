@@ -116,7 +116,7 @@ export let chartConfiguration: ChartConfiguration = {
 
     //Value Lables
     sunburstChartValueLabelFontSize: 11,
-    barChartValueLabelFontSize: 9,
+    barChartValueLabelFontSize: 8,
     valueLabelFont: "Segoe UI",
 
     //Tooltip:

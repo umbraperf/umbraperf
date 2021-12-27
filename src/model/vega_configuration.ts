@@ -15,6 +15,7 @@ export interface ChartConfiguration {
     areaChartXLabelSeparation: number;
     areaChartYLabelSeparation: number;
     barChartYLabelSeparation: number;
+    barChartXLabelSeparation: number;
     titleFontSize: number;
     axisTitleFontSize: number;
     legendTitleFontSize: number;
@@ -73,6 +74,7 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartXLabelSeparation: 2,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
+    barChartXLabelSeparation: -20,
     axisTitleFont: "Segoe UI",
     axisLabelFont: "Arial",
     memoryChartYTitle: 'Memory Address',

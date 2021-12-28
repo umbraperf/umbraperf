@@ -44,16 +44,18 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
             let tableRows = [];
             for (let i = 0; i < 5; i++) {
-                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 65), tooltipData.eventOccurrences[i] + "%"))
+                if (tooltipData.eventOccurrences[i] !== 0) {
+                    tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 65), tooltipData.eventOccurrences[i] + "%"));
+                }
             }
 
-            return (
+            return tableRows.length > 0 && (
                 <Paper
                     className={styles.queryplanNodeTooltipTableBackground}
                 >
                     <Table
                         size="small"
-                        aria-label="a dense table">
+                        aria-label="tooltip table">
                         <TableHead>
                             <TableRow>
                                 <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="right">No.</TableCell>

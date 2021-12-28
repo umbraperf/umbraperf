@@ -531,18 +531,19 @@ pub fn freq_of_memory(
 
         if outlier > 0. {
             let mem_column = get_int32_column(&single_batch, 2);
-            let mem_vec = mem_column
+            let mut mem_vec = mem_column
                 .into_iter()
                 .map(|v| (v.unwrap() as i64))
                 .collect::<Vec<i64>>();
 
-            let mean = statistics::mean(&mem_vec).unwrap();
+            //let mean = statistics::mean(&mem_vec).unwrap();
+            let mode = statistics::mode(&mut mem_vec);
             let std_deviation = statistics::std_deviation(&mem_vec).unwrap();
             let mut outlier_multiple = std_deviation;
 
             // very weak
             if outlier == 1. {
-                outlier_multiple = outlier_multiple * 100.;
+                outlier_multiple = outlier_multiple * 50.;
             }
 
             // weak
@@ -552,21 +553,21 @@ pub fn freq_of_memory(
 
             // middle
             if outlier == 3. {
-                outlier_multiple = outlier_multiple * 2.;
+                outlier_multiple = outlier_multiple * 1.;
             }
 
             // strong
             if outlier == 4. {
-                outlier_multiple = outlier_multiple;
+                outlier_multiple = outlier_multiple / 10.;
             }
 
             // very strong
             if outlier == 5. {
-                outlier_multiple = outlier_multiple / 10.;
+                outlier_multiple = outlier_multiple * 0.;
             }
 
-            let from = mean - outlier_multiple;
-            let to = mean + outlier_multiple;
+            let from = mode as f64 - outlier_multiple;
+            let to = mode as f64 + outlier_multiple;
 
             let single_batch = filter_between_int32(2, from as i32, to as i32, &single_batch);
             let min_bucket = arrow::compute::min(bucket).unwrap();

@@ -11,7 +11,7 @@ use arrow::{
 
 use crate::{
     exec::{basic::basic::sort_batch, rest::rest_api::find_name},
-    state::state::get_serde_dict,
+    state::state::{get_record_batches, get_serde_dict},
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
@@ -60,7 +60,18 @@ fn calculate(
     let dict = get_serde_dict().unwrap();
 
     let mut hashmap_count = HashMap::new();
+
+    // Get all unique events
+    let unique_events_batch = find_unique_string(
+        &get_record_batches().unwrap().batch,
+        RecordBatchSchema::EvName as usize,
+    );
+    let unique_events = get_stringarray_column(&unique_events_batch, 0);
+
     let mut unique_events_set = HashSet::new();
+    for event in unique_events {
+        unique_events_set.insert(event.unwrap().to_string());
+    }
 
     for entry in column_srcline.into_iter().enumerate() {
         let hashmap_samplekey_srcline = dict.dict.get(&(DictFields::Srcline as i64)).unwrap();
@@ -74,7 +85,6 @@ fn calculate(
             let inner_hashmap = hashmap_count
                 .entry(current_ev.to_string())
                 .or_insert(HashMap::new());
-            unique_events_set.insert(current_ev.to_string());
 
             inner_hashmap.entry(srcline_key.to_string()).or_insert(0);
             inner_hashmap.insert(srcline_key.to_string(), inner_hashmap[srcline_key] + 1);
@@ -358,10 +368,14 @@ fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
         let mut buffer_percentage = Vec::new();
 
         for event in &unique_events_set {
+            if hashmap_count.get(event).is_none() {
+                buffer_percentage.push(0.);
+                continue;
+            }
             let inner_hashmap = hashmap_count.get(event).unwrap();
             let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
             let total = *inner_hashmap.get("sum").unwrap() as f64;
-            let percentage = specific / total;
+            let percentage = if total == 0. { 0. } else { specific / total };
             let percentage = round(percentage);
             buffer_percentage.push(percentage)
         }
@@ -473,6 +487,7 @@ fn get_max_top_five(record_batch: RecordBatch) -> RecordBatch {
 // Get the top five srclines with the highest coverage
 pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordBatch {
     let srcline_batch = uir_without_rel(record_batch);
+
     let srcline_batch_sorted_after_coverage = sort_batch(&srcline_batch, ordered_by + 1, true);
 
     // Unqiue, sorted array of operators
@@ -497,7 +512,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
         total_coverage.push(0.);
     }
 
-    // Setting for the other operator the top five
+    // Setting the top five for the other operators
     for op in unique_op {
         if op.contains("None") {
         } else {

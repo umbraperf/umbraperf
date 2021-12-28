@@ -271,6 +271,9 @@ pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
 }
 
 pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
+
+    print_to_js_with_obj(&format!("{:?}", restful_string).into());
+
     if query_already_calculated(restful_string) {
         return;
     }

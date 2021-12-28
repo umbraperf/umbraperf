@@ -41,7 +41,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean, outlierDetectionDegree: HeatmapsOutlierDetectionDegrees }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { events: Array<string>, timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number], operators: Array<string> | "All" }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -81,6 +81,10 @@ export function createBackendQuery(query: QueryVariant) {
 
     const operators = () => {
         return (query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join();
+    }
+    const operatorsFilter = () => {
+        const operatorsString = operators();
+        return operatorsString && `/?operator="${operatorsString}"`;
     }
 
     const memoryAccessesDifferences = () => {
@@ -140,7 +144,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
-            return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${timeFilter()}/top(srclines)?${event()}`;
+            return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${operatorsFilter()}${timeFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

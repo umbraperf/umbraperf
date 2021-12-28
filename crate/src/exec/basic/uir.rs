@@ -9,6 +9,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
+use super::{basic::find_unique_string, filter::filter_with};
 use crate::{
     exec::{basic::basic::sort_batch, rest::rest_api::find_name},
     state::state::{get_record_batches, get_serde_dict},
@@ -19,8 +20,7 @@ use crate::{
     },
     web_file::serde_reader::DictFields,
 };
-
-use super::{basic::find_unique_string, filter::filter_with};
+use rust_decimal::{prelude::ToPrimitive, Decimal};
 
 #[derive(Clone, Debug)]
 pub struct ABSFREQ {
@@ -35,7 +35,9 @@ pub struct RELFREQ {
 // round to one decimal
 // multiply with 100 to get percentage value
 pub fn round(to_round: f64) -> f64 {
-    f64::trunc((to_round) * 1000.0) / 10.0
+    let dec = Decimal::from_f64_retain(to_round).unwrap();
+    let dec = dec.round_dp(3);
+    return dec.to_f64().unwrap();
 }
 
 pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
@@ -45,7 +47,7 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         for item in vec.iter().skip(i).step_by(num_of_events) {
             sum += item;
         }
-        out_vec.push(f64::trunc((sum) * 100.0) / 100.0);
+        out_vec.push(round(sum));
     }
 
     out_vec
@@ -377,7 +379,7 @@ fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = if total == 0. { 0. } else { specific / total };
             let percentage = round(percentage);
-            buffer_percentage.push(percentage)
+            buffer_percentage.push(round(percentage * 100.));
         }
 
         let dict = dict.uri_dict.get(&entry).unwrap();
@@ -522,7 +524,12 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
                 &srcline_batch_sorted_after_coverage,
             );
             let coverage_col = get_floatarray_column(&unique_op_batch, ordered_by + 1);
-            let sum_cov = f64::trunc((arrow::compute::sum(coverage_col).unwrap()) * 100.0) / 100.0;
+            let sum_cov = round(arrow::compute::sum(coverage_col).unwrap());
+            let sum_cov = if sum_cov >= 99.7 && sum_cov <= 100.3 {
+                100.
+            } else {
+                sum_cov
+            };
             for _i in 0..5 {
                 total_coverage.push(sum_cov);
             }

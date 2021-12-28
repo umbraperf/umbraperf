@@ -247,7 +247,6 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             case model.ChartType.QUERY_PLAN:
                 return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
-                    !_.isEqual(nextProps.operators, props.operators) ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
                     !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?

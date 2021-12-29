@@ -14,7 +14,7 @@ use crate::{
         statistics,
     },
     state::state::{
-        get_mapping_operator, get_record_batches, get_swimlane_record_batch,
+        get_mapping_operator, get_unfiltered_record_batch, get_swimlane_record_batch,
         reset_swimlane_record_batch, set_swimlane_record_batch,
     },
     utils::{
@@ -134,7 +134,7 @@ pub fn freq_of_operators(
 
     // Vector of unqiue operators
     let unique_op_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, column_for_operator);
+        find_unique_string(&get_unfiltered_record_batch().unwrap().batch, column_for_operator);
     let unique_op = get_stringarray_column(&unique_op_batch, 0);
 
     // Init result vectors

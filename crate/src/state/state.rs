@@ -10,26 +10,34 @@ pub struct RecordBatchShared {
 
 //STATE STRUCT
 pub struct State {
-    pub record_batches: Option<Arc<RecordBatchShared>>,
+    // Batch State
+    pub unfiltered_record_batch: Option<Arc<RecordBatchShared>>,
+    pub swimlane_batch: Option<Arc<RecordBatchShared>>,
+    // Caching for queries
     pub queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
     pub filtered_queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
+    // Mapping: Op <-> "Nice" Op
     pub mapping: Arc<Mutex<HashMap<String, String>>>,
     pub dict: Option<Arc<SerdeDict>>,
+    // File Loading
     pub parquet_file_binary: Arc<Mutex<Vec<u8>>>,
     pub file_size: Option<u64>,
-    pub swimlane_batch: Option<Arc<RecordBatchShared>>
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State {
-        record_batches: None,
+        // Batch State
+        unfiltered_record_batch: None,
+        swimlane_batch: None,
+        // Caching for queries
         queries:  Arc::new(Mutex::new(HashMap::new())),
-        mapping:  Arc::new(Mutex::new(HashMap::new())),
         filtered_queries: Arc::new(Mutex::new(HashMap::new())),
+        // Mapping: Op <-> "Nice" Op
+        mapping:  Arc::new(Mutex::new(HashMap::new())),
         dict: None,
+        // File Loading
         parquet_file_binary: Arc::new(Mutex::new(Vec::new())),
         file_size: None,
-        swimlane_batch: None
     });
 }
 
@@ -48,13 +56,13 @@ where
     STATE.with(|s| cb(&mut s.borrow_mut()))
 }
 
-// RECORD BATCH STATE - GLOBAL BATCH
+// RECORD BATCH STATE - SWIMLANE BATCH
 pub fn get_swimlane_record_batch() -> Option<Arc<RecordBatchShared>> {
     with_state(|s| s.swimlane_batch.clone())
 }
-pub fn set_swimlane_record_batch(record_batches: RecordBatch) {
+pub fn set_swimlane_record_batch(record_batch: RecordBatch) {
     let shared_record_batch = RecordBatchShared {
-        batch: record_batches,
+        batch: record_batch,
     };
     _with_state_mut(|s| s.swimlane_batch = Some(Arc::new(shared_record_batch)));
 }
@@ -62,15 +70,15 @@ pub fn reset_swimlane_record_batch() {
     _with_state_mut(|s| s.swimlane_batch = None);
 }
 
-// RECORD BATCH STATE - Swimlanes
-pub fn get_record_batches() -> Option<Arc<RecordBatchShared>> {
-    with_state(|s| s.record_batches.clone())
+// RECORD BATCH STATE - GLOBAL BATCH
+pub fn get_unfiltered_record_batch() -> Option<Arc<RecordBatchShared>> {
+    with_state(|s| s.unfiltered_record_batch.clone())
 }
-pub fn set_record_batches(record_batches: RecordBatch) {
+pub fn set_unfiltered_record_batch(record_batches: RecordBatch) {
     let shared_record_batch = RecordBatchShared {
         batch: record_batches,
     };
-    _with_state_mut(|s| s.record_batches = Some(Arc::new(shared_record_batch)));
+    _with_state_mut(|s| s.unfiltered_record_batch = Some(Arc::new(shared_record_batch)));
 }
 
 // MAPPING STATE

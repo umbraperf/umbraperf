@@ -64,9 +64,9 @@ mod state {
 }
 use crate::state::state::clear_cache;
 use crate::state::state::set_file_size;
-use crate::state::state::set_record_batches;
+use crate::state::state::set_unfiltered_record_batch;
 use crate::state::state::set_serde_dict;
-use state::state::get_record_batches;
+use state::state::get_unfiltered_record_batch;
 
 // TIMER
 fn start_timer() -> instant::Instant {
@@ -88,7 +88,7 @@ fn init_batches(file_size: i32) -> Vec<RecordBatch> {
 
 fn create_one_record_batch(batches: Vec<RecordBatch>) {
     let record_batch = record_batch_util::convert(batches);
-    set_record_batches(record_batch);
+    set_unfiltered_record_batch(record_batch);
 }
 
 // JS - RUST FUNCTIONS
@@ -104,5 +104,5 @@ pub fn analyze_file(file_size: i32) {
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
-    eval_query(get_record_batches().unwrap().batch.clone(), rest_query);
+    eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
 }

@@ -12,7 +12,7 @@ use arrow::{
 use super::{basic::find_unique_string, filter::filter_with};
 use crate::{
     exec::{basic::basic::sort_batch, rest::rest_api::find_name},
-    state::state::{get_record_batches, get_serde_dict},
+    state::state::{get_unfiltered_record_batch, get_serde_dict},
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
@@ -65,7 +65,7 @@ fn calculate(
 
     // Get all unique events
     let unique_events_batch = find_unique_string(
-        &get_record_batches().unwrap().batch,
+        &get_unfiltered_record_batch().unwrap().batch,
         RecordBatchSchema::EvName as usize,
     );
     let unique_events = get_stringarray_column(&unique_events_batch, 0);

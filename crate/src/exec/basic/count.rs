@@ -11,7 +11,7 @@ use arrow::{
 
 use crate::{
     exec::basic::{basic::find_unique_string, filter::filter_with},
-    state::state::{get_mapping_operator, get_record_batches},
+    state::state::{get_mapping_operator, get_unfiltered_record_batch},
     utils::{array_util::get_stringarray_column, record_batch_util::create_new_record_batch, record_batch_schema::RecordBatchSchema},
 };
 
@@ -69,7 +69,7 @@ pub fn group_by(batch: &RecordBatch, col_to_groupby: usize) -> RecordBatch {
 
     // Init
     let unique_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, col_to_groupby);
+        find_unique_string(&get_unfiltered_record_batch().unwrap().batch, col_to_groupby);
     let vec = get_stringarray_column(&unique_batch, 0);
     let mut count_arr = Float64Array::builder(vec.len());
 
@@ -96,7 +96,7 @@ pub fn group_by_with_nice_op(
 
     // Init
     let unique_batch =
-        find_unique_string(&get_record_batches().unwrap().batch, col_to_groupby);
+        find_unique_string(&get_unfiltered_record_batch().unwrap().batch, col_to_groupby);
     let vec = get_stringarray_column(&unique_batch, 0);
     let mut count_arr = Float64Array::builder(vec.len());
     let mut op_extension_vec = Vec::new();

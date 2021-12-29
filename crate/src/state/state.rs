@@ -1,4 +1,8 @@
-use std::{cell::RefCell, collections::HashMap, sync::{Arc, Mutex}};
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 
 use arrow::record_batch::RecordBatch;
 

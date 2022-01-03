@@ -10,13 +10,12 @@ import styles from '../../../style/utils.module.css';
 interface Props {
     appContext: Context.IAppContext;
     memoryHeatmapsDifferenceRepresentation: boolean,
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => void;
 }
 
 function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
+        Controller.handleHeatmapsDifferenceRepresentationSelection(event.target.checked);
         Controller.resetSelectionHeatmapsOutlierDetectionSelection();
     }
 
@@ -56,12 +55,5 @@ const mapStateToProps = (state: model.AppState) => ({
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => dispatch({
-        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
-        data: newMemoryHeatmapsDifferenceRepresentation,
-    }),
 
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(HeatmapsDiffToggler));
+export default connect(mapStateToProps)(Context.withAppContext(HeatmapsDiffToggler));

@@ -44,9 +44,6 @@ export interface ChartWrapperAppstateProps {
     currentHeatmapsOutlierDetection: model.HeatmapsOutlierDetectionDegrees,
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
-
-    setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 type Props = OwnProps & ChartWrapperAppstateProps;
@@ -74,7 +71,7 @@ class ChartWrapper extends React.Component<Props, State> {
             ...globalInputDataChanged,
             [this.props.chartIdCounter]: false,
         };
-        this.props.setChartIdCounter((this.state.chartId) + 1);
+        Controller.setChartIdCounter((this.state.chartId) + 1);
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -281,7 +278,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 break;
         }
 
-        this.props.setCurrentChart(specificChart.type);
+        Controller.setCurrentChart(specificChart.type);
         return React.createElement(chartClass!, specificChart.props as any);
     }
 
@@ -347,16 +344,5 @@ const mapStateToProps = (state: model.AppState) => ({
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHART_ID_COUNTER,
-        data: newChartIdCounter,
-    }),
-    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_CHART,
-        data: newCurrentChart,
-    }),
-});
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(ChartWrapper));
+export default connect(mapStateToProps)(Context.withAppContext(ChartWrapper));

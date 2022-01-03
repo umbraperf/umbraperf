@@ -3,7 +3,6 @@ import MemoryIcon from '@material-ui/icons/Memory';
 import CodeIcon from '@material-ui/icons/Code';
 import CachedIcon from '@material-ui/icons/Cached';
 import SearchIcon from '@material-ui/icons/Search';
-import React from 'react';
 
 export enum ProfileType {
     OVERVIEW = "OVERVIEW",
@@ -43,7 +42,6 @@ type Profile<T, I, R, D> = {
     readonly readableName: R,
     readonly description: D,
 }
-
 
 export type ProfileVariant =
     | Profile<ProfileType.OVERVIEW, typeof ProfileIcon.OVERVIEW, ProfileTitle.OVERVIEW, ProfileDescription.OVERVIEW>

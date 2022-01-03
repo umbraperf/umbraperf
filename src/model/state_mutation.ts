@@ -68,7 +68,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_KPI_VALUES_FORMATED, KpiValuesFormated>
     | StateMutation<StateMutationType.SET_CHART_ID_COUNTER, number>
     | StateMutation<StateMutationType.SET_CHART_DATA, IChartDataKeyValue>
-    | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, String>
+    | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, string>
     | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>

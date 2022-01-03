@@ -7,7 +7,7 @@ export interface AppState {
     result: IResult | undefined;
     chunksNumber: number;
     umbraperfFileParsingFinished: boolean;
-    file: undefined | File;
+    file: File | undefined;
     queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
     loadingChartReadableName: Array<ChartTypeReadable>;
@@ -26,7 +26,7 @@ export interface AppState {
     kpiValuesFormated: KpiValuesFormated;
     chartIdCounter: number;
     chartData: IChartDataKeyValue;
-    currentInterpolation: String;
+    currentInterpolation: string;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];

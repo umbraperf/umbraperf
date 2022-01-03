@@ -13,7 +13,7 @@ import CountUp from 'react-countup';
 interface Props {
     appContext: Context.IAppContext;
     kpis: Array<model.IKpiData> | undefined;
-    kpiValuesFormated: model.KpiValuesFormated;
+    kpiValuesFormated: model.IKpiValuesFormated;
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
@@ -22,7 +22,7 @@ interface Props {
 
 class KpiContainer extends React.Component<Props, {}> {
 
-    globalNewKpiValuesFormated: model.KpiValuesFormated;
+    globalNewKpiValuesFormated: model.IKpiValuesFormated;
 
     constructor(props: Props) {
         super(props);
@@ -41,7 +41,7 @@ class KpiContainer extends React.Component<Props, {}> {
         this.writeNewFormatedKpisToAppstate(prevProps.kpiValuesFormated);
     }
 
-    writeNewFormatedKpisToAppstate(oldKpiValuesFormated: model.KpiValuesFormated) {
+    writeNewFormatedKpisToAppstate(oldKpiValuesFormated: model.IKpiValuesFormated) {
         if (Object.keys(oldKpiValuesFormated).length === 0 || !_.isEqual(this.globalNewKpiValuesFormated, this.props.kpiValuesFormated)) {
             Controller.setKpiValuesFormated(this.globalNewKpiValuesFormated);
         }

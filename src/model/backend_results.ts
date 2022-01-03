@@ -22,7 +22,9 @@ export interface IKpiData {
     value: string,
 }
 
-export type KpiValuesFormated = { [kpi: number]: number };
+export interface IKpiValuesFormated { 
+    [kpi: number]: number 
+};
 
 export interface IOperatorsData {
     operatorsId: Array<string>,

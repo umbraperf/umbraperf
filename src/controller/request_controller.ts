@@ -214,14 +214,14 @@ export function requestChartData(controller: RequestController, chartId: number,
 }
 
 
-export function resetChartDataInStore(chartId: number) {
+// export function resetChartDataInStore(chartId: number) {
 
-    let chartData = store.getState().chartData;
-    delete chartData[chartId];
-    let newChartData: model.IChartDataKeyValue = { ...chartData }
+//     let chartData = store.getState().chartData;
+//     delete chartData[chartId];
+//     let newChartData: model.IChartDataKeyValue = { ...chartData }
 
-    store.dispatch({
-        type: model.StateMutationType.SET_CHART_DATA,
-        data: newChartData,
-    });
-}
+//     store.dispatch({
+//         type: model.StateMutationType.SET_CHART_DATA,
+//         data: newChartData,
+//     });
+// }

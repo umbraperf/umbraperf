@@ -107,19 +107,5 @@ export const topLevelComponents: Array<ITopLevelComponent> = [
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR} />,
         icon: () => { return (<DeveloperModeIcon />) },
     },
-    // {
-    //     path: '/swim-lanes-pipelines',
-    //     sidebarName: 'Swim Lanes (Pipelines)',
-    //     // component: SwimLanesPipelines,
-    //     // view: model.ViewType.PIPELINES,
-    //     icon: () => { return (<SortIcon />) },
-    // },
-    // {
-    //     path: '/dummy',
-    //     sidebarName: 'Dummy',
-    //     component: Dummy,
-    //     view: model.ViewType.DUMMY,
-    //     icon: () => { return (<HelpIcon />) },
-    // },
 
 ];

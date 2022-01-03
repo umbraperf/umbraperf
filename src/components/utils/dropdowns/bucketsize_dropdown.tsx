@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,7 +14,6 @@ interface BucketsizeDropdwnProps{
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentBucketSize: number;
-    setCurrentBucketSize: (newCurrentBucketSize: number) => void;
 }
 
 type Props = AppstateProps & BucketsizeDropdwnProps;
@@ -23,7 +23,7 @@ function BucketsizeDropdwn(props: Props) {
     const bucketsizes = [0.1, 0.2, 0.5, 0.7, 1, 2.5, 5, 7.5, 10, 50, 100];
 
     const handleOnItemClick = (elem: number) => {
-        props.setCurrentBucketSize(elem);
+        Controller.setCurrentBucketSize(elem);
     };
 
 
@@ -50,11 +50,4 @@ const mapStateToProps = (state: model.AppState) => ({
     currentBucketSize: state.currentBucketSize,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentBucketSize: (newCurrentBucketSize: number) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_BUCKETSIZE,
-        data: newCurrentBucketSize,
-    }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(BucketsizeDropdwn));
+export default connect(mapStateToProps)(Context.withAppContext(BucketsizeDropdwn));

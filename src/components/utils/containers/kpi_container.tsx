@@ -18,7 +18,6 @@ interface Props {
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
-    setKpiValuesFormated: (newKpiValuesFormated: model.KpiValuesFormated) => void;
 }
 
 class KpiContainer extends React.Component<Props, {}> {
@@ -44,7 +43,7 @@ class KpiContainer extends React.Component<Props, {}> {
 
     writeNewFormatedKpisToAppstate(oldKpiValuesFormated: model.KpiValuesFormated) {
         if (Object.keys(oldKpiValuesFormated).length === 0 || !_.isEqual(this.globalNewKpiValuesFormated, this.props.kpiValuesFormated)) {
-            this.props.setKpiValuesFormated(this.globalNewKpiValuesFormated);
+            Controller.setKpiValuesFormated(this.globalNewKpiValuesFormated);
         }
     }
 
@@ -163,12 +162,4 @@ const mapStateToProps = (state: model.AppState) => ({
     currentView: state.currentView,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setKpiValuesFormated: (newKpiValuesFormated: model.KpiValuesFormated) => dispatch({
-        type: model.StateMutationType.SET_KPI_VALUES_FORMATED,
-        data: newKpiValuesFormated,
-    }),
-});
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(KpiContainer));
+export default connect(mapStateToProps)(Context.withAppContext(KpiContainer));

@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
@@ -12,11 +13,6 @@ interface Props {
     file: undefined | File;
     umbraperfFileParsingFinished: boolean;
     fileLoading: boolean;
-    setFile: (newFile: File) => void;
-    setUmbraperfFileParsingFinished: (newUmbraperfFileParsingFinished: boolean) => void;
-    setFileLoading: (newFileLoading: boolean) => void;
-    setCurrentView: (newCurrentView: model.ViewType) => void;
-    setResetState: () => void;
 }
 
 interface State {
@@ -38,9 +34,9 @@ class FileUploader extends React.Component<Props, State> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             const file = acceptedFiles[0];
-            this.props.setFileLoading(true);
-            this.props.setUmbraperfFileParsingFinished(false);
-            this.props.setFile(file);
+            Controller.setFileLoading(true);
+            Controller.setUmbraperfFileParsingFinished(false);
+            Controller.setFile(file);
             this.props.appContext.controller.registerFileAtWorker(file);
         }
     }
@@ -63,8 +59,8 @@ class FileUploader extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.props.setResetState();
-        this.props.setCurrentView(model.ViewType.UPLOAD);
+        Controller.resetState();
+        Controller.setCurrentView(model.ViewType.UPLOAD);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -153,30 +149,5 @@ const mapStateToProps = (state: model.AppState) => ({
     fileLoading: state.fileLoading,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setFile: (newFile: File) => dispatch({
-        type: model.StateMutationType.SET_FILE,
-        data: newFile,
-    }),
-    setUmbraperfFileParsingFinished: (newUmbraperfFileParsingFinished: boolean) => dispatch({
-        type: model.StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED,
-        data: newUmbraperfFileParsingFinished,
-    }),
-    setFileLoading: (newFileLoading: boolean) =>
-        dispatch({
-            type: model.StateMutationType.SET_FILE_LOADING,
-            data: newFileLoading,
-        }),
-    setCurrentView: (newCurrentView: model.ViewType) =>
-        dispatch({
-            type: model.StateMutationType.SET_CURRENT_VIEW,
-            data: newCurrentView,
-        }),
-    setResetState: () =>
-        dispatch({
-            type: model.StateMutationType.SET_RESET_STATE,
-            data: undefined,
-        }),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAppContext(FileUploader));
+export default connect(mapStateToProps)(withAppContext(FileUploader));

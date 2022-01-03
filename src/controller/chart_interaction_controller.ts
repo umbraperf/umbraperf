@@ -1,8 +1,8 @@
-import * as model from "../model";
+import * as model from '../model';
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from ".";
+import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from '.';
 import ChartResetButton from '../components/utils/togglers/chart_reset_button';
 import React from "react";
 
@@ -83,6 +83,14 @@ export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetection
     });
 }
 
+export function handleHeatmapsDifferenceRepresentationSelection(memoryHeatmapsDifferenceRepresentation: boolean) {
+    store.dispatch({
+        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
+        data: memoryHeatmapsDifferenceRepresentation,
+    });
+}
+
+
 export function resetSelectionTimeframe() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActiveOperatorsPipelines(appContext.controller);
@@ -125,6 +133,13 @@ function resetCurrentPipelineSelection() {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_PIPELINE,
         data: store.getState().pipelines!,
+    });
+}
+
+export function setKpiValuesFormated(newKpiValuesFormated: model.KpiValuesFormated) {
+    store.dispatch({
+        type: model.StateMutationType.SET_KPI_VALUES_FORMATED,
+        data: newKpiValuesFormated,
     });
 }
 
@@ -271,5 +286,38 @@ export function isOperatorSelected(operatorId: string) {
     return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
 }
 
+export function setChartIdCounter(newChartIdCounter: number) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CHART_ID_COUNTER,
+        data: newChartIdCounter,
+    });
+}
 
+export function setCurrentChart(newCurrentChart: model.ChartType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_CHART,
+        data: newCurrentChart,
+    });
+}
+
+export function setCurrentView(newCurrentView: model.ViewType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_VIEW,
+        data: newCurrentView,
+    });
+}
+
+export function setCurrentBucketSize(newCurrentBucketSize: number) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_BUCKETSIZE,
+        data: newCurrentBucketSize,
+    });
+}
+
+export function setCurrentInterpolation(newCurrentInterpolation: String) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
+        data: newCurrentInterpolation,
+    });
+}
 

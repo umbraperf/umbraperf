@@ -1,4 +1,5 @@
 import * as model from '../../../model';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,7 +14,6 @@ interface BucketsizeDropdwnProps{
 interface AppstateProps {
     appContext: Context.IAppContext;
     currentInterpolation: String;
-    setCurrentInterpolation: (newCurrentInterpolation: String) => void;
 }
 
 type Props = AppstateProps & BucketsizeDropdwnProps;
@@ -23,7 +23,7 @@ function InterpolationDropdown(props: Props) {
     const interpolations = ["linear", "linear-closed", "step", "step-before", "step-after", "basis", "basis-open", "basis-closed", "cardinal", "cardinal-open", "cardinal-closed", "bundle", "monotone"];
 
     const handleOnItemClick = (elem: string) => {
-        props.setCurrentInterpolation(elem);
+        Controller.setCurrentInterpolation(elem);
     };
 
 
@@ -50,11 +50,4 @@ const mapStateToProps = (state: model.AppState) => ({
     currentInterpolation: state.currentInterpolation,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentInterpolation: (newCurrentInterpolation: String) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
-        data: newCurrentInterpolation,
-    }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(InterpolationDropdown));
+export default connect(mapStateToProps)(Context.withAppContext(InterpolationDropdown));

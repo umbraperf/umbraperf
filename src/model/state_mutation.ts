@@ -246,7 +246,6 @@ export class AppStateMutation {
                     fileLoading: false,
                     resultLoading: {},
                     result: undefined,
-                    chunksNumber: 0,
                     umbraperfFileParsingFinished: false,
                     file: undefined,
                     queryplanJson: undefined,

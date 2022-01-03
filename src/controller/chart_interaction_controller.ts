@@ -136,7 +136,7 @@ function resetCurrentPipelineSelection() {
     });
 }
 
-export function setKpiValuesFormated(newKpiValuesFormated: model.KpiValuesFormated) {
+export function setKpiValuesFormated(newKpiValuesFormated: model.IKpiValuesFormated) {
     store.dispatch({
         type: model.StateMutationType.SET_KPI_VALUES_FORMATED,
         data: newKpiValuesFormated,

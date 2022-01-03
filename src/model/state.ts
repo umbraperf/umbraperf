@@ -5,7 +5,6 @@ export interface AppState {
     fileLoading: boolean;
     resultLoading: IResultLoading;
     result: IResult | undefined;
-    chunksNumber: number;
     umbraperfFileParsingFinished: boolean;
     file: File | undefined;
     queryplanJson: object | undefined;
@@ -43,7 +42,6 @@ export function createDefaultState(): AppState {
         fileLoading: false,
         resultLoading: {},
         result: undefined,
-        chunksNumber: 0,
         umbraperfFileParsingFinished: false,
         queryplanJson: undefined,
         file: undefined,

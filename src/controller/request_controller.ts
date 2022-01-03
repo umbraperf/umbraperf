@@ -12,13 +12,13 @@ export class RequestController {
     }
 
 
-    public calculateChartData(restQueryType: model.BackendQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
+    public calculateChartData(backendQueryType: model.BackendQueryType, backendQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
 
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
             type: model.StateMutationType.SET_CURRENT_REQUEST,
-            data: restQueryType,
+            data: backendQueryType,
         });
 
         if (!metaRequest && chartType) {
@@ -38,7 +38,7 @@ export class RequestController {
             data: undefined,
         });
 
-        worker.calculateChartData(restQuery, queryRequestId, metaRequest, restQueryType);
+        worker.calculateChartData(backendQuery, queryRequestId, metaRequest, backendQueryType);
     }
 }
 

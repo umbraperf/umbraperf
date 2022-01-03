@@ -314,7 +314,7 @@ export function setCurrentBucketSize(newCurrentBucketSize: number) {
     });
 }
 
-export function setCurrentInterpolation(newCurrentInterpolation: String) {
+export function setCurrentInterpolation(newCurrentInterpolation: string) {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
         data: newCurrentInterpolation,

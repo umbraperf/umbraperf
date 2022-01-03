@@ -10,7 +10,7 @@ export * from './state';
 export * from './chart_data_results';
 export * from './backend_results';
 export * from './backend_queries';
-export * from './vega_configuration';
+export * from './chart_configuration';
 export * from './chart_types';
 export * from './backend_queries';
 export * from './profiles';

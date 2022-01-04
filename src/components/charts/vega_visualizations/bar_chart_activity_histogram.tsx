@@ -58,7 +58,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     createVisualizationData() {
 
-        const timeBucketsArray = this.props.chartData.timeBucket;
+        const timeBucketsArray = this.props.chartData.buckets;
         const occurrencesArray = this.props.chartData.occurrences;
 
         const data = {

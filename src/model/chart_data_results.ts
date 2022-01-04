@@ -58,7 +58,7 @@ export interface ISwimlanesCombinedData {
 }
 
 export interface IBarChartActivityHistogramData {
-    timeBucket: Array<number>,
+    buckets: Array<number>,
     occurrences: Array<number>,
 }
 

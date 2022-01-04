@@ -234,7 +234,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                 {
                     chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
                     data: {
-                        timeBucket: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         occurrences: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                     }
                 });

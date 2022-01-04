@@ -128,7 +128,7 @@ export function notifyJsQueryPlan(queryplan: string) {
   });
 }
 
-export function sendJsQueryResult(result: any, queryPlan?: { queryplanResult: any, queryplanRequestId: number }) {
+export function sendJsQueryResult(result: any) {
 
   if (result) {
     worker.postMessage({

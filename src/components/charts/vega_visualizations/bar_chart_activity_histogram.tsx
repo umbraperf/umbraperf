@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import ChartResetButton from '../../utils/togglers/chart_reset_button';
 
 interface AppstateProps {
     appContext: Context.IAppContext;

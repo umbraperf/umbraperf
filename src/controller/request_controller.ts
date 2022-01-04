@@ -47,6 +47,7 @@ export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
+    requestStatistics(controller);
     requestActiveOperatorsPipelines(controller);
 }
 
@@ -213,15 +214,3 @@ export function requestChartData(controller: RequestController, chartId: number,
     controller.calculateChartData(restQueryType, restQuery, false, chartId, chartType);
 }
 
-
-// export function resetChartDataInStore(chartId: number) {
-
-//     let chartData = store.getState().chartData;
-//     delete chartData[chartId];
-//     let newChartData: model.IChartDataKeyValue = { ...chartData }
-
-//     store.dispatch({
-//         type: model.StateMutationType.SET_CHART_DATA,
-//         data: newChartData,
-//     });
-// }

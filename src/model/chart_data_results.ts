@@ -77,9 +77,18 @@ export interface IMemoryAccessHeatmapChartSingleData {
 }
 
 export interface IMemoryAccessHeatmapChartDomainData {
-    memoryDomain: { max: number, min: number },
-    timeDomain: { max: number, min: number },
-    frequencyDomain: { max: number, min: number },
+    memoryDomain: {
+        max: number,
+        min: number
+    },
+    timeDomain: {
+        max: number,
+        min: number
+    },
+    frequencyDomain: {
+        max: number,
+        min: number
+    },
     numberOperators: number,
 }
 
@@ -91,16 +100,20 @@ export interface IMemoryAccessHeatmapChartData {
 export interface IUirViewerData {
     uirLines: Array<string>;
     eventsFrequency: {
-        [eventId:number ]: Array<number>;
+        [eventId: number]: Array<number>;
     }
     eventsRelativeFrequency: {
-        [eventId:number ]: Array<number>;
+        [eventId: number]: Array<number>;
     }
     operators: Array<string>;
     pipelines: Array<string>;
     isFunction: Array<number>;
 }
 
+export interface IQueryPlanData {
+    queryplanData: object | undefined;
+    nodeTooltipData: IQueryPlanNodeTooltipData;
+}
 export interface IQueryPlanNodeTooltipData {
     uirLineNumbers: Array<number>;
     uirLines: Array<string>;
@@ -109,8 +122,4 @@ export interface IQueryPlanNodeTooltipData {
     operators: Array<string>;
 }
 
-export interface IQueryPlanData {
-    queryplanData: object | undefined;
-    nodeTooltipData: IQueryPlanNodeTooltipData;
-}
 

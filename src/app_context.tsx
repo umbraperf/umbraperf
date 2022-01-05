@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ITopLevelComponent } from './app_config';
 import { RequestController } from './controller/request_controller';
 
 export interface IAppContext {
@@ -9,6 +10,7 @@ export interface IAppContext {
     accentBlack: string,
     accentDarkGreen: string,
     accentDarkBlue: string,
+    topLevelComponents: Array<ITopLevelComponent>,
 }
 
 export const ctx = React.createContext<IAppContext | null>(null);

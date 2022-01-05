@@ -1,11 +1,11 @@
 import * as model from '../../../model';
+import * as Context from '../../../app_context';
 import React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withRouter, Link } from 'react-router-dom';
-import { topLevelComponents } from '../../../app_config';
 import { useSelector } from 'react-redux';
 
 
@@ -28,7 +28,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-function ScrollableTabsButtonForce(props: any) {
+interface Props {
+    location: any;
+    appContext: Context.IAppContext;
+}
+
+function ScrollableTabsButtonForce(props: Props) {
 
     const classes = useStyles();
 
@@ -46,7 +51,7 @@ function ScrollableTabsButtonForce(props: any) {
                     aria-label="scrollable force tabs example"
                     className={umbraperfFileParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
-                    {topLevelComponents.map((prop, key) => {
+                    {props.appContext.topLevelComponents.map((prop, key) => {
                         if (prop.path !== "/") {
                             return (
                                 <Tab
@@ -65,5 +70,5 @@ function ScrollableTabsButtonForce(props: any) {
     );
 }
 
-export default withRouter(ScrollableTabsButtonForce);
+export default withRouter(Context.withAppContext(ScrollableTabsButtonForce));
 

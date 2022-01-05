@@ -1,5 +1,5 @@
 import * as model from '../model';
-import { store, topLevelComponents } from '../app_config';
+import { store, appContext } from '../app_config';
 import history from '../history';
 import { setEvent } from '.';
 
@@ -32,10 +32,10 @@ export function changeProfile(newProfile: model.ProfileType) {
             console.log("new profile: memory")
             setAppstateProfile(model.ProfileType.MEMORY_BEHAVIOUR);
             setAppstateEvent("mem_inst_retired.all_loads");
-            setAppstateView(model.ViewType.DASHBOARD_MEMORY);
+            setAppstateView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            redirectToView(model.ViewType.DASHBOARD_MEMORY);
+            redirectToView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR);
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:
@@ -52,10 +52,10 @@ export function changeProfile(newProfile: model.ProfileType) {
             console.log("new profile: uir")
             setAppstateProfile(model.ProfileType.UIR_ANALYSIS);
             setAppstateEvent("cycles:ppp");
-            setAppstateView(model.ViewType.DASHBOARD_UIR);
+            setAppstateView(model.ViewType.DASHBOARD_UIR_PROFILING);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            redirectToView(model.ViewType.DASHBOARD_UIR);
+            redirectToView(model.ViewType.DASHBOARD_UIR_PROFILING);
             break;
 
     }
@@ -105,6 +105,6 @@ function setAppstateBucketSize(bucketSize: number) {
 }
 
 function redirectToView(viewType: model.ViewType) {
-    const viewPath = topLevelComponents.find((elem) => elem.viewType === viewType)?.path;
-    history.push(viewPath as string);
+    const viewPath = appContext.topLevelComponents.find((elem) => elem.viewType === viewType)?.path;
+    history.push(viewPath!);
 }

@@ -24,7 +24,7 @@ function NoMatch() {
             <h2>
                 404: No subpage found for <code>{location.pathname}</code>.
                 <br></br>
-                You can upload a file to start profiling: <Link to={'/'} className="nav-link"> File Uploader </Link>
+                You can upload a file to start profiling: <Link to={Config.appContext.topLevelComponents[0].path} className="nav-link"> File Uploader </Link>
             </h2>
         </div>
     );
@@ -52,10 +52,10 @@ export default function App() {
                                     <Switch>
 
                                         <Route exact path="/" key="/">
-                                            <Redirect to="/upload" />
+                                            <Redirect to={Config.appContext.topLevelComponents[0].path} />
                                         </Route>
 
-                                        {Config.topLevelComponents.map((topLevelComponent) => {
+                                        {Config.appContext.topLevelComponents.map((topLevelComponent) => {
                                             return <Route exact path={topLevelComponent.path} key={topLevelComponent.path}>
                                                 {topLevelComponent.component}
                                             </Route>

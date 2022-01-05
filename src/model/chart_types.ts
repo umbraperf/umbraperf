@@ -86,7 +86,7 @@ export type ChartComponentVariant =
 export enum ViewType {
     DASHBOARD_SINGLE_EVENT = "dashboard_single_event",
     DASHBOARD_MULTIPLE_EVENTS = "dashboard_multiple_events",
-    DASHBOARD_MEMORY_BEHAVIOUR = "dashboard_memory",
+    DASHBOARD_MEMORY_BEHAVIOR = "dashboard_memory",
     DASHBOARD_UIR_PROFILING = "dashboard_uir",
     UPLOAD = "upload",
     PIPELINES = "pipelines",

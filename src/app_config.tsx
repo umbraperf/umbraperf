@@ -11,7 +11,7 @@ import BackupIcon from '@material-ui/icons/Backup';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import SaveIcon from '@material-ui/icons/Save';
-import DeveloperModeIcon from '@material-ui/icons/DeveloperMode';
+import CodeIcon from '@material-ui/icons/Code';
 import { createTheme } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
@@ -95,7 +95,7 @@ const topLevelComponents: Array<ITopLevelComponent> = [
         path: '/uir-profiling-dashboard',
         name: 'UIR Profiling Dashboard',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR_PROFILING} />,
-        icon: () => { return (<DeveloperModeIcon />) },
+        icon: () => { return (<CodeIcon />) },
     },
 
 ];

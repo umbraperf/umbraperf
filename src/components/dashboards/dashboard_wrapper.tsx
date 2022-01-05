@@ -42,7 +42,7 @@ class DashboardWrapper extends React.Component<Props, {}> {
                 return React.createElement(DashboardSingleEvent);
             case model.ViewType.DASHBOARD_MULTIPLE_EVENTS:
                 return React.createElement(DashboardMultipleEvents);
-            case model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR:
+            case model.ViewType.DASHBOARD_MEMORY_BEHAVIOR:
                 return React.createElement(DashboardMemoryAccesses);
             case model.ViewType.DASHBOARD_UIR_PROFILING:
                 return React.createElement(DashboardUir);

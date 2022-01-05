@@ -84,10 +84,10 @@ const topLevelComponents: Array<ITopLevelComponent> = [
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
-        viewType: model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR,
-        path: '/memory-behaviour-dashboard',
-        name: 'Memory Behaviour Dashboard',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR} />,
+        viewType: model.ViewType.DASHBOARD_MEMORY_BEHAVIOR,
+        path: '/memory-behavior-dashboard',
+        name: 'Memory Behavior Dashboard',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY_BEHAVIOR} />,
         icon: () => { return (<SaveIcon />) },
     },
     {

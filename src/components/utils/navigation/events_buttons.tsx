@@ -63,7 +63,7 @@ function EventsButtons(props: Props) {
     }
 
     const isButtonDisabled = (event: string) => {
-        if (props.currentView === model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR && event === "cycles:ppp") {
+        if (props.currentView === model.ViewType.DASHBOARD_MEMORY_BEHAVIOR && event === "cycles:ppp") {
             return true;
         }
         // if (props.currentView === model.ViewType.DASHBOARD_UIR) {

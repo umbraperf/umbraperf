@@ -32,10 +32,10 @@ export function changeProfile(newProfile: model.ProfileType) {
             console.log("new profile: memory")
             setAppstateProfile(model.ProfileType.MEMORY_BEHAVIOUR);
             setAppstateEvent("mem_inst_retired.all_loads");
-            setAppstateView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR);
+            setAppstateView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOR);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            redirectToView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOUR);
+            redirectToView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOR);
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:

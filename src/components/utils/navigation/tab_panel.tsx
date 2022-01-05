@@ -39,11 +39,16 @@ function ScrollableTabsButtonForce(props: Props) {
 
     const umbraperfFileParsingFinished = useSelector((state: model.AppState) => state.umbraperfFileParsingFinished);
 
+    const getActiveTopLevelComponent = () => {
+        const currentTopLevelComponent = props.appContext.topLevelComponents.find(topLevelComponent => topLevelComponent.path === props.location.pathname);
+        return currentTopLevelComponent ? currentTopLevelComponent.path : false;
+    }
+
     return (
         <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Tabs
-                    value={props.location.pathname === "/" ? "/upload" : props.location.pathname}
+                    value={getActiveTopLevelComponent()}
                     scrollButtons="on"
                     variant="fullWidth"
                     indicatorColor="secondary"
@@ -51,18 +56,16 @@ function ScrollableTabsButtonForce(props: Props) {
                     aria-label="scrollable force tabs example"
                     className={umbraperfFileParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
-                    {props.appContext.topLevelComponents.map((prop, key) => {
-                        if (prop.path !== "/") {
-                            return (
-                                <Tab
-                                    classes={{ root: classes.tabRoot }}
-                                    value={prop.path}
-                                    to={prop.path}
-                                    icon={prop.icon()}
-                                    component={Link} key={key}
-                                />
-                            );
-                        }
+                    {props.appContext.topLevelComponents.map((topLevelComponent, key) => {
+                        return (
+                            <Tab
+                                classes={{ root: classes.tabRoot }}
+                                value={topLevelComponent.path}
+                                to={topLevelComponent.path}
+                                icon={topLevelComponent.icon()}
+                                component={Link} key={key}
+                            />
+                        );
                     })}
                 </Tabs>
             </AppBar>

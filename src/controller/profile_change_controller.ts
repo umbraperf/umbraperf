@@ -1,6 +1,7 @@
 import * as model from '../model';
-import { store, topLevelComponents } from '../app_config';
+import { store, appContext } from '../app_config';
 import history from '../history';
+import { setEvent } from '.';
 
 
 export function changeProfile(newProfile: model.ProfileType) {
@@ -31,10 +32,10 @@ export function changeProfile(newProfile: model.ProfileType) {
             console.log("new profile: memory")
             setAppstateProfile(model.ProfileType.MEMORY_BEHAVIOUR);
             setAppstateEvent("mem_inst_retired.all_loads");
-            setAppstateView(model.ViewType.DASHBOARD_MEMORY);
+            setAppstateView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOR);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            redirectToView(model.ViewType.DASHBOARD_MEMORY);
+            redirectToView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOR);
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:
@@ -51,10 +52,10 @@ export function changeProfile(newProfile: model.ProfileType) {
             console.log("new profile: uir")
             setAppstateProfile(model.ProfileType.UIR_ANALYSIS);
             setAppstateEvent("cycles:ppp");
-            setAppstateView(model.ViewType.DASHBOARD_UIR);
+            setAppstateView(model.ViewType.DASHBOARD_UIR_PROFILING);
             setAppstateBucketSize(1);
             setAppstateInterpolation("basis");
-            redirectToView(model.ViewType.DASHBOARD_UIR);
+            redirectToView(model.ViewType.DASHBOARD_UIR_PROFILING);
             break;
 
     }
@@ -71,20 +72,14 @@ function setAppstateProfile(profile: model.ProfileType) {
 function setAppstateEvent(event: string) {
     const events = store.getState().events;
     if (events && events.includes(event)) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_EVENT,
-            data: event,
-        });
+        setEvent(event);
     }
 }
 
 function setAppstateMultipleEvent(event1: string, event2: string) {
     const events = store.getState().events;
     if (events && events.includes(event1) && events.includes(event2)) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
-            data: [event1, event2],
-        });
+        setEvent(event1, event2);
     }
 }
 
@@ -110,6 +105,6 @@ function setAppstateBucketSize(bucketSize: number) {
 }
 
 function redirectToView(viewType: model.ViewType) {
-    const viewPath = topLevelComponents.find((elem) => elem.viewType === viewType)?.path;
-    history.push(viewPath as string);
+    const viewPath = appContext.topLevelComponents.find((elem) => elem.viewType === viewType)?.path;
+    history.push(viewPath!);
 }

@@ -12,13 +12,13 @@ export class RequestController {
     }
 
 
-    public calculateChartData(restQueryType: model.BackendQueryType, restQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
+    public calculateChartData(backendQueryType: model.BackendQueryType, backendQuery: string, metaRequest: boolean, requestingChartId?: number, chartType?: model.ChartType) {
 
         const queryRequestId = requestingChartId === undefined ? -1 : requestingChartId;
 
         store.dispatch({
             type: model.StateMutationType.SET_CURRENT_REQUEST,
-            data: restQueryType,
+            data: backendQueryType,
         });
 
         if (!metaRequest && chartType) {
@@ -38,7 +38,7 @@ export class RequestController {
             data: undefined,
         });
 
-        worker.calculateChartData(restQuery, queryRequestId, metaRequest, restQueryType);
+        worker.calculateChartData(backendQuery, queryRequestId, metaRequest, backendQueryType);
     }
 }
 
@@ -47,6 +47,7 @@ export function requestMetadata(controller: RequestController) {
     requestEvents(controller);
     requestPipelines(controller);
     requestOperators(controller);
+    requestStatistics(controller);
     requestActiveOperatorsPipelines(controller);
 }
 
@@ -189,7 +190,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation, memoryAddressDomain: store.getState().currentMemoryAddressSelectionTuple },
+                data: { event: store.getState().currentEvent, bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, showMemoryAccessesDifferences: store.getState().memoryHeatmapsDifferenceRepresentation, outlierDetectionDegree: store.getState().currentHeatmapsOutlierDetection },
             });
             break;
 
@@ -205,7 +206,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { event: store.getState().currentEvent, pipelines: store.getState().currentPipeline, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple, operators: store.getState().currentOperator },
             });
             break;
     }
@@ -213,15 +214,3 @@ export function requestChartData(controller: RequestController, chartId: number,
     controller.calculateChartData(restQueryType, restQuery, false, chartId, chartType);
 }
 
-
-export function resetChartDataInStore(chartId: number) {
-
-    let chartData = store.getState().chartData;
-    delete chartData[chartId];
-    let newChartData: model.IChartDataKeyValue = { ...chartData }
-
-    store.dispatch({
-        type: model.StateMutationType.SET_CHART_DATA,
-        data: newChartData,
-    });
-}

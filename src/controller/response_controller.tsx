@@ -3,6 +3,7 @@ import * as model from "../model";
 import { store, appContext } from '../app_config';
 import * as RequestController from "./request_controller";
 import _ from "lodash";
+import { dispachMultipleEvent, dispachSingleEvent } from ".";
 
 
 //set file reading finished flag in redux store
@@ -58,15 +59,9 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
                 type: model.StateMutationType.SET_EVENTS,
                 data: events,
             });
-            store.dispatch({
-                type: model.StateMutationType.SET_CURRENT_EVENT,
-                data: events[0],
-            });
+            dispachSingleEvent(events[0]);
             if (events.length > 1) {
-                events.length > store.dispatch({
-                    type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
-                    data: [events[0], events[1]],
-                });
+                dispachMultipleEvent(events[0], events[1])
             }
             break;
 
@@ -239,7 +234,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                 {
                     chartType: model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM,
                     data: {
-                        timeBucket: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
                         occurrences: resultObject.rustResultTable.getColumn('absfreq').toArray(),
                     }
                 });
@@ -346,6 +341,8 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
             break;
 
         case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
+
+        console.log("should be here also with no pipeline");
 
             const queryplanTooltipData: model.IQueryPlanNodeTooltipData = {
                 uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),

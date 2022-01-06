@@ -1,11 +1,11 @@
 import * as model from '../../../model';
+import * as Context from '../../../app_context';
 import React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withRouter, Link } from 'react-router-dom';
-import { topLevelComponents } from '../../../app_config';
 import { useSelector } from 'react-redux';
 
 
@@ -16,8 +16,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         height: '38px',
         minHeight: '38px',
-        //backgroundColor: theme.palette.background.default,
-        //backgroundColor: theme.palette.background.paper,
     },
     tabsDisabled: {
         color: 'white',
@@ -27,41 +25,47 @@ const useStyles = makeStyles((theme: Theme) => ({
     tabRoot: {
         height: '38px',
         minHeight: '38px',
-        //minWidth: '200px',
     }
 }));
 
-function ScrollableTabsButtonForce(props: any) {
+interface Props {
+    location: any;
+    appContext: Context.IAppContext;
+}
+
+function ScrollableTabsButtonForce(props: Props) {
 
     const classes = useStyles();
 
     const umbraperfFileParsingFinished = useSelector((state: model.AppState) => state.umbraperfFileParsingFinished);
 
+    const getActiveTopLevelComponent = () => {
+        const currentTopLevelComponent = props.appContext.topLevelComponents.find(topLevelComponent => topLevelComponent.path === props.location.pathname);
+        return currentTopLevelComponent ? currentTopLevelComponent.path : false;
+    }
+
     return (
         <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Tabs
-                    value={props.location.pathname}
+                    value={getActiveTopLevelComponent()}
                     scrollButtons="on"
-/*                     variant="scrollable"
- */                    variant="fullWidth"
+                    variant="fullWidth"
                     indicatorColor="secondary"
                     textColor="secondary"
                     aria-label="scrollable force tabs example"
                     className={umbraperfFileParsingFinished ? classes.root : `${classes.tabsDisabled} ${classes.root}`}
                 >
-                    {topLevelComponents.map((prop, key) => {
-                        if (prop.path !== "/") {
-                            return (
-                                <Tab
-                                    classes={{ root: classes.tabRoot }}
-                                    value={prop.path}
-                                    to={prop.path}
-                                    icon={prop.icon()}
-                                    component={Link} key={key}
-                                />
-                            );
-                        }
+                    {props.appContext.topLevelComponents.map((topLevelComponent, key) => {
+                        return (
+                            <Tab
+                                classes={{ root: classes.tabRoot }}
+                                value={topLevelComponent.path}
+                                to={topLevelComponent.path}
+                                icon={topLevelComponent.icon()}
+                                component={Link} key={key}
+                            />
+                        );
                     })}
                 </Tabs>
             </AppBar>
@@ -69,5 +73,5 @@ function ScrollableTabsButtonForce(props: any) {
     );
 }
 
-export default withRouter(ScrollableTabsButtonForce);
+export default withRouter(Context.withAppContext(ScrollableTabsButtonForce));
 

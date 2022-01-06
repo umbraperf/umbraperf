@@ -4,12 +4,13 @@ import * as Context from '../../app_context';
 import styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner/spinner';
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { createRef } from 'react';
 import _ from "lodash";
 
 import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
+import HeatmapsOutlierDetectionSlider from '../utils/togglers/heatmaps_outlier_detection_slider';
 import SunburstChart from './vega_visualizations/sunburst_chart';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
@@ -18,6 +19,7 @@ import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
 import UirViewer from './uir/uir_viewer';
 import QueryPlan from './queryplan/query_plan_wrapper';
+import { Fade } from '@material-ui/core';
 
 
 interface OwnProps {
@@ -39,12 +41,9 @@ export interface ChartWrapperAppstateProps {
     currentPipeline: Array<string> | "All",
     currentView: model.ViewType;
     currentTimeBucketSelectionTuple: [number, number],
-    currentMemoryAddressSelectionTuple: [number, number],
+    currentHeatmapsOutlierDetection: model.HeatmapsOutlierDetectionDegrees,
     currentBucketSize: number,
     memoryHeatmapsDifferenceRepresentation: boolean,
-
-    setChartIdCounter: (newChartIdCounter: number) => void;
-    setCurrentChart: (newCurrentChart: model.ChartType) => void;
 }
 
 type Props = OwnProps & ChartWrapperAppstateProps;
@@ -72,7 +71,7 @@ class ChartWrapper extends React.Component<Props, State> {
             ...globalInputDataChanged,
             [this.props.chartIdCounter]: false,
         };
-        this.props.setChartIdCounter((this.state.chartId) + 1);
+        Controller.setChartIdCounter((this.state.chartId) + 1);
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -279,7 +278,7 @@ class ChartWrapper extends React.Component<Props, State> {
                 break;
         }
 
-        this.props.setCurrentChart(specificChart.type);
+        Controller.setCurrentChart(specificChart.type);
         return React.createElement(chartClass!, specificChart.props as any);
     }
 
@@ -296,7 +295,7 @@ class ChartWrapper extends React.Component<Props, State> {
         //return div with chart options or undefined if there are no chart options
         let chartOptions = undefined;
         if (this.props.chartType === model.ChartType.MEMORY_ACCESS_HEATMAP_CHART) {
-            chartOptions = <HeatmapsDiffToggler />
+            chartOptions = <><HeatmapsDiffToggler /> <HeatmapsOutlierDetectionSlider /></>
         }
         return chartOptions ? <div className={styles.chartOptionsContainer}>
             {chartOptions}
@@ -314,9 +313,12 @@ class ChartWrapper extends React.Component<Props, State> {
             {this.renderChartOptions()}
             {this.isChartDataLoading()
                 ? <Spinner />
-                : <div className={styles.chartContainer}>
-                    {this.createChildChart()}
-                </div>
+                : <Fade in={true}>
+                    <div className={styles.chartContainer}>
+                        {this.createChildChart()}
+                    </div>
+                </Fade >
+
             }
         </div>;
     }
@@ -337,21 +339,10 @@ const mapStateToProps = (state: model.AppState) => ({
     currentPipeline: state.currentPipeline,
     currentView: state.currentView,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
-    currentMemoryAddressSelectionTuple: state.currentMemoryAddressSelectionTuple,
+    currentHeatmapsOutlierDetection: state.currentHeatmapsOutlierDetection,
     currentBucketSize: state.currentBucketSize,
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setChartIdCounter: (newChartIdCounter: number) => dispatch({
-        type: model.StateMutationType.SET_CHART_ID_COUNTER,
-        data: newChartIdCounter,
-    }),
-    setCurrentChart: (newCurrentChart: model.ChartType) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_CHART,
-        data: newCurrentChart,
-    }),
-});
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(ChartWrapper));
+export default connect(mapStateToProps)(Context.withAppContext(ChartWrapper));

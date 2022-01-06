@@ -110,6 +110,11 @@
     width: 100%;
 }
 
+.queryplanNodeTooltipEmptyTableMessage{
+    font-size: 9px;
+    margin-top: 10px;
+}
+
 .queryplanNodeTooltipSubtitle{
     font-size: 11px;
     flex: 1;

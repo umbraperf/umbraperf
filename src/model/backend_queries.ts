@@ -1,3 +1,4 @@
+import { HeatmapsOutlierDetectionDegrees } from ".";
 
 export type BackendQuery<T, P> = {
     readonly type: T;
@@ -38,9 +39,9 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_ABS_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS, { event2: string, event1: string, bucketSize: number, pipelines: Array<string> | "All", operators: Array<string> | "All", timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_EVENT_OCCURRENCES_PER_TIME_UNIT, { event: string, bucketSize: number }>
     | BackendQuery<BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES, { event: string, timeBucketFrame: [number, number], allPipelines: Array<string> }>
-    | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean, memoryAddressDomain: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean, outlierDetectionDegree: HeatmapsOutlierDetectionDegrees }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { events: Array<string>, timeBucketFrame: [number, number] }>
-    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number], operators: Array<string> | "All" }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -81,6 +82,10 @@ export function createBackendQuery(query: QueryVariant) {
     const operators = () => {
         return (query.data as any).operators === "All" ? 'All' : (query.data as any).operators.join();
     }
+    const operatorsFilter = () => {
+        const operatorsString = operators();
+        return operatorsString && `/?operator="${operatorsString}"`;
+    }
 
     const memoryAccessesDifferences = () => {
         return (query.data as any).showMemoryAccessesDifferences ? '#DIFF' : '#ABS';
@@ -101,8 +106,8 @@ export function createBackendQuery(query: QueryVariant) {
         return relSelection;
     }
 
-    const memoryAdressDomain = () => {
-        return `${(query.data as any).memoryAddressDomain[0]}from_to${(query.data as any).memoryAddressDomain[1]}`;
+    const outlierDetectionDegree = () => {
+        return `${(query.data as any).outlierDetectionDegree}`;
     }
 
 
@@ -134,11 +139,12 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_PIPELINE_COUNT_WITH_OPERATOR_OCCURENCES:
             return `pipeline/operator/opcount/pipecount${eventFilter()}${timeFilter()}/sunburst?pipeline`;
         case BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT:
-            return `bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()},${memoryAdressDomain()}${memoryAccessesDifferences()}`;
+            console.log(`bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()},${outlierDetectionDegree()}${memoryAccessesDifferences()}`);
+            return `bucket/operator/mem/freq${eventFilter()}${timeFilter()}/heatmap?${bucketSize()}!${time()},${outlierDetectionDegree()}${memoryAccessesDifferences()}`;
         case BackendQueryType.GET_GROUPED_UIR_LINES:
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${timeFilter()}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
-            return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${timeFilter()}/top(srclines)?${event()}`;
+            return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${operatorsFilter()}${timeFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

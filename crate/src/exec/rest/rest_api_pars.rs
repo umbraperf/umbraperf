@@ -150,9 +150,9 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
 
     let before_excl_mark = 0;
     let split_fields_bucket_size = split_at_colon(split[before_excl_mark]);
-    let range_x_range_y = split_at_comma(split_numop[0]);
-    let range_x = split_at_to(range_x_range_y[0]);
-    let range_y = split_at_to(range_x_range_y[1]);
+    let range_x_outlier = split_at_comma(split_numop[0]);
+    let range_x = split_at_to(range_x_outlier[0]);
+    let outlier = range_x_outlier[1];
 
     let abs_or_diff = if let Some(x) = split_numop.get(1) {
         match *x {
@@ -177,8 +177,7 @@ pub fn freq_mem(record_batch: RecordBatch, params: &str) {
         bucket_size,
         range_x[0].parse::<f64>().unwrap(),
         range_x[1].parse::<f64>().unwrap(),
-        range_y[0].parse::<f64>().unwrap(),
-        range_y[1].parse::<f64>().unwrap(),
+        outlier.parse::<f64>().unwrap(),
         None,
         abs_or_diff,
     );

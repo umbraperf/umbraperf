@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use regex::Regex;
 
 use crate::{
-    state::state::{get_mapping_operator, get_record_batches, insert_mapping_hashmap},
+    state::state::{get_mapping_operator, get_unfiltered_record_batch, insert_mapping_hashmap},
     utils::{array_util::get_stringarray_column, record_batch_schema::RecordBatchSchema},
 };
 
@@ -96,7 +96,7 @@ pub fn init_mapping_operator() {
     }
 
     let unique_batch = find_unique_string(
-        &get_record_batches().unwrap().batch,
+        &get_unfiltered_record_batch().unwrap().batch,
         RecordBatchSchema::Operator as usize,
     );
 
@@ -108,7 +108,7 @@ pub fn init_mapping_operator() {
         let group_batch = filter_with(
             RecordBatchSchema::Operator as usize,
             vec![op_id.unwrap()],
-            &get_record_batches().unwrap().batch,
+            &get_unfiltered_record_batch().unwrap().batch,
         );
 
         let op_extens_col =

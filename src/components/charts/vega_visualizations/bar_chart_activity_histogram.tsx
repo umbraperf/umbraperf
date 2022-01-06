@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
-import ChartResetButton from '../../utils/togglers/chart_reset_button';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -28,12 +27,6 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         this.handleDetailDomainSelection = this.handleDetailDomainSelection.bind(this);
     }
 
-    componentDidMount() {
-        if (this.props.currentTimeBucketSelectionTuple[0] !== -1 || this.props.currentTimeBucketSelectionTuple[1] !== -1) {
-            Controller.resetSelectionTimeselection();
-        }
-    }
-
     public render() {
 
         return <div style={{ position: "relative" }} >
@@ -52,7 +45,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     handleDetailDomainSelection(...args: any[]) {
         if (null === args[1] || null === args[1][0] || null === args[0][1]) {
-            Controller.resetSelectionTimeselection();
+            Controller.resetSelectionTimeframe();
         }
         else if (args[1] && args[1][0] && args[1][1]) {
             const selectedTimeBuckets = args[1][0];
@@ -65,7 +58,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
 
     createVisualizationData() {
 
-        const timeBucketsArray = this.props.chartData.timeBucket;
+        const timeBucketsArray = this.props.chartData.buckets;
         const occurrencesArray = this.props.chartData.occurrences;
 
         const data = {

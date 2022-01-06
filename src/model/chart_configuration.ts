@@ -15,6 +15,10 @@ export interface ChartConfiguration {
     areaChartXLabelSeparation: number;
     areaChartYLabelSeparation: number;
     barChartYLabelSeparation: number;
+    barChartXLabelSeparation: number;
+    barChartXTitleY: number;
+    barChartXTitleXOffsetMult: number;
+    barChartXLabelAngle: number;
     titleFontSize: number;
     axisTitleFontSize: number;
     legendTitleFontSize: number;
@@ -26,7 +30,6 @@ export interface ChartConfiguration {
     subtitleFontSize: number;
     areaChartTooltip: string;
     areaChartAbsoluteTooltip: string;
-    // donutChartTooltip: string;
     activityHistogramTooltip: string;
     barChartTooltip: string;
     sunburstChartTooltip: (pipeline: boolean) => string;
@@ -38,13 +41,10 @@ export interface ChartConfiguration {
     valueLabelFont: string;
     hoverFillOpacity: number;
     axisTitleFontSizeYCombined: number;
-    // getOperatorColorScheme: (domainLength: number, higSaturation?: boolean, hsla?: number) => Array<string>;
-    // getOrangeColor: (getOrangeColor: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => string;
     memoryChartYTitle: string,
     memoryChartXTitle: string,
     memoryChartYLabelSeparation: number,
     memoryChartXLabelSeparation: number,
-    // memoryChartTooltip: string,
     colorLowOpacityHex: string,
     getSwimLanesXTicks: (bucketsArray: number[], numberTicksLarge: number, numberTicksSmall: number, chartWidth: number) => number[] | undefined;
     nFormatter: (num: number, digits: number) => string,
@@ -73,6 +73,10 @@ export let chartConfiguration: ChartConfiguration = {
     areaChartXLabelSeparation: 2,
     areaChartYLabelSeparation: 2,
     barChartYLabelSeparation: 1,
+    barChartXLabelSeparation: -20,
+    barChartXTitleY: -5,
+    barChartXTitleXOffsetMult: 1.02,
+    barChartXLabelAngle: -45,
     axisTitleFont: "Segoe UI",
     axisLabelFont: "Arial",
     memoryChartYTitle: 'Memory Address',
@@ -112,7 +116,7 @@ export let chartConfiguration: ChartConfiguration = {
 
     //Value Lables
     sunburstChartValueLabelFontSize: 11,
-    barChartValueLabelFontSize: 9,
+    barChartValueLabelFontSize: 8,
     valueLabelFont: "Segoe UI",
 
     //Tooltip:

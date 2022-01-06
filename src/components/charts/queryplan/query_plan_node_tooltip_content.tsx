@@ -44,45 +44,58 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
 
             let tableRows = [];
             for (let i = 0; i < 5; i++) {
-                tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 65), tooltipData.eventOccurrences[i] + "%"))
+                if (tooltipData.eventOccurrences[i] !== 0) {
+                    tableRows.push(createData(tooltipData.uirLineNumber[i], truncateUirLine(tooltipData.uirLines[i], 65), tooltipData.eventOccurrences[i] + "%"));
+                }
             }
 
             return (
                 <Paper
                     className={styles.queryplanNodeTooltipTableBackground}
                 >
-                    <Table
-                        size="small"
-                        aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="right">No.</TableCell>
-                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="left">UIR Line</TableCell>
-                                <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="right">Freq.</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {tableRows.map((row) => (
-                                <TableRow key={row.lineNumber}>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCell} component="td" align="right">
-                                        <div className={styles.queryplanNodeTooltipTableCellContentUirNumber}>
-                                            {row.lineNumber}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCell} component="th" align="left" scope="row">
-                                        <div className={styles.queryplanNodeTooltipTableCellContentUirLine}>
-                                            {row.uirLine}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className={styles.queryplanNodeTooltipTableCell} component="td" align="right">
-                                        <div className={styles.queryplanNodeTooltipTableCellContentUirFreq}>
-                                            {row.eventOccurrence}
-                                        </div>
-                                    </TableCell>
+                    {tableRows.length > 0 ?
+                        (<Table
+                            size="small"
+                            aria-label="tooltip table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="right">No.</TableCell>
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="left">UIR Line</TableCell>
+                                    <TableCell className={styles.queryplanNodeTooltipTableCellHead} align="right">Freq.</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {tableRows.map((row) => (
+                                    <TableRow key={row.lineNumber}>
+                                        <TableCell className={styles.queryplanNodeTooltipTableCell} component="td" align="right">
+                                            <div className={styles.queryplanNodeTooltipTableCellContentUirNumber}>
+                                                {row.lineNumber}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className={styles.queryplanNodeTooltipTableCell} component="th" align="left" scope="row">
+                                            <div className={styles.queryplanNodeTooltipTableCellContentUirLine}>
+                                                {row.uirLine}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className={styles.queryplanNodeTooltipTableCell} component="td" align="right">
+                                            <div className={styles.queryplanNodeTooltipTableCellContentUirFreq}>
+                                                {row.eventOccurrence}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>)
+                        :
+                        (<Typography
+                            className={styles.queryplanNodeTooltipEmptyTableMessage}
+                            variant="subtitle2"
+                        >
+                            No occurrences in current selection.
+
+                        </Typography>)
+                    }
+
                 </Paper>
             );
         }
@@ -95,7 +108,7 @@ class QueryPlanNodeTooltipContent extends React.Component<Props, {}> {
             className={styles.queryplanNodeTooltipSubtitleContainer}
         >
             {this.props.tooltipData.estimatedCardinality && this.createEstimatedCardinalityLine()}
-            {this.createTotalSumLine()}
+            {this.props.operatorId !== "root" && this.createTotalSumLine()}
         </div>
     }
 

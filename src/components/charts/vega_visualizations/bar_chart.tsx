@@ -29,7 +29,7 @@ class BarChart extends React.Component<Props, {}> {
 
 
     public render() {
-        return <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()}/>
+        return <Vega spec={this.createVisualizationSpec()} signalListeners={this.createVegaSignalListeners()} />
     }
 
     createVegaSignalListeners() {
@@ -99,6 +99,19 @@ class BarChart extends React.Component<Props, {}> {
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
 
+        const hideAllBarValues = () => {
+            if (this.props.operators!.operatorsId.length >= 20) {
+                return true;
+            }
+            if (this.props.operators!.operatorsId.length >= 15 && this.props.width < 500) {
+                return true;
+            }
+            if (this.props.operators!.operatorsId.length >= 10 && this.props.width < 420) {
+                return true;
+            }
+            return false;
+        }
+
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.props.width - 50,
@@ -117,6 +130,14 @@ class BarChart extends React.Component<Props, {}> {
             data: visData,
 
             signals: [
+                {
+                    name: "hoverBarDatum",
+                    value: {},
+                    on: [
+                        { events: "rect:mouseover", update: "datum" },
+                        { events: "rect:mouseout", update: "{}" }
+                    ]
+                },
                 {
                     name: "clickOperator",
                     on: [
@@ -157,19 +178,20 @@ class BarChart extends React.Component<Props, {}> {
                     orient: 'bottom',
                     scale: 'xscale',
                     labelOverlap: true,
+                    labelSeparation: model.chartConfiguration.barChartXLabelSeparation,
                     title: "Operators",
-                    titleY: -5,
-                    titleX: { signal: 'width', mult: 1.02 },
+                    titleY: model.chartConfiguration.barChartXTitleY,
+                    titleX: { signal: 'width', mult: model.chartConfiguration.barChartXTitleXOffsetMult },
                     titleAlign: "left",
                     titleFontSize: model.chartConfiguration.axisTitleFontSize,
                     titleFont: model.chartConfiguration.axisTitleFont,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelFont: model.chartConfiguration.axisLabelFont,
+                    labelAngle: model.chartConfiguration.barChartXLabelAngle,
                     encode: {
                         labels: {
                             update: {
                                 text: { signal: "truncate(datum.value, 9)" },
-                                angle: { value: -45 },
                                 align: { value: "right" }
                             }
                         }
@@ -217,7 +239,7 @@ class BarChart extends React.Component<Props, {}> {
                             fillOpacity: {
                                 value: model.chartConfiguration.hoverFillOpacity,
                             },
-                            cursor: {value: "pointer"}
+                            cursor: { value: "pointer" }
                         },
                     },
                 },
@@ -231,10 +253,16 @@ class BarChart extends React.Component<Props, {}> {
                             fill: { value: "black" },
                             align: { value: "center" },
                             baseline: { value: "middle" },
-                            text: { field: "datum.values" },
                             fontSize: { value: model.chartConfiguration.barChartValueLabelFontSize },
                             font: model.chartConfiguration.valueLabelFont,
-                        }
+
+                        },
+                        update: {
+                            //if all bar values hidden because of small representation or too many operators, show value of hovered bar and empty string as value for all other bars
+                            text: hideAllBarValues() ?
+                                { signal: "hoverBarDatum.operators===datum.datum.operators ? hoverBarDatum.values : ''" } :
+                                { signal: "datum.datum.values" },
+                        },
                     }
                 },
             ],

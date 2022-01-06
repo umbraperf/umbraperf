@@ -12,10 +12,10 @@ interface Props {
 function DropdownsOptions(props: Props) {
 
     const isDropdownDisabled = (dropdownType: "interpolationDropdown" | "bucketsizeDropdown") => {
-        if(dropdownType === "interpolationDropdown" && props.currentView === model.ViewType.DASHBOARD_MEMORY){
+        if(dropdownType === "interpolationDropdown" && props.currentView === model.ViewType.DASHBOARD_MEMORY_BEHAVIOR){
             return true;
         }
-        if (props.currentView === model.ViewType.DASHBOARD_UIR) {
+        if (props.currentView === model.ViewType.DASHBOARD_UIR_PROFILING) {
             return true;
         }
         return false;

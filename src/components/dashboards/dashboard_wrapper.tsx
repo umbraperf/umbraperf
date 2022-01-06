@@ -1,8 +1,11 @@
-import React from 'react';
 import * as model from '../../model';
+import * as Controller from '../../controller';
+import * as Context from '../../app_context';
 import styles from '../../style/dashboard.module.css';
 import DashboardHeader from './dashboard_header';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import DashboardSingleEvent from '../dashboards/dashboard_single_event';
 import DashboardMultipleEvents from '../dashboards/dashboard_multiple_events';
@@ -14,7 +17,8 @@ interface OwnProps {
 }
 
 interface DashboardWrapperAppstateProps {
-    setCurrentView: (newCurrentView: model.ViewType) => void;
+    appContext: Context.IAppContext;
+    umbraperfFileParsingFinished: boolean;
 }
 
 type Props = OwnProps & DashboardWrapperAppstateProps;
@@ -23,12 +27,12 @@ class DashboardWrapper extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
-        this.props.setCurrentView(model.ViewType.NONE);
+        Controller.setCurrentView(model.ViewType.NONE);
     }
 
 
     componentDidMount() {
-        this.props.setCurrentView(this.props.dashboardView);
+        Controller.setCurrentView(this.props.dashboardView);
     }
 
     createView() {
@@ -38,15 +42,19 @@ class DashboardWrapper extends React.Component<Props, {}> {
                 return React.createElement(DashboardSingleEvent);
             case model.ViewType.DASHBOARD_MULTIPLE_EVENTS:
                 return React.createElement(DashboardMultipleEvents);
-            case model.ViewType.DASHBOARD_MEMORY:
+            case model.ViewType.DASHBOARD_MEMORY_BEHAVIOR:
                 return React.createElement(DashboardMemoryAccesses);
-            case model.ViewType.DASHBOARD_UIR:
+            case model.ViewType.DASHBOARD_UIR_PROFILING:
                 return React.createElement(DashboardUir);
         }
 
     }
 
     public render() {
+
+        if (!this.props.umbraperfFileParsingFinished) {
+            return <Redirect to={this.props.appContext.topLevelComponents[0].path} />
+        }
 
         return <div className={styles.dashboardGrid}>
             <DashboardHeader />
@@ -56,15 +64,12 @@ class DashboardWrapper extends React.Component<Props, {}> {
     }
 }
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentView: (newCurrentView: model.ViewType) =>
-        dispatch({
-            type: model.StateMutationType.SET_CURRENT_VIEW,
-            data: newCurrentView,
-        })
+const mapStateToProps = (state: model.AppState) => ({
+    umbraperfFileParsingFinished: state.umbraperfFileParsingFinished,
 });
 
-export default connect(undefined, mapDispatchToProps)(DashboardWrapper);
+
+export default connect(mapStateToProps)(Context.withAppContext(DashboardWrapper));
 
 
 

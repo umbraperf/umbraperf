@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -28,13 +28,14 @@ export enum StateMutationType {
     SET_PIPELINES = 'SET_PIPELINES',
     SET_OPERATORS = 'SET_OPERATORS',
     SET_KPIS = 'SET_KPIS',
+    SET_KPI_VALUES_FORMATED = 'SET_KPI_VALUES_FORMATED',
     SET_CHART_ID_COUNTER = 'SET_CHART_ID_COUNTER',
     SET_CHART_DATA = 'SET_CHART_DATA',
     SET_CURRENT_INTERPOLATION = 'SET_CURRENT_INTERPOLATION',
     SET_CURRENT_BUCKETSIZE = 'SET_CURRENT_BUCKETSIZE',
     SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE = 'SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE',
     SET_CURRENT_TIME_POSITION_SELECTION_TUPLE = 'SET_CURRENT_TIME_POSITION_SELECTION_TUPLE',
-    SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE = 'SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE',
+    SET_CURRENT_HEATMAPS_OUTLIER_DETECTION = 'SET_CURRENT_HEATMAPS_OUTLIER_DETECTION',
     SET_CURRENT_VIEW = 'SET_CURRENT_VIEW',
     SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION = 'SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION',
     SET_CURRENT_PROFILE = 'SET_CURRENT_PROFILE',
@@ -64,13 +65,14 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_PIPELINES, Array<string>>
     | StateMutation<StateMutationType.SET_OPERATORS, IOperatorsData>
     | StateMutation<StateMutationType.SET_KPIS, Array<IKpiData>>
+    | StateMutation<StateMutationType.SET_KPI_VALUES_FORMATED, IKpiValuesFormated>
     | StateMutation<StateMutationType.SET_CHART_ID_COUNTER, number>
     | StateMutation<StateMutationType.SET_CHART_DATA, IChartDataKeyValue>
-    | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, String>
+    | StateMutation<StateMutationType.SET_CURRENT_INTERPOLATION, string>
     | StateMutation<StateMutationType.SET_CURRENT_BUCKETSIZE, number>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_BUCKET_SELECTION_TUPLE, [number, number]>
     | StateMutation<StateMutationType.SET_CURRENT_TIME_POSITION_SELECTION_TUPLE, [number, number]>
-    | StateMutation<StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE, [number, number]>
+    | StateMutation<StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION, HeatmapsOutlierDetectionDegrees>
     | StateMutation<StateMutationType.SET_CURRENT_VIEW, ViewType>
     | StateMutation<StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION, boolean>
     | StateMutation<StateMutationType.SET_CURRENT_PROFILE, ProfileType>
@@ -179,6 +181,11 @@ export class AppStateMutation {
                     ...state,
                     kpis: mutation.data,
                 };
+            case StateMutationType.SET_KPI_VALUES_FORMATED:
+                return {
+                    ...state,
+                    kpiValuesFormated: mutation.data,
+                };
             case StateMutationType.SET_CHART_ID_COUNTER:
                 return {
                     ...state,
@@ -209,10 +216,10 @@ export class AppStateMutation {
                     ...state,
                     currentTimePositionSelectionTuple: mutation.data,
                 }
-            case StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE:
+            case StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION:
                 return {
                     ...state,
-                    currentMemoryAddressSelectionTuple: mutation.data,
+                    currentHeatmapsOutlierDetection: mutation.data,
                 }
             case StateMutationType.SET_CURRENT_VIEW:
                 return {
@@ -239,7 +246,6 @@ export class AppStateMutation {
                     fileLoading: false,
                     resultLoading: {},
                     result: undefined,
-                    chunksNumber: 0,
                     umbraperfFileParsingFinished: false,
                     file: undefined,
                     queryplanJson: undefined,
@@ -257,13 +263,14 @@ export class AppStateMutation {
                     pipelinesShort: undefined,
                     operators: undefined,
                     kpis: undefined,
+                    kpiValuesFormated: {},
                     chartIdCounter: 1,
                     chartData: {},
                     currentInterpolation: "basis",
                     currentBucketSize: 1,
                     currentTimeBucketSelectionTuple: [-1, -1],
                     currentTimePositionSelectionTuple: [-1, -1],
-                    currentMemoryAddressSelectionTuple: [-1, -1],
+                    currentHeatmapsOutlierDetection: 0,
                     currentView: ViewType.UPLOAD,
                     memoryHeatmapsDifferenceRepresentation: true,
                     currentProfile: ProfileType.OVERVIEW,

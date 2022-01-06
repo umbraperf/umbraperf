@@ -175,12 +175,10 @@
 .kpiCardLabel{
     max-width: 80px;
     font-size: var(--labelFonSize);
-    animation: fadeIn 1s;
 }
 
 .kpiCardValue{
     font-size: 20px;
-    animation: fadeIn 2s;
     font-weight: 400;
 }
 
@@ -236,6 +234,10 @@
     align-items: center;
 }
 
+.formControlLabel{
+    margin: 0;
+}
+
 .togglerLabel{
     color: colorTertiary;
     font-size: 11px;
@@ -244,23 +246,22 @@
 
 .chartRestButton{
     position: absolute;
-    left: 20px;
-    margin-top: -9px;
-    z-index: 2;
+    left: 11px;
+    z-index: 10;
 }
 
-.heatmapsMemoryAddressSelectorContainer{
-    padding-bottom: 5px;
-    width: 80%;
-    max-width: 1000px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.heatmapsOption{
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
-.heatmapsMemoryAddrressSelectorTogglerLabel{
+.heatmapsOutlierDetectionSlider{
+    width: 100px;
+    margin-left: 10px;
+}
+
+.heatmapsOutlierDetectionSliderLabel{
     composes: togglerLabel;
-    margin-bottom: -10px;
 }
 
 @keyframes fadeIn {

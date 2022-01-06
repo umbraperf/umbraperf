@@ -10,13 +10,18 @@ import DashboardWrapper from './components/dashboards/dashboard_wrapper';
 import BackupIcon from '@material-ui/icons/Backup';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
-import SdStorageIcon from '@material-ui/icons/SdStorage';
-import DeveloperModeIcon from '@material-ui/icons/DeveloperMode';
+import SaveIcon from '@material-ui/icons/Save';
+import CodeIcon from '@material-ui/icons/Code';
 import { createTheme } from '@material-ui/core';
 import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
 
-export const webFileController = new RequestController();
+export const backendRequestController = new RequestController();
+
+//Create Redux stroe
+//TODO change to prod store
+//export const store = createProdStore();
+export const store = createDevStore();
 
 export const appColor = {
     primary: styles.colorPrimary,
@@ -26,22 +31,6 @@ export const appColor = {
     accentDarkGreen: styles.colorAccentDarkGreen,
     accentDarkBlue: styles.colorAccentDarkBlue,
 }
-
-export const appContext: IAppContext = {
-    controller: webFileController,
-    primaryColor: appColor.primary,
-    secondaryColor: appColor.secondary,
-    tertiaryColor: appColor.tertiary,
-    accentBlack: appColor.accentBlack,
-    accentDarkGreen: appColor.accentDarkGreen,
-    accentDarkBlue: appColor.accentDarkBlue,
-};
-
-//Create Redux stroe
-//TODO change to prod store
-//export const store = createProdStore();
-export const store = createDevStore();
-
 
 export const materialUiTheme = createTheme({
     shadows: Array(25).fill("none") as Shadows,
@@ -64,62 +53,60 @@ export const materialUiTheme = createTheme({
     }
 });
 
-interface ITopLevelComponent {
+export interface ITopLevelComponent {
     viewType: model.ViewType;
     path: string;
-    sidebarName: string;
+    name: string;
     component: JSX.Element;
     icon: () => JSX.Element;
 }
-export const topLevelComponents: Array<ITopLevelComponent> = [
+
+const topLevelComponents: Array<ITopLevelComponent> = [
     {
         viewType: model.ViewType.UPLOAD,
-        path: '/upload',
-        sidebarName: 'Upload File',
+        path: '/file-upload',
+        name: 'Upload File',
         component: <FileUploader />,
         icon: () => { return (<BackupIcon />) },
     },
     {
         viewType: model.ViewType.DASHBOARD_SINGLE_EVENT,
-        path: '/dashboard-single-event',
-        sidebarName: 'Dashboard (Single Event)',
+        path: '/single-event-dashboard',
+        name: 'Single Event Dashboard',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_SINGLE_EVENT} />,
         icon: () => { return (<DashboardIcon />) },
     },
     {
         viewType: model.ViewType.DASHBOARD_MULTIPLE_EVENTS,
-        path: '/dashboard-multiple-events',
-        sidebarName: 'Dashboard (Multiple Events)',
+        path: '/multiple-events-dashboard',
+        name: 'Multiple Events Dashboard',
         component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MULTIPLE_EVENTS} />,
         icon: () => { return (<ViewStreamIcon />) },
     },
     {
-        viewType: model.ViewType.DASHBOARD_MEMORY,
-        path: '/dashboard-memory-accesses',
-        sidebarName: 'Dashboard (Memory Accesses)',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY} />,
-        icon: () => { return (<SdStorageIcon />) },
+        viewType: model.ViewType.DASHBOARD_MEMORY_BEHAVIOR,
+        path: '/memory-behavior-dashboard',
+        name: 'Memory Behavior Dashboard',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_MEMORY_BEHAVIOR} />,
+        icon: () => { return (<SaveIcon />) },
     },
     {
-        viewType: model.ViewType.DASHBOARD_UIR,
-        path: '/dashboard-uir',
-        sidebarName: 'Dashboard (UIR)',
-        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR} />,
-        icon: () => { return (<DeveloperModeIcon />) },
+        viewType: model.ViewType.DASHBOARD_UIR_PROFILING,
+        path: '/uir-profiling-dashboard',
+        name: 'UIR Profiling Dashboard',
+        component: <DashboardWrapper dashboardView={model.ViewType.DASHBOARD_UIR_PROFILING} />,
+        icon: () => { return (<CodeIcon />) },
     },
-    // {
-    //     path: '/swim-lanes-pipelines',
-    //     sidebarName: 'Swim Lanes (Pipelines)',
-    //     // component: SwimLanesPipelines,
-    //     // view: model.ViewType.PIPELINES,
-    //     icon: () => { return (<SortIcon />) },
-    // },
-    // {
-    //     path: '/dummy',
-    //     sidebarName: 'Dummy',
-    //     component: Dummy,
-    //     view: model.ViewType.DUMMY,
-    //     icon: () => { return (<HelpIcon />) },
-    // },
 
 ];
+
+export const appContext: IAppContext = {
+    controller: backendRequestController,
+    primaryColor: appColor.primary,
+    secondaryColor: appColor.secondary,
+    tertiaryColor: appColor.tertiary,
+    accentBlack: appColor.accentBlack,
+    accentDarkGreen: appColor.accentDarkGreen,
+    accentDarkBlue: appColor.accentDarkBlue,
+    topLevelComponents: topLevelComponents,
+};

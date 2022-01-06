@@ -14,25 +14,12 @@ interface Props {
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentView: model.ViewType;
-    setCurrentEvent: (newCurrentEvent: string) => void;
-    setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => void;
 }
 
 function EventsButtons(props: Props) {
 
     const events = props.events;
     const [multipleEvents, setMultipleEvents] = useState(false);
-
-    useEffect(() => {
-        if (events && events.length > 1) {
-            if (!multipleEvents && props.currentEvent === "Default") {
-                props.setCurrentEvent(events[0]);
-            }
-            if (multipleEvents && props.currentMultipleEvent === "Default") {
-                props.setCurrentMultipleEvent([events[0], events[1]]);
-            }
-        }
-    }, []);
 
     //allow for multiple events selection if multiple events dashboard
     useEffect(() => {
@@ -45,10 +32,7 @@ function EventsButtons(props: Props) {
     }, [props.currentView, events]);
 
     const handleEventButtonClick = (event: string) => {
-        props.setCurrentEvent(event);
-        const newMultipleEventsTuple: [string, string] = [event, props.currentMultipleEvent[0]];
-        props.setCurrentMultipleEvent(newMultipleEventsTuple);
-        Controller.requestActiveOperatorsPipelines(props.appContext.controller);
+        Controller.setEvent(event);
     }
 
     const createEventShortString = (event: string) => {
@@ -79,7 +63,7 @@ function EventsButtons(props: Props) {
     }
 
     const isButtonDisabled = (event: string) => {
-        if (props.currentView === model.ViewType.DASHBOARD_MEMORY && event === "cycles:ppp") {
+        if (props.currentView === model.ViewType.DASHBOARD_MEMORY_BEHAVIOR && event === "cycles:ppp") {
             return true;
         }
         // if (props.currentView === model.ViewType.DASHBOARD_UIR) {
@@ -122,15 +106,5 @@ const mapStateToProps = (state: model.AppState) => ({
     currentView: state.currentView,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setCurrentEvent: (newCurrentEvent: string) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_EVENT,
-        data: newCurrentEvent,
-    }),
-    setCurrentMultipleEvent: (newCurrentMultipleEvent: [string, string]) => dispatch({
-        type: model.StateMutationType.SET_CURRENT_MULTIPLE_EVENT,
-        data: newCurrentMultipleEvent,
-    }),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(EventsButtons));
+export default connect(mapStateToProps)(Context.withAppContext(EventsButtons));

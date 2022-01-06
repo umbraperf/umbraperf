@@ -1,5 +1,5 @@
 import * as model from '../../../model';
-import * as Controller  from '../../../controller';
+import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -10,22 +10,24 @@ import styles from '../../../style/utils.module.css';
 interface Props {
     appContext: Context.IAppContext;
     memoryHeatmapsDifferenceRepresentation: boolean,
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => void;
 }
 
 function HeatmapsDiffToggler(props: Props) {
 
     const handleHeatmapsDiffTogglerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setMemoryHeatmapsDifferenceRepresentation(event.target.checked);
-        Controller.resetMemoryAddressSelectionTuple();
+        Controller.handleHeatmapsDifferenceRepresentationSelection(event.target.checked);
+        Controller.resetSelectionHeatmapsOutlierDetectionSelection();
     }
 
     return (
-        <div>
+        <div className={styles.heatmapsOption}>
             <FormControl
                 component="fieldset"
-                variant="standard">
+                variant="standard"
+            >
+
                 <FormControlLabel
+                    className={styles.formControlLabel}
                     control={
                         <Switch
                             checked={props.memoryHeatmapsDifferenceRepresentation}
@@ -53,12 +55,5 @@ const mapStateToProps = (state: model.AppState) => ({
     memoryHeatmapsDifferenceRepresentation: state.memoryHeatmapsDifferenceRepresentation,
 });
 
-const mapDispatchToProps = (dispatch: model.Dispatch) => ({
-    setMemoryHeatmapsDifferenceRepresentation: (newMemoryHeatmapsDifferenceRepresentation: boolean) => dispatch({
-        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
-        data: newMemoryHeatmapsDifferenceRepresentation,
-    }),
 
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Context.withAppContext(HeatmapsDiffToggler));
+export default connect(mapStateToProps)(Context.withAppContext(HeatmapsDiffToggler));

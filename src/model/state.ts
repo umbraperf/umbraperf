@@ -1,13 +1,12 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
     fileLoading: boolean;
     resultLoading: IResultLoading;
     result: IResult | undefined;
-    chunksNumber: number;
     umbraperfFileParsingFinished: boolean;
-    file: undefined | File;
+    file: File | undefined;
     queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
     loadingChartReadableName: Array<ChartTypeReadable>;
@@ -23,13 +22,14 @@ export interface AppState {
     pipelinesShort: Array<string> | undefined;
     operators: IOperatorsData | undefined;
     kpis: Array<IKpiData> | undefined;
+    kpiValuesFormated: IKpiValuesFormated;
     chartIdCounter: number;
     chartData: IChartDataKeyValue;
-    currentInterpolation: String;
+    currentInterpolation: string;
     currentBucketSize: number;
     currentTimeBucketSelectionTuple: [number, number];
     currentTimePositionSelectionTuple: [number, number];
-    currentMemoryAddressSelectionTuple: [number, number];
+    currentHeatmapsOutlierDetection: HeatmapsOutlierDetectionDegrees;
     currentView: ViewType;
     memoryHeatmapsDifferenceRepresentation: boolean;
     currentProfile: ProfileType;
@@ -42,7 +42,6 @@ export function createDefaultState(): AppState {
         fileLoading: false,
         resultLoading: {},
         result: undefined,
-        chunksNumber: 0,
         umbraperfFileParsingFinished: false,
         queryplanJson: undefined,
         file: undefined,
@@ -60,13 +59,14 @@ export function createDefaultState(): AppState {
         pipelinesShort: undefined,
         operators: undefined,
         kpis: undefined,
+        kpiValuesFormated: {},
         chartIdCounter: 1,
         chartData: {},
         currentInterpolation: "basis",
         currentBucketSize: 1,
         currentTimeBucketSelectionTuple: [-1, -1],
         currentTimePositionSelectionTuple: [-1, -1],
-        currentMemoryAddressSelectionTuple: [-1, -1],
+        currentHeatmapsOutlierDetection: 0,
         currentView: ViewType.UPLOAD,
         memoryHeatmapsDifferenceRepresentation: true,
         currentProfile: ProfileType.OVERVIEW,

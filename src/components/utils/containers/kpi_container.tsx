@@ -7,30 +7,44 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import _ from "lodash";
-
+import CountUp from 'react-countup';
 
 
 interface Props {
     appContext: Context.IAppContext;
     kpis: Array<model.IKpiData> | undefined;
+    kpiValuesFormated: model.IKpiValuesFormated;
     currentEvent: string,
     currentTimeBucketSelectionTuple: [number, number],
     currentPipeline: Array<string> | "All",
-    chartIdCounter: number,
+    currentView: model.ViewType;
 }
 
 class KpiContainer extends React.Component<Props, {}> {
 
+    globalNewKpiValuesFormated: model.IKpiValuesFormated;
+
     constructor(props: Props) {
         super(props);
-        this.state = {
-            ...this.state,
-        };
+        this.globalNewKpiValuesFormated = {};
+    }
+
+    shouldComponentUpdate(nextProps: Props) {
+        if (!_.isEqual(nextProps.kpiValuesFormated, this.props.kpiValuesFormated)) {
+            return false;
+        }
+        return true;
     }
 
     componentDidUpdate(prevProps: Props): void {
-
         this.requestNewChartData(this.props, prevProps);
+        this.writeNewFormatedKpisToAppstate(prevProps.kpiValuesFormated);
+    }
+
+    writeNewFormatedKpisToAppstate(oldKpiValuesFormated: model.IKpiValuesFormated) {
+        if (Object.keys(oldKpiValuesFormated).length === 0 || !_.isEqual(this.globalNewKpiValuesFormated, this.props.kpiValuesFormated)) {
+            Controller.setKpiValuesFormated(this.globalNewKpiValuesFormated);
+        }
     }
 
     requestNewChartData(props: Props, prevProps: Props): void {
@@ -42,7 +56,6 @@ class KpiContainer extends React.Component<Props, {}> {
     newChartDataNeeded(props: Props, prevProps: Props): boolean {
         if (this.props.currentEvent !== "Default" &&
             (!_.isEqual(props.currentTimeBucketSelectionTuple, prevProps.currentTimeBucketSelectionTuple) ||
-                props.chartIdCounter !== prevProps.chartIdCounter ||
                 !_.isEqual(props.currentPipeline, prevProps.currentPipeline) ||
                 props.currentEvent !== prevProps.currentEvent)) {
             return true;
@@ -52,32 +65,68 @@ class KpiContainer extends React.Component<Props, {}> {
     }
 
     mapKpiArrayToCards() {
-        //get array of kpis from redux, map to multiple cards
+        //get array of kpis from redux, create countup or static element for each and map to multiple cards
         return this.props.kpis!.map((elem, index) => {
+            let value = +elem.value;
+            let suffix = "";
+            let numberDecimals = 0;
+
             if (elem.id === "noSamples") {
-                return this.createKpiCard(index, elem.title, model.chartConfiguration.nFormatter(+elem.value, 1));
+                const nFormatedString = model.chartConfiguration.nFormatter(+elem.value, 1);
+                numberDecimals = nFormatedString.includes(".") ? 1 : 0;
+                if (isNaN(+nFormatedString.slice(-1))) {
+                    value = +nFormatedString.slice(0, -1);
+                    suffix = nFormatedString.slice(-1);
+                } else {
+                    value = +nFormatedString;
+                }
             } else if (elem.id === "execTime") {
-                const valueRounded = Math.round(+elem.value) / 1000;
-                const valueString = valueRounded + "s";
-                return this.createKpiCard(index, elem.title, valueString);
+                const valueRounded = Math.round(+elem.value);
+                suffix = "s";
+                if (valueRounded % 1000 === 0) {
+                    numberDecimals = 0;
+                } else if (valueRounded % 100 === 0) {
+                    numberDecimals = 1;
+                } else if (valueRounded % 10 === 0) {
+                    numberDecimals = 2;
+                } else {
+                    numberDecimals = 3;
+                }
+                value = valueRounded / 1000;
             } else if (elem.id === "errRate") {
-                const valueString = isNaN(+elem.value) ? "-" : (Math.round(+elem.value * 100) + "%");
-                return this.createKpiCard(index, elem.title, valueString);
-            } else {
-                return this.createKpiCard(index, elem.title, elem.value);
+                value = Math.round(+elem.value * 100);
+                suffix = "%";
             }
+
+            this.globalNewKpiValuesFormated = {
+                ...this.globalNewKpiValuesFormated,
+                [index]: value,
+            }
+
+            const countupValueElement = this.createCountupValue(value, suffix, numberDecimals, index);
+            return this.createKpiCard(index, elem.title, countupValueElement);;
         });
 
     }
 
-    createKpiCard(key: number, title: string, value: string | number) {
+    createCountupValue(value: number, suffix: string, numberDecimals: number, kpiIndex: number) {
+        return <CountUp
+            start={this.props.kpiValuesFormated[kpiIndex] ? this.props.kpiValuesFormated[kpiIndex] : 0}
+            end={value}
+            duration={1}
+            suffix={suffix}
+            decimals={numberDecimals}
+        />
+    }
+
+    createKpiCard(key: number, title: string, valueElement: JSX.Element, isUnfedined?: boolean) {
         return <div key={key} className={styles.kpiCard} >
             <div>
                 <Typography className={styles.kpiCardLabel} style={{ color: this.props.appContext.tertiaryColor }}>
                     {title}
                 </Typography>
-                <Typography className={styles.kpiCardValue} key={value} variant="h5" component="div">
-                    {value}
+                <Typography className={styles.kpiCardValue} variant="h5" component="div">
+                    {isUnfedined ? "-" : valueElement}
                 </Typography>
             </div>
         </div>
@@ -102,18 +151,15 @@ class KpiContainer extends React.Component<Props, {}> {
             }
         </div>
     }
-
-
 }
 
 const mapStateToProps = (state: model.AppState) => ({
     kpis: state.kpis,
+    kpiValuesFormated: state.kpiValuesFormated,
     currentEvent: state.currentEvent,
     currentTimeBucketSelectionTuple: state.currentTimeBucketSelectionTuple,
     currentPipeline: state.currentPipeline,
-    chartIdCounter: state.chartIdCounter,
-
+    currentView: state.currentView,
 });
-
 
 export default connect(mapStateToProps)(Context.withAppContext(KpiContainer));

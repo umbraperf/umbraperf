@@ -1,8 +1,8 @@
-import * as model from "../model";
+import * as model from '../model';
 import { store, appContext } from '../app_config';
 import { ChartWrapperAppstateProps } from '../components/charts/chart_wrapper';
 import _ from "lodash";
-import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from ".";
+import { requestActiveOperatorsPipelines, requestActiveOperatorsTimeframePipeline } from '.';
 import ChartResetButton from '../components/utils/togglers/chart_reset_button';
 import React from "react";
 
@@ -23,11 +23,6 @@ export function handleOperatorSelection(selectedOperator: string, selectedOperat
             const selectedIndexPosition = operators!.operatorsId.indexOf(selectedOperator);
             if (currentOperator[selectedIndexPosition] === "") {
                 //Operator was disbaled and will be enabled
-                // const currentPipeline = store.getState().currentPipeline;
-                // if (selectedOperatorPipeline && !currentPipeline.includes(selectedOperatorPipeline)) {
-                //     // Automatically enable pipeline on operator selection if pipeline of operator was disabled 
-                //     handlePipelineSelection(selectedOperatorPipeline);
-                // }
                 store.dispatch({
                     type: model.StateMutationType.SET_CURRENT_OPERATOR,
                     data: currentOperator.map((elem, index) => (index === selectedIndexPosition ? operators!.operatorsId[index] : elem)),
@@ -81,17 +76,22 @@ export function handleTimeBucketSelection(selectedTimeBuckets: [number, number],
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function handleMemoryAddressSelectionTuple(selectedMemoryAddressTuple: [number, number]) {
-    // const currentMemoryAddressTuple = store.getState().currentMemoryAddressSelectionTuple;
-    // if (currentMemoryAddressTuple[0] !== selectedMemoryAddressTuple[0] ||
-    //     currentMemoryAddressTuple[1] !== selectedMemoryAddressTuple[1]) {
+export function handleHeatmapsOutlierDetectionSelection(selectedoutlierDetectionDegree: model.HeatmapsOutlierDetectionDegrees) {
     store.dispatch({
-        type: model.StateMutationType.SET_CURRENT_MEMORY_ADDRESS_SELECTION_TUPLE,
-        data: selectedMemoryAddressTuple,
+        type: model.StateMutationType.SET_CURRENT_HEATMAPS_OUTLIER_DETECTION,
+        data: selectedoutlierDetectionDegree,
     });
 }
 
-export function resetSelectionTimeselection() {
+export function handleHeatmapsDifferenceRepresentationSelection(memoryHeatmapsDifferenceRepresentation: boolean) {
+    store.dispatch({
+        type: model.StateMutationType.SET_MEMORY_HEATMAPS_DIFFERENCE_REPRESENTATION,
+        data: memoryHeatmapsDifferenceRepresentation,
+    });
+}
+
+
+export function resetSelectionTimeframe() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
     requestActiveOperatorsPipelines(appContext.controller);
 }
@@ -102,8 +102,24 @@ export function resetSelectionPipelinesOperators() {
     requestActiveOperatorsPipelines(appContext.controller);
 }
 
-export function resetMemoryAddressSelectionTuple() {
-    handleMemoryAddressSelectionTuple([-1, -1]);
+export function resetSelectionHeatmapsOutlierDetectionSelection() {
+    handleHeatmapsOutlierDetectionSelection(0);
+}
+
+export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
+    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
+        store.dispatch({
+            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+            data: newYDomainValue,
+        });
+    }
+}
+
+export function resetSelectionCurrentAbsoluteSwimLaneMaxYDomain() {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
+        data: 0,
+    });
 }
 
 function resetCurrentOperatorSelection() {
@@ -117,6 +133,13 @@ function resetCurrentPipelineSelection() {
     store.dispatch({
         type: model.StateMutationType.SET_CURRENT_PIPELINE,
         data: store.getState().pipelines!,
+    });
+}
+
+export function setKpiValuesFormated(newKpiValuesFormated: model.IKpiValuesFormated) {
+    store.dispatch({
+        type: model.StateMutationType.SET_KPI_VALUES_FORMATED,
+        data: newKpiValuesFormated,
     });
 }
 
@@ -141,7 +164,7 @@ export function createChartResetComponent(resetType: "pipelinesOperators" | "tim
                 return false;
             }
         }
-        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeselection });
+        return isResetButtonVisible() && React.createElement(ChartResetButton, { chartResetButtonFunction: resetSelectionTimeframe });
     }
 }
 
@@ -228,7 +251,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
-                    !_.isEqual(nextProps.currentMemoryAddressSelectionTuple, props.currentMemoryAddressSelectionTuple)) ?
+                    !_.isEqual(nextProps.currentHeatmapsOutlierDetection, props.currentHeatmapsOutlierDetection)) ?
                     true :
                     false;
             case model.ChartType.UIR_VIEWER:
@@ -239,7 +262,6 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
             case model.ChartType.QUERY_PLAN:
                 return (evenChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
-                    !_.isEqual(nextProps.operators, props.operators) ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
                     !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
@@ -264,12 +286,38 @@ export function isOperatorSelected(operatorId: string) {
     return store.getState().currentOperator === "All" || store.getState().currentOperator.includes(operatorId);
 }
 
-export function setCurrentAbsoluteSwimLaneMaxYDomain(newYDomainValue: number) {
-    if (store.getState().currentAbsoluteSwimLaneMaxYDomain < newYDomainValue) {
-        store.dispatch({
-            type: model.StateMutationType.SET_CURRENT_ABSOLUTE_SWIMLANE_MAX_Y_DOMAIN,
-            data: newYDomainValue,
-        });
-    }
+export function setChartIdCounter(newChartIdCounter: number) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CHART_ID_COUNTER,
+        data: newChartIdCounter,
+    });
+}
+
+export function setCurrentChart(newCurrentChart: model.ChartType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_CHART,
+        data: newCurrentChart,
+    });
+}
+
+export function setCurrentView(newCurrentView: model.ViewType) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_VIEW,
+        data: newCurrentView,
+    });
+}
+
+export function setCurrentBucketSize(newCurrentBucketSize: number) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_BUCKETSIZE,
+        data: newCurrentBucketSize,
+    });
+}
+
+export function setCurrentInterpolation(newCurrentInterpolation: string) {
+    store.dispatch({
+        type: model.StateMutationType.SET_CURRENT_INTERPOLATION,
+        data: newCurrentInterpolation,
+    });
 }
 

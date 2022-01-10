@@ -16,11 +16,6 @@ interface Props {
 
 function HeatmapsOutlierDetectionSlider(props: Props) {
 
-    const getSliderScale = () => {
-        //TODO remove? 
-        return ['off', 'very weak', 'weak', 'medium', 'strong', 'very strong'];
-    }
-
     const getSliderValue = () => {
         return props.currentHeatmapsOutlierDetection;
     }
@@ -32,7 +27,7 @@ function HeatmapsOutlierDetectionSlider(props: Props) {
             0: "off",
             1: "very weak",
             2: "weak",
-            3: "middle",
+            3: "medium",
             4: "strong",
             5: "very strong",
         }

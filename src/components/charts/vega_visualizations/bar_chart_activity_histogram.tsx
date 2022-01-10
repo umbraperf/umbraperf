@@ -7,6 +7,7 @@ import { SignalListeners, Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
 import _ from 'lodash';
 
+
 interface AppstateProps {
     appContext: Context.IAppContext;
     chartData: model.IBarChartActivityHistogramData,
@@ -85,9 +86,11 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         const selectionPos0 = this.props.currentTimePositionSelectionTuple[0];
         const selectionPos1 = this.props.currentTimePositionSelectionTuple[1];
 
+        const groupMarkLeftMargin = 11;
+
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
-            width: this.props.width - 60,
+            width: this.props.width - 50,
             height: 70,
             padding: { left: 5, right: 5, top: 5, bottom: 5 },
             autosize: { type: "fit", resize: false },
@@ -124,6 +127,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                     name: "overview",
                     encode: {
                         enter: {
+                            x: {value: groupMarkLeftMargin},
                             height: { signal: "height" },
                             width: { signal: "width" },
                             fill: { value: "transparent" }
@@ -223,6 +227,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             orient: 'bottom',
                             scale: 'xscale',
+                            // position: 10,
                             labelOverlap: true,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,

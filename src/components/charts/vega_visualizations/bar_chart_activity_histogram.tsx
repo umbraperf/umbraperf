@@ -86,6 +86,8 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
         const selectionPos0 = this.props.currentTimePositionSelectionTuple[0];
         const selectionPos1 = this.props.currentTimePositionSelectionTuple[1];
 
+        const groupMarkLeftMargin = 11;
+
         const spec: VisualizationSpec = {
             $schema: 'https://vega.github.io/schema/vega/v5.json',
             width: this.props.width - 50,
@@ -125,6 +127,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                     name: "overview",
                     encode: {
                         enter: {
+                            x: {value: groupMarkLeftMargin},
                             height: { signal: "height" },
                             width: { signal: "width" },
                             fill: { value: "transparent" }
@@ -224,7 +227,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             orient: 'bottom',
                             scale: 'xscale',
-                            position: 10,
+                            // position: 10,
                             labelOverlap: true,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,

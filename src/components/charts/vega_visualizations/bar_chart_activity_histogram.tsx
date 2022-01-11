@@ -127,7 +127,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                     name: "overview",
                     encode: {
                         enter: {
-                            x: {value: groupMarkLeftMargin},
+                            x: { value: groupMarkLeftMargin },
                             height: { signal: "height" },
                             width: { signal: "width" },
                             fill: { value: "transparent" }
@@ -141,15 +141,15 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                             on: [
                                 {
                                     events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }],
-                                    update: "[x(), x()]"
+                                    update: `[x()-${groupMarkLeftMargin}, x()-${groupMarkLeftMargin}]`
                                 },
                                 {
                                     events: "[@overview:mousedown, window:mouseup] > window:mousemove!",
-                                    update: "[brush[0], clamp(x(), 0, width)]"
+                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
                                     events: "[@bars:mousedown, window:mouseup] > window:mousemove!",
-                                    update: "[brush[0], clamp(x(), 0, width)]"
+                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
                                     events: { signal: "delta" },
@@ -227,7 +227,6 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             orient: 'bottom',
                             scale: 'xscale',
-                            // position: 10,
                             labelOverlap: true,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,

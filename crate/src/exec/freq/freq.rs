@@ -22,7 +22,7 @@ use crate::{
             get_floatarray_column, get_int32_column, get_stringarray_column, get_uint_column,
         },
         record_batch_schema::RecordBatchSchema,
-        record_batch_util::{create_new_record_batch, send_record_batch_to_js},
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js}, print_to_cons::print_to_js_with_obj,
     },
 };
 
@@ -457,7 +457,7 @@ pub fn freq_of_memory(
             Arc::new(Float64Array::from(vec![min_time])),
             Arc::new(Float64Array::from(vec![max_freq])),
             Arc::new(Float64Array::from(vec![min_freq])),
-            Arc::new(Float64Array::from(vec![num_op])),
+            Arc::new(Float64Array::from(vec![num_op - 1.])),
         ],
     );
 
@@ -468,6 +468,10 @@ pub fn freq_of_memory(
     let mut hashmap = HashMap::new();
 
     for entry in op_arr.into_iter().enumerate() {
+
+        print_to_js_with_obj(&format!("{:?}", entry.1.unwrap()).into());
+
+        
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 
         if len == 0. {
@@ -491,6 +495,11 @@ pub fn freq_of_memory(
         }
 
         let batch = sorted_batch.slice(offset as usize, len as usize);
+
+        if entry.1.unwrap() == "analyzeplan1" {
+            offset += len;
+            continue;
+        }
 
         let bucket = get_floatarray_column(&batch, 0);
         let mut bucket_vec = Vec::new();

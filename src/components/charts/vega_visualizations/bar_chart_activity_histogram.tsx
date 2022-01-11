@@ -145,11 +145,11 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                                 },
                                 {
                                     events: "[@overview:mousedown, window:mouseup] > window:mousemove!",
-                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin})-${groupMarkLeftMargin}]`
+                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
                                     events: "[@bars:mousedown, window:mouseup] > window:mousemove!",
-                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin})-${groupMarkLeftMargin}]`
+                                    update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
                                     events: { signal: "delta" },

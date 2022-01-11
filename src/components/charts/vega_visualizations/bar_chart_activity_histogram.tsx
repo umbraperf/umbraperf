@@ -141,7 +141,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                             on: [
                                 {
                                     events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }],
-                                    update: "[x(), x()]"
+                                    update: "[x()-11, x()-11]"
                                 },
                                 {
                                     events: "[@overview:mousedown, window:mouseup] > window:mousemove!",
@@ -165,7 +165,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             name: "xdown",
                             value: 0,
-                            on: [{ events: "@brush:mousedown", update: "x()" }]
+                            on: [{ events: "@brush:mousedown", update: "x()-11" }]
                         },
                         {
                             name: "delta",
@@ -227,7 +227,6 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             orient: 'bottom',
                             scale: 'xscale',
-                            // position: 10,
                             labelOverlap: true,
                             title: model.chartConfiguration.activityHistogramXTitle,
                             titleY: -5,

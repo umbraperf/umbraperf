@@ -457,7 +457,7 @@ pub fn freq_of_memory(
             Arc::new(Float64Array::from(vec![min_time])),
             Arc::new(Float64Array::from(vec![max_freq])),
             Arc::new(Float64Array::from(vec![min_freq])),
-            Arc::new(Float64Array::from(vec![num_op - 1.])),
+            Arc::new(Float64Array::from(vec![num_op])),
         ],
     );
 
@@ -495,11 +495,6 @@ pub fn freq_of_memory(
         }
 
         let batch = sorted_batch.slice(offset as usize, len as usize);
-
-        if entry.1.unwrap() == "analyzeplan1" {
-            offset += len;
-            continue;
-        }
 
         let bucket = get_floatarray_column(&batch, 0);
         let mut bucket_vec = Vec::new();

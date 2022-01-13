@@ -1,7 +1,7 @@
 use crate::{
     bindings::send_js_query_result,
     state::state::get_serde_dict,
-    web_file::{serde_reader::DictFields, web_file_chunkreader::WebFileChunkReader},
+    web_file::{serde_reader::DictFields, web_file_chunkreader::WebFileChunkReader}, exec::basic::{basic::sort_batch, filter::filter_with},
 };
 use arrow::{
     array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
@@ -12,7 +12,7 @@ use parquet::{
     arrow::{arrow_reader::ParquetRecordBatchReader, ArrowReader, ParquetFileArrowReader},
     file::serialized_reader::SerializedFileReader,
 };
-use std::{io::Cursor, sync::Arc};
+use std::{io::Cursor, sync::Arc, collections::HashSet, iter::FromIterator};
 
 use super::array_util::{get_floatarray_column, get_int64_column, get_uint_column};
 
@@ -197,7 +197,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         physical_op.push(dict_key.unwrap().as_str());
     }
 
-    create_new_record_batch(
+    let batch = create_new_record_batch(
         vec![
             "operator",
             "ev_name",
@@ -219,7 +219,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
             DataType::Utf8,
         ],
         vec![
-            Arc::new(StringArray::from(operator_vec)),
+            Arc::new(StringArray::from(operator_vec.clone())),
             Arc::new(StringArray::from(event_vec)),
             Arc::new(Float64Array::from(time)),
             Arc::new(StringArray::from(pipeline_vec)),
@@ -228,7 +228,12 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(op_extension)),
             Arc::new(StringArray::from(physical_op)),
         ],
-    )
+    );
+
+    let mut op_unique: HashSet<&str> = HashSet::from_iter(operator_vec);
+    op_unique.remove("analyzeplan1");
+    let hashset = Vec::from_iter(op_unique);
+    return filter_with(0, hashset, &batch);
 }
 
 // Sending record batch to javascript via IPC which include a schema and a message

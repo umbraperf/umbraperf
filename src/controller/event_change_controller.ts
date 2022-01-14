@@ -4,6 +4,7 @@ import { requestActiveOperatorsPipelines, resetSelectionCurrentAbsoluteSwimLaneM
 
 export function setEvent(newEvent1: string, newEvent2?: string) {
 
+    console.log("here");
     performEventChangeSideActions();
 
     const currentEvent = store.getState().currentEvent;
@@ -33,6 +34,8 @@ export function dispachMultipleEvent(event1: string, event2: string) {
 }
 
 function performEventChangeSideActions() {
+    console.log("old:");
+    console.log(store.getState().currentPipelineActiveTimeframe)
     requestActiveOperatorsPipelines(appContext.controller);
     resetSelectionTimeframe();
     resetSelectionCurrentAbsoluteSwimLaneMaxYDomain();

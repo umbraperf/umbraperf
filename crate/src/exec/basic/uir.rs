@@ -46,7 +46,8 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         let mut sum = 0.;
         for item in vec.iter().skip(i).step_by(num_of_events) {
             sum += item;
-        }
+        } 
+        sum = round(sum) * 100.;
         out_vec.push(round(sum));
     }
 
@@ -124,7 +125,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
             let total = *inner_hashmap.get("sum").unwrap() as f64;
             let percentage = specific / total;
             let percentage = round(percentage);
-            buffer_percentage.push(percentage)
+            buffer_percentage.push(round(percentage * 100.))
         }
 
         let dict = dict.uri_dict.get(&entry).unwrap();
@@ -224,7 +225,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 if total_sum_vec[curr_freq.0] == 0. {
                     vec.push(0.);
                 } else {
-                    vec.push(round(curr_freq.1 / total_sum_vec[curr_freq.0]));
+                    vec.push(round(100.*round((curr_freq.1 / total_sum_vec[curr_freq.0]))));
                 }
             }
             let rel_freq = RELFREQ {

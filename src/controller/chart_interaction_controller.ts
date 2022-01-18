@@ -93,13 +93,13 @@ export function handleHeatmapsDifferenceRepresentationSelection(memoryHeatmapsDi
 
 export function resetSelectionTimeframe() {
     handleTimeBucketSelection([-1, -1], [-1, -1]);
-    requestActiveOperatorsPipelines(appContext.controller);
+    // requestActiveOperatorsPipelines(appContext.controller);
 }
 
 export function resetSelectionPipelinesOperators() {
     resetCurrentOperatorSelection();
     resetCurrentPipelineSelection();
-    requestActiveOperatorsPipelines(appContext.controller);
+    // requestActiveOperatorsPipelines(appContext.controller);
 }
 
 export function resetSelectionHeatmapsOutlierDetectionSelection() {
@@ -134,6 +134,7 @@ function resetCurrentPipelineSelection() {
         type: model.StateMutationType.SET_CURRENT_PIPELINE,
         data: store.getState().pipelines!,
     });
+    requestActiveOperatorsPipelines(appContext.controller);
 }
 
 export function setKpiValuesFormated(newKpiValuesFormated: model.IKpiValuesFormated) {

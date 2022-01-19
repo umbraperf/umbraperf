@@ -73,9 +73,9 @@ fn start_timer() -> instant::Instant {
     instant::Instant::now()
 }
 
-fn stop_timer(now: instant::Instant) {
+fn stop_timer(now: instant::Instant, measured_str: &str) {
     let elapsed = now.elapsed();
-    print_to_js_with_obj(&format!("{:?}", elapsed).into());
+    print_to_js_with_obj(&format!("time passed: {:?}, for {:?}", elapsed, measured_str).into());
 }
 
 // RECORD_BATCHES
@@ -97,12 +97,14 @@ pub fn analyze_file(file_size: i32) {
     clear_cache();
     let timer = start_timer();
     let batches = init_batches(file_size);
-    stop_timer(timer);
     create_one_record_batch(batches);
+    stop_timer(timer, "file loading");
     notify_js_finished_reading(0);
 }
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
+    let timer = start_timer();
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
+    stop_timer(timer, rest_query);
 }

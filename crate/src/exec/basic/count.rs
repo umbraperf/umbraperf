@@ -67,25 +67,34 @@ pub fn count_unqiue(batch: &RecordBatch, col_for_unique: &usize) -> RecordBatch 
 // Group by column
 pub fn group_by(batch: &RecordBatch, col_to_groupby: usize) -> RecordBatch {
 
-    // Init
-    let unique_batch =
-        find_unique_string(&get_unfiltered_record_batch().unwrap().batch, col_to_groupby);
-    let vec = get_stringarray_column(&unique_batch, 0);
-    let mut count_arr = Float64Array::builder(vec.len());
+    let mut hashmap: HashMap<&str, f64> = HashMap::new();
+    let vec = get_stringarray_column(&batch, col_to_groupby);
 
-    // Calc & Finish
-    for group in vec {
-        let group_batch = filter_with(col_to_groupby, vec![group.unwrap()], batch);
-        let row_count = group_batch.num_rows() as f64;
-        let _result = count_arr.append_value(row_count);
+    let mut i = 0;
+    while i < batch.column(0).len() {
+        let current_value = vec.value(i);
+        hashmap.entry(current_value).or_insert(0.);
+        hashmap.insert(current_value, hashmap[current_value] + 1.);
+        i += 1;
     }
 
-    // Return
+    let mut key_column = Vec::new();
+    let mut value_column = Vec::new();
+
+    for entry in hashmap {
+        key_column.push(entry.0);
+        value_column.push(entry.1);
+    }
+
     create_new_record_batch(
         vec![batch.schema().field(col_to_groupby).name(), "count"],
         vec![DataType::Utf8, DataType::Float64],
-        vec![unique_batch.column(0).to_owned(), Arc::new(count_arr.finish())],
+        vec![
+            Arc::new(StringArray::from(key_column)),
+            Arc::new(Float64Array::from(value_column)),
+        ],
     )
+
 }
 
 // Group by column with "nice" operator
@@ -94,47 +103,41 @@ pub fn group_by_with_nice_op(
     col_to_groupby: usize,
 ) -> RecordBatch {
 
-    // Init
-    let unique_batch =
-        find_unique_string(&get_unfiltered_record_batch().unwrap().batch, col_to_groupby);
-    let vec = get_stringarray_column(&unique_batch, 0);
-    let mut count_arr = Float64Array::builder(vec.len());
-    let mut op_extension_vec = Vec::new();
-    let mut pyhsical_vec = Vec::new();
+    let mut hashmap: HashMap<&str, f64> = HashMap::new();
+    let vec = get_stringarray_column(&batch, col_to_groupby);
 
-    // Calc
-    for group in vec {
-        let group_batch = filter_with(col_to_groupby, vec![group.unwrap()], batch);
-        let row_count = group_batch.num_rows() as f64;
-        let pyhsical_vec_col = get_stringarray_column(&group_batch, RecordBatchSchema::Physical as usize);
-        init_mapping_operator();
-        let mapping = get_mapping_operator();
-        let map = mapping.lock().unwrap();
-        pyhsical_vec.push(pyhsical_vec_col.value(0).to_owned());
-        op_extension_vec.push(map.get(group.unwrap()).unwrap().to_owned());
-        let _result = count_arr.append_value(row_count);
+    let mut i = 0;
+    while i < batch.column(0).len() {
+        let current_value = vec.value(i);
+        hashmap.entry(current_value).or_insert(0.);
+        hashmap.insert(current_value, hashmap[current_value] + 1.);
+        i += 1;
+    }
+
+    let mut key_column = Vec::new();
+    let mut value_column = Vec::new();
+    let mut op_extension_vec = Vec::new();
+
+    init_mapping_operator();
+    let mapping = get_mapping_operator();
+    let map = mapping.lock().unwrap();
+
+    for entry in hashmap {
+        key_column.push(entry.0);
+        value_column.push(entry.1);
+        op_extension_vec.push(map.get(entry.0).unwrap().to_owned());
     }
 
     create_new_record_batch(
+        vec![batch.schema().field(col_to_groupby).name(), "op_ext", "count"],
+        vec![DataType::Utf8, DataType::Utf8, DataType::Float64],
         vec![
-            batch.schema().field(col_to_groupby).name(),
-            "op_ext",
-            "physical_op",
-            "count",
-        ],
-        vec![
-            DataType::Utf8,
-            DataType::Utf8,
-            DataType::Utf8,
-            DataType::Float64,
-        ],
-        vec![
-            unique_batch.column(0).to_owned(),
+            Arc::new(StringArray::from(key_column)),
             Arc::new(StringArray::from(op_extension_vec)),
-            Arc::new(StringArray::from(pyhsical_vec)),
-            Arc::new(count_arr.finish()),
+            Arc::new(Float64Array::from(value_column)),
         ],
     )
+
 }
 
 // Group by for two columns (Sunburst)

@@ -4,7 +4,7 @@ import { requestActiveOperatorsPipelines, resetSelectionCurrentAbsoluteSwimLaneM
 
 export function setEvent(newEvent1: string, newEvent2?: string) {
 
-    performEventChangeSideActions();
+    performPreEventChangeSideActions();
 
     const currentEvent = store.getState().currentEvent;
     dispachSingleEvent(newEvent1);
@@ -16,6 +16,7 @@ export function setEvent(newEvent1: string, newEvent2?: string) {
         //two events were provided: set both new events to new multiple event, set single event to first event
         dispachMultipleEvent(newEvent1, newEvent2);
     }
+    performPostEventChangeSideActions();
 }
 
 export function dispachSingleEvent(event: string) {
@@ -32,8 +33,12 @@ export function dispachMultipleEvent(event1: string, event2: string) {
     });
 }
 
-function performEventChangeSideActions() {
-    requestActiveOperatorsPipelines(appContext.controller);
+function performPreEventChangeSideActions() {
+    //requestActiveOperatorsPipelines(appContext.controller);
     resetSelectionTimeframe();
     resetSelectionCurrentAbsoluteSwimLaneMaxYDomain();
+}
+
+function performPostEventChangeSideActions() {
+    requestActiveOperatorsPipelines(appContext.controller);
 }

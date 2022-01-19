@@ -140,8 +140,10 @@ class MemoryAccessHeatmapChart extends React.Component<Props, {}> {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             width: isSmallWindow ? 150 : 300,
             height: isSmallWindow ? 100 : 200,
-            padding: { left: 5, right: 5, top: 10, bottom: 10 },
-            autosize: { type: "pad", resize: false },
+            padding: { left: 75, right: 110, top: 40, bottom: 40 },
+            // padding: { left: 5, right: 5, top: 10, bottom: 10 },
+            // autosize: { type: "pad", resize: false },
+            autosize: { type: "none", resize: false },
 
             title: {
                 text: createHeatmapTitle(),

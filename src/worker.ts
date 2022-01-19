@@ -2,7 +2,6 @@
 
 import * as profiler_core from '../crate/pkg/shell';
 import * as BackendApi from './model/backend_queries';
-import * as JSZip from '../node_modules/jszip/';
 
 
 //worker responses:
@@ -42,7 +41,6 @@ export type WorkerResponseVariant =
 export enum WorkerRequestType {
   REGISTER_FILE = 'REGISTER_FILE',
   CALCULATE_CHART_DATA = 'CALCULATE_CHART_DATA',
-  TEST = 'TEST',
 };
 
 export type WorkerRequest<T, P> = {

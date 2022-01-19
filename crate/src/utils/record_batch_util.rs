@@ -14,7 +14,7 @@ use parquet::{
 };
 use std::{io::Cursor, sync::Arc, collections::HashSet, iter::FromIterator};
 
-use super::array_util::{get_floatarray_column, get_int64_column, get_uint_column};
+use super::{array_util::{get_floatarray_column, get_int64_column, get_uint_column}, print_to_cons::print_to_js_with_obj};
 
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();
@@ -258,6 +258,8 @@ pub fn send_record_batch_to_js(record_batch: &RecordBatch) {
     let _writer_schema = arrow::ipc::writer::write_message(&mut buff, encoded_schema, &options);
     let _writer_mess =
         arrow::ipc::writer::write_message(&mut buff, encoded_message.unwrap().1, &options);
+
+    print_to_js_with_obj(&format!("{:?}", buff.get_ref().len()).into());
 
     send_js_query_result(buff.into_inner());
 }

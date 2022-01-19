@@ -70,10 +70,17 @@ pub fn group_by(batch: &RecordBatch, col_to_groupby: usize) -> RecordBatch {
     let mut hashmap: HashMap<&str, f64> = HashMap::new();
     let vec = get_stringarray_column(&batch, col_to_groupby);
 
+    let unique_batch =
+    find_unique_string(&get_unfiltered_record_batch().unwrap().batch, col_to_groupby);
+    let unique_str = get_stringarray_column(&unique_batch, 0);
+
+    for str in unique_str {
+        hashmap.insert(str.unwrap(),0.0);
+    }
+
     let mut i = 0;
     while i < batch.column(0).len() {
         let current_value = vec.value(i);
-        hashmap.entry(current_value).or_insert(0.);
         hashmap.insert(current_value, hashmap[current_value] + 1.);
         i += 1;
     }

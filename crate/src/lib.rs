@@ -95,16 +95,16 @@ fn create_one_record_batch(batches: Vec<RecordBatch>) {
 #[wasm_bindgen(js_name = "analyzeFile")]
 pub fn analyze_file(file_size: i32) {
     clear_cache();
-    let timer = start_timer();
+    //let timer = start_timer();
     let batches = init_batches(file_size);
     create_one_record_batch(batches);
-    stop_timer(timer, "file loading");
+    //stop_timer(timer, "file loading");
     notify_js_finished_reading(0);
 }
 
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
-    let timer = start_timer();
+    //let timer = start_timer();
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
-    stop_timer(timer, rest_query);
+    //stop_timer(timer, rest_query);
 }

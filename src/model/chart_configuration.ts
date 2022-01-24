@@ -207,10 +207,10 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     const operatosGroupBaseHsl: Array<[number, number, number]> = [
         //accorded to tableau10 of vega with adjusted luminance
-        [211, 38, 50],
-        [30, 92, 50],
-        [114, 37, 50],
-        [177, 39, 50],
+        [114, 37, 50], 
+        [30, 92, 50],  
+        [177, 39, 50], 
+        [211, 38, 50], 
         [48, 70, 50],
         [0, 72, 50],
         [11, 5, 50],

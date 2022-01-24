@@ -29,6 +29,7 @@ export interface IKpiValuesFormated {
 export interface IOperatorsData {
     operatorsId: Array<string>,
     operatorsGroup: Array<string>,
+    operatorsGroupSorted: Array<string>,
     operatorsNice: Array<string>,
 }
 

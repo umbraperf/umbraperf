@@ -129,11 +129,26 @@ pub fn group_by_with_nice_op(
     let mapping = get_mapping_operator();
     let map = mapping.lock().unwrap();
 
-    for entry in hashmap {
+    let mut v: Vec<_> = hashmap.into_iter().collect();
+    v.sort_by(|x,y| x.0.cmp(&y.0));
+
+    let mut vec_spe = Vec::new();
+
+    for entry in v {
+        if entry.0 == "No Operator" || entry.0 == "Kernel" {
+            vec_spe.push(entry);
+            continue;
+        }
         key_column.push(entry.0);
         value_column.push(entry.1);
         op_extension_vec.push(map.get(entry.0).unwrap().to_owned());
     }
+
+    for entry in vec_spe {
+        key_column.push(entry.0);
+        value_column.push(entry.1);
+        op_extension_vec.push(map.get(entry.0).unwrap().to_owned());
+    } 
 
     create_new_record_batch(
         vec![batch.schema().field(col_to_groupby).name(), "op_ext", "count"],

@@ -154,7 +154,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 {
                     name: "colorOperatorsGroup",
                     type: "ordinal",
-                    domain: this.props.operators!.operatorsGroup,
+                    domain: this.props.operators!.operatorsGroupSorted,
                     range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
@@ -335,7 +335,7 @@ class SwimLanesCombinedMultiplePipelines extends React.Component<Props, {}> {
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: [...new Set(this.props.operators!.operatorsGroup)],
+                values: [...new Set(this.props.operators!.operatorsGroupSorted)],
             }
             ],
         } as VisualizationSpec;

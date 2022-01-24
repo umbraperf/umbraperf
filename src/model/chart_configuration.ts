@@ -284,7 +284,6 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
         operatorsIdColorScaleLowOpacity: createHslStringArray(operatorsIdColorScale, 0.2),
         operatorsGroupScale: createHslStringArray(operatorsGroupColorScale),
     }
-    console.log(chartConfiguration.colorScale.operatorsGroupScale);
 }
 
 

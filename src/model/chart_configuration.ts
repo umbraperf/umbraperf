@@ -197,7 +197,7 @@ export let chartConfiguration: ChartConfiguration = {
 // ]
 
 //Create and return color scales
-export function createColorScales(operatorsId: Array<string>, operatorsGroup: Array<string>, hsla: number) {
+export function createColorScales(operatorsId: Array<string>, operatorsGroup: Array<string>, operatorsGroupSorted: Array<string>) {
     interface IOperatorsGroupBaseColors { [operator: string]: [number, number, number] }
     interface IOperatorsGroupCount { [operator: string]: number }
     interface IBaseOperatorsGroupColors {
@@ -206,12 +206,12 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
     }
 
     const operatosGroupBaseHsl: Array<[number, number, number]> = [
-        //vega tableau10 with adjusted luminance
-        [211, 38, 50],
-        [30, 92, 50],
-        [114, 37, 50],
+        //accorded to tableau10 of vega with adjusted luminance
+        [114, 37, 50], 
+        [30, 92, 50],  
+        [177, 39, 50], 
+        [211, 38, 50], 
         [48, 70, 50],
-        [177, 39, 50],
         [0, 72, 50],
         [11, 5, 50],
         [339, 55, 50],
@@ -230,7 +230,8 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
         let operatorsGroupBaseColors: IOperatorsGroupBaseColors = {};
         let operatorsGroupCount: IOperatorsGroupCount = {};
         let colorIndexCounter = 0;
-        operatorsGroup.forEach((elem) => {
+
+        operatorsGroupSorted.forEach((elem) => {
             if (operatorsGroupCount[elem]) {
                 operatorsGroupCount[elem] = operatorsGroupCount[elem] + 1;
             } else {

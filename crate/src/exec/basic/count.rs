@@ -133,7 +133,7 @@ pub fn group_by_with_nice_op(
         key_column.push(entry.0);
         value_column.push(entry.1);
         op_extension_vec.push(map.get(entry.0).unwrap().to_owned());
-    }
+    } 
 
     create_new_record_batch(
         vec![batch.schema().field(col_to_groupby).name(), "op_ext", "count"],

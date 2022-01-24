@@ -258,7 +258,7 @@ class SunburstChart extends React.Component<Props, {}> {
                 {
                     name: "colorOperatorsGroup",
                     type: "ordinal",
-                    domain: this.props.operators!.operatorsGroup,
+                    domain: this.props.operators!.operatorsGroupSorted,
                     range: model.chartConfiguration.colorScale!.operatorsGroupScale,
                 }
             ],
@@ -373,7 +373,7 @@ class SunburstChart extends React.Component<Props, {}> {
                     labelFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleLabelFontSize : model.chartConfiguration.legendLabelFontSize,
                     titleFontSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleTitleFontSize : model.chartConfiguration.legendTitleFontSize,
                     symbolSize: this.props.doubleRowSize ? model.chartConfiguration.legendDoubleSymbolSize : model.chartConfiguration.legendSymbolSize,
-                    values: [...new Set(this.props.operators!.operatorsGroup)],
+                    values: [...new Set(this.props.operators!.operatorsGroupSorted)],
                     encode: {
                         labels: {
                             update: {

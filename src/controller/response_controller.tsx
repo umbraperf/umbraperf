@@ -77,15 +77,32 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
 
             const operatorsId = store.getState().result?.rustResultTable.getColumn('operator').toArray();
             const createOperatorsGroupNames = () => {
-                return operatorsId.map((elem: string) => elem.replace(/\d+/g, ''));
+                //Remove numbers from operator id to get group name and sort (place Caps at the end -> Kernel and No Operator), return both
+                const operatorGroups = operatorsId.map((elem: string) => elem.replace(/\d+/g, ''));
+                const operatorGroupsSorted = [...operatorGroups].sort((a: string, b: string) => {
+                    if (a.charAt(0) === a.charAt(0).toUpperCase() && b.charAt(0) === b.charAt(0).toLowerCase() ) {
+                        return 1;
+                    }
+                    if (a.charAt(0) === a.charAt(0).toLowerCase() && b.charAt(0) === b.charAt(0).toUpperCase() ) {
+                        return -1;
+                    }
+                    if (a.charAt(0) < b.charAt(0)) {
+                        return -1;
+                    }
+                    return 0;
+                }
+                );
+                return { operatorGroups, operatorGroupsSorted };
             }
 
             const operators: model.IOperatorsData = {
                 operatorsId,
-                operatorsGroup: createOperatorsGroupNames(),
+                operatorsGroup: createOperatorsGroupNames().operatorGroups,
+                operatorsGroupSorted: createOperatorsGroupNames().operatorGroupsSorted,
                 operatorsNice: store.getState().result?.rustResultTable.getColumn('op_ext').toArray(),
             }
-            model.createColorScales(operators.operatorsId, operators.operatorsGroup, 0.3);
+
+            model.createColorScales(operators.operatorsId, operators.operatorsGroup, operators.operatorsGroupSorted);
 
             store.dispatch({
                 type: model.StateMutationType.SET_OPERATORS,
@@ -344,7 +361,7 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
 
         case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
 
-        console.log("should be here also with no pipeline");
+            console.log("should be here also with no pipeline");
 
             const queryplanTooltipData: model.IQueryPlanNodeTooltipData = {
                 uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),

@@ -198,7 +198,7 @@ export function requestChartData(controller: RequestController, chartId: number,
             restQueryType = model.BackendQueryType.GET_GROUPED_UIR_LINES;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { events: store.getState().events!, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { events: store.getState().events!, pipelines: store.getState().currentPipeline, operators: store.getState().currentOperator, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
 

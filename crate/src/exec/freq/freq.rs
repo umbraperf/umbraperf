@@ -468,9 +468,6 @@ pub fn freq_of_memory(
     let mut hashmap = HashMap::new();
 
     for entry in op_arr.into_iter().enumerate() {
-
-        print_to_js_with_obj(&format!("{:?}", entry.1.unwrap()).into());
-
         
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 

@@ -191,7 +191,7 @@ class BarChart extends React.Component<Props, {}> {
                     encode: {
                         labels: {
                             update: {
-                                text: { signal: "truncate(datum.value, 9)" },
+                                text: { signal: "truncate(datum.value, 11)" },
                                 align: { value: "right" }
                             }
                         }

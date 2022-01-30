@@ -16,7 +16,7 @@ use crate::{
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
-        record_batch_util::{self, create_new_record_batch},
+        record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj,
     },
     web_file::serde_reader::DictFields,
 };
@@ -120,9 +120,13 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         let mut buffer_percentage = Vec::new();
 
         for event in &unique_events_set {
+            if hashmap_count.get(event).is_none() {
+                buffer_percentage.push(0.);
+                continue;
+            }
             let inner_hashmap = hashmap_count.get(event).unwrap();
             let specific = *inner_hashmap.get(entry.as_str()).unwrap_or(&0) as f64;
-            let total = *inner_hashmap.get("sum").unwrap() as f64;
+            let total = *inner_hashmap.get("sum").unwrap_or(&1) as f64;
             let percentage = specific / total;
             let percentage = round(percentage);
             buffer_percentage.push(round(percentage * 100.))
@@ -165,6 +169,10 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                         break;
                     } else {
                         for event in &unique_events_set {
+                            if hashmap_count.get(event).is_none() {
+                                buffer_percentage.push(0.);
+                                continue;
+                            }
                             let inner_hashmap = hashmap_count.get(event).unwrap();
                             let specific = *inner_hashmap
                                 .get(&(item.0 as i64).to_string())

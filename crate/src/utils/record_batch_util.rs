@@ -232,6 +232,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
 
     let mut op_unique: HashSet<&str> = HashSet::from_iter(operator_vec);
     op_unique.remove("analyzeplan1");
+    op_unique.remove("map1");
     let hashset = Vec::from_iter(op_unique);
     return filter_with(0, hashset, &batch);
 }

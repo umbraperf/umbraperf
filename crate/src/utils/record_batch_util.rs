@@ -222,7 +222,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(operator_vec.clone())),
             Arc::new(StringArray::from(event_vec)),
             Arc::new(Float64Array::from(time)),
-            Arc::new(StringArray::from(pipeline_vec)),
+            Arc::new(StringArray::from(pipeline_vec.clone())),
             Arc::new(UInt64Array::from(addr)),
             Arc::new(Int64Array::from(uri)),
             Arc::new(StringArray::from(op_extension)),

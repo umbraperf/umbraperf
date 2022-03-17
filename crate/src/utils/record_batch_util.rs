@@ -222,7 +222,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(operator_vec.clone())),
             Arc::new(StringArray::from(event_vec)),
             Arc::new(Float64Array::from(time)),
-            Arc::new(StringArray::from(pipeline_vec)),
+            Arc::new(StringArray::from(pipeline_vec.clone())),
             Arc::new(UInt64Array::from(addr)),
             Arc::new(Int64Array::from(uri)),
             Arc::new(StringArray::from(op_extension)),
@@ -232,8 +232,21 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
 
     let mut op_unique: HashSet<&str> = HashSet::from_iter(operator_vec);
     op_unique.remove("analyzeplan1");
+    op_unique.remove("map1");
     let hashset = Vec::from_iter(op_unique);
-    return filter_with(0, hashset, &batch);
+
+    let filter_batch = filter_with(0, hashset, &batch);
+
+    let mut pipeline_unique: HashSet<&str> = HashSet::from_iter(pipeline_vec);
+    for str_pipe in pipeline_unique.clone() {
+        if str_pipe.contains("analyzeplan") {
+            pipeline_unique.remove(str_pipe);
+        }
+    }
+    let hashset_pipe = Vec::from_iter(pipeline_unique);
+
+
+    return filter_with(3, hashset_pipe, &filter_batch);
 }
 
 // Sending record batch to javascript via IPC which include a schema and a message

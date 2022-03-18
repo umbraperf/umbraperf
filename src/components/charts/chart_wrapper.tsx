@@ -142,6 +142,10 @@ class ChartWrapper extends React.Component<Props, State> {
             if (newWidth !== this.state.width || newHeight !== this.state.height) {
                 child.style.display = 'none';
 
+                if(this.props.chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM){
+                    Controller.resetSelectionTimeframe();
+                }
+
                 this.setState((state, props) => ({
                     ...state,
                     width: newWidth,

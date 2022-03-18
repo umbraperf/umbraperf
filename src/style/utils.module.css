@@ -211,6 +211,17 @@
     align-items: center;
 }
 
+.appbarToolbarLogoContainer{
+    display: flex;
+    padding-right: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.appbarToolbarLogo{
+    width: 25px;
+}
+
 .headerMenuContainer{
     flex-basis: 0;
     padding-right: 20px;

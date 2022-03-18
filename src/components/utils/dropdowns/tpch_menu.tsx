@@ -6,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Button, ListItemText, Menu, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import styles from "../../../style/utils.module.css";
-import { connect } from 'react-redux';
 
 const tpchSampleFiles: { readableName: string, name: string }[] = [
     { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },
@@ -32,8 +31,6 @@ function TpchMenu(props: Props) {
         },
     }))(MenuItem);
 
-    const [selectedTpch, setSelectedTpch] = React.useState(-1);
-
     const handleOnItemClick = (index: number) => {
         setSelectedTpch(index);
         Controller.resetState();
@@ -41,6 +38,7 @@ function TpchMenu(props: Props) {
         handleClose();
     };
 
+    const [selectedTpch, setSelectedTpch] = React.useState(-1);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -124,7 +122,8 @@ function TpchMenu(props: Props) {
                     <ListItemText>
                         <Typography
                             className={styles.headerMenuItemContentText}
-                            variant="body2">
+                            variant="body2"
+                        >
                             {elem.readableName}
                         </Typography>
                     </ListItemText>
@@ -136,12 +135,4 @@ function TpchMenu(props: Props) {
     );
 }
 
-const mapStateToProps = (state: model.AppState) => ({
-    currentProfile: state.currentProfile,
-    profiles: state.profiles,
-    events: state.events,
-    currentView: state.currentView,
-});
-
-
-export default connect(mapStateToProps)(Context.withAppContext(TpchMenu));
+export default Context.withAppContext(TpchMenu);

@@ -1,4 +1,3 @@
-import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
@@ -96,6 +95,8 @@ function TpchMenu(props: Props) {
             <Menu
                 classes={{ paper: styles.headerMenuPaper }}
                 id="tpchMenu"
+                // autoFocus={false}
+                disableAutoFocusItem
                 anchorEl={anchorEl}
                 getContentAnchorEl={null}
                 keepMounted

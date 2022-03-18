@@ -88,7 +88,6 @@ function TpchMenu(props: Props) {
             <Menu
                 classes={{ paper: styles.headerMenuPaper }}
                 id="tpchMenu"
-                // autoFocus={false}
                 disableAutoFocusItem
                 anchorEl={anchorEl}
                 getContentAnchorEl={null}

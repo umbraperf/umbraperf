@@ -131,23 +131,16 @@ export function configure(params) {
             new HtmlWebpackPlugin({
                 template: './static/index.html',
                 filename: './index.html',
+                favicon: './favicon.ico',
             }),
             new MiniCssExtractPlugin({
                 filename: './static/css/[id].[contenthash].css',
                 chunkFilename: './static/css/[id].[contenthash].css',
             }),
             new MonacoWebpackPlugin()
-            // new webpack.ProvidePlugin({ 
-            //     JSZip: 'jszip', 
-            // }), 
         ],
         experiments: {
             asyncWebAssembly: true,
         },
-        // externals: [
-        //     {
-        //         './jszip': 'jszip'
-        //     }
-        // ]
     };
 }

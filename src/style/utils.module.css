@@ -46,7 +46,7 @@
 .bucketsizeDropdownSelectorContainer{
     composes: dropdownSelectorContainer;
 }
-.profilesMenuButton{
+.headerMenuButton{
     color: white;
     font-size: 10px;
     display: flex;
@@ -55,15 +55,15 @@
     width: 150px;
 }
 
-.profilesMenuButton:hover{
+.headerMenuButton:hover{
     background-color: colorSecondary;
 }
 
-.profilesMenuButtonDisabled{
+.headerMenuButtonDisabled{
     color: colorTertiary !important;
 }
 
-.profilesMenuPaper{
+.headerMenuPaper{
     background-color: colorAccentBlack;
     border-style: hidden;
     border-bottom-left-radius: 15px;
@@ -71,31 +71,31 @@
     width: 250px;
 }
 
-.profilesMenuItem:hover, .profilesMenuItem:hover:focus{
+.headerMenuItem:hover, .headerMenuItem:hover:focus{
     background-color: colorSecondary;
 }
 
-.profilesMenuItemContent{
+.headerMenuItemContent{
     color: white;
 }
 
-.profilesMenuItemContentText{
-    composes: profilesMenuItemContent;
+.headerMenuItemContentText{
+    composes: headerMenuItemContent;
     font-size: 11px;
     padding-left: 10px;
 }
 
-.profilesMenuItemContentIcon{
-    composes: profilesMenuItemContent;
+.headerMenuItemContentIcon{
+    composes: headerMenuItemContent;
 }
 
-.profilesMenuItemContentIconInfo{
-    composes: profilesMenuItemContentIcon;
+.headerMenuItemContentIconInfo{
+    composes: headerMenuItemContentIcon;
     font-size: 15px;
     padding-left: 15px;
 }
 
-.profilesMenuItemContentInfoTooltipContent{
+.headerMenuItemContentInfoTooltipContent{
     font-size: 13px;
 }
 
@@ -205,7 +205,7 @@
     align-items: center;
 }
 
-.profilesMenuContainer{
+.headerMenuContainer{
     flex-basis: 0;
     padding-right: 20px;
     display: flex;
@@ -283,6 +283,10 @@
         margin-top: 5px;
         margin-bottom: 5px;
     }
+
+    .tpchHeaderMenuContainer{
+        display: none;
+    }
 }
 
 
@@ -301,13 +305,12 @@
         display: none;
     }
 
-    .profilesMenuContainer{
-        composes: profilesMenuContainer;
+    .headerMenuContainer{
+        composes: headerMenuContainer;
         flex: 1;
         padding-right: 10px;
         justify-content: right;
-    }
-    
+    }    
 
 }
 

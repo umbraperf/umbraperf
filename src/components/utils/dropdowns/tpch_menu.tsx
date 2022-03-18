@@ -3,33 +3,20 @@ import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Tooltip, Typography, withStyles } from '@material-ui/core';
+import { Button, ListItemText, Menu, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import InfoIcon from '@material-ui/icons/Info';
 import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
-const tpchSampleFiles = ["tpc-h_10_sf1_opt", "tpc-h_10_sf1_unopt", "tpc-h_10_sf10_opt", "tpc-h_10_sf10_unopt"];
-
-const fetchTpchUmbraperfSampleFile = (filename: string) => {
-    fetch("https://raw.githubusercontent.com/michscho/test/main/tpch10_sf1_optimized.umbraperf", { mode: "cors" })
-    .then((response) => {
-        console.log(response)
-        return response.blob()
-    })
-    .then(blob => {
-        console.log(blob);
-        console.log(new File([blob], filename));
-        return blob;
-    });
-}
+const tpchSampleFiles: { readableName: string, name: string }[] = [
+    { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },
+    { readableName: "TPCH 10 SF1 (unopt)", name: "tpc-h_10_sf1_unopt" },
+    { readableName: "TPCH 10 SF10 (opt)", name: "tpc-h_10_sf10_opt" },
+    { readableName: "TPCH 10 SF10 (unopt)", name: "tpc-h_10_sf10_unopt" },
+];
 
 interface Props {
     appContext: Context.IAppContext;
-    currentProfile: model.ProfileType;
-    profiles: Array<model.ProfileVariant>;
-    events: Array<string> | undefined;
-    currentView: model.ViewType;
 }
 
 function TpchMenu(props: Props) {
@@ -45,38 +32,12 @@ function TpchMenu(props: Props) {
         },
     }))(MenuItem);
 
-    const menuProfiles = props.profiles.map((elem, index) => (
-        <>
-            <ListItemIcon>
-                {React.createElement(elem.icon, { className: styles.headerMenuItemContentIcon, fontSize: "small" })}
-            </ListItemIcon>
-            <ListItemText>
-                <Typography
-                    className={styles.headerMenuItemContentText}
-                    variant="body2">
-                    {elem.readableName}
-                </Typography>
-            </ListItemText>
-            <ListItemIcon>
-                <Tooltip
-                    title={
-                        <Typography
-                            className={styles.headerMenuItemContentInfoTooltipContent}
-                            variant="body2">
-                            {elem.description}
-                        </Typography>
-                    }
-                    className={styles.headerMenuItemContentInfoTooltip}
-                >
-                    <InfoIcon className={styles.headerMenuItemContentIconInfo} />
-                </Tooltip>
-            </ListItemIcon>
-
-        </>
-    ));
+    const [selectedTpch, setSelectedTpch] = React.useState(-1);
 
     const handleOnItemClick = (index: number) => {
-        Controller.changeProfile(props.profiles[index].type);
+        setSelectedTpch(index);
+        Controller.resetState();
+        fetchTpchUmbraperfSampleFileTest();
         handleClose();
     };
 
@@ -93,21 +54,31 @@ function TpchMenu(props: Props) {
         setAnchorEl(null);
     };
 
-    const getProfileIndex = (profileType: model.ProfileType) => {
-        return props.profiles.findIndex((elem) => (elem.type === profileType));
+    const fetchTpchUmbraperfSampleFileTest = () => {
+        fetch("https://raw.githubusercontent.com/michscho/test/main/tpch10_sf1_optimized.umbraperf", { mode: "cors" })
+            .then((response) => {
+                console.log(response)
+                return response.blob()
+            })
+            .then(blob => {
+                console.log(blob);
+                const file = new File([blob], "testfile");
+                Controller.handleNewFile(file);
+                return blob;
+            });
     }
 
-    const getReadableProfileName = () => {
-        const profileIndex = getProfileIndex(props.currentProfile);
-        return props.profiles[profileIndex].readableName;
+    const fetchTpchUmbraperfSampleFile = () => {
+        const selectedTpchFileName = tpchSampleFiles[selectedTpch].name;
+        fetch(`https://raw.githubusercontent.com/michscho/test/main/${selectedTpchFileName}.umbraperf`, { mode: "cors" })
+            .then((response) => {
+                return response.blob()
+            })
+            .then(blob => {
+                console.log(new File([blob], selectedTpchFileName));
+                return blob;
+            });
     }
-
-    const isProfileIndexSelected = (index: number) => {
-        const currentSelectedProfileIndex = getProfileIndex(props.currentProfile);
-        return index === currentSelectedProfileIndex;
-    }
-
-    // const isMenuDisabled = undefined === props.events || model.ViewType.UPLOAD === props.currentView;
 
     return (
 
@@ -115,19 +86,18 @@ function TpchMenu(props: Props) {
             <Button
                 className={styles.headerMenuButton}
                 classes={{ disabled: styles.headerMenuButtonDisabled }}
-                aria-controls="profileMenu"
+                aria-controls="tpchMenu"
                 aria-haspopup="true"
                 onClick={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
-            // disabled={isMenuDisabled}
             >
-                {getReadableProfileName()}
+                {selectedTpch < 0 ? "TPC-H Sample Files" : tpchSampleFiles[selectedTpch].readableName}
             </Button>
 
             <Menu
                 classes={{ paper: styles.headerMenuPaper }}
-                id="profileMenu"
+                id="tpchMenu"
                 anchorEl={anchorEl}
                 getContentAnchorEl={null}
                 keepMounted
@@ -144,14 +114,20 @@ function TpchMenu(props: Props) {
                     horizontal: 'center',
                 }}
             >
-                {menuProfiles.map((elem, index) =>
+                {tpchSampleFiles.map((elem, index) =>
                 (<StyledMenuItem
                     className={styles.headerMenuItem}
                     onClick={() => handleOnItemClick(index)}
-                    selected={isProfileIndexSelected(index)}
+                    selected={index === selectedTpch}
                     key={index}
                 >
-                    {elem}
+                    <ListItemText>
+                        <Typography
+                            className={styles.headerMenuItemContentText}
+                            variant="body2">
+                            {elem.readableName}
+                        </Typography>
+                    </ListItemText>
                 </StyledMenuItem>)
                 )}
             </Menu>

@@ -1,5 +1,12 @@
 import * as model from '../model';
-import { store } from '../app_config';
+import { store, appContext } from '../app_config';
+
+export function handleNewFile(file: File){
+    setFileLoading(true);
+    setUmbraperfFileParsingFinished(false);
+    setFile(file);
+    appContext.controller.registerFileAtWorker(file);
+}
 
 export function setFile(newFile: File) {
     store.dispatch({

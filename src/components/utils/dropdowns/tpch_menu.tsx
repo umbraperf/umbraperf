@@ -36,7 +36,7 @@ function TpchMenu(props: Props) {
 
     const handleOnItemClick = (index: number) => {
         setSelectedTpch(index);
-        // Controller.resetState();
+        Controller.resetState();
         fetchTpchUmbraperfSampleFileTest();
         handleClose();
     };

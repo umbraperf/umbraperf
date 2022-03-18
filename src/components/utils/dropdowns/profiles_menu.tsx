@@ -34,11 +34,11 @@ function ProfilesMenu(props: Props) {
     const menuProfiles = props.profiles.map((elem, index) => (
         <>
             <ListItemIcon>
-                {React.createElement(elem.icon, { className: styles.profilesMenuItemContentIcon, fontSize: "small" })}
+                {React.createElement(elem.icon, { className: styles.headerMenuItemContentIcon, fontSize: "small" })}
             </ListItemIcon>
             <ListItemText>
                 <Typography
-                    className={styles.profilesMenuItemContentText}
+                    className={styles.headerMenuItemContentText}
                     variant="body2">
                     {elem.readableName}
                 </Typography>
@@ -47,14 +47,14 @@ function ProfilesMenu(props: Props) {
                 <Tooltip
                     title={
                         <Typography
-                            className={styles.profilesMenuItemContentInfoTooltipContent}
+                            className={styles.headerMenuItemContentInfoTooltipContent}
                             variant="body2">
                             {elem.description}
                         </Typography>
                     }
-                    className={styles.profilesMenuItemContentInfoTooltip}
+                    className={styles.headerMenuItemContentInfoTooltip}
                 >
-                    <InfoIcon className={styles.profilesMenuItemContentIconInfo} />
+                    <InfoIcon className={styles.headerMenuItemContentIconInfo} />
                 </Tooltip>
             </ListItemIcon>
 
@@ -97,10 +97,10 @@ function ProfilesMenu(props: Props) {
 
     return (
 
-        <div className={styles.profilesMenuContainer}>
+        <div className={styles.headerMenuContainer}>
             <Button
-                className={styles.profilesMenuButton}
-                classes={{ disabled: styles.profilesMenuButtonDisabled }}
+                className={styles.headerMenuButton}
+                classes={{ disabled: styles.headerMenuButtonDisabled }}
                 aria-controls="profileMenu"
                 aria-haspopup="true"
                 onClick={handleClick}
@@ -112,7 +112,7 @@ function ProfilesMenu(props: Props) {
             </Button>
 
             <Menu
-                classes={{ paper: styles.profilesMenuPaper }}
+                classes={{ paper: styles.headerMenuPaper }}
                 id="profileMenu"
                 anchorEl={anchorEl}
                 getContentAnchorEl={null}
@@ -132,7 +132,7 @@ function ProfilesMenu(props: Props) {
             >
                 {menuProfiles.map((elem, index) =>
                 (<StyledMenuItem
-                    className={styles.profilesMenuItem}
+                    className={styles.headerMenuItem}
                     onClick={() => handleOnItemClick(index)}
                     selected={isProfileIndexSelected(index)}
                     key={index}

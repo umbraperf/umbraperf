@@ -121,7 +121,7 @@ function TpchMenu(props: Props) {
                 >
                     <ListItemText>
                         <Typography
-                            className={styles.headerMenuItemContentText}
+                            className={styles.tpchHeaderMenuItemContentText}
                             variant="body2"
                         >
                             {elem.readableName}

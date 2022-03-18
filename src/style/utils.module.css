@@ -85,6 +85,12 @@
     padding-left: 10px;
 }
 
+.tpchHeaderMenuItemContentText{
+    composes: headerMenuItemContent;
+    font-size: 11px;
+    text-align: center;
+}
+
 .headerMenuItemContentIcon{
     composes: headerMenuItemContent;
 }

@@ -1,3 +1,4 @@
+import * as model from '../../../model';
 import * as Controller from '../../../controller';
 import * as Context from '../../../app_context';
 import React from 'react';
@@ -5,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Button, ListItemText, Menu, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import styles from "../../../style/utils.module.css";
+import { connect } from 'react-redux';
 
 const tpchSampleFiles: { readableName: string, name: string }[] = [
     { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },
@@ -15,6 +17,7 @@ const tpchSampleFiles: { readableName: string, name: string }[] = [
 
 interface Props {
     appContext: Context.IAppContext;
+    fileLoading: boolean;
 }
 
 function TpchMenu(props: Props) {
@@ -33,7 +36,7 @@ function TpchMenu(props: Props) {
     const handleOnItemClick = (index: number) => {
         setSelectedTpch(index);
         Controller.resetState();
-        fetchTpchUmbraperfSampleFileTest();
+        fetchTpchUmbraperfSampleFile(index);
         handleClose();
     };
 
@@ -51,28 +54,17 @@ function TpchMenu(props: Props) {
         setAnchorEl(null);
     };
 
-    const fetchTpchUmbraperfSampleFileTest = () => {
-        fetch("https://raw.githubusercontent.com/michscho/test/main/tpch10_sf1_optimized.umbraperf", { mode: "cors" })
+    const fetchTpchUmbraperfSampleFile = (index: number) => {
+        const selectedTpchFileName = tpchSampleFiles[index].name;
+        console.log(`https://raw.githubusercontent.com/umbraperf/tpch-samples/main/${selectedTpchFileName}.umbraperf`);
+        fetch(`https://raw.githubusercontent.com/umbraperf/tpch-samples/main/${selectedTpchFileName}.umbraperf`, { mode: "cors" })
             .then((response) => {
-                console.log(response)
-                return response.blob()
+                return response.blob();
             })
             .then(blob => {
-                console.log(blob);
-                const file = new File([blob], "testfile");
+                const file = new File([blob], selectedTpchFileName);
+                console.log(file);
                 Controller.handleNewFile(file);
-                return blob;
-            });
-    }
-
-    const fetchTpchUmbraperfSampleFile = () => {
-        const selectedTpchFileName = tpchSampleFiles[selectedTpch].name;
-        fetch(`https://raw.githubusercontent.com/michscho/test/main/${selectedTpchFileName}.umbraperf`, { mode: "cors" })
-            .then((response) => {
-                return response.blob()
-            })
-            .then(blob => {
-                console.log(new File([blob], selectedTpchFileName));
                 return blob;
             });
     }
@@ -88,6 +80,7 @@ function TpchMenu(props: Props) {
                 onClick={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
+                disabled={props.fileLoading}
             >
                 {selectedTpch < 0 ? "TPC-H Sample Files" : tpchSampleFiles[selectedTpch].readableName}
             </Button>
@@ -136,4 +129,8 @@ function TpchMenu(props: Props) {
     );
 }
 
-export default Context.withAppContext(TpchMenu);
+const mapStateToProps = (state: model.AppState) => ({
+    fileLoading: state.fileLoading,
+});
+
+export default connect(mapStateToProps)(Context.withAppContext(TpchMenu));

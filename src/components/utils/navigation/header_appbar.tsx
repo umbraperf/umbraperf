@@ -3,6 +3,7 @@ import styles from "../../../style/utils.module.css";
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import StatusIndicator from './status_indicator';
 import ProfilesDropdown from '../dropdowns/profiles_menu';
+import TpchMenu from '../dropdowns/tpch_menu';
 
 function HeaderAppbar() {
 
@@ -19,6 +20,7 @@ function HeaderAppbar() {
                 </Typography>
 
                 <div className={styles.appbarToolbarOptionsContainer}>
+                    <TpchMenu />
                     <ProfilesDropdown />
                     <StatusIndicator />
                 </div>

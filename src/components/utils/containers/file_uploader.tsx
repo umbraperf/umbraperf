@@ -34,28 +34,25 @@ class FileUploader extends React.Component<Props, State> {
     public receiveFileOnDrop(acceptedFiles: Array<File>): void {
         if (acceptedFiles && acceptedFiles.length != 0 && acceptedFiles[0] != null) {
             const file = acceptedFiles[0];
-            Controller.setFileLoading(true);
-            Controller.setUmbraperfFileParsingFinished(false);
-            Controller.setFile(file);
-            this.props.appContext.controller.registerFileAtWorker(file);
+            Controller.handleNewFile(file);
         }
     }
 
     defineDropzoneStyle(isDragActive: boolean, acceptedFiles: File[], fileRejections: FileRejection[]): string {
         let styleString = "dropzoneBase";
         if (isDragActive) { styleString = "dropzoneActive" };
-        if (acceptedFiles.length !== 0) { styleString = "dropzoneAccept" };
+        if (acceptedFiles.length !== 0 || this.props.fileLoading) { styleString = "dropzoneAccept" };
         if (fileRejections.length !== 0) { styleString = "dropzoneReject" };
 
         return styleString;
     }
 
-    listAcceptedFiles(acceptedFiles: File[]) {
-        return acceptedFiles.map(file => (
-            <li className={styles.acceptedFilesList} key={file.name}>
-                {file.name} - {Math.round((file.size / 1000000 + Number.EPSILON) * 100) / 100} MB
-            </li>
-        ));
+    listAcceptedFile() {
+        const file = this.props.file!;
+        return <span className={styles.acceptedFilesList}>
+            <br/>
+            {file.name} - {Math.round((file.size / 1000000 + Number.EPSILON) * 100) / 100} MB
+        </span>
     }
 
     componentDidMount(): void {
@@ -83,7 +80,8 @@ class FileUploader extends React.Component<Props, State> {
                     <br></br>
                     (or click to select files)
                 </p>
-            } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
+            } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading) {
+                // } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
                 innerText = <Spinner />
             }
 
@@ -95,9 +93,12 @@ class FileUploader extends React.Component<Props, State> {
             if (fileRejections.length != 0) {
                 innerText = <p>File not valid!</p>;
                 return innerText;
-            } else if (acceptedFiles.length != 0) {
-                innerText = <p>Loading File: {this.listAcceptedFiles(acceptedFiles)}</p>;
+            } else if (this.props.file) {
+                innerText = <p>Loading File: {this.listAcceptedFile()}</p>;
                 return innerText;
+                // } else if (acceptedFiles.length != 0) {
+                //     innerText = <p>Loading File: {this.listAcceptedFiles(acceptedFiles)}</p>;
+                //     return innerText;
             } else {
                 innerText = <p>No files selected.</p>;
                 return innerText;

@@ -9,6 +9,20 @@ import InfoIcon from '@material-ui/icons/Info';
 import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
+const tpchSampleFiles = ["tpc-h_10_sf1_opt", "tpc-h_10_sf1_unopt", "tpc-h_10_sf10_opt", "tpc-h_10_sf10_unopt"];
+
+const fetchTpchUmbraperfSampleFile = (filename: string) => {
+    fetch("https://raw.githubusercontent.com/michscho/test/main/tpch10_sf1_optimized.umbraperf", { mode: "cors" })
+    .then((response) => {
+        console.log(response)
+        return response.blob()
+    })
+    .then(blob => {
+        console.log(blob);
+        console.log(new File([blob], filename));
+        return blob;
+    });
+}
 
 interface Props {
     appContext: Context.IAppContext;
@@ -18,7 +32,7 @@ interface Props {
     currentView: model.ViewType;
 }
 
-function ProfilesMenu(props: Props) {
+function TpchMenu(props: Props) {
 
     const StyledMenuItem = withStyles((theme) => ({
         root: {
@@ -93,11 +107,11 @@ function ProfilesMenu(props: Props) {
         return index === currentSelectedProfileIndex;
     }
 
-    const isMenuDisabled = undefined === props.events || model.ViewType.UPLOAD === props.currentView;
+    // const isMenuDisabled = undefined === props.events || model.ViewType.UPLOAD === props.currentView;
 
     return (
 
-        <div className={styles.headerMenuContainer}>
+        <div className={`${styles.headerMenuContainer} ${styles.tpchHeaderMenuContainer}`}>
             <Button
                 className={styles.headerMenuButton}
                 classes={{ disabled: styles.headerMenuButtonDisabled }}
@@ -106,7 +120,7 @@ function ProfilesMenu(props: Props) {
                 onClick={handleClick}
                 size="small"
                 endIcon={<KeyboardArrowDownIcon />}
-                disabled={isMenuDisabled}
+            // disabled={isMenuDisabled}
             >
                 {getReadableProfileName()}
             </Button>
@@ -154,4 +168,4 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 
-export default connect(mapStateToProps)(Context.withAppContext(ProfilesMenu));
+export default connect(mapStateToProps)(Context.withAppContext(TpchMenu));

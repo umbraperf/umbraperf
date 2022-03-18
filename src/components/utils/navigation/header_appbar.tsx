@@ -5,6 +5,8 @@ import StatusIndicator from './status_indicator';
 import ProfilesDropdown from '../dropdowns/profiles_menu';
 import TpchMenu from '../dropdowns/tpch_menu';
 
+import umbraProfilerLogo from '../../../../images/umbra-profiler_logo.png';
+
 function HeaderAppbar() {
 
     return (
@@ -15,6 +17,13 @@ function HeaderAppbar() {
             <Toolbar
                 className={styles.appbarToolbar}
             >
+                <div className={styles.appbarToolbarLogoContainer}>
+                    <img
+                        className={styles.appbarToolbarLogo}
+                        src={umbraProfilerLogo}
+                        alt="logo">
+                    </img>
+                </div>
                 <Typography variant="h6">
                     Umbra-Profiler
                 </Typography>

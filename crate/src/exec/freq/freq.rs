@@ -193,7 +193,7 @@ pub fn freq_of_operators(
                 } else {
                     let rel_freq =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                    let rel_freq_rounded = f64::trunc(rel_freq * 100.0) / 100.0;
+                    let rel_freq_rounded = rel_freq;
                     result_rel_freq.push(rel_freq_rounded);
                 }
 
@@ -244,7 +244,7 @@ pub fn freq_of_operators(
                 } else {
                     let rel_freq =
                         bucket_map.get(operator).unwrap() / bucket_map.get("sum").unwrap();
-                    let rel_freq_rounded = f64::trunc(rel_freq * 100.0) / 100.0;
+                    let rel_freq_rounded = rel_freq;
                     result_rel_freq.push(rel_freq_rounded);
                 }
             }

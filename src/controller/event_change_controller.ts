@@ -35,7 +35,7 @@ export function dispachMultipleEvent(event1: string, event2: string) {
 
 function performPreEventChangeSideActions() {
     //requestActiveOperatorsPipelines(appContext.controller);
-    resetSelectionTimeframe();
+    // resetSelectionTimeframe();
     resetSelectionCurrentAbsoluteSwimLaneMaxYDomain();
 }
 

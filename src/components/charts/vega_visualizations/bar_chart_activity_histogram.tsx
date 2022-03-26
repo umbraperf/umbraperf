@@ -140,15 +140,15 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                             init: [selectionPos0, selectionPos1],
                             on: [
                                 {
-                                    events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }],
+                                    events: [{ type: "mousedown", marktype: "group" }, { type: "mousedown", markname: "bars" }, { type: "touchstart", markname: "group" }, { type: "touchstart", markname: "bars" }],
                                     update: `[x()-${groupMarkLeftMargin}, x()-${groupMarkLeftMargin}]`
                                 },
                                 {
-                                    events: "[@overview:mousedown, window:mouseup] > window:mousemove!",
+                                    events: "[@overview:mousedown, window:mouseup] > window:mousemove!, [@overview:touchstart, window:touchend] > window:touchmove!",
                                     update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
-                                    events: "[@bars:mousedown, window:mouseup] > window:mousemove!",
+                                    events: "[@bars:mousedown, window:mouseup] > window:mousemove!,[@bars:touchstart, window:touchend] > window:touchmove!",
                                     update: `[brush[0], clamp(x(), ${groupMarkLeftMargin + 1}, width + ${groupMarkLeftMargin - 1})-${groupMarkLeftMargin}]`
                                 },
                                 {
@@ -160,19 +160,19 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                         {
                             name: "anchor",
                             value: null,
-                            on: [{ events: "@brush:mousedown", update: "slice(brush)" }]
+                            on: [{ events: "@brush:mousedown, @brush:touchstart", update: "slice(brush)" }]
                         },
                         {
                             name: "xdown",
                             value: 0,
-                            on: [{ events: "@brush:mousedown", update: "x()" }]
+                            on: [{ events: "@brush:mousedown, @brush:touchstart", update: "x()" }]
                         },
                         {
                             name: "delta",
                             value: 0,
                             on: [
                                 {
-                                    events: "[@brush:mousedown, window:mouseup] > window:mousemove!",
+                                    events: "[@brush:mousedown, window:mouseup] > window:mousemove!, [@brush:touchstart, window:touchend] > window:touchmove!",
                                     update: "x() - xdown"
                                 }
                             ]
@@ -200,7 +200,7 @@ class BarChartActivityHistogram extends React.Component<Props, {}> {
                             push: "outer",
                             on: [
                                 {
-                                    events: "view:mouseup",
+                                    events: "view:mouseup, view:touchend",
                                     update: "[detailDomain, detailDomainPosition]"
                                 }
                             ]

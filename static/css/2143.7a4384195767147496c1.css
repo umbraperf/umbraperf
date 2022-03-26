@@ -407,11 +407,11 @@ body {
     display: flex;
     align-items: center;
     margin: 20px 60px 20px 60px;
-    min-height: 250px;
     height: 70%;
+    overflow-y: scroll;
     flex: 1;
     border-width: thick;
-    border-radius: 2;
+    border-radius: 2px;
     border-color: #adadad;
     border-style: dashed;
     background-color: rgb(238, 238, 238);

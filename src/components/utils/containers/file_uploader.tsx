@@ -81,7 +81,6 @@ class FileUploader extends React.Component<Props, State> {
                     (or click to select files)
                 </p>
             } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading) {
-                // } else if (!this.props.umbraperfFileParsingFinished && this.props.fileLoading && acceptedFiles.length != 0) {
                 innerText = <Spinner />
             }
 
@@ -96,9 +95,6 @@ class FileUploader extends React.Component<Props, State> {
             } else if (this.props.file) {
                 innerText = <p>Loading File: {this.listAcceptedFile()}</p>;
                 return innerText;
-                // } else if (acceptedFiles.length != 0) {
-                //     innerText = <p>Loading File: {this.listAcceptedFiles(acceptedFiles)}</p>;
-                //     return innerText;
             } else {
                 innerText = <p>No files selected.</p>;
                 return innerText;

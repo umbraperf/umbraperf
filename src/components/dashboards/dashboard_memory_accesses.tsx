@@ -24,7 +24,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
     componentDidUpdate(prevProps: Props) {
         //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to avoid use cycles as current event 
         if (
-            !_.isEqual(prevProps.events, this.props.events) 
+            !_.isEqual(prevProps.events, this.props.events)
             && this.props.events
             && !this.props.events.includes("mem_inst_retired.all_loads")) {
             Controller.setEvent(this.props.events[0])
@@ -48,7 +48,14 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
                     <Box className={styles.dashboardGridCellChartBoxAutoheightChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
+                            {
+                                this.props.events && this.props.events?.length === 1 && this.props.events[0] === "cycles:ppp" ?
+                                    <p>
+                                        No memory information in profiling data provided!
+                                    </p>
+                                    :
+                                    <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
+                            }
                         </div>
                     </Box>
                 </Grid>

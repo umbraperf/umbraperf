@@ -31,6 +31,10 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
         }
     }
 
+    memoryInformationAvailable() {
+        return this.props.events && this.props.events?.length === 1 && this.props.events[0] === "cycles:ppp";
+    }
+
     public render() {
 
         return <Grid container>
@@ -49,7 +53,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                     <Box className={styles.dashboardGridCellChartBoxAutoheightChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             {
-                                this.props.events && this.props.events?.length === 1 && this.props.events[0] === "cycles:ppp" ?
+                                this.memoryInformationAvailable() ?
                                     <p>
                                         No memory information in profiling data provided!
                                     </p>

@@ -59,7 +59,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                                     </p>
                                     : */}
                             <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
-                            // }
+                             {/* } */}
                         </div>
                     </Box>
                 </Grid>

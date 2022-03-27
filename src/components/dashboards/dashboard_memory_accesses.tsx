@@ -23,10 +23,11 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
 
     componentDidUpdate(prevProps: Props) {
         //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to avoid use cycles as current event 
-        if (!_.isEqual(prevProps.events, this.props.events)
-            && this.props.events
+        if (
+            // !_.isEqual(prevProps.events, this.props.events) &&
+            this.props.events
             && !this.props.events.includes("mem_inst_retired.all_loads")) {
-                Controller.setEvent(this.props.events[this.props.events.length - 1])
+            Controller.setEvent(this.props.events[0])
         }
     }
 

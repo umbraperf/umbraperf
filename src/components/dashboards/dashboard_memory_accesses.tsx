@@ -52,14 +52,14 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={12} >
                     <Box className={styles.dashboardGridCellChartBoxAutoheightChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
-                            {
+                            {/* {
                                 this.memoryInformationAvailable() ?
                                     <p>
                                         No memory information in profiling data provided!
                                     </p>
-                                    :
-                                    <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
-                            }
+                                    : */}
+                            <ChartWrapper chartType={model.ChartType.MEMORY_ACCESS_HEATMAP_CHART} />
+                            // }
                         </div>
                     </Box>
                 </Grid>

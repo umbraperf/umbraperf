@@ -1,7 +1,7 @@
 use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 use crate::{
     exec::basic::{
-        basic, count, filter, kpis,
+        basic::{self, sort_batch}, count::{self, group_by}, filter, kpis,
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
@@ -9,7 +9,7 @@ use crate::{
     utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::combine_to_one_record_batch,
-        string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}, record_batch_schema::RecordBatchSchema,
+        string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}, record_batch_schema::RecordBatchSchema, array_util::get_stringarray_column,
     },
 };
 use arrow::record_batch::RecordBatch;
@@ -132,14 +132,19 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch = uir(record_batch);
             }
             "top(srclines)" => {
-                let order = match params {
-                    "cycles::ppp" => 0,
-                    "l1-cache-misses" => 1,
-                    "l3-cache-misses" => 2,
-                    "mem_inst_retired.all_loads" => 3,
-                    &_ => 0,
-                };
-                record_batch = get_top_srclines(record_batch, order as usize);
+                let events = group_by(&record_batch, 1);
+                let sorted = sort_batch(&events, 0, false);
+                let str_col = get_stringarray_column(&sorted, 0);
+                let mut index = 0;
+                print_to_js_with_obj(&format!("{:?}", sorted).into());
+
+                for event in str_col {
+                    if event.unwrap() == params {
+                        record_batch = get_top_srclines(record_batch, index as usize);
+                        break;
+                    }
+                    index = index + 1;
+                } 
             }
             _ => {
                 panic!("Not supported operator!");

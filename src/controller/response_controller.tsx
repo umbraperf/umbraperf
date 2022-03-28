@@ -61,7 +61,9 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
             });
             dispachSingleEvent(events[0]);
             if (events.length > 1) {
-                dispachMultipleEvent(events[0], events[1])
+                dispachMultipleEvent(events[0], events[1]);
+            }else{
+                dispachMultipleEvent(events[0], events[0]);
             }
             break;
 

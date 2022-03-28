@@ -165,12 +165,28 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         pipeline_vec.push(dict_key.unwrap().as_str());
     }
 
-    // Address
-    let addr_col = get_uint_column(&batch, 5);
+
+    // Addr
     let mut addr = Vec::new();
-    for value in addr_col {
-        addr.push(value.unwrap());
+    let datatype =  batch.schema().field(5).data_type().clone();
+
+    if datatype == DataType::Int64 {
+        
+        let addr_col = get_int64_column(&batch, 5);
+        for value in addr_col {
+            addr.push(value.unwrap() as u64);
+        }
+
+    } else {
+
+        let addr_col = get_uint_column(&batch, 5);
+        for value in addr_col {
+            addr.push(value.unwrap());
+        }
+
     }
+
+
 
     // URI
     let uri_col = get_int64_column(&batch, 4);

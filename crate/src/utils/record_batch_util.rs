@@ -262,7 +262,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
     let hashset_pipe = Vec::from_iter(pipeline_unique);
 
 
-    return filter_with(3, hashset_pipe, &sorted_batch);
+    return filter_with(3, hashset_pipe, &filter_batch);
 }
 
 // Sending record batch to javascript via IPC which include a schema and a message

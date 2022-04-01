@@ -47,7 +47,6 @@ class DashboardWrapper extends React.Component<Props, {}> {
             case model.ViewType.DASHBOARD_UIR_PROFILING:
                 return React.createElement(DashboardUir);
         }
-
     }
 
     public render() {
@@ -58,7 +57,6 @@ class DashboardWrapper extends React.Component<Props, {}> {
 
         return <div className={styles.dashboardGrid}>
             <DashboardHeader />
-
             {this.createView()}
         </div >;
     }

@@ -575,7 +575,8 @@ p{
     --girdCellItemDoubleRowHeight: calc(2 * var(--mainVisualizationsHeight) + 3 * var(--gridCellBoxPadding) + 3 * var(--gridCellItemPadding));
     --activityHistogramHeight: 84px;
     --movingTransition: all .5s ease-in-out;
-    --gridCellItemFullScreenStretchContentMaxHeight: 700px;
+    --gridCellItemFullScreenStretchContentMaxHeightMED: 700px;
+    --gridCellItemFullScreenStretchContentMaxHeightUPD: 1400px;
     --gridCellItemFullScreenStretchContentMinHeight: 200px;
 }
 
@@ -610,8 +611,15 @@ p{
 
 ._3UAyQmx22BWnzKRz6y-ZcR{
     flex: 1 1 auto;
-    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
     min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
+}
+
+._33uGkrHOGaQz-9ZaUkW4fX{
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightMED);
+}
+
+._21BEQK4-cV4aER6qLCOxP1{
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightUPD);
 }
 
 ._3puztDCBhHTZeg7_n_iW4g{
@@ -623,11 +631,6 @@ p{
 ._2ifpg4LOXSAnbCXlnZ_3df{
     max-height: var(--girdCellItemDoubleRowHeight);
 }
-
-/* .dashboardDoubleGridCellItem{
-/*     composes: dashboardGridCellItem;
-    padding: 0px; 
-} */
 
 ._32XY6NlC2PgYvmBsrebUcc{
     padding: var(--gridCellItemPadding);
@@ -675,7 +678,7 @@ p{
 
 .M_AZKSjpQWeb2d29hHDSH{
     flex: 1;
-    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightUPD);
     min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
 }
 

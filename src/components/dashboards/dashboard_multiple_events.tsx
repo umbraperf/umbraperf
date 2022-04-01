@@ -46,7 +46,7 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
 
 
             <Box clone order={{ xs: 3, md: 3, lg: 3 }}>
-                <Grid item className={styles.dashboardGridCellItemFullScreenStretchContent} xs={12}>
+                <Grid item className={styles.dashboardGridCellItemFullScreenStretchContentMED} xs={12}>
                     <Box className={styles.dashboardGridCellChartBoxAutoheightFullheightStretchChart}>
                         <div className={styles.dashboardGridCellChartContainer}>
                             <ChartWrapper chartType={model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE} />

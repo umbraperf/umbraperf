@@ -11,7 +11,8 @@
     --girdCellItemDoubleRowHeight: calc(2 * var(--mainVisualizationsHeight) + 3 * var(--gridCellBoxPadding) + 3 * var(--gridCellItemPadding));
     --activityHistogramHeight: 84px;
     --movingTransition: all .5s ease-in-out;
-    --gridCellItemFullScreenStretchContentMaxHeight: 700px;
+    --gridCellItemFullScreenStretchContentMaxHeightMED: 700px;
+    --gridCellItemFullScreenStretchContentMaxHeightUPD: 1400px;
     --gridCellItemFullScreenStretchContentMinHeight: 200px;
 }
 
@@ -48,8 +49,17 @@
 .dashboardGridCellItemFullScreenStretchContent{
     composes: dashboardGridCellItem;
     flex: 1 1 auto;
-    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
     min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
+}
+
+.dashboardGridCellItemFullScreenStretchContentMED{
+    composes: dashboardGridCellItemFullScreenStretchContent;
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightMED);
+}
+
+.dashboardGridCellItemFullScreenStretchContentUPD{
+    composes: dashboardGridCellItemFullScreenStretchContent;
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightUPD);
 }
 
 .dashboardGridCellItemDoubleRow{
@@ -62,11 +72,6 @@
 .dashboardGridCellItemDoubleRowInnerGridContainer{
     max-height: var(--girdCellItemDoubleRowHeight);
 }
-
-/* .dashboardDoubleGridCellItem{
-/*     composes: dashboardGridCellItem;
-    padding: 0px; 
-} */
 
 .dashboardGridCellOptionsItem{
     composes: dashboardGridCellItem;
@@ -121,7 +126,7 @@
 
 .dashboardGridCellItemFullScreenStretchContentMultiColumnContainer{
     flex: 1;
-    max-height: var(--gridCellItemFullScreenStretchContentMaxHeight);
+    max-height: var(--gridCellItemFullScreenStretchContentMaxHeightUPD);
     min-height: var(--gridCellItemFullScreenStretchContentMinHeight);
 }
 

@@ -102,6 +102,9 @@ pub fn convert(batches: Vec<RecordBatch>) -> RecordBatch {
     }
 
     let batch = create_record_batch(batches[0].schema(), columns);
+
+    //print_to_js_with_obj(&format!("{:?}", batch).into());
+
     apply_mapping_to_record_batch(batch)
 }
 
@@ -245,6 +248,8 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
             Arc::new(StringArray::from(physical_op)),
         ],
     );
+
+    print_to_js_with_obj(&format!("{:?}", batch).into());
 
     let mut op_unique: HashSet<&str> = HashSet::from_iter(operator_vec);
     op_unique.remove("analyzeplan1");

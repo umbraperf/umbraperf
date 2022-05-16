@@ -7,6 +7,7 @@ use arrow::{
 };
 use std::{collections::HashSet, sync::Arc};
 
+use crate::state::state::{get_event_record_batch, set_event_record_batch};
 use crate::utils::array_util::get_stringarray_column;
 use crate::utils::record_batch_util::create_new_record_batch;
 use crate::utils::record_batch_util::create_record_batch;
@@ -56,6 +57,13 @@ pub fn sort_batch(
 
 // UNIQUE for specified column
 pub fn find_unique_string(batch: &RecordBatch, column_for_unique: usize) -> RecordBatch {
+
+    if column_for_unique == 1 {
+        if let Some(pre_calc_event_batch) = get_event_record_batch() {
+            return pre_calc_event_batch.batch.to_owned();
+        }
+    }
+
     let column = get_stringarray_column(batch, column_for_unique);
 
     let hash_set = column
@@ -74,6 +82,11 @@ pub fn find_unique_string(batch: &RecordBatch, column_for_unique: usize) -> Reco
         vec![field.data_type().to_owned()],
         vec![Arc::new(string_arr)],
     );
+
+    if column_for_unique == 1 {
+        set_event_record_batch(batch.clone());
+    }
+
 
     return batch;
 }

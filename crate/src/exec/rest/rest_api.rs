@@ -1,11 +1,11 @@
 use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 use crate::{
     exec::basic::{
-        basic::{self, sort_batch}, count::{self, group_by}, filter, kpis,
+        basic::{self, sort_batch, find_unique_string}, count::{self, group_by}, filter, kpis,
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
-    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
+    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache, get_event_record_batch, set_event_record_batch},
     utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::combine_to_one_record_batch,
@@ -70,6 +70,9 @@ fn eval_filters(record_batch: RecordBatch, mut filter_vec: Vec<&str>) -> RecordB
 }
 
 fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<RecordBatch> {
+
+    //print_to_js_with_obj(&format!("{:?}", op_vec).into());
+
     for op in op_vec {
         let split = split_at_question_mark(op);
         let operator = split[0];
@@ -132,11 +135,12 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch = uir(record_batch);
             }
             "top(srclines)" => {
-                let events = group_by(&record_batch, 1);
-                let sorted = sort_batch(&events, 0, false);
-                let str_col = get_stringarray_column(&sorted, 0);
+
+                let events = find_unique_string(&record_batch, 1);
+
+                
+                let str_col = get_stringarray_column(&events, 0);
                 let mut index = 0;
-                print_to_js_with_obj(&format!("{:?}", sorted).into());
 
                 for event in str_col {
                     if event.unwrap() == params {

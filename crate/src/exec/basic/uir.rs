@@ -12,11 +12,11 @@ use arrow::{
 use super::{basic::find_unique_string, filter::filter_with};
 use crate::{
     exec::{basic::basic::sort_batch, rest::rest_api::find_name},
-    state::state::{get_unfiltered_record_batch, get_serde_dict},
+    state::state::{ get_serde_dict, get_event_record_batch},
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
-        record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj,
+        record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj
     },
     web_file::serde_reader::DictFields,
 };
@@ -64,12 +64,9 @@ fn calculate(
 
     let mut hashmap_count = HashMap::new();
 
-    // Get all unique events
-    let unique_events_batch = find_unique_string(
-        &get_unfiltered_record_batch().unwrap().batch,
-        RecordBatchSchema::EvName as usize,
-    );
-    let unique_events = get_stringarray_column(&unique_events_batch, 0);
+    let batch = &get_event_record_batch().unwrap().batch;
+
+    let unique_events = get_stringarray_column(&batch, 0);
 
     let mut unique_events_set = HashSet::new();
     for event in unique_events {
@@ -513,36 +510,39 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     unique_op.sort();
 
     let mut top_five = Vec::new();
-    let mut total_coverage = Vec::new();
+    let mut total_frequency = Vec::new();
 
     // Setting the global top five
     top_five.push(get_max_top_five(
         srcline_batch_sorted_after_coverage.clone(),
     ));
     for _i in 0..5 {
-        total_coverage.push(0.);
+        total_frequency.push(0.);
     }
 
     // Setting the top five for the other operators
     for op in unique_op {
         if op.contains("None") {
         } else {
-            let unique_op_batch = filter_with(
+            let unique_operator_batch = filter_with(
                 operator_col,
                 vec![&op],
                 &srcline_batch_sorted_after_coverage,
             );
-            let coverage_col = get_floatarray_column(&unique_op_batch, ordered_by + 1);
-            let sum_cov = round(arrow::compute::sum(coverage_col).unwrap());
-            let sum_cov = if sum_cov >= 99.7 && sum_cov <= 100.3 {
+            let freq_col = get_floatarray_column(&unique_operator_batch, ordered_by + 1);
+            
+            let sum_freq = round(arrow::compute::sum(freq_col).unwrap());
+            // Solving rounding errors
+            let sum_cov = if sum_freq >= 99.7 && sum_freq <= 100.3 {
                 100.
             } else {
-                sum_cov
+                sum_freq
             };
-            for _i in 0..5 {
-                total_coverage.push(sum_cov);
+
+            for _i in 0..get_max_top_five(unique_operator_batch.clone()).column(0).len() {
+                total_frequency.push(sum_cov);
             }
-            top_five.push(get_max_top_five(unique_op_batch));
+            top_five.push(get_max_top_five(unique_operator_batch));
         }
     }
 
@@ -562,6 +562,16 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
 
     // Return created Record Batch
     let srcline_num_col = find_name("srcline_num", &one_batch);
+
+    //print_to_js_with_obj(&format!("{:?}", one_batch).into());
+    //print_to_js_with_obj(&format!("{:?}", ordered_by).into());
+    //print_to_js_with_obj(&format!("{:?}", Float64Array::from(one_batch.column(ordered_by + 1).data().clone())).into());
+    //print_to_js_with_obj(&format!("{:?}", StringArray::from(op_vec.clone())).into());
+    //print_to_js_with_obj(&format!("{:?}", Float64Array::from(total_frequency.clone())).into());
+
+
+
+
     create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num", "total"],
         vec![
@@ -580,7 +590,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             Arc::new(Int32Array::from(
                 one_batch.column(srcline_num_col).data().clone(),
             )),
-            Arc::new(Float64Array::from(total_coverage)),
+            Arc::new(Float64Array::from(total_frequency)),
         ],
     )
 }

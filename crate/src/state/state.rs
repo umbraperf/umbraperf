@@ -17,6 +17,7 @@ pub struct State {
     // Batch State
     pub unfiltered_record_batch: Option<Arc<RecordBatchShared>>,
     pub swimlane_batch: Option<Arc<RecordBatchShared>>,
+    pub event_batch: Option<Arc<RecordBatchShared>>,
     // Caching for queries
     pub queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
     pub filtered_queries: Arc<Mutex<HashMap<String, RecordBatch>>>,
@@ -33,6 +34,7 @@ thread_local! {
         // Batch State
         unfiltered_record_batch: None,
         swimlane_batch: None,
+        event_batch: None,
         // Caching for queries
         queries:  Arc::new(Mutex::new(HashMap::new())),
         filtered_queries: Arc::new(Mutex::new(HashMap::new())),
@@ -58,6 +60,20 @@ where
     Callback: FnOnce(&mut State) -> ReturnType,
 {
     STATE.with(|s| cb(&mut s.borrow_mut()))
+}
+
+// RECORD BATCH STATE - EVENT BATCH
+pub fn get_event_record_batch() -> Option<Arc<RecordBatchShared>> {
+    with_state(|s| s.event_batch.clone())
+}
+pub fn set_event_record_batch(record_batch: RecordBatch) {
+    let shared_record_batch = RecordBatchShared {
+        batch: record_batch,
+    };
+    _with_state_mut(|s| s.event_batch = Some(Arc::new(shared_record_batch)));
+}
+pub fn reset_event_record_batch() {
+    _with_state_mut(|s| s.event_batch = None);
 }
 
 // RECORD BATCH STATE - SWIMLANE BATCH
@@ -128,6 +144,7 @@ pub fn set_serde_dict(serde_dict: SerdeDict) {
 
 // CACHE STATE
 pub fn clear_cache() {
+    reset_event_record_batch(); 
     _with_state_mut(|s| {
         let mut hashmap = s.queries.lock().unwrap();
         hashmap.clear();

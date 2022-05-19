@@ -132,8 +132,6 @@ function storeMetaDataFromRust(restQueryType: model.BackendQueryType) {
                 type: model.StateMutationType.SET_CURRENT_PIPELINE_ACTIVE_TIMEFRAME,
                 data: pipelinesTimeframe,
             });
-            console.log("neu");
-            console.log(pipelinesTimeframe);
             break;
 
         case model.BackendQueryType.GET_OPERATORS_ACTIVE_IN_TIMEFRAME_PIPELINE_PER_EVENT:
@@ -362,8 +360,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
             break;
 
         case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
-
-            console.log("should be here also with no pipeline");
 
             const queryplanTooltipData: model.IQueryPlanNodeTooltipData = {
                 uirLines: resultObject.rustResultTable.getColumn('scrline').toArray(),

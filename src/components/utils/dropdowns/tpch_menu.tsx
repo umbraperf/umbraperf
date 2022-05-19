@@ -56,7 +56,6 @@ function TpchMenu(props: Props) {
 
     const fetchTpchUmbraperfSampleFile = (index: number) => {
         const selectedTpchFileName = tpchSampleFiles[index].name;
-        console.log(`https://raw.githubusercontent.com/umbraperf/tpch-samples/main/${selectedTpchFileName}.umbraperf`);
         fetch(`https://raw.githubusercontent.com/umbraperf/tpch-samples/main/${selectedTpchFileName}.umbraperf`, { mode: "cors" })
             .then((response) => {
                 return response.blob();

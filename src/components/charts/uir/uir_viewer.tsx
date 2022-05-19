@@ -10,7 +10,7 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import Spinner from '../../utils/spinner/spinner';
 import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
-import {  } from '@material-ui/icons';
+import { } from '@material-ui/icons';
 
 
 interface AppstateProps {
@@ -98,7 +98,7 @@ class UirViewer extends React.Component<Props, State> {
     }
 
     prepareUirLines() {
-        return this.props.chartData.uirLines;
+        return this.props.chartData.uirLines.join('');
     }
 
     handleEditorWillMount(monaco: Monaco) {
@@ -289,7 +289,10 @@ class UirViewer extends React.Component<Props, State> {
 
     createMonacoEditor() {
 
-        const monacoDefaultValue = this.props.chartData.uirLines.join('');
+        // const monacoDefaultValue = this.props.chartData.uirLines.join('');
+        // console.log(this.props.chartData.uirLines);
+        // console.log(this.props.chartData.uirLines.join(''))
+
 
         const monacoOptions = {
             readOnly: true,
@@ -307,7 +310,7 @@ class UirViewer extends React.Component<Props, State> {
                 key={this.props.key}
                 defaultLanguage="umbraIntermediateRepresentation"
                 theme={"uirTheme"}
-                defaultValue={monacoDefaultValue}
+                defaultValue={this.prepareUirLines()}
                 options={monacoOptions}
                 loading={<Spinner />}
                 beforeMount={this.handleEditorWillMount}
@@ -362,7 +365,7 @@ class UirViewer extends React.Component<Props, State> {
                 eventOccurenceRelAbsColorGroup = eventOccurenceRelAbsColorGroup === 10 ? 9 : eventOccurenceRelAbsColorGroup;
                 const eventOccurrenceColorGroup = `${eventOccurenceIsFunctionColorGroup}${eventOccurenceRelAbsColorGroup}`;
                 elemGlyphClasses[0] = this.createCustomCssGlyphClass("Event", eventOccurrenceColorGroup);
-                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) }; 
+                glyphMarginHoverMessage = { value: this.createMarkdownEventsList(i, eventNumber, true) };
             }
 
             //color line glyph for operator

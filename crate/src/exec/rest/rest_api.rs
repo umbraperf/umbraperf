@@ -137,9 +137,10 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
             "top(srclines)" => {
 
                 let events = find_unique_string(&record_batch, 1);
-
+                let events = sort_batch(&events, 0, false);
                 
                 let str_col = get_stringarray_column(&events, 0);
+                
                 let mut index = 0;
 
                 for event in str_col {

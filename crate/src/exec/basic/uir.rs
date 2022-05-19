@@ -483,6 +483,8 @@ fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
+    // print_to_js_with_obj(&format!("{:?}", out_batch).into());
+
     return out_batch;
 }
 

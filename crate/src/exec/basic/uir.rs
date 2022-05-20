@@ -141,13 +141,17 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
         ));
     }
 
-    // Special treatment for functions with define, declare and aggregated output
+    // Special treatment for functions with define, declare
     let mut aggregated_output_vec = Vec::new();
+
     for item in output_vec.clone().into_iter().enumerate() {
+
         let current_index = item.0;
         let all_entries = item.1;
         let current_srcline = all_entries.0.unwrap();
-        if current_srcline.contains("define") || current_srcline.contains("declare") {
+
+        // define and declare aggregation of percentages
+        if current_srcline.contains("define") || current_srcline.contains("declare") && current_index + 1 != output_vec.len() {
             let mut buffer_percentage = Vec::new();
             for item in output_vec.clone().into_iter().enumerate() {
                 if item.0 > current_index {
@@ -182,7 +186,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 }
             }
         } else {
-            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ")
+            if all_entries.0.unwrap().contains("const") || all_entries.0.unwrap().starts_with("  ") || all_entries.0.unwrap().starts_with("declare")  || all_entries.0.unwrap().starts_with("define")
             {
                 aggregated_output_vec.push((
                     Some(format!("{}", all_entries.0.unwrap())),
@@ -333,6 +337,13 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
     column_ref.push(Arc::new(Int32Array::from(is_function_flag)));
     column_ref.push(Arc::new(Int32Array::from(srcline_num)));
 
+    //op.push("None");
+    //column_ref.push(Arc::new(StringArray::from(op)));
+    //pipe.push("None");
+    //column_ref.push(Arc::new(StringArray::from(pipe)));
+    //srcline_num.push(0);
+    //column_ref.push(Arc::new(Int32Array::from(srcline_num)));
+
     for entry in unique_events_set.clone().into_iter().enumerate() {
         let mut vec = Vec::new();
         for vec_perc in &vec_vec_rel_perc {
@@ -349,6 +360,8 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
             .collect::<Vec<DataType>>(),
         column_ref,
     );
+
+    //print_to_js_with_obj(&format!("{:?}", &out_batch).into());
 
     return out_batch;
 }
@@ -483,8 +496,6 @@ fn uir_without_rel(record_batch: RecordBatch) -> RecordBatch {
         column_ref,
     );
 
-    // print_to_js_with_obj(&format!("{:?}", out_batch).into());
-
     return out_batch;
 }
 
@@ -569,10 +580,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     //print_to_js_with_obj(&format!("{:?}", ordered_by).into());
     //print_to_js_with_obj(&format!("{:?}", Float64Array::from(one_batch.column(ordered_by + 1).data().clone())).into());
     //print_to_js_with_obj(&format!("{:?}", StringArray::from(op_vec.clone())).into());
-    //print_to_js_with_obj(&format!("{:?}", Float64Array::from(total_frequency.clone())).into());
-
-
-
+    //print_to_js_with_obj(&format!("{:?}", Float64Array::from(total_frequency.clone())).into());S
 
     create_new_record_batch(
         vec!["scrline", "perc", "op", "srcline_num", "total"],

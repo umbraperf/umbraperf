@@ -357,7 +357,6 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                     }
                 });
             toggleResultLoadingFlag = true;
-            console.log((chartDataElem.chartData.data as any).uirLines)
             break;
 
         case model.BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:

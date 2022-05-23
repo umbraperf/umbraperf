@@ -173,7 +173,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
         let referenceNodes = new Array<{
             referenceTargetAnalyzePlanId: number,
             referenceNode: any,
-            isTempRef?: boolean,
+            isScannedOperator?: boolean,
         }>();
 
 
@@ -318,11 +318,11 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (currentPlanElement.hasOwnProperty('source')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
             }
-            if (currentPlanElement.hasOwnProperty('tempRef')) {
-                referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['tempRef'], referenceNode: currentPlanElement, isTempRef: true });
-            }
+            // if (currentPlanElement.hasOwnProperty('scannedOperator')) {
+            //     referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['scannedOperator'], referenceNode: currentPlanElement, isScannedOperator: true });
+            // }
 
-            ["input", "left", "right", "magic", "temp"].forEach(childType => {
+            ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {
                     fillGraph(currentPlanElement[childType], currentPlanElement.operator);
                 }
@@ -336,7 +336,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
                     return planNodes.analyzePlanId === reference.referenceTargetAnalyzePlanId;
                 });
                 const referenceOperatorId = referenceOperator!.operatorId;
-                if (reference.isTempRef) {
+                if (reference.isScannedOperator) {
                     planData.links.push({
                         source: reference.referenceNode.operator,
                         target: referenceOperatorId,

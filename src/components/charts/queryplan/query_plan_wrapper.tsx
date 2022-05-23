@@ -318,9 +318,9 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             if (currentPlanElement.hasOwnProperty('source')) {
                 referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['source'], referenceNode: currentPlanElement });
             }
-            // if (currentPlanElement.hasOwnProperty('scannedOperator')) {
-            //     referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['scannedOperator'], referenceNode: currentPlanElement, isScannedOperator: true });
-            // }
+            if (currentPlanElement.hasOwnProperty('scannedOperator') && !currentPlanElement.hasOwnProperty('pipelineBreaker')) {
+                referenceNodes.push({ referenceTargetAnalyzePlanId: currentPlanElement['scannedOperator'], referenceNode: currentPlanElement, isScannedOperator: true });
+            }
 
             ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
                 if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {

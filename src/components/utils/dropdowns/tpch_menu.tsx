@@ -9,10 +9,14 @@ import styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 const tpchSampleFiles: { readableName: string, name: string }[] = [
-    { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },
-    { readableName: "TPCH 10 SF1 (unopt)", name: "tpc-h_10_sf1_unopt" },
-    { readableName: "TPCH 10 SF10 (opt)", name: "tpc-h_10_sf10_opt" },
-    { readableName: "TPCH 10 SF10 (unopt)", name: "tpc-h_10_sf10_unopt" },
+    // { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },
+    // { readableName: "TPCH 10 SF1 (unopt)", name: "tpc-h_10_sf1_unopt" },
+    // { readableName: "TPCH 10 SF10 (opt)", name: "tpc-h_10_sf10_opt" },
+    // { readableName: "TPCH 10 SF10 (unopt)", name: "tpc-h_10_sf10_unopt" },
+    { readableName: "TPCH 3 SF10 (opt)", name: "sf10_tpch3_opt" },
+    { readableName: "TPCH 3 SF10 (unopt)", name: "sf10_tpch3_unopt" },
+    { readableName: "TPCH 10 SF10 (opt)", name: "sf10_tpch10_opt" },
+    { readableName: "TPCH 10 SF10 (unopt)", name: "sf10_tpch10_unopt" },
 ];
 
 interface Props {

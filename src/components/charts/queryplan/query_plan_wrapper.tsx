@@ -323,10 +323,21 @@ class QueryPlanWrapper extends React.Component<Props, State> {
             }
 
             ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
-                if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {
-                    fillGraph(currentPlanElement[childType], currentPlanElement.operator);
-                }
+                    if (currentPlanElement.hasOwnProperty(childType) && currentPlanElement[childType] !== 0) {
+                        fillGraph(currentPlanElement[childType], currentPlanElement.operator);
+                    }
             });
+
+            if (currentPlanElement.hasOwnProperty("arguments") && currentPlanElement["arguments"] !== 0) {
+                currentPlanElement["arguments"].forEach((arg:any) => {
+                    console.log(arg.operator);
+                    ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
+                        if (arg.hasOwnProperty(childType) && arg[childType] !== 0) {
+                            fillGraph(arg[childType], currentPlanElement.operator);
+                        }
+                    });
+                })
+            }
         }
 
         //Add links for references

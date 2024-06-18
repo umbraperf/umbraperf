@@ -18,6 +18,11 @@ Please ensure the install the EXACT version of the following tools to get starte
 Uninstall conflicting versions first. 
 
 
+### rust
+
+Rust with Cargo is required. Cargo is automatically installed on using the standard Rust package.
+Required version: 1.61.0
+
 ### node.js
 
 To have a specific version of node, we use the **Node Version Manager (nvm)**.

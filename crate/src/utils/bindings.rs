@@ -2,7 +2,7 @@ use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 
 // Connection between Rust and JavaScript
-#[wasm_bindgen(raw_module = "../../src/worker")]
+#[wasm_bindgen(raw_module = "../../src/worker.ts")]
 extern "C" {
 
     #[wasm_bindgen(js_name = "readFileChunk")]

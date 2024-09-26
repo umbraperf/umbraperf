@@ -22,7 +22,7 @@ use crate::{
             get_floatarray_column, get_int32_column, get_stringarray_column, get_uint_column,
         },
         record_batch_schema::RecordBatchSchema,
-        record_batch_util::{create_new_record_batch, send_record_batch_to_js}, print_to_cons::print_to_js_with_obj,
+        record_batch_util::{create_new_record_batch, send_record_batch_to_js},
     },
 };
 
@@ -468,7 +468,7 @@ pub fn freq_of_memory(
     let mut hashmap = HashMap::new();
 
     for entry in op_arr.into_iter().enumerate() {
-        
+
         let len = bucket_map_count.get(entry.1.unwrap()).unwrap().to_owned();
 
         if len == 0. {

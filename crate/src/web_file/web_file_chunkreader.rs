@@ -1,3 +1,6 @@
+use std::io::Read;
+
+use bytes::Bytes;
 use parquet::errors::Result;
 use parquet::file::reader::ChunkReader;
 use parquet::file::reader::Length;
@@ -23,10 +26,18 @@ impl WebFileChunkReader {
 impl ChunkReader for WebFileChunkReader {
     type T = BufferReader;
 
-    fn get_read(&self, start: u64, _length: usize) -> Result<BufferReader> {
+    fn get_read(&self, start: u64) -> Result<BufferReader> {
         let buf_read = BufferReader::set_offset(start);
         Ok(buf_read)
     }
+
+    fn get_bytes(&self, start: u64, length: usize) -> Result<Bytes> {
+        let mut buf_read = BufferReader::set_offset(start);
+        let mut buffer = vec![0; length];
+        buf_read.read_exact(&mut buffer)?;
+        Ok(Bytes::from(buffer))
+    }
+
 }
 
 impl Length for WebFileChunkReader {
@@ -36,4 +47,12 @@ impl Length for WebFileChunkReader {
         let reader = zip.by_name(PARQUET_FILE_NAME).unwrap();
         reader.size()
     }
+}
+
+impl Clone for WebFileChunkReader {
+    fn clone(&self) -> Self {
+        Self {
+            length: self.length,
+        }
+}
 }

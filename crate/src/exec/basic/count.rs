@@ -10,9 +10,9 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{basic::find_unique_string, filter::filter_with},
+    exec::basic::basic::find_unique_string,
     state::state::{get_mapping_operator, get_unfiltered_record_batch},
-    utils::{array_util::get_stringarray_column, record_batch_util::create_new_record_batch, record_batch_schema::RecordBatchSchema},
+    utils::{array_util::get_stringarray_column, record_batch_util::create_new_record_batch},
 };
 
 use super::op_mapping::init_mapping_operator;
@@ -133,7 +133,7 @@ pub fn group_by_with_nice_op(
         key_column.push(entry.0);
         value_column.push(entry.1);
         op_extension_vec.push(map.get(entry.0).unwrap().to_owned());
-    } 
+    }
 
     create_new_record_batch(
         vec![batch.schema().field(col_to_groupby).name(), "op_ext", "count"],

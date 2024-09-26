@@ -1,11 +1,11 @@
 use super::rest_api_pars::{abs_freq_pars, freq_mem, rel_freq_pars, sort};
 use crate::{
     exec::basic::{
-        basic::{self, sort_batch, find_unique_string}, count::{self, group_by}, filter, kpis,
+        basic::{self, sort_batch, find_unique_string}, count::{self}, filter, kpis,
         uir::{get_top_srclines, uir},
     },
     record_batch_util::send_record_batch_to_js,
-    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache, get_event_record_batch, set_event_record_batch},
+    state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
     utils::{
         print_to_cons::print_to_js_with_obj,
         record_batch_util::combine_to_one_record_batch,
@@ -138,9 +138,9 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
 
                 let events = find_unique_string(&record_batch, 1);
                 let events = sort_batch(&events, 0, false);
-                
+
                 let str_col = get_stringarray_column(&events, 0);
-                
+
                 let mut index = 0;
 
                 for event in str_col {
@@ -149,7 +149,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                         break;
                     }
                     index = index + 1;
-                } 
+                }
             }
             _ => {
                 panic!("Not supported operator!");
@@ -212,7 +212,7 @@ fn filter_already_applied(batch: RecordBatch, filter_vec: Vec<&str>) -> RecordBa
             return filtered_batch;
         }
     }
-    
+
 
     let filtered_batch = eval_filters(batch, filter_vec);
     query.insert(str_raw, filtered_batch.to_owned());
@@ -290,7 +290,7 @@ pub fn eval_query(record_batch: RecordBatch, restful_string: &str) {
     if multiple_queries_concat(restful_string) {
         let split = split_at_double_and(restful_string);
         let mut vec_batch = Vec::new();
-        let filtered = exec_filters(record_batch, restful_string); 
+        let filtered = exec_filters(record_batch, restful_string);
         for query in split {
             vec_batch.push(exec_query_without_filters(filtered.to_owned(), query).unwrap());
         }

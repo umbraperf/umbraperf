@@ -16,7 +16,7 @@ use crate::{
     utils::{
         array_util::{get_floatarray_column, get_int64_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
-        record_batch_util::{self, create_new_record_batch}, print_to_cons::print_to_js_with_obj
+        record_batch_util::{self, create_new_record_batch}
     },
     web_file::serde_reader::DictFields,
 };
@@ -46,7 +46,7 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         let mut sum = 0.;
         for item in vec.iter().skip(i).step_by(num_of_events) {
             sum += item;
-        } 
+        }
         sum = round(sum) * 100.;
         out_vec.push(round(sum));
     }
@@ -234,7 +234,7 @@ pub fn uir(record_batch: RecordBatch) -> RecordBatch {
                 if total_sum_vec[curr_freq.0] == 0. {
                     vec.push(0.);
                 } else {
-                    vec.push(round(100.*round((curr_freq.1 / total_sum_vec[curr_freq.0]))));
+                    vec.push(round(100.*round(curr_freq.1 / total_sum_vec[curr_freq.0])));
                 }
             }
             let rel_freq = RELFREQ {
@@ -543,7 +543,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
                 &srcline_batch_sorted_after_coverage,
             );
             let freq_col = get_floatarray_column(&unique_operator_batch, ordered_by + 1);
-            
+
             let sum_freq = round(arrow::compute::sum(freq_col).unwrap());
             // Solving rounding errors
             let sum_cov = if sum_freq >= 99.7 && sum_freq <= 100.3 {
@@ -563,7 +563,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
     let one_batch = record_batch_util::convert_without_mapping(top_five);
 
     // Setting root for the global top five
-    let op = StringArray::from(one_batch.column(operator_col).data().clone());
+    let op = StringArray::from(one_batch.column(operator_col).to_data().clone());
     let mut op_vec = Vec::new();
     for entry in op.into_iter().enumerate() {
         if entry.0 < 5 {
@@ -592,13 +592,13 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
             DataType::Float64,
         ],
         vec![
-            Arc::new(StringArray::from(one_batch.column(0).data().clone())),
+            Arc::new(StringArray::from(one_batch.column(0).to_data().clone())),
             Arc::new(Float64Array::from(
-                one_batch.column(ordered_by + 1).data().clone(),
+                one_batch.column(ordered_by + 1).to_data().clone(),
             )),
             Arc::new(StringArray::from(op_vec)),
             Arc::new(Int32Array::from(
-                one_batch.column(srcline_num_col).data().clone(),
+                one_batch.column(srcline_num_col).to_data().clone(),
             )),
             Arc::new(Float64Array::from(total_frequency)),
         ],

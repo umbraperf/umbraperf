@@ -7,7 +7,7 @@ use arrow::{
 };
 
 use crate::{
-    exec::basic::{basic::find_unique_string, filter},
+    exec::basic::filter,
     utils::{
         array_util::{get_floatarray_column, get_stringarray_column},
         record_batch_schema::RecordBatchSchema,
@@ -19,7 +19,7 @@ use super::freq;
 
 pub fn abs_freq_of_event(
     batch: &RecordBatch,
-    event_col: usize,
+    _event_col: usize,
     time_col: usize,
     bucket_size: f64,
 ) -> RecordBatch {
@@ -50,7 +50,7 @@ pub fn abs_freq_of_event(
             result_time_bucket.push((f64::trunc(time_bucket * 100.0) / 100.0) - bucket_size);
             let frequenzy = bucket_map.get("sum").unwrap();
             result_freq.push(frequenzy.to_owned());
-            
+
         }
     }
 

@@ -1,7 +1,5 @@
 use std::{collections::HashMap, io::{Read, BufReader}};
-use crate::{
-    bindings::send_js_query_plan,
-};
+use crate::bindings::send_js_query_plan;
 
 use serde::Deserialize;
 use serde_json::{Map, Value};
@@ -56,7 +54,7 @@ impl SerdeDict {
             zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
         let reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
         let mut buf_reader = BufReader::new(reader);
-        
+
         let mut buf: String = String::new();
         let _result = buf_reader.read_to_string(&mut buf);
 
@@ -136,7 +134,7 @@ impl SerdeDict {
         let d: HashMap<String, DictionaryUri> = serde_json::from_reader(buf_reader).unwrap();
 
         send_js_query_plan(buf);
-        
+
         return Self {
             dict: hash_map,
             uri_dict: d

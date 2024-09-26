@@ -1,7 +1,7 @@
 use crate::{
     bindings::send_js_query_result,
     state::state::get_serde_dict,
-    web_file::{serde_reader::DictFields, web_file_chunkreader::WebFileChunkReader}, exec::basic::{basic::sort_batch, filter::filter_with},
+    web_file::{serde_reader::DictFields, web_file_chunkreader::WebFileChunkReader}, exec::basic::filter::filter_with,
 };
 use arrow::{
     array::{Array, ArrayRef, Float64Array, Int64Array, StringArray, UInt64Array},
@@ -9,10 +9,10 @@ use arrow::{
     record_batch::RecordBatch,
 };
 use parquet::{
-    arrow::{arrow_reader::ParquetRecordBatchReader, ArrowReader, ParquetFileArrowReader},
-    file::serialized_reader::SerializedFileReader,
+    arrow::{arrow_reader::{ArrowReaderBuilder, ParquetRecordBatchReader, ParquetRecordBatchReaderBuilder}, ProjectionMask},
+    file::{reader::FileReader, serialized_reader::SerializedFileReader}, schema::types::{SchemaDescPtr, SchemaDescriptor},
 };
-use std::{io::Cursor, sync::Arc, collections::HashSet, iter::FromIterator};
+use std::{collections::HashSet, io::Cursor, iter::FromIterator, sync::Arc};
 
 use super::{array_util::{get_floatarray_column, get_int64_column, get_uint_column}, print_to_cons::print_to_js_with_obj};
 
@@ -27,12 +27,21 @@ fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
 // Parquet Reader, specify columns which are read
 pub fn init_reader(file_size: i32) -> ParquetRecordBatchReader {
     let webfile_chunkreader = WebFileChunkReader::new(file_size as i32);
-    let reader = SerializedFileReader::new(webfile_chunkreader).unwrap();
-    let mut reader = ParquetFileArrowReader::new(Arc::new(reader));
-    let record_reader = reader
-        .get_record_reader_by_columns(vec![0, 1, 2, 3, 10, 6, 13, 14].into_iter(), 1024 * 8)
+    let size = 1024 * 8;
+    let projection_indices: Vec<usize> = vec![0, 1, 2, 3, 10, 6, 13, 14];
+
+    let file_reader = SerializedFileReader::new(webfile_chunkreader.clone()).unwrap();
+    let schema: SchemaDescPtr = file_reader.metadata().file_metadata().schema_descr_ptr();
+
+    let projection_mask = ProjectionMask::leaves(&schema, projection_indices);
+
+    let reader = ParquetRecordBatchReaderBuilder::try_new(webfile_chunkreader)
+        .unwrap()
+        .with_batch_size(size)
+        .with_projection(projection_mask)
+        .build()
         .unwrap();
-    record_reader
+    reader
 }
 
 // Record is read in batches
@@ -51,7 +60,8 @@ pub fn combine_to_one_record_batch(vec_batch: Vec<RecordBatch>) -> RecordBatch {
     let mut col_vec = Vec::new();
 
     for batch in vec_batch {
-        fields_vec.push(batch.schema().fields().to_owned());
+        let cloned_fields: Vec<Field> = batch.schema().flattened_fields().into_iter().cloned().collect();
+        fields_vec.push(cloned_fields);
         col_vec.push(batch.columns().to_owned());
     }
 
@@ -174,7 +184,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
     let datatype =  batch.schema().field(5).data_type().clone();
 
     if datatype == DataType::Int64 {
-        
+
         let addr_col = get_int64_column(&batch, 5);
         for value in addr_col {
             addr.push(value.unwrap() as u64);

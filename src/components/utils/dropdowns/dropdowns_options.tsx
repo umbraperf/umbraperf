@@ -1,6 +1,6 @@
 import * as model from '../../../model';
 import React from 'react';
-import styles from '../../../style/utils.module.css';
+import * as styles from '../../../style/utils.module.css';
 import InterpolationDropdown from './interpolation_dropdown';
 import BucketsizeDropdwn from './bucketsize_dropdown';
 import { connect } from 'react-redux';

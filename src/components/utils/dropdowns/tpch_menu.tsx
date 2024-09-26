@@ -5,7 +5,7 @@ import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Button, ListItemText, Menu, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import styles from "../../../style/utils.module.css";
+import * as styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 const tpchSampleFiles: { readableName: string, name: string }[] = [

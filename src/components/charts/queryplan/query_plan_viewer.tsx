@@ -3,7 +3,7 @@ import styles from '../../../style/queryplan.module.css';
 import React from 'react';
 import _ from 'lodash';
 import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
-import ReactFlow, { ConnectionLineType, Controls, ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, Controls, NodeTypesType, ReactFlowProvider } from 'react-flow-renderer';
 import QueryplanNode from './query_plan_node';
 
 
@@ -32,14 +32,13 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
     createReactFlowGraph() {
 
-        const nodeTypes = {
-            queryplanNode: QueryplanNode,
+        const nodeTypes: NodeTypesType = {
+            queryplanNode: QueryplanNode as any,
         };
 
         return <div
             className={styles.reactFlowGraph}
         >
-            <ReactFlowProvider>
                 <ReactFlow
                     elements={this.props.graphElements}
                     minZoom={0.1}
@@ -55,9 +54,6 @@ class QueryPlanViewer extends React.Component<Props, {}> {
                 >
                     <Controls className={styles.reactFlowControls} />
                 </ReactFlow>
-
-
-            </ReactFlowProvider>
         </div>
     }
 

@@ -1,5 +1,5 @@
 import * as model from '../../../model';
-import styles from '../../../style/utils.module.css';
+import * as styles from '../../../style/utils.module.css';
 import MiniSpinner from '../spinner/mini_spinner';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';

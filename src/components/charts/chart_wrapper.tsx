@@ -1,7 +1,7 @@
 import * as model from '../../model';
 import * as Controller from '../../controller';
 import * as Context from '../../app_context';
-import styles from '../../style/charts.module.css';
+import * as styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -96,7 +96,7 @@ class ChartWrapper extends React.Component<Props, State> {
             return true;
         }
 
-        //do not rerender in all other cases 
+        //do not rerender in all other cases
         return false;
     }
 

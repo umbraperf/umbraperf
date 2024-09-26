@@ -3,7 +3,7 @@ import * as Controller from '../../../controller';
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
-import styles from '../../../style/upload.module.css';
+import * as styles from '../../../style/upload.module.css';
 import Spinner from '../spinner/spinner';
 import { IAppContext, withAppContext } from '../../../app_context';
 import { Redirect } from 'react-router-dom';

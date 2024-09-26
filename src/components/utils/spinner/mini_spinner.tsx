@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../../style/mini-spinner.module.css';
+import * as styles from '../../../style/mini-spinner.module.css';
 
 function MiniSpinner() {
 

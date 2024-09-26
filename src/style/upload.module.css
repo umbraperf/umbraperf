@@ -59,6 +59,10 @@ p{
     transform: translateY(-50%);
 }
 
+.dropzoneInner{
+
+}
+
 .acceptedFilesList{
     list-style-type: none;
 }

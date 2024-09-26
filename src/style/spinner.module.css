@@ -31,6 +31,9 @@
 		-webkit-animation: stretchdelay 0.78s infinite ease-in-out;
 		-moz-animation: stretchdelay 0.78s infinite ease-in-out;
 }
+.cssloadRect1 {
+
+}
 .cssloadPiano .cssloadRect2 {
 	animation-delay: -0.65s;
 		-o-animation-delay: -0.65s;

@@ -1,6 +1,6 @@
 import { Zoom } from '@material-ui/core';
 import React from 'react';
-import styles from '../../../style/spinner.module.css';
+import * as styles from '../../../style/spinner.module.css';
 
 function Spinner() {
 

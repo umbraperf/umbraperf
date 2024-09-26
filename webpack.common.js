@@ -4,7 +4,6 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function configure(params) {
@@ -31,7 +30,10 @@ export function configure(params) {
                     test: /\.tsx?$/,
                     loader: 'ts-loader',
                     exclude: /node_modules/,
-                    options: params.tsLoaderOptions,
+                    options: {
+                        ...params.tsLoaderOptions,
+                        transpileOnly: true,
+                    },
                 },
                 {
                     test: /\.css$/,
@@ -41,7 +43,6 @@ export function configure(params) {
                             loader: 'css-loader',
                             options: {
                                 modules: {
-                                    compileType: 'module',
                                     mode: 'local',
                                     auto: true,
                                     exportGlobals: true,
@@ -51,55 +52,37 @@ export function configure(params) {
                             },
                         },
                     ],
-                },
+                  },
                 {
                     test: /.*umbra_profiler\.wasm$/,
                     type: 'webassembly/async',
                 },
                 {
                     test: /\.(png|jpe?g|gif|svg|ico)$/i,
-                    loader: 'file-loader',
-                    options: {
-                        name: 'static/img/[name].[contenthash].[ext]',
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'static/img/[name].[contenthash][ext]',
                     },
                 },
                 {
                     test: /\.(ttf|eot|woff|woff2)$/,
-                    loader: 'file-loader',
-                    options: {
-                        name: 'static/fonts/[name].[contenthash].[ext]',
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'static/fonts/[name].[contenthash][ext]',
                     },
                 },
                 {
-                    test: /\.js$/,
-                    enforce: 'pre',
-                    use: [
-                        {
-                            loader: 'source-map-loader',
-                            options: {
-                                filterSourceMappingUrl: (url, resourcePath) => {
-                                    if (/\.worker\.js$/i.test(resourcePath)) {
-                                        return 'skip';
-                                    }
-
-                                    return true;
-                                },
-                            },
-                        },
-                    ],
-                },
-                {
                     test: /site\.webmanifest$/i,
-                    loader: 'file-loader',
-                    options: {
-                        name: 'static/[name].[contenthash].[ext]',
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'static/[name].[contenthash][ext]',
                     },
                 },
                 {
                     test: /browserconfig\.xml$/i,
-                    loader: 'file-loader',
-                    options: {
-                        name: 'static/[name].[contenthash].[ext]',
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'static/[name].[contenthash][ext]',
                     },
                 },
                 {

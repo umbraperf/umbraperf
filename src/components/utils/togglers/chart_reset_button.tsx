@@ -1,6 +1,6 @@
 import React from 'react';
 import { IconButton, Zoom } from '@material-ui/core';
-import styles from '../../../style/utils.module.css';
+import * as styles from '../../../style/utils.module.css';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 
 

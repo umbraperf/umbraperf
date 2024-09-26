@@ -10,10 +10,8 @@ const base = configure({
     tsLoaderOptions: {
         compilerOptions: {
             configFile: './tsconfig.json',
-            sourceMap: true,
         },
     },
-    extractCss: false,
     cssIdentifier: '[local]_[hash:base64]',
 });
 
@@ -29,11 +27,8 @@ export default {
     performance: {
         hints: false,
     },
-    devtool: 'source-map',
     devServer: {
         historyApiFallback: true,
-        contentBase: path.join(__dirname, './build/debug'),
-        watchContentBase: true,
         compress: true,
         port: 9002,
         headers: {

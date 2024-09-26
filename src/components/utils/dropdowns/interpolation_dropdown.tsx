@@ -4,7 +4,7 @@ import * as Context from '../../../app_context';
 import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel, Select } from '@material-ui/core';
-import styles from "../../../style/utils.module.css";
+import * as styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 interface BucketsizeDropdwnProps{

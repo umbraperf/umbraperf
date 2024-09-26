@@ -1,7 +1,7 @@
 import * as React from 'react';
 import createDevStore from './model/store_dev';
 import { IAppContext } from './app_context';
-import styles from './style/export-variables.module.css';
+import * as styles from './style/export-variables.module.css';
 import * as model from './model';
 
 import FileUploader from './components/utils/containers/file_uploader';
@@ -24,12 +24,12 @@ export const backendRequestController = new RequestController();
 export const store = createDevStore();
 
 export const appColor = {
-    primary: styles.colorPrimary,
-    secondary: styles.colorSecondary,
-    tertiary: styles.colorTertiary,
-    accentBlack: styles.colorAccentBlack,
-    accentDarkGreen: styles.colorAccentDarkGreen,
-    accentDarkBlue: styles.colorAccentDarkBlue,
+    primary: '#f5f3bb',
+    secondary: '#d4733e',
+    tertiary: '#919191',
+    accentBlack: '#040404',
+    accentDarkGreen: '#379634',
+    accentDarkBlue: '#454E9E',
 }
 
 export const materialUiTheme = createTheme({

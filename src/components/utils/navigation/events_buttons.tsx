@@ -5,7 +5,7 @@ import Spinner from '../spinner/spinner';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
-import styles from '../../../style/utils.module.css';
+import * as styles from '../../../style/utils.module.css';
 
 
 interface Props {

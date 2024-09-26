@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 /* eslint-env worker */
 
 import * as profiler_core from '../crate/pkg/shell';

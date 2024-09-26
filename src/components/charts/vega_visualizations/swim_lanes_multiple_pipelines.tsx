@@ -47,6 +47,7 @@ class SwimLanesMultiplePipelines extends React.Component<Props, State> {
         //to figure out max y axis domain of absolute chart, get stacked data from vega and find out max, set max to global state to keep for remountings eg. on event change
         if (this.props.absoluteValues) {
             const viewData = view.data("table");
+            // @ts-ignore
             const dataY1Array = viewData.map(datum => datum.y1);
             const maxY1Value = Math.max(...dataY1Array);
             this.setState((state, props) => ({

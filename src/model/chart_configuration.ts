@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import styles from '../style/export-variables.module.css';
+import * as styles from '../style/export-variables.module.css';
 
 export interface ChartConfiguration {
     titlePadding: number;
@@ -137,8 +137,8 @@ export let chartConfiguration: ChartConfiguration = {
     //Color properties:
     colorLowOpacityHex: "26",
 
-    //Hover behaviour: 
-    hoverFillOpacity: +styles.hoverOpacity,
+    //Hover behaviour:
+    hoverFillOpacity: 0.5,
 
     //Number formatter:
     nFormatter: (num: number, digits: number) => {
@@ -207,10 +207,10 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
 
     const operatosGroupBaseHsl: Array<[number, number, number]> = [
         //accorded to tableau10 of vega with adjusted luminance
-        [114, 37, 50], 
-        [30, 92, 50],  
-        [177, 39, 50], 
-        [211, 38, 50], 
+        [114, 37, 50],
+        [30, 92, 50],
+        [177, 39, 50],
+        [211, 38, 50],
         [48, 70, 50],
         [0, 72, 50],
         [11, 5, 50],
@@ -285,5 +285,3 @@ export function createColorScales(operatorsId: Array<string>, operatorsGroup: Ar
         operatorsGroupScale: createHslStringArray(operatorsGroupColorScale),
     }
 }
-
-

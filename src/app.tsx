@@ -9,7 +9,7 @@ import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
 import './globals.css';
 import '../node_modules/react-grid-layout/css/styles.css';
 import '../node_modules/react-resizable/css/styles.css';
-import styles from './style/main-app.module.css';
+import * as styles from './style/main-app.module.css';
 import * as Config from './app_config';
 
 import TabPanel from './components/utils/navigation/tab_panel';
@@ -32,6 +32,8 @@ function NoMatch() {
 
 
 export default function App() {
+    console.log("App")
+    console.log(styles)
     return (
         <AppContextProvider value={Config.appContext}>
             <ReduxProvider store={Config.store}>
@@ -43,7 +45,7 @@ export default function App() {
                                 <div className={styles.appHeader}>
                                     <HeaderAppbar />
                                 </div>
-                                
+
                                 <div className={`appNavigation ${styles.appNavigation}`}>
                                     <TabPanel />
                                 </div>
@@ -77,5 +79,3 @@ export default function App() {
         </AppContextProvider>
     );
 }
-
-

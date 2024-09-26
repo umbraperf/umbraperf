@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Tooltip, Typography, withStyles } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import InfoIcon from '@material-ui/icons/Info';
-import styles from "../../../style/utils.module.css";
+import * as styles from "../../../style/utils.module.css";
 import { connect } from 'react-redux';
 
 
@@ -19,6 +19,8 @@ interface Props {
 }
 
 function ProfilesMenu(props: Props) {
+    console.log("sets")
+    console.log(styles)
 
     const StyledMenuItem = withStyles((theme) => ({
         root: {
@@ -52,7 +54,7 @@ function ProfilesMenu(props: Props) {
                             {elem.description}
                         </Typography>
                     }
-                    className={styles.headerMenuItemContentInfoTooltip}
+                    className={styles.headerMenuItemContentInfoTooltipContent}
                 >
                     <InfoIcon className={styles.headerMenuItemContentIconInfo} />
                 </Tooltip>

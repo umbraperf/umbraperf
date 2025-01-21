@@ -1,19 +1,18 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
-import styles from '../../../style/queryplan.module.css';
-import React from 'react';
-import { connect } from 'react-redux';
-import { createRef } from 'react';
-import _ from 'lodash';
-import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
-import QueryPlanViewer from './query_plan_viewer';
-import dagre from 'dagre';
-import { ConnectionLineType, Position } from 'react-flow-renderer';
+import WarningIcon from '@material-ui/icons/Warning';
 import CSS from 'csstype';
+import dagre from 'dagre';
+import _ from 'lodash';
+import React, { createRef } from 'react';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
+import { connect } from 'react-redux';
+import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
+import * as styles from '../../../style/queryplan.module.css';
 import { QueryplanNodeData } from './query_plan_node';
 import { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
+import QueryPlanViewer from './query_plan_viewer';
 
 export interface AppstateProps {
     appContext: Context.IAppContext;
@@ -330,7 +329,6 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             if (currentPlanElement.hasOwnProperty("arguments") && currentPlanElement["arguments"] !== 0) {
                 currentPlanElement["arguments"].forEach((arg:any) => {
-                    console.log(arg.operator);
                     ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
                         if (arg.hasOwnProperty(childType) && arg[childType] !== 0) {
                             fillGraph(arg[childType], currentPlanElement.operator);

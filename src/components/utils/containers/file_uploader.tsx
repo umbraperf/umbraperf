@@ -1,12 +1,12 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
 import React from 'react';
+import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone';
 import { connect } from 'react-redux';
-import Dropzone, { DropzoneState, FileRejection } from 'react-dropzone'
+import { Redirect } from 'react-router-dom';
+import { IAppContext, withAppContext } from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
 import * as styles from '../../../style/upload.module.css';
 import Spinner from '../spinner/spinner';
-import { IAppContext, withAppContext } from '../../../app_context';
-import { Redirect } from 'react-router-dom';
 
 interface Props {
     appContext: IAppContext;

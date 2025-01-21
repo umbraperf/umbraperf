@@ -1,6 +1,20 @@
 @value colors: "./export-variables.module.css";
 @value colorAccentBlack, colorSecondary from colors;
 
+.monaco-hover{
+    border: solid !important;
+    border-width: var(--tooltipBorderWidth) !important;
+    border-radius: var(--tooltipBorderRadius) !important;
+    border-color: var(--tooltipBorderColor) !important;
+    background-color: var(--tooltipBackgroundColor) !important;
+    margin-left: 10px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.hover-row p{
+    font-size: 11px;
+}
 
 .monacoEditorContainer{
     flex: 1 1 fit-content;
@@ -9,9 +23,9 @@
 }
 
 .monacoEditor{
-    flex: 1 1 fit-content; 
+    flex: 1 1 fit-content;
     height: 100%;
-    width: 100%; 
+    width: 100%;
     align-items: center;
 }
 
@@ -20,7 +34,7 @@
     display: flex;
     justify-content: center;
     position: relative;
-    top: 1px; 
+    top: 1px;
     font-family: 'Segoe UI';
     font-size: 11px;
     font-weight: bold;
@@ -116,12 +130,12 @@ changed test glyph:
 }
 
 .glyphClassEvent11{
-    composes: glyphClassEventCommon; 
+    composes: glyphClassEventCommon;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C60.559 -4.61547e-07 70.8469 3.34275 79.3893 9.54915C87.9316 15.7556 94.2899 24.507 97.5528 34.5491L50 50L50 0Z' fill='%23919191'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 
-.glyphClassEvent12{  
-    composes: glyphClassEventCommon;  
+.glyphClassEvent12{
+    composes: glyphClassEventCommon;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0C57.8905 -3.44906e-07 65.669 1.86745 72.6995 5.44967C79.73 9.03189 85.8129 14.2272 90.4508 20.6107C95.0888 26.9943 98.1501 34.3849 99.3844 42.1783C100.619 49.9717 99.9911 57.9465 97.5528 65.4509L50 50L50 0Z' fill='%23919191'/%3E%3Ccircle r='45' transform='matrix(1 0 0 -1 50 50)' stroke='%23919191' stroke-width='10'/%3E%3C/svg%3E%0A");
 }
 

@@ -1,11 +1,11 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import styles from '../../style/dashboard.module.css';
-import ChartWrapper from '../charts/chart_wrapper';
-import React from 'react';
-import { Grid, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { Box, Grid } from '@material-ui/core';
 import _ from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
+import * as Controller from '../../controller';
+import * as model from '../../model';
+import * as styles from '../../style/dashboard.module.css';
+import ChartWrapper from '../charts/chart_wrapper';
 
 interface Props {
     events: Array<string> | undefined;
@@ -22,7 +22,7 @@ class DashboardMemoryAccesses extends React.Component<Props, {}> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to avoid use cycles as current event 
+        //on component init, current event was set to memory loads in constructor. if events finished loading and do not contain memory loads, set current event do last element of events available to avoid use cycles as current event
         if (
             !_.isEqual(prevProps.events, this.props.events)
             && this.props.events
@@ -64,6 +64,3 @@ const mapStateToProps = (state: model.AppState) => ({
 });
 
 export default connect(mapStateToProps)(DashboardMemoryAccesses);
-
-
-

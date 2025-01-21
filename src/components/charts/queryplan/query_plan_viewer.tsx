@@ -1,10 +1,9 @@
-import * as Controller from '../../../controller';
-import styles from '../../../style/queryplan.module.css';
 import React from 'react';
-import _ from 'lodash';
-import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
-import ReactFlow, { ConnectionLineType, Controls, NodeTypesType, ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, Controls, NodeTypes } from 'react-flow-renderer';
+import * as Controller from '../../../controller';
+import * as styles from '../../../style/queryplan.module.css';
 import QueryplanNode from './query_plan_node';
+import { FlowGraphElements, FlowGraphNode } from './query_plan_wrapper';
 
 
 interface Props {
@@ -32,7 +31,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
 
     createReactFlowGraph() {
 
-        const nodeTypes: NodeTypesType = {
+        const nodeTypes: NodeTypes = {
             queryplanNode: QueryplanNode as any,
         };
 

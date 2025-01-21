@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import * as styles from '../style/export-variables.module.css';
 
 export interface ChartConfiguration {
     titlePadding: number;

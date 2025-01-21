@@ -1,25 +1,24 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import * as Context from '../../app_context';
-import * as styles from '../../style/charts.module.css';
-import Spinner from '../utils/spinner/spinner';
-import React from 'react';
+import _ from "lodash";
+import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { createRef } from 'react';
-import _ from "lodash";
+import * as Context from '../../app_context';
+import * as Controller from '../../controller';
+import * as model from '../../model';
+import * as styles from '../../style/charts.module.css';
+import Spinner from '../utils/spinner/spinner';
 
+import { Fade } from '@material-ui/core';
 import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
 import HeatmapsOutlierDetectionSlider from '../utils/togglers/heatmaps_outlier_detection_slider';
-import SunburstChart from './vega_visualizations/sunburst_chart';
+import QueryPlan from './queryplan/query_plan_wrapper';
+import UirViewer from './uir/uir_viewer';
 import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
-import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multiple_pipelines';
-import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
-import UirViewer from './uir/uir_viewer';
-import QueryPlan from './queryplan/query_plan_wrapper';
-import { Fade } from '@material-ui/core';
+import SunburstChart from './vega_visualizations/sunburst_chart';
+import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
+import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multiple_pipelines';
 
 
 interface OwnProps {

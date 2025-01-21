@@ -1,10 +1,9 @@
-import * as model from '../../../model';
 import { Tooltip } from '@material-ui/core';
+import CSS from 'csstype';
 import React, { memo, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { ctx } from '../../../app_context';
-import CSS from 'csstype';
-import styles from '../../../style/queryplan.module.css';
+import * as styles from '../../../style/queryplan.module.css';
 import QueryPlanNodeTooltipContent, { QueryplanNodeTooltipData } from './query_plan_node_tooltip_content';
 
 export type QueryplanNodeData = {

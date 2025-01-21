@@ -1,10 +1,10 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
+import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
-import styles from '../../../style/utils.module.css';
+import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
+import * as styles from '../../../style/utils.module.css';
 
 
 interface Props {

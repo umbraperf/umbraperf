@@ -1,8 +1,8 @@
-import * as model from '../../../model';
-import * as Context from '../../../app_context';
-import styles from '../../../style/queryplan.module.css';
-import React from 'react';
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
+import React from 'react';
+import * as Context from '../../../app_context';
+import * as model from '../../../model';
+import * as styles from '../../../style/queryplan.module.css';
 
 export type QueryplanNodeTooltipData = {
     uirLines: Array<string>,

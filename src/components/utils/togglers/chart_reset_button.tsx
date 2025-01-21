@@ -1,7 +1,7 @@
-import React from 'react';
 import { IconButton, Zoom } from '@material-ui/core';
-import * as styles from '../../../style/utils.module.css';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
+import React from 'react';
+import * as styles from '../../../style/utils.module.css';
 
 
 interface Props {

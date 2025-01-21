@@ -1,20 +1,19 @@
 import * as React from 'react';
-import createDevStore from './model/store_dev';
 import { IAppContext } from './app_context';
-import * as styles from './style/export-variables.module.css';
 import * as model from './model';
+import createDevStore from './model/store_dev';
 
-import FileUploader from './components/utils/containers/file_uploader';
 import DashboardWrapper from './components/dashboards/dashboard_wrapper';
+import FileUploader from './components/utils/containers/file_uploader';
 
-import BackupIcon from '@material-ui/icons/Backup';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ViewStreamIcon from '@material-ui/icons/ViewStream';
-import SaveIcon from '@material-ui/icons/Save';
-import CodeIcon from '@material-ui/icons/Code';
 import { createTheme } from '@material-ui/core';
-import { RequestController } from './controller/request_controller';
 import { Shadows } from '@material-ui/core/styles/shadows';
+import BackupIcon from '@material-ui/icons/Backup';
+import CodeIcon from '@material-ui/icons/Code';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import SaveIcon from '@material-ui/icons/Save';
+import ViewStreamIcon from '@material-ui/icons/ViewStream';
+import { RequestController } from './controller/request_controller';
 
 export const backendRequestController = new RequestController();
 

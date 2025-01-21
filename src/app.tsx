@@ -1,19 +1,17 @@
+import { MuiThemeProvider, StylesProvider } from '@material-ui/core';
 import * as React from 'react';
-import { AppContextProvider } from './app_context';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Route, Router, Switch, useLocation, Redirect, Link } from 'react-router-dom';
-import history from "./history";
-import { StylesProvider, MuiThemeProvider } from '@material-ui/core';
-
-
-import './globals.css';
+import { Link, Redirect, Route, Router, Switch, useLocation } from 'react-router-dom';
 import '../node_modules/react-grid-layout/css/styles.css';
 import '../node_modules/react-resizable/css/styles.css';
-import * as styles from './style/main-app.module.css';
 import * as Config from './app_config';
+import { AppContextProvider } from './app_context';
+import './globals.css';
+import history from "./history";
+import * as styles from './style/main-app.module.css';
 
-import TabPanel from './components/utils/navigation/tab_panel';
 import HeaderAppbar from './components/utils/navigation/header_appbar';
+import TabPanel from './components/utils/navigation/tab_panel';
 
 
 function NoMatch() {

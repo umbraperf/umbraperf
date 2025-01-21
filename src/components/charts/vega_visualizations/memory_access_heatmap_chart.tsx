@@ -1,12 +1,10 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
-import styles from '../../../style/charts.module.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Vega } from 'react-vega';
 import { VisualizationSpec } from "react-vega/src";
-import _ from 'lodash';
+import * as Context from '../../../app_context';
+import * as model from '../../../model';
+import * as styles from '../../../style/charts.module.css';
 
 interface AppstateProps {
     appContext: Context.IAppContext;
@@ -264,4 +262,3 @@ const mapStateToProps = (state: model.AppState, ownProps: model.IMemoryAccessHea
 
 
 export default connect(mapStateToProps, undefined)(Context.withAppContext(MemoryAccessHeatmapChart));
-

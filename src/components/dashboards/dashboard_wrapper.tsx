@@ -1,15 +1,15 @@
-import * as model from '../../model';
-import * as Controller from '../../controller';
-import * as Context from '../../app_context';
-import styles from '../../style/dashboard.module.css';
-import DashboardHeader from './dashboard_header';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import * as Context from '../../app_context';
+import * as Controller from '../../controller';
+import * as model from '../../model';
+import * as styles from '../../style/dashboard.module.css';
+import DashboardHeader from './dashboard_header';
 
-import DashboardSingleEvent from '../dashboards/dashboard_single_event';
-import DashboardMultipleEvents from '../dashboards/dashboard_multiple_events';
 import DashboardMemoryAccesses from '../dashboards/dashboard_memory_accesses';
+import DashboardMultipleEvents from '../dashboards/dashboard_multiple_events';
+import DashboardSingleEvent from '../dashboards/dashboard_single_event';
 import DashboardUir from '../dashboards/dashboard_uir';
 
 interface OwnProps {
@@ -68,6 +68,3 @@ const mapStateToProps = (state: model.AppState) => ({
 
 
 export default connect(mapStateToProps)(Context.withAppContext(DashboardWrapper));
-
-
-

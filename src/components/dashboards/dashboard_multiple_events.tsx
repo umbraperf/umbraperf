@@ -1,8 +1,8 @@
+import { Box, Grid } from '@material-ui/core';
 import React from 'react';
 import * as model from '../../model';
-import styles from '../../style/dashboard.module.css';
+import * as styles from '../../style/dashboard.module.css';
 import ChartWrapper from '../charts/chart_wrapper';
-import { Grid, Box } from '@material-ui/core';
 
 
 class DashboardMultipleEvents extends React.Component<{}, {}> {
@@ -62,6 +62,3 @@ class DashboardMultipleEvents extends React.Component<{}, {}> {
 
 
 export default DashboardMultipleEvents;
-
-
-

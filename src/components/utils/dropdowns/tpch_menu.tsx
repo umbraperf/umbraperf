@@ -1,12 +1,12 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
-import React from 'react';
-import MenuItem from '@material-ui/core/MenuItem';
 import { Button, ListItemText, Menu, Typography, withStyles } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import * as styles from "../../../style/utils.module.css";
+import React from 'react';
 import { connect } from 'react-redux';
+import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
+import * as styles from "../../../style/utils.module.css";
 
 const tpchSampleFiles: { readableName: string, name: string }[] = [
     // { readableName: "TPCH 10 SF1 (opt)", name: "tpc-h_10_sf1_opt" },

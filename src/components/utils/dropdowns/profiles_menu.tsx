@@ -1,13 +1,13 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
-import React from 'react';
+import { Button, ListItemIcon, ListItemText, Menu, Tooltip, Typography, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Button, ListItemIcon, ListItemText, Menu, MenuProps, Tooltip, Typography, withStyles } from '@material-ui/core';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import InfoIcon from '@material-ui/icons/Info';
-import * as styles from "../../../style/utils.module.css";
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import React from 'react';
 import { connect } from 'react-redux';
+import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
+import * as styles from "../../../style/utils.module.css";
 
 
 interface Props {

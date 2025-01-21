@@ -1,16 +1,15 @@
-import * as model from '../../../model';
-import * as Controller from '../../../controller';
-import * as Context from '../../../app_context';
-import styles from '../../../style/uir-viewer.module.css';
-import '../../../style/uir-view-monaco-editor.css';
+import { } from '@material-ui/icons';
+import Editor, { Monaco } from "@monaco-editor/react";
+import _ from 'lodash';
+import * as monaco from 'monaco-editor';
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
-import Editor, { Monaco } from "@monaco-editor/react";
+import * as Context from '../../../app_context';
+import * as Controller from '../../../controller';
+import * as model from '../../../model';
+import * as styles from '../../../style/uir-viewer.module.css';
 import Spinner from '../../utils/spinner/spinner';
-import * as monaco from 'monaco-editor';
 import UirToggler from '../../utils/togglers/uir_toggler';
-import { } from '@material-ui/icons';
 
 
 interface AppstateProps {

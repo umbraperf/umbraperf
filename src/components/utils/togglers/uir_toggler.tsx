@@ -1,6 +1,6 @@
-import React from 'react';
 import { FormControl, FormControlLabel, Switch, Typography } from '@material-ui/core';
-import styles from '../../../style/utils.module.css';
+import React from 'react';
+import * as styles from '../../../style/utils.module.css';
 
 
 interface Props {

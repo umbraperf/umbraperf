@@ -1,9 +1,9 @@
+import { Box, Grid } from '@material-ui/core';
 import React from 'react';
-import styles from '../../style/dashboard.module.css';
-import EventsButtons from '../utils/navigation/events_buttons';
+import * as styles from '../../style/dashboard.module.css';
 import KpiContainer from '../utils/containers/kpi_container';
 import DropdownsOptions from '../utils/dropdowns/dropdowns_options';
-import { Grid, Box } from '@material-ui/core';
+import EventsButtons from '../utils/navigation/events_buttons';
 
 
 class DashboardHeader extends React.Component<{}, {}> {
@@ -39,6 +39,3 @@ class DashboardHeader extends React.Component<{}, {}> {
 
 
 export default DashboardHeader;
-
-
-

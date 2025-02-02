@@ -9,8 +9,8 @@ use arrow::{
     record_batch::RecordBatch,
 };
 use parquet::{
-    arrow::{arrow_reader::{ArrowReaderBuilder, ParquetRecordBatchReader, ParquetRecordBatchReaderBuilder}, ProjectionMask},
-    file::{reader::FileReader, serialized_reader::SerializedFileReader}, schema::types::{SchemaDescPtr, SchemaDescriptor},
+    arrow::{arrow_reader::{ParquetRecordBatchReader, ParquetRecordBatchReaderBuilder}, ProjectionMask},
+    file::{reader::FileReader, serialized_reader::SerializedFileReader}, schema::types::SchemaDescPtr,
 };
 use std::{collections::HashSet, io::Cursor, iter::FromIterator, sync::Arc};
 
@@ -259,7 +259,7 @@ pub fn apply_mapping_to_record_batch(batch: RecordBatch) -> RecordBatch {
         ],
     );
 
-    print_to_js_with_obj(&format!("{:?}", batch).into());
+    // print_to_js_with_obj(&format!("{:?}", batch).into());
 
     let mut op_unique: HashSet<&str> = HashSet::from_iter(operator_vec);
     op_unique.remove("analyzeplan1");

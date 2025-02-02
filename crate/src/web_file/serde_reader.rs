@@ -5,7 +5,7 @@ use serde::Deserialize;
 use serde_json::{Map, Value};
 
 use super::{parquet_reader::BufferReader, streambuf::WebFileReader};
-use crate::{web_file::serde_reader::Value::Number};
+use crate::web_file::serde_reader::Value::Number;
 
 #[derive(Deserialize, Debug, Clone)]
 struct Dictionary {
@@ -13,8 +13,6 @@ struct Dictionary {
     pipelines: Map<String, Value>,
     events: Map<String, Value>,
     srclines: Map<String, Value>,
-    dso: Map<String, Value>,
-    mapping: Map<String, Value>,
     op_extension: Map<String, Value>,
     physical_op: Map<String, Value>,
 }
@@ -23,8 +21,6 @@ struct Dictionary {
 pub struct DictionaryUri {
     pub pipeline: Option<String>,
     pub uir: Option<String>,
-    #[serde(rename = "instrId")]
-    pub instrid: Option<String>,
     pub op: Option<String>,
 }
 

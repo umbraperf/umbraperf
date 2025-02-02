@@ -11,13 +11,6 @@ pub fn mean(data: &[i64]) -> Option<f64> {
     }
 }
 
-// Median
-pub fn median(numbers: &mut [i64]) -> i64 {
-    numbers.sort();
-    let mid = numbers.len() / 2;
-    numbers[mid]
-}
-
 // Mode
 pub fn mode(numbers: &[i64]) -> i64 {
     let mut occurrences = HashMap::new();

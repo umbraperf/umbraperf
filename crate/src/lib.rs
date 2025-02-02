@@ -55,7 +55,6 @@ mod utils {
 
 use crate::utils::bindings::notify_js_finished_reading;
 use utils::bindings;
-use utils::print_to_cons::print_to_js_with_obj;
 use utils::record_batch_util;
 
 // State
@@ -67,16 +66,6 @@ use crate::state::state::set_file_size;
 use crate::state::state::set_unfiltered_record_batch;
 use crate::state::state::set_serde_dict;
 use state::state::get_unfiltered_record_batch;
-
-// TIMER
-fn start_timer() -> instant::Instant {
-    instant::Instant::now()
-}
-
-fn stop_timer(now: instant::Instant, measured_str: &str) {
-    let elapsed = now.elapsed();
-    print_to_js_with_obj(&format!("time passed: {:?}, for {:?}", elapsed, measured_str).into());
-}
 
 // RECORD_BATCHES
 fn init_batches(file_size: i32) -> Vec<RecordBatch> {

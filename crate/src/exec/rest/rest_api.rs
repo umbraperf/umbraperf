@@ -7,7 +7,6 @@ use crate::{
     record_batch_util::send_record_batch_to_js,
     state::state::{get_query_from_cache, insert_query_to_cache, get_filter_query_from_cache},
     utils::{
-        print_to_cons::print_to_js_with_obj,
         record_batch_util::combine_to_one_record_batch,
         string_util::{split_at_comma, split_at_double_and, split_at_question_mark, split_at_to}, record_batch_schema::RecordBatchSchema, array_util::get_stringarray_column,
     },
@@ -273,8 +272,8 @@ fn exec_filters(record_batch: RecordBatch, restful_string: &str) -> RecordBatch 
 
 pub fn finish_query_exec(record_batch: RecordBatch, restful_string: &str) {
     if false {
-        print_to_js_with_obj(&format!("{:?}", restful_string).into());
-        print_to_js_with_obj(&format!("{:?}", record_batch).into());
+        // print_to_js_with_obj(&format!("{:?}", restful_string).into());
+        // print_to_js_with_obj(&format!("{:?}", record_batch).into());
     }
     send_record_batch_to_js(&record_batch);
     insert_query_to_cache(restful_string, record_batch);

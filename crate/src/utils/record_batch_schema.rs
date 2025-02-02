@@ -6,5 +6,4 @@ pub enum RecordBatchSchema {
     _Addr = 4,
     Uri = 5,
     OpExtension = 6,
-    Physical = 7,
 }

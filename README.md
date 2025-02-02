@@ -35,6 +35,8 @@ yarn install
 yarn start
 ```
 
+## Project Status
+
 ### Migration to React v18
 
 React Flow Version 10 needs following migration to work with React v18:

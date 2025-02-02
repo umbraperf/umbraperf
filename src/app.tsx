@@ -30,8 +30,6 @@ function NoMatch() {
 
 
 export default function App() {
-    console.log("App")
-    console.log(styles)
     return (
         <AppContextProvider value={Config.appContext}>
             <ReduxProvider store={Config.store}>

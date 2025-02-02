@@ -19,8 +19,6 @@ interface Props {
 }
 
 function ProfilesMenu(props: Props) {
-    console.log("sets")
-    console.log(styles)
 
     const StyledMenuItem = withStyles((theme) => ({
         root: {

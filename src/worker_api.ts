@@ -1,10 +1,8 @@
-import * as Controller from './controller';
-import * as model from './worker';
 import * as ArrowTable from "../node_modules/apache-arrow/table";
-import { ICalculateChartDataRequestData } from './worker';
+import * as Controller from './controller';
 import * as BackendApi from './model/backend_queries';
-
-
+import * as model from './worker';
+import { ICalculateChartDataRequestData } from './worker';
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url));
 
@@ -16,7 +14,6 @@ export class WorkerAPI {
     }
 
     //Requests from Main to Worker:
-
     public registerFile(file: File) {
         this.worker.postMessage({
             type: model.WorkerRequestType.REGISTER_FILE,
@@ -25,7 +22,6 @@ export class WorkerAPI {
     }
 
     public calculateChartData(backendQuery: string, requestId: number, metaRequest: boolean, backendQueryType: BackendApi.BackendQueryType) {
-        console.log("REQ: " + backendQueryType + ", " + requestId);
         const requestData: ICalculateChartDataRequestData = {
             backendQuery: backendQuery,
             metaRequest: metaRequest,
@@ -56,7 +52,6 @@ worker.addEventListener('message', message => {
             break;
 
         case model.WorkerResponseType.STORE_RESULT:
-            console.log("RESP: " + messageData.backendQueryType + ", " + messageData.requestId);
             const resultRequestId = messageData.requestId;
             const resultChartData = messageData.chartData;
             const resultArrowTable = ArrowTable.Table.from(resultChartData);
@@ -70,8 +65,7 @@ worker.addEventListener('message', message => {
             break;
 
         default:
-            console.log("Unknown message type from worker.");
+            console.error("Unknown message type from worker.");
 
     }
 });
-

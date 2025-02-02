@@ -8,6 +8,7 @@ Tool:  https://umbraperf.github.io/umbraperf
 
 ### Project Directory Layout:
 
+```
 umbraperf/
 │
 ├── src/                  # Frontend (React)
@@ -20,6 +21,7 @@ umbraperf/
 ├── crate/                # Backend (Rust)
 │   ├── exec/
 └── README.md             # << You are here
+```
 
 ## Getting started
 

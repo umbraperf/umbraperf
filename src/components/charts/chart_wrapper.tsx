@@ -1,3 +1,4 @@
+import { Fade } from '@material-ui/core';
 import _ from "lodash";
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
@@ -7,8 +8,6 @@ import * as Controller from '../../controller';
 import * as model from '../../model';
 import * as styles from '../../style/charts.module.css';
 import Spinner from '../utils/spinner/spinner';
-
-import { Fade } from '@material-ui/core';
 import HeatmapsDiffToggler from '../utils/togglers/heatmaps_difference_toggler';
 import HeatmapsOutlierDetectionSlider from '../utils/togglers/heatmaps_outlier_detection_slider';
 import QueryPlan from './queryplan/query_plan_wrapper';

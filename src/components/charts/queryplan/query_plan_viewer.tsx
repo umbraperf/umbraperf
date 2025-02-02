@@ -32,7 +32,7 @@ class QueryPlanViewer extends React.Component<Props, {}> {
     createReactFlowGraph() {
 
         const nodeTypes: NodeTypes = {
-            queryplanNode: QueryplanNode as any,
+            queryplanNode: QueryplanNode as NodeTypes['queryplanNode'],
         };
 
         return <div

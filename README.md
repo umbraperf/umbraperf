@@ -32,3 +32,8 @@ npm install
 ```
 npm start
 ```
+
+### Migration to React v18
+
+React Flow Version 10 needs following migration to work with React v18:
+https://reactflow.dev/learn/troubleshooting/migrate-to-v10

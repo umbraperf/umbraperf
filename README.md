@@ -26,11 +26,11 @@ umbraperf/
 Node version >= 18.0.0
 
 ```
-npm install
+yarn install
 ```
 
 ```
-npm start
+yarn start
 ```
 
 ### Migration to React v18

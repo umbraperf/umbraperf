@@ -14,7 +14,7 @@ use parquet::{
 };
 use std::{collections::HashSet, io::Cursor, iter::FromIterator, sync::Arc};
 
-use super::{array_util::{get_floatarray_column, get_int64_column, get_uint_column}, print_to_cons::print_to_js_with_obj};
+use super::array_util::{get_floatarray_column, get_int64_column, get_uint_column};
 
 pub fn create_record_batch(schema: SchemaRef, columns: Vec<ArrayRef>) -> RecordBatch {
     return RecordBatch::try_new(schema, columns).unwrap();

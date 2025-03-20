@@ -36,7 +36,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build/release/**
+          path: build/release
         
   deploy:
     name: deploy

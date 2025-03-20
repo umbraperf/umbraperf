@@ -32,21 +32,25 @@ jobs:
       - run: yarn install
       - run: yarn build:release
 
-      # Upload build artifacts
+      # Upload build artifacts (updated to v4)
       - uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build/release
-        
+          path: build/release/**
+
   deploy:
     name: deploy
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: build
-    - uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build
+      # Download build artifacts (updated to v4)
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build  # Ensure correct path for deployment
+
+      # Deploy to GitHub Pages
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build  # Corrected path for deployment

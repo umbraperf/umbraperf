@@ -12,17 +12,31 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: stable
-        targets: wasm32-unknown-unknown
-    - run: yarn install
-    - run: yarn build:release
-    - uses: actions/upload-artifact@v1
-      with:
-        name: build
-        path: build/release
+      - uses: actions/checkout@v2
+
+      # Set up Rust with version 1.61.0
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: 1.61.0
+          targets: wasm32-unknown-unknown
+
+      # Set up Node.js with version 16.15.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.15.0
+
+      # Install Yarn 1.22.18
+      - run: npm install -g yarn@1.22.18
+
+      # Install dependencies and build the project
+      - run: yarn install
+      - run: yarn build:release
+
+      # Upload build artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build/release/**
         
   deploy:
     name: deploy

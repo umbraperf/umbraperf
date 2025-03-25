@@ -123,6 +123,7 @@ fn eval_operations(mut record_batch: RecordBatch, op_vec: Vec<&str>) -> Option<R
                 record_batch = rel_freq_pars(record_batch, params);
             }
             "relfreq_csv" => {
+                print_to_js_with_obj(&format!("Inside relfreq_csv").into());
                 let serde_dict = get_serde_dict().unwrap();
                 let csv_data = &serde_dict.tmam_csv;
                 print_to_js_with_obj(&format!("Read CSV data: {:?}", csv_data).into());

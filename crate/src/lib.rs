@@ -113,17 +113,30 @@ pub fn analyze_file(file_size: i32) {
 pub fn request_chart_data(rest_query: &str) {
     //let timer = start_timer();
     if rest_query.starts_with("relfreq_csv") {
-        process_custom_batch_request();
+        process_custom_batch_request(rest_query);
         return;
     }
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
     //stop_timer(timer, rest_query);
 }
 
-fn process_custom_batch_request() {
+fn process_custom_batch_request(rest_query: &str) {
     print_to_js_with_obj(&format!("Inside relfreq_csv").into());
     let serde_dict = get_serde_dict().unwrap();
     let batch = &serde_dict.batch;
+
+    let time_filter = {
+        let parts: Vec<&str> = rest_query.split('?').collect();
+        if parts.len() > 1 {
+            parts[1].to_string()
+        } else {
+            "".to_string()
+        }
+    };
+
+    // Parse time filter if it exists
+    let (start_time, end_time) = parse_time_filter(&time_filter);
+    print_to_js_with_obj(&format!("Time filter: start={:?}, end={:?}", start_time, end_time).into());
 
     // Extract schema and columns
     let schema = batch.schema();
@@ -148,6 +161,13 @@ fn process_custom_batch_request() {
     for i in 0..batch.num_rows() {
         let raw_bucket = batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
         let bucket = (raw_bucket - first_bucket) / 1000.0 / 1000.0;
+
+        // Apply time filter if it exists
+        if let (Some(start), Some(end)) = (start_time, end_time) {
+            if bucket < start || bucket > end {
+                continue; // Skip this row if outside the time range
+            }
+        }
 
         // each column is a category
         for j in 1..num_columns {
@@ -175,4 +195,23 @@ fn process_custom_batch_request() {
     print_to_js_with_obj(&format!("Result batch: {:?}", result_batch).into());
 
     send_record_batch_to_js(&result_batch);
+}
+
+// Helper function to parse time filter
+fn parse_time_filter(filter: &str) -> (Option<f64>, Option<f64>) {
+    if filter.is_empty() || filter == "-1from_to-1" {
+        return (None, None); // No filtering
+    }
+
+    if let Some(from_to_idx) = filter.find("from_to") {
+        let start_str = &filter[0..from_to_idx];
+        let end_str = &filter[from_to_idx + "from_to".len()..];
+
+        let start = start_str.parse::<f64>().ok();
+        let end = end_str.parse::<f64>().ok();
+
+        return (start, end);
+    }
+
+    (None, None)
 }

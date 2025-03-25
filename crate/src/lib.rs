@@ -137,9 +137,18 @@ fn process_custom_batch_request() {
     let mut categories = Vec::new();
     let mut frequencies = Vec::new();
 
+    // Get the first bucket value to use as reference
+    let first_bucket = if batch.num_rows() > 0 {
+        batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(0)
+    } else {
+        0.0
+    };
+
     // Iterate over the record batch
     for i in 0..batch.num_rows() {
-        let bucket = batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+        let raw_bucket = batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+        let bucket = (raw_bucket - first_bucket) / 1000.0 / 1000.0;
+
         // each column is a category
         for j in 1..num_columns {
             let category = schema.field(j).name();

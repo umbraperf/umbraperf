@@ -22,7 +22,6 @@ export class RequestController {
         });
 
         if (!metaRequest && chartType) {
-            console.log("HERE", chartType)
             store.dispatch({
                 type: model.StateMutationType.SET_LOADING_CHART_READABLE_NAME,
                 data: {[requestingChartId as number]: model.ChartTypeReadable[chartType as keyof typeof model.ChartTypeReadable]},
@@ -188,10 +187,10 @@ export function requestChartData(controller: RequestController, chartId: number,
             break;
         
         case model.ChartType.SWIM_LANES_TMAM:
-            restQueryType = model.BackendQueryType.GET_REL_TMAM_DISTR_PER_BUCKET;
+            restQueryType = model.BackendQueryType.GET_REL_TMAM_DISTR;
             restQuery = model.createBackendQuery({
                 type: restQueryType,
-                data: { bucketSize: store.getState().currentBucketSize, timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
+                data: { timeBucketFrame: store.getState().currentTimeBucketSelectionTuple },
             });
             break;
 

@@ -12,9 +12,7 @@ interface AppstateProps {
     currentEvent: string;
     operators: model.IOperatorsData | undefined;
     currentInterpolation: String,
-    currentBucketSize: number,
-    chartData: model.ISwimlanesData,
-    currentAbsoluteSwimLaneMaxYDomain: number,
+    chartData: model.ISwimlanesTmamData,
 }
 
 type Props = model.ISwimlanesProps & AppstateProps;
@@ -27,9 +25,6 @@ class SwimLanesTmam extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            currentAbsoluteYDomainValue: 0,
-        };
 
         this.createVisualizationSpec = this.createVisualizationSpec.bind(this);
         this.handleVegaView = this.handleVegaView.bind(this);
@@ -60,10 +55,9 @@ class SwimLanesTmam extends React.Component<Props, State> {
 
     createVisualizationData() {
 
-        const chartDataElement: model.ISwimlanesData = {
+        const chartDataElement: model.ISwimlanesTmamData = {
             buckets: this.props.chartData.buckets,
-            operatorsNice: this.props.chartData.operatorsNice,
-            operators: this.props.chartData.operators,
+            category: this.props.chartData.category,
             frequency: this.props.chartData.frequency,
         }
 
@@ -73,11 +67,11 @@ class SwimLanesTmam extends React.Component<Props, State> {
             transform: [
                 {
                     type: "flatten",
-                    fields: ["buckets", "operatorsNice", "operators", "frequency"]
+                    fields: ["buckets", "category", "frequency"]
                 },
                 {
                     type: "collect",
-                    sort: { field: "operators" }
+                    sort: { field: "category" }
                 },
                 {
                     type: "stack",
@@ -86,24 +80,12 @@ class SwimLanesTmam extends React.Component<Props, State> {
                 }
             ]
         };
-
         return { data: data, chartDataElement: chartDataElement };
 
     }
 
     createVisualizationSpec() {
         const visData = this.createVisualizationData();
-
-        const getAbsoluteYDomain = () => {
-            //use current plus percentage of difference to max if smaller then half of max, else use max
-            const differenceCurrentMaxYDomain = this.props.currentAbsoluteSwimLaneMaxYDomain - this.state.currentAbsoluteYDomainValue;
-            if (differenceCurrentMaxYDomain > this.props.currentAbsoluteSwimLaneMaxYDomain / 2) {
-                const differencePercentage = 70;
-                return this.state.currentAbsoluteYDomainValue + ((differenceCurrentMaxYDomain * differencePercentage) / 100);
-            } else {
-                return this.props.currentAbsoluteSwimLaneMaxYDomain;
-            }
-        }
 
         const spec: VisualizationSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -113,7 +95,7 @@ class SwimLanesTmam extends React.Component<Props, State> {
             autosize: { type: "fit", resize: false },
 
             title: {
-                text: 'Swim Lanes (variable Pipelines)',
+                text: 'Swim Lanes (TMAM)',
                 align: model.chartConfiguration.titleAlign,
                 dy: model.chartConfiguration.titlePadding,
                 fontSize: model.chartConfiguration.titleFontSize,
@@ -122,13 +104,6 @@ class SwimLanesTmam extends React.Component<Props, State> {
 
             data: [
                 visData.data
-            ],
-
-            signals: [
-                {
-                    name: "getMaxY1Absolute",
-                    value: 10
-                }
             ],
 
             scales: [
@@ -147,20 +122,14 @@ class SwimLanesTmam extends React.Component<Props, State> {
                     range: "height",
                     nice: true,
                     zero: true,
-                    domain: this.props.absoluteValues ? [0, getAbsoluteYDomain()] : [0, 1]
+                    domain: [0, 1]
                 },
                 {
                     name: "color",
                     type: "ordinal",
-                    range: model.chartConfiguration.colorScale!.operatorsIdColorScale,
-                    domain: this.props.operators!.operatorsId,
-                },
-                {
-                    name: "colorOperatorsGroup",
-                    type: "ordinal",
-                    domain: this.props.operators!.operatorsGroupSorted,
                     range: model.chartConfiguration.colorScale!.operatorsGroupScale,
-                }
+                    domain: this.props.chartData.category,
+                },
             ],
             axes: [
                 {
@@ -181,7 +150,7 @@ class SwimLanesTmam extends React.Component<Props, State> {
                     orient: "left",
                     scale: "y",
                     zindex: 1,
-                    title: this.props.absoluteValues ? model.chartConfiguration.areaChartYTitleAbsolute : model.chartConfiguration.areaChartYTitle,
+                    title: model.chartConfiguration.areaChartYTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
                     labelSeparation: model.chartConfiguration.areaChartYLabelSeparation,
@@ -198,7 +167,7 @@ class SwimLanesTmam extends React.Component<Props, State> {
                         facet: {
                             name: "series",
                             data: "table",
-                            groupby: "operators"
+                            groupby: "category"
                         }
                     },
                     marks: [
@@ -226,12 +195,12 @@ class SwimLanesTmam extends React.Component<Props, State> {
                                     },
                                     fill: {
                                         scale: "color",
-                                        field: "operators"
+                                        field: "category"
                                     },
-                                    tooltip:
-                                    {
-                                        signal: `{${this.props.absoluteValues ? model.chartConfiguration.areaChartAbsoluteTooltip : model.chartConfiguration.areaChartTooltip}}`,
-                                    },
+                                    // tooltip:
+                                    // {
+                                    //     signal: model.chartConfiguration.areaChartTmumTooltip,
+                                    // },
                                 },
                                 update: {
                                     fillOpacity: {
@@ -249,13 +218,13 @@ class SwimLanesTmam extends React.Component<Props, State> {
                 }
             ],
             legends: [{
-                fill: "colorOperatorsGroup",
-                title: "Operators",
+                fill: "color",
+                title: "Cathegories",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,
                 symbolSize: model.chartConfiguration.legendSymbolSize,
-                values: [...new Set(this.props.operators!.operatorsGroupSorted)],
+                values: [...new Set(this.props.chartData.category)],
             }
             ],
         } as VisualizationSpec;
@@ -269,9 +238,7 @@ const mapStateToProps = (state: model.AppState, ownProps: model.ISwimlanesProps)
     currentEvent: state.currentEvent,
     operators: state.operators,
     currentInterpolation: state.currentInterpolation,
-    currentBucketSize: state.currentBucketSize,
     chartData: state.chartData[ownProps.chartId].chartData.data as model.ISwimlanesData,
-    currentAbsoluteSwimLaneMaxYDomain: state.currentAbsoluteSwimLaneMaxYDomain,
 });
 
 

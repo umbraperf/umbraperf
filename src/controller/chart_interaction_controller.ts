@@ -203,24 +203,24 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
 
     const metadataAvailable = isMetadataAvailable();
     const chartDataInputChangedGeneral = isChartDataInputChangedGeneral();
-    const evenChartDataInputChangedGeneral = isEventChartDataInputChangedGeneral();
+    const eventChartDataInputChangedGeneral = isEventChartDataInputChangedGeneral();
 
     const chartDataInputChangedChart: () => boolean = () => {
         switch (chartType) {
             case model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize) ?
                     true :
                     false;
             case model.ChartType.SUNBURST_CHART:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.BAR_CHART:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple) ||
                     !_.isEqual(nextProps.currentPipeline, props.currentPipeline)) ?
@@ -228,7 +228,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     false;
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES:
             case model.ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
@@ -237,14 +237,13 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     true :
                     false;
             case model.ChartType.SWIM_LANES_TMAM:
-                return (nextProps.currentView !== props.currentView ||
-                    nextProps.currentBucketSize !== props.currentBucketSize ||
+                return (chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
@@ -253,7 +252,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     true :
                     false;
             case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     nextProps.currentBucketSize !== props.currentBucketSize ||
                     nextProps.memoryHeatmapsDifferenceRepresentation !== props.memoryHeatmapsDifferenceRepresentation ||
@@ -269,7 +268,7 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     true :
                     false;
             case model.ChartType.QUERY_PLAN:
-                return (evenChartDataInputChangedGeneral ||
+                return (eventChartDataInputChangedGeneral ||
                     chartDataInputChangedGeneral ||
                     !_.isEqual(nextProps.currentOperator, props.currentOperator) ||
                     !_.isEqual(nextProps.currentPipeline, props.currentPipeline) ||

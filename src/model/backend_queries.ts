@@ -22,7 +22,7 @@ export enum BackendQueryType {
     GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT = "GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT",
     GET_GROUPED_UIR_LINES = "GET_GROUPED_UIR_LINES",
     GET_QUERYPLAN_TOOLTIP_DATA = "GET_QUERYPLAN_TOOLTIP_DATA",
-    GET_REL_TMAM_DISTR_PER_BUCKET = "GET_REL_TMAM_DISTR_PER_BUCKET",
+    GET_REL_TMAM_DISTR = "GET_REL_TMAM_DISTR",
     other = "other",
 }
 
@@ -43,7 +43,7 @@ export type QueryVariant =
     | BackendQuery<BackendQueryType.GET_MEMORY_ACCESSES_PER_TIME_BUCKET_PER_EVENT, { event: string, bucketSize: number, timeBucketFrame: [number, number], showMemoryAccessesDifferences: boolean, outlierDetectionDegree: HeatmapsOutlierDetectionDegrees }>
     | BackendQuery<BackendQueryType.GET_GROUPED_UIR_LINES, { events: Array<string>, pipelines: Array<string> | "All", operators: Array<string> | "All", timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA, { event: string, pipelines: Array<string> | "All", timeBucketFrame: [number, number], operators: Array<string> | "All" }>
-    | BackendQuery<BackendQueryType.GET_REL_TMAM_DISTR_PER_BUCKET, { bucketSize: number, timeBucketFrame: [number, number] }>
+    | BackendQuery<BackendQueryType.GET_REL_TMAM_DISTR, { timeBucketFrame: [number, number] }>
     | BackendQuery<BackendQueryType.other, {}>
     ;
 
@@ -146,8 +146,8 @@ export function createBackendQuery(query: QueryVariant) {
             return `scrline${uirLinesEventFrequencySelections()}/op/pipe/func_flag${uirLinesEventRelativeFrequencySelections()}${pipelinesFilter()}${operatorsFilter()}${timeFilter()}/uir?srclines`;
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
             return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${operatorsFilter()}${timeFilter()}/top(srclines)?${event()}`;
-        case BackendQueryType.GET_REL_TMAM_DISTR_PER_BUCKET:
-            return `relfreq_csv`;
+        case BackendQueryType.GET_REL_TMAM_DISTR:
+            return `relfreq_csv${timeFilter()}`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

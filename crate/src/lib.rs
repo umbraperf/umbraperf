@@ -172,7 +172,7 @@ fn process_custom_batch_request(rest_query: &str) {
         // each column is a category
         for j in 1..num_columns {
             let category = schema.field(j).name();
-            let freq = batch.column(j).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+            let freq = batch.column(j).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i) / 100.0;
             buckets.push(bucket);
             categories.push(category.to_string());
             frequencies.push(freq);

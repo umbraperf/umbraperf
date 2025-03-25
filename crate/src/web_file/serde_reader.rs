@@ -150,6 +150,8 @@ impl SerdeDict {
             tmam_csv.push(record);
         }
 
+        print_to_js_with_obj(&format!("csv data is: {:?}", tmam_csv).into());
+
         send_js_query_plan(buf);
 
         return Self {

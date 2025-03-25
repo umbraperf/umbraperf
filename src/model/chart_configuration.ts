@@ -101,10 +101,8 @@ export let chartConfiguration: ChartConfiguration = {
             for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
                 ticks.push(bucketsUnique[i]);
             }
-            console.log("HERE1", ticks)
             return ticks;
         }else{
-            console.log("HERE2")
             return undefined;
         }
     },

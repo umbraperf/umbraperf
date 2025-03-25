@@ -167,6 +167,9 @@ impl SerdeDict {
             let record = result.unwrap();
             tmam_csv.push(record.clone());
 
+            print_to_js_with_obj(&format!("Read CSV data: {:?}", record).into());
+
+
             // Parse values from each record
             time_col.push(record[0].parse::<f64>().unwrap_or(0.0));
             retiring_col.push(record[1].parse::<f64>().unwrap_or(0.0));

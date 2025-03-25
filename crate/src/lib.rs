@@ -1,6 +1,10 @@
 // WASM Bindgen
 extern crate wasm_bindgen;
-use exec::freq::rel_freq;
+use std::sync::Arc;
+
+use arrow::array::{Float64Array, StringArray, Array};
+use arrow::datatypes::DataType;
+use arrow::record_batch::RecordBatch;
 use exec::rest::rest_api_pars::rel_freq_pars;
 use state::state::get_serde_dict;
 use utils::record_batch_util::send_record_batch_to_js;
@@ -11,8 +15,6 @@ extern crate console_error_panic_hook;
 
 // Arrow
 extern crate arrow;
-use arrow::record_batch::RecordBatch;
-use arrow::array::Array;
 
 // Reader
 mod web_file {
@@ -138,27 +140,28 @@ fn process_custom_batch_request() {
     // Iterate over the record batch
     for i in 0..batch.num_rows() {
         let bucket = batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
-        let category = batch.column(1).as_any().downcast_ref::<arrow::array::StringArray>().unwrap().value(i);
-        let freq = batch.column(2).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
-
-        buckets.push(bucket);
-        categories.push(category);
-        frequencies.push(freq);
+        // each column is a category
+        for j in 1..num_columns {
+            let category = schema.field(j).name();
+            let freq = batch.column(j).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+            buckets.push(bucket);
+            categories.push(category.to_string());
+            frequencies.push(freq);
+        }
     }
 
-    let result_batch = create_new_record_batch(
-        vec!["bucket", "category", "freq"],
-        vec![
-            DataType::Float64,
-            DataType::Utf8,
-            DataType::Float64,
-        ],
+    let result_batch = RecordBatch::try_new(
+        Arc::new(arrow::datatypes::Schema::new(vec![
+            arrow::datatypes::Field::new("bucket", DataType::Float64, false),
+            arrow::datatypes::Field::new("category", DataType::Utf8, false),
+            arrow::datatypes::Field::new("freq", DataType::Float64, false),
+        ])),
         vec![
             Arc::new(Float64Array::from(buckets)),
             Arc::new(StringArray::from(categories)),
             Arc::new(Float64Array::from(frequencies)),
         ],
-    );
+    ).unwrap();
 
     print_to_js_with_obj(&format!("Result batch: {:?}", result_batch).into());
 

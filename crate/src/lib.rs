@@ -199,7 +199,10 @@ fn process_custom_batch_request(rest_query: &str) {
 
 // Helper function to parse time filter
 fn parse_time_filter(filter: &str) -> (Option<f64>, Option<f64>) {
+    print_to_js_with_obj(&format!("Parsing time filter: '{}'", filter).into());
+
     if filter.is_empty() || filter == "-1from_to-1" {
+        print_to_js_with_obj(&"Empty filter or default value, returning None".into());
         return (None, None); // No filtering
     }
 
@@ -207,11 +210,16 @@ fn parse_time_filter(filter: &str) -> (Option<f64>, Option<f64>) {
         let start_str = &filter[0..from_to_idx];
         let end_str = &filter[from_to_idx + "from_to".len()..];
 
-        let start = start_str.parse::<f64>().ok();
-        let end = end_str.parse::<f64>().ok();
+        print_to_js_with_obj(&format!("Split filter - start_str: '{}', end_str: '{}'", start_str, end_str).into());
 
-        return (start, end);
+        let start = start_str.parse::<f64>();
+        let end = end_str.parse::<f64>();
+
+        print_to_js_with_obj(&format!("Parsed values - start: {:?}, end: {:?}", start, end).into());
+
+        return (start.ok(), end.ok());
     }
 
+    print_to_js_with_obj(&"No 'from_to' found in filter, returning None".into());
     (None, None)
 }

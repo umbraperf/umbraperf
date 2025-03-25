@@ -112,9 +112,8 @@ pub fn request_chart_data(rest_query: &str) {
         let batch = &serde_dict.batch;
         print_to_js_with_obj(&format!("Read CSV data: {:?}", batch).into());
 
-        // 1) convert csv data to record batch
-        // let record_batch = rel_freq_pars(record_batch, params);
-        //  send_record_batch_to_js(&record_batch);
+        // let record_batch = rel_freq_pars(batch.clone(), params);
+        send_record_batch_to_js(&record_batch);
 
         return;
     }

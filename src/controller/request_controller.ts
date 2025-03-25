@@ -25,7 +25,7 @@ export class RequestController {
             console.log("HERE", chartType)
             store.dispatch({
                 type: model.StateMutationType.SET_LOADING_CHART_READABLE_NAME,
-                data: chartType,
+                data: {[requestingChartId as number]: model.ChartTypeReadable[chartType as keyof typeof model.ChartTypeReadable]},
             });
         }
 

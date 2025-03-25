@@ -147,7 +147,7 @@ export function createBackendQuery(query: QueryVariant) {
         case BackendQueryType.GET_QUERYPLAN_TOOLTIP_DATA:
             return `scrline/perc/op/srcline_num/total${pipelinesFilter()}${operatorsFilter()}${timeFilter()}/top(srclines)?${event()}`;
         case BackendQueryType.GET_REL_TMAM_DISTR_PER_BUCKET:
-            return `bucket/tmam/relfreq${timeFilter()}/relfreq?${bucketSize()}!${time()}`;
+            return `relfreq_csv`;
         case BackendQueryType.other:
             return 'error - bad request to backend';
     }

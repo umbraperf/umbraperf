@@ -1,4 +1,4 @@
-import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, ChartTypeReadable, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated } from '.';
+import { AppState, createProfiles, ProfileType, IKpiData, IResult, BackendQueryType, IChartDataKeyValue, ViewType, ChartType, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated, IResultLoadingReadableName } from '.';
 
 /// A mutation
 export type StateMutation<T, P> = {
@@ -53,7 +53,7 @@ export type StateMutationVariant =
     | StateMutation<StateMutationType.SET_UMBRAPERF_FILE_PARSING_FINISHED, boolean>
     | StateMutation<StateMutationType.SET_RESET_STATE, undefined>
     | StateMutation<StateMutationType.SET_CURRENT_CHART, ChartType>
-    | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, ChartType>
+    | StateMutation<StateMutationType.SET_LOADING_CHART_READABLE_NAME, IResultLoadingReadableName>
     | StateMutation<StateMutationType.SET_CURRENT_EVENT, string>
     | StateMutation<StateMutationType.SET_CURRENT_MULTIPLE_EVENT, [string, string]>
     | StateMutation<StateMutationType.SET_CURRENT_PIPELINE, Array<string>>
@@ -123,7 +123,10 @@ export class AppStateMutation {
             case StateMutationType.SET_LOADING_CHART_READABLE_NAME:
                 return {
                     ...state,
-                    loadingChartReadableName: state.loadingChartReadableName.concat([ChartTypeReadable[mutation.data]]),
+                    loadingChartReadableName: {
+                        ...state.loadingChartReadableName, 
+                        ...mutation.data  // Merge new chartId → ChartTypeReadable mapping
+                    }
                 };
             case StateMutationType.SET_CURRENT_EVENT:
                 return {

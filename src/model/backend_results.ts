@@ -1,4 +1,5 @@
 import * as ArrowTable from "apache-arrow/table";
+import { ChartType, ChartTypeReadable } from "./chart_types";
 
 export interface IResult {
     request: number;
@@ -8,6 +9,8 @@ export interface IResult {
 export interface IResultLoading {
     [chartId: number]: boolean;
 }
+
+export interface IResultLoadingReadableName {[chartId: number]: ChartTypeReadable}
 
 export function createResultObject(request: number, resultTable: ArrowTable.Table<any>): IResult {
     return {

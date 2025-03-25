@@ -71,8 +71,8 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
 
             <Box clone order={{ xs: 6, sm: 6, lg: 6 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} >
-                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
-                        <div className={styles.dashboardGridCellChartContainer}>
+                    <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                        <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
                             <ChartWrapper chartType={model.ChartType.SWIM_LANES_TMAM} />
                         </div>
                     </Box>

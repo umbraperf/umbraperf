@@ -18,6 +18,7 @@ export type ChartDataVariant =
     | ChartData<ChartType.BAR_CHART, IBarChartData>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES, ISwimlanesData>
     | ChartData<ChartType.SWIM_LANES_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesData>
+    | ChartData<ChartType.SWIM_LANES_TMAM, ISwimlanesTmamData>
     | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES, ISwimlanesCombinedData>
     | ChartData<ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE, ISwimlanesCombinedData>
     | ChartData<ChartType.BAR_CHART_ACTIVITY_HISTOGRAM, IBarChartActivityHistogramData>
@@ -43,6 +44,12 @@ export interface ISwimlanesData {
     buckets: Array<number>,
     operators: Array<string>,
     operatorsNice: Array<string>,
+    frequency: Array<number>,
+}
+
+export interface ISwimlanesTmamData {
+    buckets: Array<number>,
+    category: Array<string>,
     frequency: Array<number>,
 }
 

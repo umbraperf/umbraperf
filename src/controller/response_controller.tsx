@@ -187,6 +187,12 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                         frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
                     }
                 });
+            console.log({
+                buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                operatorsNice: resultObject.rustResultTable.getColumn('op_ext').toArray(),
+                operators: resultObject.rustResultTable.getColumn('operator').toArray(),
+                frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
+            })
             toggleResultLoadingFlag = true;
             break;
 
@@ -377,6 +383,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
                         nodeTooltipData: queryplanTooltipData,
                         queryplanData: store.getState().queryplanJson,
                     },
+                });
+            toggleResultLoadingFlag = true;
+            break;
+
+        case model.BackendQueryType.GET_REL_TMAM_DISTR_PER_BUCKET:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.SWIM_LANES_TMAM,
+                    data: {
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        category: resultObject.rustResultTable.getColumn('operator').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('relfreq').toArray(),
+                    }
                 });
             toggleResultLoadingFlag = true;
             break;

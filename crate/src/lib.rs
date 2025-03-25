@@ -1,5 +1,6 @@
 // WASM Bindgen
 extern crate wasm_bindgen;
+use state::state::get_serde_dict;
 use wasm_bindgen::prelude::*;
 
 // Aux
@@ -105,6 +106,14 @@ pub fn analyze_file(file_size: i32) {
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
     //let timer = start_timer();
+    if rest_query == "relfreq_csv" {
+        print_to_js_with_obj(&format!("Inside relfreq_csv").into());
+        let serde_dict = get_serde_dict().unwrap();
+        let csv_data = &serde_dict.tmam_csv;
+        print_to_js_with_obj(&format!("Read CSV data: {:?}", csv_data).into());
+
+        return;
+    }
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
     //stop_timer(timer, rest_query);
 }

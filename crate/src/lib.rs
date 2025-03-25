@@ -135,68 +135,16 @@ fn process_custom_batch_request() {
     let mut categories = Vec::new();
     let mut frequencies = Vec::new();
 
-    // Get unique buckets (assuming first column contains bucket/time values)
-    let bucket_array = crate::utils::array_util::get_floatarray_column(batch, bucket_col_idx);
-    let mut unique_buckets = Vec::new();
-    for i in 0..bucket_array.len() {
-        let value = bucket_array.value(i);
-        if !unique_buckets.contains(&value) {
-            unique_buckets.push(value);
-        }
+    // Iterate over the record batch
+    for i in 0..batch.num_rows() {
+        let bucket = batch.column(bucket_col_idx).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+        let category = batch.column(1).as_any().downcast_ref::<arrow::array::StringArray>().unwrap().value(i);
+        let freq = batch.column(2).as_any().downcast_ref::<arrow::array::Float64Array>().unwrap().value(i);
+
+        buckets.push(bucket);
+        categories.push(category);
+        frequencies.push(freq);
     }
-    unique_buckets.sort_by(|a, b| a.partial_cmp(b).unwrap());
-
-    // For each column (except bucket column)
-    for col_idx in 1..num_columns {
-        let col_name = schema.field(col_idx).name();
-
-        // Get column data
-        let col_data = batch.column(col_idx);
-
-        // Process based on column type
-        if let Some(string_array) = col_data.as_any().downcast_ref::<arrow::array::StringArray>() {
-            // Find unique categories
-            let mut unique_categories = Vec::new();
-            for i in 0..string_array.len() {
-                let value = string_array.value(i);
-                if !unique_categories.contains(&value) {
-                    unique_categories.push(value);
-                }
-            }
-
-            // Calculate frequencies for each bucket-category combination
-            for &bucket in &unique_buckets {
-                let total_in_bucket = bucket_array.iter()
-                    .filter(|&x| x == Some(bucket))
-                    .count() as f64;
-
-                for &category in &unique_categories {
-                    // Count occurrences of this category in this bucket
-                    let mut count = 0;
-                    for i in 0..batch.num_rows() {
-                        if bucket_array.value(i) == bucket &&
-                           string_array.value(i) == category {
-                            count += 1;
-                        }
-                    }
-
-                    // Calculate relative frequency
-                    let freq = if total_in_bucket > 0.0 {
-                        count as f64 / total_in_bucket
-                    } else {
-                        0.0
-                    };
-
-                    // Add to result vectors
-                    buckets.push(bucket);
-                    categories.push(category);
-                    frequencies.push(freq);
-                }
-            }
-        }
-        // Add similar blocks for other array types if needed
-    }
-
 
     let result_batch = create_new_record_batch(
         vec!["bucket", "category", "freq"],

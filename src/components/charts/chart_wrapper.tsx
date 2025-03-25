@@ -143,7 +143,7 @@ class ChartWrapper extends React.Component<Props, State> {
             if (newWidth !== this.state.width || newHeight !== this.state.height) {
                 child.style.display = 'none';
 
-                if(this.props.chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM){
+                if (this.props.chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM) {
                     Controller.resetSelectionTimeframe();
                 }
 
@@ -235,19 +235,6 @@ class ChartWrapper extends React.Component<Props, State> {
                 chartClass = SwimLanesMultiplePipelines;
                 break;
 
-            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
-                const swimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
-                    ...partialChartProps,
-                    height: this.state.height,
-                    absoluteValues: true,
-                };
-                specificChart = {
-                    type: this.props.chartType,
-                    props: swimLanesCombinedMultiplePipelinesAbsoluteProps,
-                };
-                chartClass = SwimLanesCombinedMultiplePipelines;
-                break;
-
             case model.ChartType.SWIM_LANES_TMAM:
                 const swimLanesTmamProps: model.ISwimlanesProps = {
                     ...partialChartProps,
@@ -259,6 +246,19 @@ class ChartWrapper extends React.Component<Props, State> {
                     props: swimLanesTmamProps,
                 };
                 chartClass = SwimLanesTmam;
+                break;
+
+            case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
+                const swimLanesCombinedMultiplePipelinesAbsoluteProps: model.ISwimlanesProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                    absoluteValues: true,
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesCombinedMultiplePipelinesAbsoluteProps,
+                };
+                chartClass = SwimLanesCombinedMultiplePipelines;
                 break;
 
             case model.ChartType.MEMORY_ACCESS_HEATMAP_CHART:

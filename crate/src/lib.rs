@@ -1,5 +1,6 @@
 // WASM Bindgen
 extern crate wasm_bindgen;
+use exec::rest::rest_api_pars::rel_freq_pars;
 use state::state::get_serde_dict;
 use utils::record_batch_util::send_record_batch_to_js;
 use wasm_bindgen::prelude::*;
@@ -107,13 +108,14 @@ pub fn analyze_file(file_size: i32) {
 #[wasm_bindgen(js_name = "requestChartData")]
 pub fn request_chart_data(rest_query: &str) {
     //let timer = start_timer();
-    if rest_query == "relfreq_csv" {
+    if rest_query.starts_with("relfreq_csv") {
         print_to_js_with_obj(&format!("Inside relfreq_csv").into());
         let serde_dict = get_serde_dict().unwrap();
         let batch = &serde_dict.batch;
         print_to_js_with_obj(&format!("Read CSV data: {:?}", batch).into());
 
-        // let record_batch = rel_freq_pars(batch.clone(), params);
+        let params = rest_query.split('?').nth(1).unwrap_or("");
+        let record_batch = rel_freq_pars(batch.clone(), params);
         send_record_batch_to_js(&batch);
 
         return;

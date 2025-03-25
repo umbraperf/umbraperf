@@ -162,7 +162,9 @@ impl SerdeDict {
         let mut frontend_bound_col: Vec<f64> = Vec::new();
         let mut bad_speculation_col: Vec<f64> = Vec::new();
 
-        let mut rdr = csv::Reader::from_reader(buf_reader);
+        let mut rdr = csv::ReaderBuilder::new()
+            .delimiter(b';')
+            .from_reader(buf_reader);
         for result in rdr.records() {
             let record = result.unwrap();
             tmam_csv.push(record.clone());
@@ -170,11 +172,11 @@ impl SerdeDict {
             print_to_js_with_obj(&format!("Read CSV data: {:?}", record).into());
 
             // Parse values from each record
-            time_col.push(record.get(0).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
-            retiring_col.push(record.get(1).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
-            backend_bound_col.push(record.get(2).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
-            frontend_bound_col.push(record.get(3).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
-            bad_speculation_col.push(record.get(4).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
+            time_col.push(record.get(0).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            retiring_col.push(record.get(1).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            backend_bound_col.push(record.get(2).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            frontend_bound_col.push(record.get(3).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            bad_speculation_col.push(record.get(4).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
         }
 
         print_to_js_with_obj(&format!("read read cols").into());

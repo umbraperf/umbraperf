@@ -109,8 +109,8 @@ pub fn request_chart_data(rest_query: &str) {
     if rest_query == "relfreq_csv" {
         print_to_js_with_obj(&format!("Inside relfreq_csv").into());
         let serde_dict = get_serde_dict().unwrap();
-        let csv_data = &serde_dict.tmam_csv;
-        print_to_js_with_obj(&format!("Read CSV data: {:?}", csv_data).into());
+        let batch = &serde_dict.batch;
+        print_to_js_with_obj(&format!("Read CSV data: {:?}", batch).into());
 
         // 1) convert csv data to record batch
         // let record_batch = rel_freq_pars(record_batch, params);

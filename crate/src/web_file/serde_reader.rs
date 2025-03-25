@@ -36,7 +36,7 @@ pub struct DictionaryUri {
 pub struct SerdeDict {
     pub dict: HashMap<i64, HashMap<u64, String>>,
     pub uri_dict: HashMap<String, DictionaryUri>,
-    pub tmam_csv: Vec<StringRecord>,
+    pub batch: RecordBatch
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
@@ -169,13 +169,12 @@ impl SerdeDict {
 
             print_to_js_with_obj(&format!("Read CSV data: {:?}", record).into());
 
-
             // Parse values from each record
-            time_col.push(record[0].parse::<f64>().unwrap_or(0.0));
-            retiring_col.push(record[1].parse::<f64>().unwrap_or(0.0));
-            backend_bound_col.push(record[2].parse::<f64>().unwrap_or(0.0));
-            frontend_bound_col.push(record[3].parse::<f64>().unwrap_or(0.0));
-            bad_speculation_col.push(record[4].parse::<f64>().unwrap_or(0.0));
+            time_col.push(record.get(0).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
+            retiring_col.push(record.get(1).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
+            backend_bound_col.push(record.get(2).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
+            frontend_bound_col.push(record.get(3).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
+            bad_speculation_col.push(record.get(4).unwrap_or("0.0").parse::<f64>().unwrap_or(0.0));
         }
 
         print_to_js_with_obj(&format!("read read cols").into());
@@ -200,7 +199,7 @@ impl SerdeDict {
         return Self {
             dict: hash_map,
             uri_dict: d,
-            tmam_csv: tmam_csv,
+            batch: batch,
         };
     }
 }

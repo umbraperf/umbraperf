@@ -202,6 +202,8 @@ fn parse_time_filter(filter: &str) -> (Option<f64>, Option<f64>) {
     print_to_js_with_obj(&format!("Parsing time filter: '{}'", filter).into());
 
     let filter = filter.strip_prefix("time=").unwrap_or(filter);
+    // replace all "
+    let filter = filter.replace("\"", "");
 
     if filter.is_empty() || filter == "-1from_to-1" {
         print_to_js_with_obj(&"Empty filter or default value, returning None".into());

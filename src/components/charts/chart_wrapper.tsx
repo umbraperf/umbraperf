@@ -297,7 +297,6 @@ class ChartWrapper extends React.Component<Props, State> {
         }
 
         Controller.setCurrentChart(specificChart.type);
-        console.log(specificChart.type, React.createElement(chartClass!, specificChart.props as any))
         return React.createElement(chartClass!, specificChart.props as any);
     }
 

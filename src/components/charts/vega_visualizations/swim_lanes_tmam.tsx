@@ -138,6 +138,7 @@ class SwimLanesTmam extends React.Component<Props, State> {
                     zindex: 1,
                     labelOverlap: true,
                     values: model.chartConfiguration.getSwimLanesXTicks(visData.chartDataElement.buckets, 50, 20, this.props.width),
+                    format: ".0f",
                     title: model.chartConfiguration.areaChartXTitle,
                     titlePadding: model.chartConfiguration.axisPadding,
                     labelFontSize: model.chartConfiguration.axisLabelFontSize,
@@ -197,10 +198,10 @@ class SwimLanesTmam extends React.Component<Props, State> {
                                         scale: "color",
                                         field: "category"
                                     },
-                                    // tooltip:
-                                    // {
-                                    //     signal: model.chartConfiguration.areaChartTmumTooltip,
-                                    // },
+                                    tooltip:
+                                    {
+                                        signal: `{${model.chartConfiguration.areaChartTmumTooltip}}`,
+                                    },
                                 },
                                 update: {
                                     fillOpacity: {

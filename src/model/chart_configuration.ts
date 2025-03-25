@@ -101,8 +101,10 @@ export let chartConfiguration: ChartConfiguration = {
             for (let i = 0; i < bucketsUniqueLength; i = i + delta) {
                 ticks.push(bucketsUnique[i]);
             }
+            console.log("HERE1", ticks)
             return ticks;
         }else{
+            console.log("HERE2")
             return undefined;
         }
     },
@@ -123,7 +125,7 @@ export let chartConfiguration: ChartConfiguration = {
     //Tooltip:
     areaChartTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Relative Frequency': round(datum.frequency * 100)/100",
     areaChartAbsoluteTooltip: "'Time': datum.buckets, 'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Absolute Frequency': datum.frequency",
-    areaChartTmumTooltip: "'Time': datum.buckets",
+    areaChartTmumTooltip: "'Time':  round(datum.buckets), 'Category': datum.category, 'Relative Frequency': round(datum.frequency * 100)/100",
     // donutChartTooltip: "{'Pipeline': datum.pipeline, 'Occurrences': datum.value}",
     activityHistogramTooltip: "{'Time': datum.timeBuckets, 'Event Occurences': datum.occurrences}",
     barChartTooltip: "{'Operator': datum.operatorsNice, 'Operator ID': datum.operators, 'Occurences': datum.values}",

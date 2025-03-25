@@ -1,6 +1,7 @@
 // WASM Bindgen
 extern crate wasm_bindgen;
 use state::state::get_serde_dict;
+use utils::record_batch_util::send_record_batch_to_js;
 use wasm_bindgen::prelude::*;
 
 // Aux
@@ -113,7 +114,7 @@ pub fn request_chart_data(rest_query: &str) {
         print_to_js_with_obj(&format!("Read CSV data: {:?}", batch).into());
 
         // let record_batch = rel_freq_pars(batch.clone(), params);
-        send_record_batch_to_js(&record_batch);
+        send_record_batch_to_js(&batch);
 
         return;
     }

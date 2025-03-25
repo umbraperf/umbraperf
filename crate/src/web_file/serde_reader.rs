@@ -168,13 +168,11 @@ impl SerdeDict {
             tmam_csv.push(record.clone());
 
             // Parse values from each record
-            if record.len() >= 5 {
-                time_col.push(record[0].parse::<f64>().unwrap_or(0.0));
-                retiring_col.push(record[1].parse::<f64>().unwrap_or(0.0));
-                backend_bound_col.push(record[2].parse::<f64>().unwrap_or(0.0));
-                frontend_bound_col.push(record[3].parse::<f64>().unwrap_or(0.0));
-                bad_speculation_col.push(record[4].parse::<f64>().unwrap_or(0.0));
-            }
+            time_col.push(record[0].parse::<f64>().unwrap_or(0.0));
+            retiring_col.push(record[1].parse::<f64>().unwrap_or(0.0));
+            backend_bound_col.push(record[2].parse::<f64>().unwrap_or(0.0));
+            frontend_bound_col.push(record[3].parse::<f64>().unwrap_or(0.0));
+            bad_speculation_col.push(record[4].parse::<f64>().unwrap_or(0.0));
         }
 
         print_to_js_with_obj(&format!("read read cols").into());

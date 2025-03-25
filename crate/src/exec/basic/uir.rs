@@ -46,7 +46,7 @@ pub fn sum_of_vec(vec: Vec<f64>, num_of_events: usize) -> Vec<f64> {
         let mut sum = 0.;
         for item in vec.iter().skip(i).step_by(num_of_events) {
             sum += item;
-        } 
+        }
         sum = round(sum) * 100.;
         out_vec.push(round(sum));
     }
@@ -543,7 +543,7 @@ pub fn get_top_srclines(record_batch: RecordBatch, ordered_by: usize) -> RecordB
                 &srcline_batch_sorted_after_coverage,
             );
             let freq_col = get_floatarray_column(&unique_operator_batch, ordered_by + 1);
-            
+
             let sum_freq = round(arrow::compute::sum(freq_col).unwrap());
             // Solving rounding errors
             let sum_cov = if sum_freq >= 99.7 && sum_freq <= 100.3 {

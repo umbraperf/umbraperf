@@ -112,6 +112,10 @@ pub fn request_chart_data(rest_query: &str) {
         let csv_data = &serde_dict.tmam_csv;
         print_to_js_with_obj(&format!("Read CSV data: {:?}", csv_data).into());
 
+        // 1) convert csv data to record batch
+        // let record_batch = rel_freq_pars(record_batch, params);
+        //  send_record_batch_to_js(&record_batch);
+
         return;
     }
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);

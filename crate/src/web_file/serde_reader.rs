@@ -1,8 +1,9 @@
-use std::{collections::HashMap, io::{Read, BufReader}};
+use std::{collections::HashMap, io::{BufReader, Read}, sync::Arc};
 use crate::{
     bindings::send_js_query_plan, utils::print_to_cons::print_to_js_with_obj,
 };
 
+use arrow::{array::{ArrayRef, Float64Array}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
 use csv::StringRecord;
 use serde::Deserialize;
 use serde_json::{Map, Value};
@@ -144,13 +145,54 @@ impl SerdeDict {
 
         print_to_js_with_obj(&format!("start reading csv").into());
 
+        let schema = Schema::new(vec![
+            Field::new("time", DataType::Float64, false),
+            Field::new("% retiring", DataType::Float64, false),
+            Field::new("% backend_bound", DataType::Float64, false),
+            Field::new("% frontend_bound", DataType::Float64, false),
+            Field::new("% bad_speculation", DataType::Float64, false),
+        ]);
+
+        print_to_js_with_obj(&format!("read schema").into());
+
+        // Initialize vectors for each column
+        let mut time_col: Vec<f64> = Vec::new();
+        let mut retiring_col: Vec<f64> = Vec::new();
+        let mut backend_bound_col: Vec<f64> = Vec::new();
+        let mut frontend_bound_col: Vec<f64> = Vec::new();
+        let mut bad_speculation_col: Vec<f64> = Vec::new();
+
         let mut rdr = csv::Reader::from_reader(buf_reader);
         for result in rdr.records() {
             let record = result.unwrap();
-            tmam_csv.push(record);
+            tmam_csv.push(record.clone());
+
+            // Parse values from each record
+            if record.len() >= 5 {
+                time_col.push(record[0].parse::<f64>().unwrap_or(0.0));
+                retiring_col.push(record[1].parse::<f64>().unwrap_or(0.0));
+                backend_bound_col.push(record[2].parse::<f64>().unwrap_or(0.0));
+                frontend_bound_col.push(record[3].parse::<f64>().unwrap_or(0.0));
+                bad_speculation_col.push(record[4].parse::<f64>().unwrap_or(0.0));
+            }
         }
 
-        print_to_js_with_obj(&format!("csv data is: {:?}", tmam_csv).into());
+        print_to_js_with_obj(&format!("read read cols").into());
+
+        // Create Arrow arrays for each column
+        let columns: Vec<ArrayRef> = vec![
+            Arc::new(Float64Array::from(time_col)) as ArrayRef,
+            Arc::new(Float64Array::from(retiring_col)) as ArrayRef,
+            Arc::new(Float64Array::from(backend_bound_col)) as ArrayRef,
+            Arc::new(Float64Array::from(frontend_bound_col)) as ArrayRef,
+            Arc::new(Float64Array::from(bad_speculation_col)) as ArrayRef,
+        ];
+
+        print_to_js_with_obj(&format!("record").into());
+
+        let batch = RecordBatch::try_new(Arc::new(schema), columns).unwrap();
+
+        print_to_js_with_obj(&format!("record batch is: {:?}", batch).into());
 
         send_js_query_plan(buf);
 

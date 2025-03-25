@@ -85,6 +85,7 @@ function StatusIndicator(props: Props) {
     }
 
     const getLoadingChartName: () => model.ChartTypeReadable = () => {
+        console.log("HERE", props.resultLoading,props.loadingChartReadableName, Object.values(props.resultLoading).indexOf(true, 0))
         const currentLoadingIndex = Object.values(props.resultLoading).indexOf(true, 0);
         return props.loadingChartReadableName[currentLoadingIndex];
     }

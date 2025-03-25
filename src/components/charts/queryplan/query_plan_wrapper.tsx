@@ -330,7 +330,7 @@ class QueryPlanWrapper extends React.Component<Props, State> {
 
             if (currentPlanElement.hasOwnProperty("arguments") && currentPlanElement["arguments"] !== 0) {
                 currentPlanElement["arguments"].forEach((arg:any) => {
-                    console.log(arg.operator);
+                    // console.log(arg.operator);
                     ["input", "left", "right", "magic", "pipelineBreaker"].forEach(childType => {
                         if (arg.hasOwnProperty(childType) && arg[childType] !== 0) {
                             fillGraph(arg[childType], currentPlanElement.operator);

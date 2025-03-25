@@ -236,6 +236,12 @@ export function chartRerenderNeeded(nextProps: ChartWrapperAppstateProps, props:
                     !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
                     true :
                     false;
+            case model.ChartType.SWIM_LANES_TMAM:
+                return (nextProps.currentView !== props.currentView ||
+                    nextProps.currentBucketSize !== props.currentBucketSize ||
+                    !_.isEqual(nextProps.currentTimeBucketSelectionTuple, props.currentTimeBucketSelectionTuple)) ?
+                    true :
+                    false;
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES:
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:
                 return (evenChartDataInputChangedGeneral ||

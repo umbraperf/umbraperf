@@ -197,11 +197,6 @@ fn process_custom_batch_request() {
         // Add similar blocks for other array types if needed
     }
 
-    // Create a new record batch with the results
-    use std::sync::Arc;
-    use arrow::array::{Float64Array, StringArray};
-    use arrow::datatypes::DataType;
-    use crate::utils::record_batch_util::create_new_record_batch;
 
     let result_batch = create_new_record_batch(
         vec!["bucket", "category", "freq"],
@@ -216,6 +211,8 @@ fn process_custom_batch_request() {
             Arc::new(Float64Array::from(frequencies)),
         ],
     );
+
+    print_to_js_with_obj(&format!("Result batch: {:?}", result_batch).into());
 
     send_record_batch_to_js(&result_batch);
 }

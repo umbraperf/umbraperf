@@ -1,6 +1,6 @@
 use std::{collections::HashMap, io::{Read, BufReader}};
 use crate::{
-    bindings::send_js_query_plan,
+    bindings::send_js_query_plan, utils::print_to_cons::print_to_js_with_obj,
 };
 
 use csv::StringRecord;
@@ -142,6 +142,7 @@ impl SerdeDict {
         let buf_reader = BufReader::new(csv_reader);
         let mut tmam_csv: Vec<StringRecord> = Vec::new();
 
+        print_to_js_with_obj(&format!("start reading csv").into());
 
         let mut rdr = csv::Reader::from_reader(buf_reader);
         for result in rdr.records() {

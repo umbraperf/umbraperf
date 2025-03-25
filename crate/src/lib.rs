@@ -1,5 +1,6 @@
 // WASM Bindgen
 extern crate wasm_bindgen;
+use exec::freq::rel_freq;
 use exec::rest::rest_api_pars::rel_freq_pars;
 use state::state::get_serde_dict;
 use utils::record_batch_util::send_record_batch_to_js;
@@ -11,6 +12,7 @@ extern crate console_error_panic_hook;
 // Arrow
 extern crate arrow;
 use arrow::record_batch::RecordBatch;
+use arrow::array::Array;
 
 // Reader
 mod web_file {
@@ -109,17 +111,111 @@ pub fn analyze_file(file_size: i32) {
 pub fn request_chart_data(rest_query: &str) {
     //let timer = start_timer();
     if rest_query.starts_with("relfreq_csv") {
-        print_to_js_with_obj(&format!("Inside relfreq_csv").into());
-        let serde_dict = get_serde_dict().unwrap();
-        let batch = &serde_dict.batch;
-        print_to_js_with_obj(&format!("Read CSV data: {:?}", batch).into());
-
-        let params = rest_query.split('?').nth(1).unwrap_or("");
-        let record_batch = rel_freq_pars(batch.clone(), params);
-        send_record_batch_to_js(&batch);
-
+        process_custom_batch_request();
         return;
     }
     eval_query(get_unfiltered_record_batch().unwrap().batch.clone(), rest_query);
     //stop_timer(timer, rest_query);
+}
+
+fn process_custom_batch_request() {
+    print_to_js_with_obj(&format!("Inside relfreq_csv").into());
+    let serde_dict = get_serde_dict().unwrap();
+    let batch = &serde_dict.batch;
+
+    // Extract schema and columns
+    let schema = batch.schema();
+    let num_columns = schema.fields().len();
+
+    // Find the time/bucket column (assuming it's a float column, typically first column)
+    let mut bucket_col_idx = 0;
+
+    // Create collections for our results
+    let mut buckets = Vec::new();
+    let mut categories = Vec::new();
+    let mut frequencies = Vec::new();
+
+    // Get unique buckets (assuming first column contains bucket/time values)
+    let bucket_array = crate::utils::array_util::get_floatarray_column(batch, bucket_col_idx);
+    let mut unique_buckets = Vec::new();
+    for i in 0..bucket_array.len() {
+        let value = bucket_array.value(i);
+        if !unique_buckets.contains(&value) {
+            unique_buckets.push(value);
+        }
+    }
+    unique_buckets.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+    // For each column (except bucket column)
+    for col_idx in 1..num_columns {
+        let col_name = schema.field(col_idx).name();
+
+        // Get column data
+        let col_data = batch.column(col_idx);
+
+        // Process based on column type
+        if let Some(string_array) = col_data.as_any().downcast_ref::<arrow::array::StringArray>() {
+            // Find unique categories
+            let mut unique_categories = Vec::new();
+            for i in 0..string_array.len() {
+                let value = string_array.value(i);
+                if !unique_categories.contains(&value) {
+                    unique_categories.push(value);
+                }
+            }
+
+            // Calculate frequencies for each bucket-category combination
+            for &bucket in &unique_buckets {
+                let total_in_bucket = bucket_array.iter()
+                    .filter(|&x| x == Some(bucket))
+                    .count() as f64;
+
+                for &category in &unique_categories {
+                    // Count occurrences of this category in this bucket
+                    let mut count = 0;
+                    for i in 0..batch.num_rows() {
+                        if bucket_array.value(i) == bucket &&
+                           string_array.value(i) == category {
+                            count += 1;
+                        }
+                    }
+
+                    // Calculate relative frequency
+                    let freq = if total_in_bucket > 0.0 {
+                        count as f64 / total_in_bucket
+                    } else {
+                        0.0
+                    };
+
+                    // Add to result vectors
+                    buckets.push(bucket);
+                    categories.push(category);
+                    frequencies.push(freq);
+                }
+            }
+        }
+        // Add similar blocks for other array types if needed
+    }
+
+    // Create a new record batch with the results
+    use std::sync::Arc;
+    use arrow::array::{Float64Array, StringArray};
+    use arrow::datatypes::DataType;
+    use crate::utils::record_batch_util::create_new_record_batch;
+
+    let result_batch = create_new_record_batch(
+        vec!["bucket", "category", "freq"],
+        vec![
+            DataType::Float64,
+            DataType::Utf8,
+            DataType::Float64,
+        ],
+        vec![
+            Arc::new(Float64Array::from(buckets)),
+            Arc::new(StringArray::from(categories)),
+            Arc::new(Float64Array::from(frequencies)),
+        ],
+    );
+
+    send_record_batch_to_js(&result_batch);
 }

@@ -3,6 +3,7 @@ use crate::{
     bindings::send_js_query_plan,
 };
 
+use csv::StringRecord;
 use serde::Deserialize;
 use serde_json::{Map, Value};
 
@@ -33,12 +34,14 @@ pub struct DictionaryUri {
 #[derive(Clone)]
 pub struct SerdeDict {
     pub dict: HashMap<i64, HashMap<u64, String>>,
-    pub uri_dict: HashMap<String, DictionaryUri>
+    pub uri_dict: HashMap<String, DictionaryUri>,
+    pub tmam_csv: Vec<StringRecord>,
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
 static QUERY_PLAN_FILE_NAME: &str = "query_plan_analyzed.json";
+static TMAM_FILE_NAME: &str = "tmam.csv";
 
 pub enum DictFields {
     Operator = 0,
@@ -56,7 +59,7 @@ impl SerdeDict {
             zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
         let reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
         let mut buf_reader = BufReader::new(reader);
-        
+
         let mut buf: String = String::new();
         let _result = buf_reader.read_to_string(&mut buf);
 
@@ -135,11 +138,23 @@ impl SerdeDict {
         let buf_reader = BufReader::new(reader);
         let d: HashMap<String, DictionaryUri> = serde_json::from_reader(buf_reader).unwrap();
 
+        let csv_reader = BufferReader::read_to_buffer(TMAM_FILE_NAME, length as u64);
+        let buf_reader = BufReader::new(csv_reader);
+        let mut tmam_csv: Vec<StringRecord> = Vec::new();
+
+
+        let mut rdr = csv::Reader::from_reader(buf_reader);
+        for result in rdr.records() {
+            let record = result.unwrap();
+            tmam_csv.push(record);
+        }
+
         send_js_query_plan(buf);
-        
+
         return Self {
             dict: hash_map,
-            uri_dict: d
+            uri_dict: d,
+            tmam_csv: tmam_csv,
         };
     }
 }

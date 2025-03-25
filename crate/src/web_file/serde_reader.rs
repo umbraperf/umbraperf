@@ -143,13 +143,11 @@ impl SerdeDict {
         let mut tmam_csv: Vec<StringRecord> = Vec::new();
 
 
-        print_to_js_with_obj!("Reading CSV data: {:?}", TMAM_FILE_NAME);
         let mut rdr = csv::Reader::from_reader(buf_reader);
         for result in rdr.records() {
             let record = result.unwrap();
             tmam_csv.push(record);
         }
-        print_to_js_with_obj!("Read CSV data: {:?}", TMAM_FILE_NAME);
 
         send_js_query_plan(buf);
 

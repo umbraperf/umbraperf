@@ -220,7 +220,7 @@ class SwimLanesTmam extends React.Component<Props, State> {
             ],
             legends: [{
                 fill: "color",
-                title: "Cathegories",
+                title: "Categories",
                 orient: "right",
                 labelFontSize: model.chartConfiguration.legendLabelFontSize,
                 titleFontSize: model.chartConfiguration.legendTitleFontSize,

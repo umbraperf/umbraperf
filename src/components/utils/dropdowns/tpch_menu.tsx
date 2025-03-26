@@ -17,8 +17,8 @@ const tpchSampleFiles: { readableName: string, name: string }[] = [
     //     { readableName: "TPCH 3 SF10 (unopt)", name: "sf10_tpch3_unopt" },
     //     { readableName: "TPCH 10 SF10 (opt)", name: "sf10_tpch10_opt" },
     //     { readableName: "TPCH 10 SF10 (unopt)", name: "sf10_tpch10_unopt" },
-    { readableName: "Demo Scenario 1", name: "Scenario1.umbraperf" },
-    { readableName: "Demo Scenario 2", name: "Scenario2.umbraperf" },
+    { readableName: "Demo Scenario 1", name: "Scenario1" },
+    { readableName: "Demo Scenario 2", name: "Scenario2" },
 ];
 
 interface Props {

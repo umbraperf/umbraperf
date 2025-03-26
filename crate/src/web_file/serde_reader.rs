@@ -1,8 +1,10 @@
-use std::{collections::HashMap, io::{Read, BufReader}};
+use std::{collections::HashMap, io::{BufReader, Read}, sync::Arc};
 use crate::{
-    bindings::send_js_query_plan,
+    bindings::send_js_query_plan, utils::print_to_cons::print_to_js_with_obj,
 };
 
+use arrow::{array::{ArrayRef, Float64Array}, datatypes::{DataType, Field, Schema}, record_batch::RecordBatch};
+use csv::StringRecord;
 use serde::Deserialize;
 use serde_json::{Map, Value};
 
@@ -33,12 +35,14 @@ pub struct DictionaryUri {
 #[derive(Clone)]
 pub struct SerdeDict {
     pub dict: HashMap<i64, HashMap<u64, String>>,
-    pub uri_dict: HashMap<String, DictionaryUri>
+    pub uri_dict: HashMap<String, DictionaryUri>,
+    pub batch: RecordBatch
 }
 
 static DICT_FILE_NAME: &str = "dictionary_compression.json";
 static URI_DICT_FILE_NAME: &str = "uir.json";
 static QUERY_PLAN_FILE_NAME: &str = "query_plan_analyzed.json";
+static TMAM_FILE_NAME: &str = "tmam.csv";
 
 pub enum DictFields {
     Operator = 0,
@@ -56,7 +60,7 @@ impl SerdeDict {
             zip::ZipArchive::new(WebFileReader::new_from_file(length as i32)).unwrap();
         let reader = zip.by_name(QUERY_PLAN_FILE_NAME).unwrap();
         let mut buf_reader = BufReader::new(reader);
-        
+
         let mut buf: String = String::new();
         let _result = buf_reader.read_to_string(&mut buf);
 
@@ -135,11 +139,69 @@ impl SerdeDict {
         let buf_reader = BufReader::new(reader);
         let d: HashMap<String, DictionaryUri> = serde_json::from_reader(buf_reader).unwrap();
 
+        let csv_reader = BufferReader::read_to_buffer(TMAM_FILE_NAME, length as u64);
+        let buf_reader = BufReader::new(csv_reader);
+        let mut tmam_csv: Vec<StringRecord> = Vec::new();
+
+        print_to_js_with_obj(&format!("start reading csv").into());
+
+        let schema = Schema::new(vec![
+            Field::new("time", DataType::Float64, false),
+            Field::new("% retiring", DataType::Float64, false),
+            Field::new("% backend_bound", DataType::Float64, false),
+            Field::new("% frontend_bound", DataType::Float64, false),
+            Field::new("% bad_speculation", DataType::Float64, false),
+        ]);
+
+        print_to_js_with_obj(&format!("read schema").into());
+
+        // Initialize vectors for each column
+        let mut time_col: Vec<f64> = Vec::new();
+        let mut retiring_col: Vec<f64> = Vec::new();
+        let mut backend_bound_col: Vec<f64> = Vec::new();
+        let mut frontend_bound_col: Vec<f64> = Vec::new();
+        let mut bad_speculation_col: Vec<f64> = Vec::new();
+
+        let mut rdr = csv::ReaderBuilder::new()
+            .delimiter(b';')
+            .from_reader(buf_reader);
+        for result in rdr.records() {
+            let record = result.unwrap();
+            tmam_csv.push(record.clone());
+
+            print_to_js_with_obj(&format!("Read CSV data: {:?}", record).into());
+
+            // Parse values from each record
+            time_col.push(record.get(0).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            retiring_col.push(record.get(1).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            backend_bound_col.push(record.get(2).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            frontend_bound_col.push(record.get(3).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+            bad_speculation_col.push(record.get(4).unwrap_or("0.0").parse::<f64>().unwrap_or(1.0));
+        }
+
+        print_to_js_with_obj(&format!("read read cols").into());
+
+        // Create Arrow arrays for each column
+        let columns: Vec<ArrayRef> = vec![
+            Arc::new(Float64Array::from(time_col)) as ArrayRef,
+            Arc::new(Float64Array::from(retiring_col)) as ArrayRef,
+            Arc::new(Float64Array::from(backend_bound_col)) as ArrayRef,
+            Arc::new(Float64Array::from(frontend_bound_col)) as ArrayRef,
+            Arc::new(Float64Array::from(bad_speculation_col)) as ArrayRef,
+        ];
+
+        print_to_js_with_obj(&format!("record").into());
+
+        let batch = RecordBatch::try_new(Arc::new(schema), columns).unwrap();
+
+        print_to_js_with_obj(&format!("record batch is: {:?}", batch).into());
+
         send_js_query_plan(buf);
-        
+
         return Self {
             dict: hash_map,
-            uri_dict: d
+            uri_dict: d,
+            batch: batch,
         };
     }
 }

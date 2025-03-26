@@ -9,7 +9,7 @@ export function changeProfile(newProfile: model.ProfileType) {
     switch (newProfile) {
 
         case model.ProfileType.OVERVIEW:
-            console.log("new profile: overview")
+            // console.log("new profile: overview")
             setAppstateProfile(model.ProfileType.OVERVIEW);
             setAppstateEvent("cycles:ppp");
             setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
@@ -19,7 +19,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             break;
 
         case model.ProfileType.DETAIL_ANALYSIS:
-            console.log("new profile: detail")
+            // console.log("new profile: detail")
             setAppstateProfile(model.ProfileType.DETAIL_ANALYSIS);
             setAppstateEvent("cycles:ppp");
             setAppstateView(model.ViewType.DASHBOARD_SINGLE_EVENT);
@@ -29,7 +29,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             break;
 
         case model.ProfileType.MEMORY_BEHAVIOUR:
-            console.log("new profile: memory")
+            // console.log("new profile: memory")
             setAppstateProfile(model.ProfileType.MEMORY_BEHAVIOUR);
             setAppstateEvent("mem_inst_retired.all_loads");
             setAppstateView(model.ViewType.DASHBOARD_MEMORY_BEHAVIOR);
@@ -39,7 +39,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             break;
 
         case model.ProfileType.CACHE_ANALYSIS:
-            console.log("new profile: cache")
+            // console.log("new profile: cache")
             setAppstateProfile(model.ProfileType.CACHE_ANALYSIS);
             setAppstateMultipleEvent("l1-cache-misses", "l3-cache-misses");
             setAppstateView(model.ViewType.DASHBOARD_MULTIPLE_EVENTS);
@@ -49,7 +49,7 @@ export function changeProfile(newProfile: model.ProfileType) {
             break;
 
         case model.ProfileType.UIR_ANALYSIS:
-            console.log("new profile: uir")
+            // console.log("new profile: uir")
             setAppstateProfile(model.ProfileType.UIR_ANALYSIS);
             setAppstateEvent("cycles:ppp");
             setAppstateView(model.ViewType.DASHBOARD_UIR_PROFILING);

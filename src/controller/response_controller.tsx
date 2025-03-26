@@ -206,6 +206,21 @@ function storeChartDataFromRust(requestId: number, resultObject: model.IResult, 
             toggleResultLoadingFlag = true;
             break;
 
+        case model.BackendQueryType.GET_REL_TMAM_DISTR:
+
+            chartDataElem = model.createChartDataObject(
+                requestId,
+                {
+                    chartType: model.ChartType.SWIM_LANES_TMAM,
+                    data: {
+                        buckets: resultObject.rustResultTable.getColumn('bucket').toArray(),
+                        category: resultObject.rustResultTable.getColumn('category').toArray(),
+                        frequency: resultObject.rustResultTable.getColumn('freq').toArray(),
+                    }
+                });
+            toggleResultLoadingFlag = true;
+            break;
+
         case model.BackendQueryType.GET_REL_OP_DISTR_PER_BUCKET_PER_MULTIPLE_PIPELINES_COMBINED_EVENTS:
 
             chartDataElem = model.createChartDataObject(

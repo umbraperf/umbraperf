@@ -16,6 +16,7 @@ import BarChart from './vega_visualizations/bar_chart';
 import BarChartActivityHistogram from './vega_visualizations/bar_chart_activity_histogram';
 import SwimLanesMultiplePipelines from './vega_visualizations/swim_lanes_multiple_pipelines';
 import SwimLanesCombinedMultiplePipelines from './vega_visualizations/swim_lanes_combined_multiple_pipelines';
+import SwimLanesTmam from './vega_visualizations/swim_lanes_tmam';
 import MemoryAccessHeatmapChart from './vega_visualizations/memory_access_heatmap_chart';
 import UirViewer from './uir/uir_viewer';
 import QueryPlan from './queryplan/query_plan_wrapper';
@@ -142,7 +143,7 @@ class ChartWrapper extends React.Component<Props, State> {
             if (newWidth !== this.state.width || newHeight !== this.state.height) {
                 child.style.display = 'none';
 
-                if(this.props.chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM){
+                if (this.props.chartType === model.ChartType.BAR_CHART_ACTIVITY_HISTOGRAM) {
                     Controller.resetSelectionTimeframe();
                 }
 
@@ -232,6 +233,19 @@ class ChartWrapper extends React.Component<Props, State> {
                     props: swimLanesMultiplePipelinesAbsoluteProps,
                 };
                 chartClass = SwimLanesMultiplePipelines;
+                break;
+
+            case model.ChartType.SWIM_LANES_TMAM:
+                const swimLanesTmamProps: model.ISwimlanesProps = {
+                    ...partialChartProps,
+                    height: this.state.height,
+                    absoluteValues: false,
+                };
+                specificChart = {
+                    type: this.props.chartType,
+                    props: swimLanesTmamProps,
+                };
+                chartClass = SwimLanesTmam;
                 break;
 
             case model.ChartType.SWIM_LANES_COMBINED_MULTIPLE_PIPELINES_ABSOLUTE:

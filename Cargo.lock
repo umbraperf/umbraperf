@@ -316,9 +316,9 @@ dependencies = [
 
 [[package]]
 name = "csv"
-version = "1.1.6"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22813a6dc45b335f9bade10bf7271dc477e81113e89eb251a0bc2a8a81c536e1"
+checksum = "a54cd62557f353f140b42305fb4efcff2ae08e32fbabaf5b0929423000febb63"
 dependencies = [
  "bstr",
  "csv-core",
@@ -1176,6 +1176,7 @@ dependencies = [
  "boolvec",
  "chrono",
  "console_error_panic_hook",
+ "csv",
  "encode_unicode",
  "futures",
  "instant",

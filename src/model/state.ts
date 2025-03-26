@@ -1,4 +1,4 @@
-import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated } from ".";
+import { BackendQueryType, ProfileType, IChartDataKeyValue, IKpiData, IResult, IResultLoading, ProfileVariant, createProfiles, IOperatorsData, HeatmapsOutlierDetectionDegrees, IKpiValuesFormated, IResultLoadingReadableName } from ".";
 import { ViewType, ChartTypeReadable, ChartType } from "./chart_types";
 
 export interface AppState {
@@ -9,7 +9,7 @@ export interface AppState {
     file: File | undefined;
     queryplanJson: object | undefined;
     currentChart: Array<ChartType>;
-    loadingChartReadableName: Array<ChartTypeReadable>;
+    loadingChartReadableName: IResultLoadingReadableName; 
     currentEvent: string | "Default";
     currentMultipleEvent: [string, string] | "Default";
     currentPipeline: Array<string> | "All";
@@ -46,7 +46,7 @@ export function createDefaultState(): AppState {
         queryplanJson: undefined,
         file: undefined,
         currentChart: [],
-        loadingChartReadableName: [],
+        loadingChartReadableName: {},
         currentEvent: "Default",
         currentMultipleEvent: "Default",
         currentPipeline: "All",

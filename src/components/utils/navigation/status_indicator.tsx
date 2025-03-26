@@ -16,7 +16,7 @@ interface Props {
     pipelines: Array<string> | undefined;
     operators: model.IOperatorsData | undefined;
     kpis: Array<model.IKpiData> | undefined;
-    loadingChartReadableName: Array<model.ChartTypeReadable>;
+    loadingChartReadableName: model.IResultLoadingReadableName;
 }
 
 
@@ -85,7 +85,7 @@ function StatusIndicator(props: Props) {
     }
 
     const getLoadingChartName: () => model.ChartTypeReadable = () => {
-        const currentLoadingIndex = Object.values(props.resultLoading).indexOf(true, 0);
+        const currentLoadingIndex = Object.values(props.resultLoading).indexOf(true, 0) + 1;
         return props.loadingChartReadableName[currentLoadingIndex];
     }
 

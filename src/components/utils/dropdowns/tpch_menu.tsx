@@ -66,7 +66,7 @@ function TpchMenu(props: Props) {
             })
             .then(blob => {
                 const file = new File([blob], selectedTpchFileName);
-                console.log(file);
+                // console.log(file);
                 Controller.handleNewFile(file);
                 return blob;
             });

@@ -12,16 +12,6 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
         return <Grid container>
 
             <Box clone order={{ xs: 1, sm: 1, lg: 1 }}>
-            <Grid item className={styles.dashboardGridCellItem} xs={12} >
-                    <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
-                        <div className={styles.dashboardGridCellChartContainer}>
-                        <ChartWrapper chartType={model.ChartType.SWIM_LANES_TMAM} />
-                        </div>
-                    </Box>
-                </Grid>
-            </Box>
-
-            <Box clone order={{ xs: 2, sm: 2, lg: 2 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} >
                     <Box className={styles.dashboardGridCellChartBoxActivityHistogram}>
                         <div className={styles.dashboardGridCellChartContainer}>
@@ -31,8 +21,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 </Grid>
             </Box>
 
-
-            <Box clone order={{ xs: 3, md: 3, lg: 3 }}>
+            <Box clone order={{ xs: 2, md: 2, lg: 2 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={6} lg={4} >
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
@@ -41,7 +30,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                     </Box>
                 </Grid>
             </Box>
-            <Box clone order={{ xs: 5, md: 5, lg: 4 }}>
+            <Box clone order={{ xs: 4, md: 4, lg: 3 }}>
                 <Grid item className={styles.dashboardGridCellItem} xs={12} md={12} lg={8}>
                     <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
                         <div className={styles.dashboardGridCellChartContainer}>
@@ -51,8 +40,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                 </Grid>
             </Box>
 
-
-            <Box clone order={{ xs: 4, md: 4, lg: 5 }}>
+            <Box clone order={{ xs: 3, md: 3, lg: 4 }}>
                 <Grid item className={styles.dashboardGridCellItemDoubleRow} xs={12} md={6} lg={4}>
                     <Box className={styles.dashboardGridCellChartBoxDoublerowVisualizations}>
                         <div className={`${styles.dashboardGridCellChartContainer} ${styles.dashboardGridCellChartContainerStaticWidthSmall}`}>
@@ -61,7 +49,7 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                     </Box>
                 </Grid>
             </Box>
-            <Box clone order={{ xs: 6, md: 6, lg: 6 }}>
+            <Box clone order={{ xs: 5, md: 5, lg: 5 }}>
                 <Grid item container className={styles.dashboardGridCellItemDoubleRowInnerGridContainer} direction="column" xs={12} md={12} lg={8}>
                     <Grid item className={styles.dashboardGridCellItem}>
                         <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
@@ -77,6 +65,16 @@ class DashboardSingleEvent extends React.Component<{}, {}> {
                             </div>
                         </Box>
                     </Grid>
+                </Grid>
+            </Box>
+
+            <Box clone order={{ xs: 6, sm: 6, lg: 6 }}>
+                <Grid item className={styles.dashboardGridCellItem} xs={12} >
+                    <Box className={styles.dashboardGridCellChartBoxMainVisualizations}>
+                        <div className={styles.dashboardGridCellChartContainer}>
+                            <ChartWrapper chartType={model.ChartType.SWIM_LANES_TMAM} />
+                        </div>
+                    </Box>
                 </Grid>
             </Box>
 

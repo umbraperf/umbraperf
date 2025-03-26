@@ -13,10 +13,12 @@ const tpchSampleFiles: { readableName: string, name: string }[] = [
     // { readableName: "TPCH 10 SF1 (unopt)", name: "tpc-h_10_sf1_unopt" },
     // { readableName: "TPCH 10 SF10 (opt)", name: "tpc-h_10_sf10_opt" },
     // { readableName: "TPCH 10 SF10 (unopt)", name: "tpc-h_10_sf10_unopt" },
-    { readableName: "TPCH 3 SF10 (opt)", name: "sf10_tpch3_opt" },
-    { readableName: "TPCH 3 SF10 (unopt)", name: "sf10_tpch3_unopt" },
-    { readableName: "TPCH 10 SF10 (opt)", name: "sf10_tpch10_opt" },
-    { readableName: "TPCH 10 SF10 (unopt)", name: "sf10_tpch10_unopt" },
+    //     { readableName: "TPCH 3 SF10 (opt)", name: "sf10_tpch3_opt" },
+    //     { readableName: "TPCH 3 SF10 (unopt)", name: "sf10_tpch3_unopt" },
+    //     { readableName: "TPCH 10 SF10 (opt)", name: "sf10_tpch10_opt" },
+    //     { readableName: "TPCH 10 SF10 (unopt)", name: "sf10_tpch10_unopt" },
+    { readableName: "Demo Scenario 1", name: "Scenario1.umbraperf" },
+    { readableName: "Demo Scenario 2", name: "Scenario2.umbraperf" },
 ];
 
 interface Props {
@@ -85,7 +87,7 @@ function TpchMenu(props: Props) {
                 endIcon={<KeyboardArrowDownIcon />}
                 disabled={props.fileLoading}
             >
-                {selectedTpch < 0 ? "TPC-H Sample Files" : tpchSampleFiles[selectedTpch].readableName}
+                {selectedTpch < 0 ? "Sample Files" : tpchSampleFiles[selectedTpch].readableName}
             </Button>
 
             <Menu
